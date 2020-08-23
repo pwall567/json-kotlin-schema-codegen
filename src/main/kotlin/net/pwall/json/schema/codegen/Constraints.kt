@@ -65,6 +65,8 @@ open class Constraints(val schema: JSONSchema) {
     val required = mutableListOf<String>()
 
     var arrayItems: Constraints? = null
+    var minItems: Int? = null
+    var maxItems: Int? = null
 
     var minimum: Number? = null // Number will be BigDecimal, Long or Int
     var exclusiveMinimum: Number? = null
@@ -80,7 +82,7 @@ open class Constraints(val schema: JSONSchema) {
     var enumValues: JSONArray? = null
     var constValue: JSONValue? = null
 
-    val nestedClasses = mutableListOf<NamedConstraints>()
+    val nestedClasses = mutableListOf<NestedClass>()
 
     @Suppress("unused")
     val nestedClassesPresent: Boolean
@@ -116,6 +118,14 @@ open class Constraints(val schema: JSONSchema) {
     @Suppress("unused")
     val multipleOfPresent: Boolean
         get() = multipleOf != null
+
+    @Suppress("unused")
+    val maxItemsPresent: Boolean
+        get() = maxItems != null
+
+    @Suppress("unused")
+    val minItemsPresent: Boolean
+        get() = minItems != null
 
     @Suppress("unused")
     val nameFromURI: String? by lazy {
@@ -240,7 +250,8 @@ open class Constraints(val schema: JSONSchema) {
         TIME(42),
         DURATION(45),
         // utility
-        UUID(60),
+        URI(60),
+        UUID(61),
         // local
         VALIDATION(90)
     }

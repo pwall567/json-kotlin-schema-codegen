@@ -1,0 +1,3 @@
+{{#maxItemsPresent}}        require({{&name}}.size <= {{&maxItems}}) { "{{&name}} length > maximum - " + {{&name}}.size }
+{{/maxItemsPresent}}{{#minItemsPresent}}        require({{&name}}.size >= {{&minItems}}) { "{{&name}} length < minimum - " + {{&name}}.size }
+{{/minItemsPresent}}

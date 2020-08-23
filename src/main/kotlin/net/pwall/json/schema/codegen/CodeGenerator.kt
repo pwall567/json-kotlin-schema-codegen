@@ -41,6 +41,7 @@ import net.pwall.json.schema.subschema.ItemSchema
 import net.pwall.json.schema.subschema.PropertySchema
 import net.pwall.json.schema.subschema.RefSchema
 import net.pwall.json.schema.subschema.RequiredSchema
+import net.pwall.json.schema.validation.ArrayValidator
 import net.pwall.json.schema.validation.ConstValidator
 import net.pwall.json.schema.validation.DefaultValidator
 import net.pwall.json.schema.validation.EnumValidator
@@ -50,6 +51,7 @@ import net.pwall.json.schema.validation.PatternValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.mustache.Template
+import net.pwall.util.Strings
 
 class CodeGenerator(
         var templates: String = "kotlin",
@@ -170,25 +172,36 @@ class CodeGenerator(
             if (property.isObject) {
                 // TODO - how do we handle nested classes?
                 // answer - we always generate as nested classes for now, look at alternatives later
-                val innerClassName = property.capitalisedName
-                if (parentConstraints.nestedClasses.any { it.capitalisedName == innerClassName }) {
+                var innerClassName = property.capitalisedName
+                if (parentConstraints.nestedClasses.any { it.className == innerClassName }) {
                     for (i in 1..1000) {
                         if (i == 1000)
                             throw JSONSchemaException("Too many identically named inner classes - $innerClassName")
-                        if (!parentConstraints.nestedClasses.any { it.capitalisedName == "$innerClassName$i" }) {
-                            property.overridingName = "$innerClassName$i"
+                        if (!parentConstraints.nestedClasses.any { it.className == "$innerClassName$i" }) {
+                            innerClassName = "$innerClassName$i"
                             break
                         }
                     }
                 }
-                parentConstraints.nestedClasses.add(property)
+                parentConstraints.nestedClasses.add(NestedClass(property, innerClassName))
                 analyseConstraints(parentConstraints, property)
                 property.localTypeName = property.className
             }
             if (property.isArray) {
                 parentConstraints.systemClasses.addOnce(Constraints.SystemClass.LIST)
-                property.arrayItems?.let { analyseConstraints(parentConstraints, it) }
-                // TODO - minItems, maxItems etc.
+                property.arrayItems?.let {
+                    analyseConstraints(parentConstraints, it)
+                    if (it.isObject) {
+                        // what do we use as inner class name?
+                        val innerClassName = it.schema.findRefChild()?.let { ref ->
+                            ref.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
+                        } ?: Strings.capitalise(property.name.depluralise())
+                        parentConstraints.nestedClasses.add(NestedClass(it, innerClassName))
+                        it.localTypeName = innerClassName
+                    }
+                }
+                if (property.maxItems != null || property.minItems != null)
+                    parentConstraints.validationsPresent = true
             }
             if (property.isInt) {
                 if (property.maximum != null || property.exclusiveMaximum != null || property.minimum != null ||
@@ -222,6 +235,10 @@ class CodeGenerator(
                         parentConstraints.systemClasses.addOnce(Constraints.SystemClass.UUID)
                         property.systemClass = Constraints.SystemClass.UUID
                     }
+                    FormatValidator.FormatType.URI, FormatValidator.FormatType.URI_REFERENCE -> {
+                        parentConstraints.systemClasses.addOnce(Constraints.SystemClass.URI)
+                        property.systemClass = Constraints.SystemClass.URI
+                    }
                     else -> {}
                 }
                 if (property.enumValues != null || property.constValue != null) {
@@ -244,6 +261,15 @@ class CodeGenerator(
             }
         }
     }
+
+    private fun String.depluralise(): String = when {
+        this.endsWith("es") -> dropLast(2)
+        this.endsWith('s') -> dropLast(1)
+        else -> this
+    }
+
+    private fun JSONSchema.findRefChild(): RefSchema? =
+            ((this as? JSONSchema.General)?.children?.find { it is RefSchema }) as RefSchema?
 
     private fun <T: Any> MutableList<T>.addOnce(entry: T) {
         if (entry !in this)
@@ -300,6 +326,7 @@ class CodeGenerator(
             is PatternValidator -> processPatternValidator(validator, constraints)
             is StringValidator -> processStringValidator(validator, constraints)
             is TypeValidator -> processTypeValidator(validator, constraints)
+            is ArrayValidator -> processArrayValidator(validator, constraints)
         }
     }
 
@@ -333,6 +360,15 @@ class CodeGenerator(
                     Constraints.minimumOf(constraints.maximum, numberValidator.value)
             NumberValidator.ValidationType.EXCLUSIVE_MAXIMUM -> constraints.exclusiveMaximum =
                     Constraints.minimumOf(constraints.exclusiveMaximum, numberValidator.value)
+        }
+    }
+
+    private fun processArrayValidator(arrayValidator: ArrayValidator, constraints: Constraints) {
+        when (arrayValidator.condition) {
+            ArrayValidator.ValidationType.MAX_ITEMS -> constraints.maxItems =
+                    Constraints.minimumOf(constraints.maxItems, arrayValidator.value)?.toInt()
+            ArrayValidator.ValidationType.MIN_ITEMS -> constraints.minItems =
+                    Constraints.maximumOf(constraints.minLength, arrayValidator.value)?.toInt()
         }
     }
 

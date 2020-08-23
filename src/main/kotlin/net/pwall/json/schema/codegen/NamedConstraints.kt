@@ -36,16 +36,11 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
     val propertyName: String
         get() = name
 
-    @Suppress("unused")
     val capitalisedName: String
         get() = Strings.capitalise(name)
 
     @Suppress("unused")
     val className: String
         get() = overridingName ?: capitalisedName
-
-    @Suppress("unused")
-    val nameFromURIOrName: String
-        get() = nameFromURI ?: capitalisedName
 
 }

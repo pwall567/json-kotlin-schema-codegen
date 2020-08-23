@@ -5,4 +5,8 @@
 {{/DURATION}}{{#EMAIL}}        require(JSONValidation.isEmail({{&propertyName}})) { "{{&propertyName}} does not match format email - ${{&propertyName}}" }
 {{/EMAIL}}{{#HOSTNAME}}        require(JSONValidation.isHostname({{&propertyName}})) { "{{&propertyName}} does not match format hostname - ${{&propertyName}}" }
 {{/HOSTNAME}}{{#UUID}}        require(JSONValidation.isUUID({{&propertyName}})) { "{{&propertyName}} does not match format uuid - ${{&propertyName}}" }
-{{/UUID}}{{/format}}
+{{/UUID}}{{#URI}}        require(JSONValidation.isURI({{&propertyName}})) { "{{&propertyName}} does not match format uri - ${{&propertyName}}" }
+{{/URI}}{{#URI_REFERENCE}}        require(JSONValidation.isURIReference({{&propertyName}})) { "{{&propertyName}} does not match format uri-reference - ${{&propertyName}}" }
+{{/URI_REFERENCE}}{{#IPV4}}        require(JSONValidation.isIPV4({{&propertyName}})) { "{{&propertyName}} does not match format ipv4 - ${{&propertyName}}" }
+{{/IPV4}}{{#IPV6}}        require(JSONValidation.isIPV6({{&propertyName}})) { "{{&propertyName}} does not match format ipv6 - ${{&propertyName}}" }
+{{/IPV6}}{{/format}}
