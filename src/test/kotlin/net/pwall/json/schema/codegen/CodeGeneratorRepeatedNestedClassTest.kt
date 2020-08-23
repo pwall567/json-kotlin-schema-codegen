@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorDefaultTest.kt
+ * @(#) CodeGeneratorRepeatedNestedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
@@ -31,32 +31,49 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-class CodeGeneratorDefaultTest {
+class CodeGeneratorRepeatedNestedClassTest {
 
-    @Test fun `should output class with default value`() {
-        val input = File("src/test/resources/test-default.schema.json")
+    @Test fun `should correctly output repeated nested class`() {
+        val input = File("src/test/resources/test-repeated-object.schema.json")
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
+                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestRepeatedObject", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedDefault) { stringWriter.toString() }
+        expect(expectedRepeated) { stringWriter.toString() }
     }
 
     companion object {
 
-        const val expectedDefault =
+        const val expectedRepeated =
 """package com.example
 
+data class TestRepeatedObject(
+        val nested1: Nested1,
+        val nested2: Nested2
+) {
 
-data class TestDefault(
-        val aaa: Long = 8,
-        val bbb: String? = null,
-        val ccc: String = "CCC",
-        val ddd: List<Long> = listOf(123, 456)
-)
+    data class Nested1(
+            val internal: Internal
+    )
+
+    data class Internal(
+            val prop1: String,
+            val prop2: String
+    )
+
+    data class Nested2(
+            val internal: Internal1
+    )
+
+    data class Internal1(
+            val prop1: String,
+            val prop2: String
+    )
+
+}
 """
 
     }

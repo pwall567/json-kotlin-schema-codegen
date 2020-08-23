@@ -1,7 +1,7 @@
 /*
  * @(#) NamedConstraints.kt
  *
- * json-kotlin-schema Kotlin implementation of JSON Schema
+ * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,17 +30,11 @@ import net.pwall.util.Strings
 
 class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
 
-    var overridingName: String? = null
-
     @Suppress("unused")
     val propertyName: String
         get() = name
 
     val capitalisedName: String
         get() = Strings.capitalise(name)
-
-    @Suppress("unused")
-    val className: String
-        get() = overridingName ?: capitalisedName
 
 }

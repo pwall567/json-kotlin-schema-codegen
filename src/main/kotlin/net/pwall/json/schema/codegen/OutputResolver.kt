@@ -1,7 +1,7 @@
 /*
  * @(#) OutputResolver.kt
  *
- * json-kotlin-schema Kotlin implementation of JSON Schema
+ * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

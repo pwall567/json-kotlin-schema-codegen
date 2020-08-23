@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-repeated-object",
+  "title": "Dummy",
+  "type": "object",
+  "properties": {
+    "nested1": {
+      "type": "object",
+      "properties": {
+        "internal": {
+          "$ref": "#/$defs/internal"
+        }
+      },
+      "required": ["internal"]
+    },
+    "nested2": {
+      "type": "object",
+      "properties": {
+        "internal": {
+          "$ref": "#/$defs/internal"
+        }
+      },
+      "required": ["internal"]
+    }
+  },
+  "required": [ "nested1", "nested2" ],
+  "$defs": {
+    "internal": {
+      "type": "object",
+      "properties": {
+        "prop1": {
+          "type": "string"
+        },
+        "prop2": {
+          "type": "string"
+        }
+      },
+      "required": ["prop1","prop2"]
+    }
+  }
+}
