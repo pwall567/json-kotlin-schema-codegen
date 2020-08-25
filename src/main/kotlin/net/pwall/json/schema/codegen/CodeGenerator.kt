@@ -172,20 +172,9 @@ class CodeGenerator(
             if (property.isObject) {
                 // TODO - how do we handle nested classes?
                 // answer - we always generate as nested classes for now, look at alternatives later
-                var innerClassName = property.capitalisedName
-                if (parentConstraints.nestedClasses.any { it.className == innerClassName }) {
-                    for (i in 1..1000) {
-                        if (i == 1000)
-                            throw JSONSchemaException("Too many identically named inner classes - $innerClassName")
-                        if (!parentConstraints.nestedClasses.any { it.className == "$innerClassName$i" }) {
-                            innerClassName = "$innerClassName$i"
-                            break
-                        }
-                    }
-                }
-                parentConstraints.nestedClasses.add(NestedClass(property, innerClassName))
+                val innerClassName = property.capitalisedName
+                property.localTypeName = parentConstraints.addNestedClass(property, innerClassName)
                 analyseConstraints(parentConstraints, property)
-                property.localTypeName = innerClassName
             }
             if (property.isArray) {
                 parentConstraints.systemClasses.addOnce(Constraints.SystemClass.LIST)
@@ -196,8 +185,7 @@ class CodeGenerator(
                         val innerClassName = it.schema.findRefChild()?.let { ref ->
                             ref.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
                         } ?: Strings.capitalise(property.name.depluralise())
-                        parentConstraints.nestedClasses.add(NestedClass(it, innerClassName))
-                        it.localTypeName = innerClassName
+                        it.localTypeName = parentConstraints.addNestedClass(it, innerClassName)
                     }
                 }
                 if (property.maxItems != null || property.minItems != null)
@@ -261,6 +249,22 @@ class CodeGenerator(
                 else -> property.nullable = true // should be error, but that would be unhelpful
             }
         }
+    }
+
+    private fun Constraints.addNestedClass(constraints: Constraints, innerClassName: String): String {
+        var actualInnerClassName = innerClassName
+        if (nestedClasses.any { it.className == innerClassName }) {
+            for (i in 1..1000) {
+                if (i == 1000)
+                    throw JSONSchemaException("Too many identically named inner classes - $innerClassName")
+                if (!nestedClasses.any { it.className == "$innerClassName$i" }) {
+                    actualInnerClassName = "$innerClassName$i"
+                    break
+                }
+            }
+        }
+        nestedClasses.add(NestedClass(constraints, actualInnerClassName))
+        return actualInnerClassName
     }
 
     private fun String.depluralise(): String = when {

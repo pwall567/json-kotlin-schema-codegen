@@ -2,5 +2,5 @@
 {{/EMAIL}}{{#HOSTNAME}}        require(JSONValidation.isHostname({{&propertyName}})) { "{{&propertyName}} does not match format hostname - ${{&propertyName}}" }
 {{/HOSTNAME}}{{#IPV4}}        require(JSONValidation.isIPV4({{&propertyName}})) { "{{&propertyName}} does not match format ipv4 - ${{&propertyName}}" }
 {{/IPV4}}{{#IPV6}}        require(JSONValidation.isIPV6({{&propertyName}})) { "{{&propertyName}} does not match format ipv6 - ${{&propertyName}}" }
-{{/IPV6}}{{/format}}{{#regex}}        require(Regex("""{{&.}}""") matches {{&propertyName}}) { "{{&propertyName}} does not match pattern " + """{{&.}}""" + " - " + {{&propertyName}} }
+{{/IPV6}}{{/format}}{{#regex}}        require({{#nullable}}{{&propertyName}} == null || {{/nullable}}Regex("""{{&.}}""") matches {{&propertyName}}) { "{{&propertyName}} does not match pattern " + """{{&.}}""" + " - " + {{&propertyName}} }
 {{/regex}}

@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.3.1] - 2020-08-25
+### Changed
+- templates: bug fix - validation of nullable types
+
+## [0.3] - 2020-08-25
+### Changed
+- `CodeGenerator`: Added generation of pattern test
+
 ## [0.2.1] - 2020-08-24
 ### Changed
 - `CodeGenerator`: bug fix - repeated nested classes
