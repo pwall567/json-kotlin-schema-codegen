@@ -201,19 +201,19 @@ class CodeGenerator(
                     }
                 }
                 if (property.maxItems != null || property.minItems != null)
-                    parentConstraints.validationsPresent = true
+                    constraints.validationsPresent = true
             }
             if (property.isInt) {
                 if (property.maximum != null || property.exclusiveMaximum != null || property.minimum != null ||
                         property.exclusiveMaximum != null || property.multipleOf != null)
-                    parentConstraints.validationsPresent = true
+                    constraints.validationsPresent = true
             }
             if (property.isString) {
                 when (property.format) {
                     FormatValidator.FormatType.EMAIL,
                     FormatValidator.FormatType.HOSTNAME -> {
                         parentConstraints.systemClasses.addOnce(Constraints.SystemClass.VALIDATION)
-                        parentConstraints.validationsPresent = true
+                        constraints.validationsPresent = true
                     }
                     FormatValidator.FormatType.DATE_TIME -> {
                         parentConstraints.systemClasses.addOnce(Constraints.SystemClass.DATE_TIME)
@@ -246,7 +246,8 @@ class CodeGenerator(
                     // should enums (and const) cause an enum class to be created? or a string with a value check?
                 }
                 if (property.regex != null) {
-                    // TODO ...
+                    constraints.validationsPresent = true
+                    parentConstraints.systemClasses.addOnce(Constraints.SystemClass.REGEX)
                 }
             }
             if (property.isDecimal) {

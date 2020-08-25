@@ -10,7 +10,8 @@
           "format": "uuid"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z]*$"
         }
       },
       "required": [ "id", "name" ]

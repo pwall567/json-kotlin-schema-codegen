@@ -252,6 +252,8 @@ open class Constraints(val schema: JSONSchema) {
         // utility
         URI(60),
         UUID(61),
+        // regex
+        REGEX(80),
         // local
         VALIDATION(90)
     }

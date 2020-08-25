@@ -56,10 +56,20 @@ data class TestArray(
         val aaa: List<Person>
 ) {
 
+    init {
+        require(aaa.size <= 2) { "aaa length > maximum - " + aaa.size }
+    }
+
     data class Person(
             val id: UUID,
             val name: String
-    )
+    ) {
+
+        init {
+            require(Regex(""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'}) matches name) { "name does not match pattern " + ""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'} + " - " + name }
+        }
+
+    }
 
 }
 """

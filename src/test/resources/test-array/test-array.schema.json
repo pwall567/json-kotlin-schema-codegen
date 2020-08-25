@@ -8,7 +8,8 @@
       "type": "array",
       "items": {
         "$ref": "http://pwall.net/test/schema/utility#/$defs/person"
-      }
+      },
+      "maxItems": 2
     }
   },
   "required": [ "aaa" ]

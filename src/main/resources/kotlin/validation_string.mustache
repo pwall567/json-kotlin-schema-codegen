@@ -1,12 +1,6 @@
-{{#format}}{{#DATE_TIME}}        require(JSONValidation.isDateTime({{&propertyName}})) { "{{&propertyName}} does not match format date-time - ${{&propertyName}}" }
-{{/DATE_TIME}}{{#DATE}}        require(JSONValidation.isDate({{&propertyName}})) { "{{&propertyName}} does not match format date - ${{&propertyName}}" }
-{{/DATE}}{{#TIME}}        require(JSONValidation.isTime({{&propertyName}})) { "{{&propertyName}} does not match format time - ${{&propertyName}}" }
-{{/TIME}}{{#DURATION}}        require(JSONValidation.isDuration({{&propertyName}})) { "{{&propertyName}} does not match format duration - ${{&propertyName}}" }
-{{/DURATION}}{{#EMAIL}}        require(JSONValidation.isEmail({{&propertyName}})) { "{{&propertyName}} does not match format email - ${{&propertyName}}" }
+{{#format}}{{#EMAIL}}        require(JSONValidation.isEmail({{&propertyName}})) { "{{&propertyName}} does not match format email - ${{&propertyName}}" }
 {{/EMAIL}}{{#HOSTNAME}}        require(JSONValidation.isHostname({{&propertyName}})) { "{{&propertyName}} does not match format hostname - ${{&propertyName}}" }
-{{/HOSTNAME}}{{#UUID}}        require(JSONValidation.isUUID({{&propertyName}})) { "{{&propertyName}} does not match format uuid - ${{&propertyName}}" }
-{{/UUID}}{{#URI}}        require(JSONValidation.isURI({{&propertyName}})) { "{{&propertyName}} does not match format uri - ${{&propertyName}}" }
-{{/URI}}{{#URI_REFERENCE}}        require(JSONValidation.isURIReference({{&propertyName}})) { "{{&propertyName}} does not match format uri-reference - ${{&propertyName}}" }
-{{/URI_REFERENCE}}{{#IPV4}}        require(JSONValidation.isIPV4({{&propertyName}})) { "{{&propertyName}} does not match format ipv4 - ${{&propertyName}}" }
+{{/HOSTNAME}}{{#IPV4}}        require(JSONValidation.isIPV4({{&propertyName}})) { "{{&propertyName}} does not match format ipv4 - ${{&propertyName}}" }
 {{/IPV4}}{{#IPV6}}        require(JSONValidation.isIPV6({{&propertyName}})) { "{{&propertyName}} does not match format ipv6 - ${{&propertyName}}" }
-{{/IPV6}}{{/format}}
+{{/IPV6}}{{/format}}{{#regex}}        require(Regex("""{{&.}}""") matches {{&propertyName}}) { "{{&propertyName}} does not match pattern " + """{{&.}}""" + " - " + {{&propertyName}} }
+{{/regex}}

@@ -6,6 +6,8 @@
 {{/description}}{{/schema}}            val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/properties}}    ){{#validationsPresent}} {
+
         init {
-{{#properties}}{{>validation}}{{/properties}}        }
-}{{/validationsPresent}}
+{{#properties}}{{>nested_validation}}{{/properties}}        }
+
+    }{{/validationsPresent}}
