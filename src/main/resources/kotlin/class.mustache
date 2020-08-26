@@ -9,10 +9,14 @@
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}){{#validationsOrNestedClassesPresent}} {
+{{/properties}}){{#validationsOrNestedClassesOrStaticsPresent}} {
 {{#validationsPresent}}
     init {
 {{#properties}}{{>validation}}{{/properties}}    }
 {{/validationsPresent}}{{#nestedClasses}}
-{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}
-}{{/validationsOrNestedClassesPresent}}
+{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{#staticsPresent}}
+    companion object {
+{{#statics}}{{#type}}{{#PATTERN}}        private val {{&staticName}} = Regex("""{{&value}}""")
+{{/PATTERN}}{{/type}}{{/statics}}    }
+{{/staticsPresent}}
+}{{/validationsOrNestedClassesOrStaticsPresent}}

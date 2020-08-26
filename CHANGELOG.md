@@ -2,6 +2,15 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.4] - 2020-08-26
+### Changed
+- `CodeGenerator`: improved sharing of constant values
+
+## [0.4] - 2020-08-26
+### Changed
+- `CodeGenerator`: improved handling of pattern validation
+- templates: improved output of validation error messages
+
 ## [0.3.1] - 2020-08-25
 ### Changed
 - templates: bug fix - validation of nullable types

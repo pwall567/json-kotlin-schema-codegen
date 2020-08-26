@@ -57,7 +57,7 @@ data class TestArray(
 ) {
 
     init {
-        require(aaa.size <= 2) { "aaa length > maximum - " + aaa.size }
+        require(aaa.size <= 2) { "aaa length > maximum - ${'$'}{aaa.size}" }
     }
 
     data class Person(
@@ -66,9 +66,13 @@ data class TestArray(
     ) {
 
         init {
-            require(Regex(""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'}) matches name) { "name does not match pattern " + ""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'} + " - " + name }
+            require(_regex0 matches name) { "name does not match pattern ${'$'}_regex0 - ${'$'}name" }
         }
 
+    }
+
+    companion object {
+        private val _regex0 = Regex(""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'})
     }
 
 }

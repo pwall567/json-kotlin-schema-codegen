@@ -36,6 +36,12 @@ import net.pwall.util.Strings
 
 open class Constraints(val schema: JSONSchema) {
 
+    @Suppress("unused")
+    val openBrace = '{'
+
+    @Suppress("unused")
+    val closeBrace = '}'
+
     var uri: URI? = schema.uri
 
     var packageName: String? = null
@@ -78,15 +84,22 @@ open class Constraints(val schema: JSONSchema) {
     var minLength: Int? = null
     var format: FormatValidator.FormatType? = null
     var regex: Regex? = null
+    var regexStaticName: String? = null
 
     var enumValues: JSONArray? = null
     var constValue: JSONValue? = null
 
     val nestedClasses = mutableListOf<NestedClass>()
 
+    val statics = mutableListOf<Static>()
+
     @Suppress("unused")
     val nestedClassesPresent: Boolean
         get() = nestedClasses.isNotEmpty()
+
+    @Suppress("unused")
+    val staticsPresent: Boolean
+        get() = statics.isNotEmpty()
 
     @Suppress("unused")
     var validationsPresent: Boolean = false
@@ -94,6 +107,10 @@ open class Constraints(val schema: JSONSchema) {
     @Suppress("unused")
     val validationsOrNestedClassesPresent: Boolean
         get() = validationsPresent || nestedClassesPresent
+
+    @Suppress("unused")
+    val validationsOrNestedClassesOrStaticsPresent: Boolean
+        get() = validationsPresent || nestedClassesPresent || staticsPresent
 
     @Suppress("unused")
     val isSystemClass: Boolean
@@ -257,6 +274,10 @@ open class Constraints(val schema: JSONSchema) {
         // local
         VALIDATION(90)
     }
+
+    enum class StaticType { PATTERN }
+
+    data class Static(val type: StaticType, val staticName: String, val value: Any)
 
     companion object {
 

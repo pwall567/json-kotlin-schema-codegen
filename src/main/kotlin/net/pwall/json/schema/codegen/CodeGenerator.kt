@@ -170,8 +170,12 @@ class CodeGenerator(
     private fun analyseConstraints(parentConstraints: Constraints, constraints: Constraints) {
         constraints.properties.forEach { property ->
             if (property.isObject) {
+                // TODO - if the first item in an object is "allOf", consider using it as a base class
+                // check whether it has a "$id" to use as base class name
                 // TODO - how do we handle nested classes?
                 // answer - we always generate as nested classes for now, look at alternatives later
+                val refChild = property.schema.findRefChild()
+                // if refChild is a class being generated, use it
                 val innerClassName = property.capitalisedName
                 property.localTypeName = parentConstraints.addNestedClass(property, innerClassName)
                 analyseConstraints(parentConstraints, property)
@@ -236,13 +240,21 @@ class CodeGenerator(
                 if (property.regex != null) {
                     constraints.validationsPresent = true
                     parentConstraints.systemClasses.addOnce(Constraints.SystemClass.REGEX)
+                    parentConstraints.statics.find {
+                        it.type == Constraints.StaticType.PATTERN && it.value == property.regex.toString() }?.let {
+                            entry -> property.regexStaticName = entry.staticName
+                    } ?: "_regex${parentConstraints.statics.size}".let {
+                        parentConstraints.statics.add(Constraints.Static(Constraints.StaticType.PATTERN, it,
+                                property.regex.toString()))
+                        property.regexStaticName = it
+                    }
                 }
             }
             if (property.isDecimal) {
                 parentConstraints.systemClasses.addOnce(Constraints.SystemClass.DECIMAL)
                 property.systemClass = Constraints.SystemClass.DECIMAL
             }
-            // TODO - more validation types (enum, const, pattern)
+            // TODO - more validation types (enum, const)
             when {
                 property.name in constraints.required -> property.isRequired = true
                 property.nullable == true || property.defaultValue != null -> {}
