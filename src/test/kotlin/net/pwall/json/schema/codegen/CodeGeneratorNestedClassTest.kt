@@ -45,6 +45,18 @@ class CodeGeneratorNestedClassTest {
         expect(expectedNested) { stringWriter.toString() }
     }
 
+    @Test fun `should output deeply nested class in Java`() {
+        val input = File("src/test/resources/test-nested-object.schema.json")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver =
+                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestNestedObject", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(expectedNestedJava) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expectedNested =
@@ -61,6 +73,121 @@ data class TestNestedObject(
     data class Deeper(
             val deepest: String
     )
+
+}
+"""
+
+        const val expectedNestedJava =
+"""package com.example;
+
+public class TestNestedObject {
+
+    private final Nested nested;
+
+    public TestNestedObject(
+            Nested nested
+    ) {
+        if (nested == null)
+            throw new IllegalArgumentException("Must not be null - nested");
+        this.nested = nested;
+    }
+
+    public Nested getNested() {
+        return nested;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestNestedObject))
+            return false;
+        TestNestedObject typedOther = (TestNestedObject)other;
+        if (!nested.equals(typedOther.nested))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash ^= nested.hashCode();
+        return hash;
+    }
+
+    public static class Nested {
+
+        private final Deeper deeper;
+
+        public Nested(
+                Deeper deeper
+        ) {
+            if (deeper == null)
+                throw new IllegalArgumentException("Must not be null - deeper");
+            this.deeper = deeper;
+        }
+
+        public Deeper getDeeper() {
+            return deeper;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (!(other instanceof Nested))
+                return false;
+            Nested typedOther = (Nested)other;
+            if (!deeper.equals(typedOther.deeper))
+                return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 0;
+            hash ^= deeper.hashCode();
+            return hash;
+        }
+
+    }
+
+    public static class Deeper {
+
+        private final String deepest;
+
+        public Deeper(
+                String deepest
+        ) {
+            if (deepest == null)
+                throw new IllegalArgumentException("Must not be null - deepest");
+            this.deepest = deepest;
+        }
+
+        public String getDeepest() {
+            return deepest;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (!(other instanceof Deeper))
+                return false;
+            Deeper typedOther = (Deeper)other;
+            if (!deepest.equals(typedOther.deepest))
+                return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 0;
+            hash ^= deepest.hashCode();
+            return hash;
+        }
+
+    }
 
 }
 """

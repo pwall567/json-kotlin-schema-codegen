@@ -10,9 +10,8 @@
 {{#properties}}    private final {{>type}} {{&name}};
 {{/properties}}
     public {{&nameFromURI}}(
-            {{#properties}}{{>type}} {{&name}}{{^last}},
-            {{/last}}{{/properties}}
-    ) {
+{{#properties}}            {{>type}} {{&name}}{{^last}},{{/last}}
+{{/properties}}    ) {
 {{#properties}}{{^isPrimitive}}{{^nullable}}        if ({{&name}} == null)
             throw new IllegalArgumentException("Must not be null - {{&name}}");
 {{/nullable}}{{/isPrimitive}}{{>validation}}        this.{{&name}} = {{&name}};
@@ -46,5 +45,6 @@
 }}{{&name}}.hashCode(){{/nullable}}{{/isBoolean}}{{/isLong}}{{/isInt}};
 {{/properties}}        return hash;
     }
-
+{{#nestedClasses}}
+{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}
 }

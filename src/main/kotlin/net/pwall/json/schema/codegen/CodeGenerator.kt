@@ -171,7 +171,7 @@ class CodeGenerator(
         constraints.properties.forEach { property ->
             if (property.isObject) {
                 // TODO - if the first item in an object is "allOf", consider using it as a base class
-                // check whether it has a "$id" to use as base class name
+                // check whether it has a "$id" to use as base class name (mapper to map id to classname?)
                 // TODO - how do we handle nested classes?
                 // answer - we always generate as nested classes for now, look at alternatives later
                 val refChild = property.schema.findRefChild()
@@ -241,13 +241,14 @@ class CodeGenerator(
                     constraints.validationsPresent = true
                     parentConstraints.systemClasses.addOnce(Constraints.SystemClass.REGEX)
                     parentConstraints.statics.find {
-                        it.type == Constraints.StaticType.PATTERN && it.value == property.regex.toString() }?.let {
-                            entry -> property.regexStaticName = entry.staticName
-                    } ?: "_regex${parentConstraints.statics.size}".let {
-                        parentConstraints.statics.add(Constraints.Static(Constraints.StaticType.PATTERN, it,
-                                property.regex.toString()))
-                        property.regexStaticName = it
-                    }
+                        it.type == Constraints.StaticType.PATTERN && it.value == property.regex.toString()
+                    }?.let { entry ->
+                        property.regexStaticName = entry.staticName
+                    } ?: "cg_regex${parentConstraints.statics.size}".let {
+                            parentConstraints.statics.add(Constraints.Static(Constraints.StaticType.PATTERN, it,
+                                    property.regex.toString()))
+                            property.regexStaticName = it
+                        }
                 }
             }
             if (property.isDecimal) {

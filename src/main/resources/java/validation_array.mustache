@@ -1,0 +1,5 @@
+{{#maxItemsPresent}}        if ({{&name}}.size() > {{&maxItems}})
+            {{>tniae}}("{{&name}} length > maximum - " + {{&name}}.size());
+{{/maxItemsPresent}}{{#minItemsPresent}}        if ({{&name}}.size() < {{&minItems}})
+            {{>tniae}}("{{&name}} length < minimum - " + {{&name}}.size());
+{{/minItemsPresent}}

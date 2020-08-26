@@ -45,6 +45,18 @@ class CodeGeneratorExampleTest {
         expect(expectedExample) { stringWriter.toString() }
     }
 
+    @Test fun `should output example data class in Java`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver =
+                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "Test", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(expectedExampleJava) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expectedExample =
@@ -66,6 +78,143 @@ data class Test(
             val warehouse: BigDecimal? = null,
             val retail: BigDecimal? = null
     )
+
+}
+"""
+
+        const val expectedExampleJava =
+"""package com.example;
+
+import java.util.List;
+import java.math.BigDecimal;
+
+public class Test {
+
+    private final BigDecimal id;
+    private final String name;
+    private final BigDecimal price;
+    private final List<String> tags;
+    private final Stock stock;
+
+    public Test(
+            BigDecimal id,
+            String name,
+            BigDecimal price,
+            List<String> tags,
+            Stock stock
+    ) {
+        if (id == null)
+            throw new IllegalArgumentException("Must not be null - id");
+        this.id = id;
+        if (name == null)
+            throw new IllegalArgumentException("Must not be null - name");
+        this.name = name;
+        if (price == null)
+            throw new IllegalArgumentException("Must not be null - price");
+        this.price = price;
+        this.tags = tags;
+        this.stock = stock;
+    }
+
+    public BigDecimal getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Test))
+            return false;
+        Test typedOther = (Test)other;
+        if (!id.equals(typedOther.id))
+            return false;
+        if (!name.equals(typedOther.name))
+            return false;
+        if (!price.equals(typedOther.price))
+            return false;
+        if (tags == null && typedOther.tags != null ||
+                tags != null && !tags.equals(typedOther.tags))
+            return false;
+        if (stock == null && typedOther.stock != null ||
+                stock != null && !stock.equals(typedOther.stock))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash ^= id.hashCode();
+        hash ^= name.hashCode();
+        hash ^= price.hashCode();
+        hash ^= tags != null ? tags.hashCode() : 0;
+        hash ^= stock != null ? stock.hashCode() : 0;
+        return hash;
+    }
+
+    public static class Stock {
+
+        private final BigDecimal warehouse;
+        private final BigDecimal retail;
+
+        public Stock(
+                BigDecimal warehouse,
+                BigDecimal retail
+        ) {
+            this.warehouse = warehouse;
+            this.retail = retail;
+        }
+
+        public BigDecimal getWarehouse() {
+            return warehouse;
+        }
+
+        public BigDecimal getRetail() {
+            return retail;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (!(other instanceof Stock))
+                return false;
+            Stock typedOther = (Stock)other;
+            if (warehouse == null && typedOther.warehouse != null ||
+                    warehouse != null && !warehouse.equals(typedOther.warehouse))
+                return false;
+            if (retail == null && typedOther.retail != null ||
+                    retail != null && !retail.equals(typedOther.retail))
+                return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 0;
+            hash ^= warehouse != null ? warehouse.hashCode() : 0;
+            hash ^= retail != null ? retail.hashCode() : 0;
+            return hash;
+        }
+
+    }
 
 }
 """
