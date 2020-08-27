@@ -16,7 +16,7 @@
 {{/validationsPresent}}{{#nestedClasses}}
 {{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{#staticsPresent}}
     companion object {
-{{#statics}}{{#type}}{{#PATTERN}}        private val {{&staticName}} = Regex("""{{&value}}""")
+{{#statics}}{{#type}}{{#PATTERN}}        private val {{&staticName}} = Regex({{&value}})
 {{/PATTERN}}{{/type}}{{/statics}}    }
 {{/staticsPresent}}
 }{{/validationsOrNestedClassesOrStaticsPresent}}

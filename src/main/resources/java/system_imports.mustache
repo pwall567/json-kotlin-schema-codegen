@@ -1,10 +1,12 @@
 {{#systemClasses}}{{#.}}{{#LIST}}import java.util.List;
 {{/LIST}}{{#DECIMAL}}import java.math.BigDecimal;
-{{/DECIMAL}}{{#DATE}}import java.time.LocalDate;
+{{/DECIMAL}}{{#URI}}import java.net.URI;
+{{/URI}}{{#DATE}}import java.time.LocalDate;
 {{/DATE}}{{#DATE_TIME}}import java.time.OffsetDateTime;
 {{/DATE_TIME}}{{#TIME}}import java.time.OffsetTime;
 {{/TIME}}{{#DURATION}}import java.time.Duration;
 {{/DURATION}}{{#UUID}}import java.util.UUID;
-{{/UUID}}{{#VALIDATION}}import net.pwall.json.validation.JSONValidation;
+{{/UUID}}{{#REGEX}}import java.util.regex.Pattern;
+{{/REGEX}}{{#VALIDATION}}import net.pwall.json.validation.JSONValidation;
 {{/VALIDATION}}{{/.}}{{#last}}
 {{/last}}{{/systemClasses}}

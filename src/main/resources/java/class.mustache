@@ -7,7 +7,9 @@
  */
 {{/description}}public class {{&nameFromURI}} {
 
-{{#properties}}    private final {{>type}} {{&name}};
+{{#staticsPresent}}{{#statics}}{{#type}}{{#PATTERN}}    private static final Pattern {{&staticName}} = Pattern.compile({{&value}});
+{{/PATTERN}}{{/type}}{{/statics}}
+{{/staticsPresent}}{{#properties}}    private final {{>type}} {{&name}};
 {{/properties}}
     public {{&nameFromURI}}(
 {{#properties}}            {{>type}} {{&name}}{{^last}},{{/last}}

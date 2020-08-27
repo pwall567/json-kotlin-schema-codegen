@@ -84,7 +84,7 @@ data class TestArray(
     }
 
     companion object {
-        private val cg_regex0 = Regex(""${'"'}^[A-Z][A-Za-z]*${'$'}""${'"'})
+        private val cg_regex0 = Regex("^[A-Z][A-Za-z]*${'$'}")
     }
 
 }
@@ -95,8 +95,11 @@ data class TestArray(
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class TestArray {
+
+    private static final Pattern cg_regex0 = Pattern.compile("^[A-Z][A-Za-z]*${'$'}");
 
     private final List<Person> aaa;
 
@@ -147,6 +150,8 @@ public class TestArray {
             this.id = id;
             if (name == null)
                 throw new IllegalArgumentException("Must not be null - name");
+            if (!cg_regex0.matcher(name).matches())
+                throw new IllegalArgumentException("name does not match pattern ${'$'}cg_regex0 - ${'$'}name");
             this.name = name;
         }
 

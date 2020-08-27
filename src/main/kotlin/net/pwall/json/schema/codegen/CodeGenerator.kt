@@ -51,6 +51,7 @@ import net.pwall.json.schema.validation.PatternValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.mustache.Template
+import net.pwall.util.Java
 import net.pwall.util.Strings
 
 class CodeGenerator(
@@ -246,7 +247,7 @@ class CodeGenerator(
                         property.regexStaticName = entry.staticName
                     } ?: "cg_regex${parentConstraints.statics.size}".let {
                             parentConstraints.statics.add(Constraints.Static(Constraints.StaticType.PATTERN, it,
-                                    property.regex.toString()))
+                                    Java.quote(property.regex.toString())))
                             property.regexStaticName = it
                         }
                 }

@@ -1,1 +1,11 @@
-{{#format}}{{! to be completed... }}{{/format}}
+{{#format}}{{#EMAIL}}        if (!JSONValidation.isEmail({{&propertyName}}))
+            {{>tniae}}("{{&propertyName}} does not match format email - ${{&propertyName}}");
+{{/EMAIL}}{{#HOSTNAME}}        if (!JSONValidation.isHostname({{&propertyName}}))
+            {{>tniae}}("{{&propertyName}} does not match format hostname - ${{&propertyName}}");
+{{/HOSTNAME}}{{#IPV4}}        if (!JSONValidation.isIPV4({{&propertyName}}))
+            {{>tniae}}("{{&propertyName}} does not match format ipv4 - ${{&propertyName}}");
+{{/IPV4}}{{#IPV6}}        if (!JSONValidation.isIPV6({{&propertyName}}))
+            {{>tniae}}("{{&propertyName}} does not match format ipv6 - ${{&propertyName}}");
+{{/IPV6}}{{/format}}{{#regexStaticName}}        if (!{{&.}}.matcher({{&propertyName}}).matches())
+            {{>tniae}}("{{&propertyName}} does not match pattern ${{&.}} - ${{&propertyName}}");
+{{/regexStaticName}}

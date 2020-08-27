@@ -4,7 +4,8 @@
 }}{{#DATE_TIME}}OffsetDateTime{{/DATE_TIME}}{{! is it a DATE?
 }}{{#DATE}}LocalDate{{/DATE}}{{! is it a TIME?
 }}{{#TIME}}OffsetTime{{/TIME}}{{! is it a DURATION?
-}}{{#DURATION}}Duration{{/DURATION}}{{! is it a UUID?
+}}{{#DURATION}}Duration{{/DURATION}}{{! is it a URI?
+}}{{#URI}}URI{{/URI}}{{! is it a UUID?
 }}{{#UUID}}UUID{{/UUID}}{{/systemClass}}{{/isSystemClass}}{{^isSystemClass}}{{! is it a local type
 }}{{#isLocalType}}{{&localTypeName}}{{/isLocalType}}{{^isLocalType}}{{! is it a string?
 }}{{#isString}}String{{/isString}}{{^isString}}{{! is it an int?
