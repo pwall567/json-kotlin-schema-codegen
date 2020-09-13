@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.5] - 2020-09-13
 ### Changed
 - templates: Improved output of Java
 - `CodeGenerator`: Added logging
