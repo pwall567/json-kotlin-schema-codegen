@@ -31,11 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.log.ConsoleLog
+
 class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -47,7 +49,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to Java`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -59,7 +61,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to TypeScript`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -84,8 +86,10 @@ data class TestPerson(
 ) {
 
     init {
-        require(age <= 120) { "age > maximum 120 - ${'$'}age" }
+        require(name.length >= 1) { "name length < minimum 1 - ${'$'}{name.length}" }
+        require(name.length <= 80) { "name length > maximum 80 - ${'$'}{name.length}" }
         require(age >= 0) { "age < minimum 0 - ${'$'}age" }
+        require(age <= 120) { "age > maximum 120 - ${'$'}age" }
     }
 
 }
@@ -110,12 +114,16 @@ public class TestPerson {
     ) {
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");
+        if (name.length() < 1)
+            throw new IllegalArgumentException("name length < minimum 1 - " + name.length());
+        if (name.length() > 80)
+            throw new IllegalArgumentException("name length > maximum 80 - " + name.length());
         this.name = name;
         this.nickname = nickname;
-        if (age > 120)
-            throw new IllegalArgumentException("age > maximum 120 - " + age);
         if (age < 0)
             throw new IllegalArgumentException("age < minimum 0 - " + age);
+        if (age > 120)
+            throw new IllegalArgumentException("age > maximum 120 - " + age);
         this.age = age;
     }
 
@@ -140,12 +148,9 @@ public class TestPerson {
         TestPerson typedOther = (TestPerson)other;
         if (!name.equals(typedOther.name))
             return false;
-        if (nickname == null && typedOther.nickname != null ||
-                nickname != null && !nickname.equals(typedOther.nickname))
+        if (nickname == null ? typedOther.nickname != null : !nickname.equals(typedOther.nickname))
             return false;
-        if (age != typedOther.age)
-            return false;
-        return true;
+        return age == typedOther.age;
     }
 
     @Override

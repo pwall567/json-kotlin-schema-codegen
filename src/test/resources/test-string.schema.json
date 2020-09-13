@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-string",
+  "type": "object",
+  "properties": {
+    "email1": {
+      "type": "string",
+      "format": "email"
+    },
+    "hostname1": {
+      "type": "string",
+      "format": "hostname"
+    },
+    "ipv4a": {
+      "type": "string",
+      "format": "ipv4"
+    },
+    "ipv6a": {
+      "type": "string",
+      "format": "ipv6"
+    },
+    "maxlen": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "minlen": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z]*$"
+    }
+  },
+  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name" ]
+}

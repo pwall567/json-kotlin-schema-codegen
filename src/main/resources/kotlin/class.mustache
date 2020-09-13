@@ -1,22 +1,18 @@
 {{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{>system_imports}}{{#imports}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
 {{#last}}
-{{/last}}{{/imports}}{{#description}}/**
+{{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&description}}
  */
-{{/description}}data class {{&nameFromURI}}(
+{{/description}}{{/schema}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/properties}}){{#validationsOrNestedClassesOrStaticsPresent}} {
 {{#validationsPresent}}
     init {
-{{#properties}}{{>validation}}{{/properties}}    }
+{{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#nestedClasses}}
-{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{#staticsPresent}}
-    companion object {
-{{#statics}}{{#type}}{{#PATTERN}}        private val {{&staticName}} = Regex({{&value}})
-{{/PATTERN}}{{/type}}{{/statics}}    }
-{{/staticsPresent}}
-}{{/validationsOrNestedClassesOrStaticsPresent}}
+{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
+}{{/validationsOrNestedClassesOrStaticsPresent}}{{/constraints}}

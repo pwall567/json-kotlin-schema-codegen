@@ -25,18 +25,35 @@
 
 package net.pwall.json.schema.codegen
 
+import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.log.ConsoleLog
+
 class CodeGeneratorGeneratedFileTest {
+
+    @AfterTest fun `clean up generated sources directory`() {
+        File("target/generated-test-sources/json-kotlin-schema").deleteAll()
+    }
+
+    private fun File.deleteAll() {
+        when {
+            isDirectory -> {
+                listFiles()?.forEach { it.deleteAll() }
+                delete()
+            }
+            isFile -> delete()
+        }
+    }
 
     @Test fun `should process test directory and write to generated-sources`() {
         val input = File("src/test/resources/test1")
         val outputDirectory = "target/generated-test-sources/json-kotlin-schema/net/pwall/json/schema/test"
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
@@ -45,7 +62,7 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should output test class to Java`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -57,7 +74,7 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should use custom templates`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.setTemplateDirectory(File("src/test/resources/dummy-template"))
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
@@ -128,9 +145,7 @@ public class Person {
         Person typedOther = (Person)other;
         if (!id.equals(typedOther.id))
             return false;
-        if (!name.equals(typedOther.name))
-            return false;
-        return true;
+        return name.equals(typedOther.name);
     }
 
     @Override

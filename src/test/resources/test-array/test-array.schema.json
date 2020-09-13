@@ -9,7 +9,8 @@
       "items": {
         "$ref": "http://pwall.net/test/schema/utility#/$defs/person"
       },
-      "maxItems": 2
+      "maxItems": 5,
+      "minItems": 1
     }
   },
   "required": [ "aaa" ]

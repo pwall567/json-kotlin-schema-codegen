@@ -31,11 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.log.ConsoleLog
+
 class CodeGeneratorExampleTest {
 
     @Test fun `should output example data class`() {
         val input = File("src/test/resources/example.schema.json")
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -47,7 +49,7 @@ class CodeGeneratorExampleTest {
 
     @Test fun `should output example data class in Java`() {
         val input = File("src/test/resources/example.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -74,10 +76,18 @@ data class Test(
         val stock: Stock? = null
 ) {
 
+    init {
+        require(price >= cg_dec0) { "price < minimum 0 - ${'$'}price" }
+    }
+
     data class Stock(
             val warehouse: BigDecimal? = null,
             val retail: BigDecimal? = null
     )
+
+    companion object {
+        private val cg_dec0 = BigDecimal.ZERO
+    }
 
 }
 """
@@ -89,6 +99,8 @@ import java.util.List;
 import java.math.BigDecimal;
 
 public class Test {
+
+    private static final BigDecimal cg_dec0 = BigDecimal.ZERO;
 
     private final BigDecimal id;
     private final String name;
@@ -111,6 +123,8 @@ public class Test {
         this.name = name;
         if (price == null)
             throw new IllegalArgumentException("Must not be null - price");
+        if (price.compareTo(cg_dec0) < 0)
+            throw new IllegalArgumentException("price < minimum 0 - " + price);
         this.price = price;
         this.tags = tags;
         this.stock = stock;
@@ -149,13 +163,9 @@ public class Test {
             return false;
         if (!price.equals(typedOther.price))
             return false;
-        if (tags == null && typedOther.tags != null ||
-                tags != null && !tags.equals(typedOther.tags))
+        if (tags == null ? typedOther.tags != null : !tags.equals(typedOther.tags))
             return false;
-        if (stock == null && typedOther.stock != null ||
-                stock != null && !stock.equals(typedOther.stock))
-            return false;
-        return true;
+        return stock == null ? typedOther.stock == null : stock.equals(typedOther.stock);
     }
 
     @Override
@@ -197,13 +207,9 @@ public class Test {
             if (!(other instanceof Stock))
                 return false;
             Stock typedOther = (Stock)other;
-            if (warehouse == null && typedOther.warehouse != null ||
-                    warehouse != null && !warehouse.equals(typedOther.warehouse))
+            if (warehouse == null ? typedOther.warehouse != null : !warehouse.equals(typedOther.warehouse))
                 return false;
-            if (retail == null && typedOther.retail != null ||
-                    retail != null && !retail.equals(typedOther.retail))
-                return false;
-            return true;
+            return retail == null ? typedOther.retail == null : retail.equals(typedOther.retail);
         }
 
         @Override

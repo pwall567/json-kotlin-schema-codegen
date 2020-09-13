@@ -1,6 +1,0 @@
-{{#maximumPresent}}        require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}} <= {{&maximum}}) { "{{&name}} > maximum {{&maximum}} - ${{&name}}" }
-{{/maximumPresent}}{{#exclusiveMaximumPresent}}        require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}} < {{&exclusiveMaximum}}) { "{{&name}} >= exclusiveMaximum {{&exclusiveMaximum}} - ${{&name}}" }
-{{/exclusiveMaximumPresent}}{{#minimumPresent}}        require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}} >= {{&minimum}}) { "{{&name}} < minimum {{&minimum}} - ${{&name}}" }
-{{/minimumPresent}}{{#exclusiveMinimumPresent}}        require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}} > {{&exclusiveMinimum}}) { "{{&name}} <= exclusiveMinimum {{&exclusiveMinimum}} - ${{&name}}" }
-{{/exclusiveMinimumPresent}}{{#multipleOfPresent}}        require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}}.rem({{&multipleOf}}) == 0) { "{{&name}} not multiple of {{&multipleOf}} - ${{&name}}" }
-{{/multipleOfPresent}}

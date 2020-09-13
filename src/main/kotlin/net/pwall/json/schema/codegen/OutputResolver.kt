@@ -27,4 +27,8 @@ package net.pwall.json.schema.codegen
 
 import java.io.Writer
 
-typealias OutputResolver = (String, List<String>, String, String) -> Writer
+/**
+ * Function to resolve output class details to a [Writer].
+ */
+typealias OutputResolver = (baseDirectoryName: String, subdirectories: List<String>, className: String,
+        suffix: String) -> Writer

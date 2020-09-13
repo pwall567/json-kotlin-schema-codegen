@@ -31,11 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.log.ConsoleLog
+
 class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -47,7 +49,7 @@ class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object in Java`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -69,7 +71,8 @@ data class TestArray(
 ) {
 
     init {
-        require(aaa.size <= 2) { "aaa length > maximum - ${'$'}{aaa.size}" }
+        require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
+        require(aaa.size >= 1) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
     }
 
     data class Person(
@@ -84,13 +87,13 @@ data class TestArray(
     }
 
     companion object {
-        private val cg_regex0 = Regex("^[A-Z][A-Za-z]*${'$'}")
+        private val cg_regex0 = Regex("^[A-Z][A-Za-z]*\${'$'}")
     }
 
 }
 """
 
-        const val expectedJava = // NOTE: Does not expect pattern validation
+        const val expectedJava =
 """package com.example;
 
 import java.util.List;
@@ -108,8 +111,10 @@ public class TestArray {
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
-        if (aaa.size() > 2)
-            throw new IllegalArgumentException("aaa length > maximum - " + aaa.size());
+        if (aaa.size() > 5)
+            throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
+        if (aaa.size() < 1)
+            throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.size());
         this.aaa = aaa;
     }
 
@@ -124,9 +129,7 @@ public class TestArray {
         if (!(other instanceof TestArray))
             return false;
         TestArray typedOther = (TestArray)other;
-        if (!aaa.equals(typedOther.aaa))
-            return false;
-        return true;
+        return aaa.equals(typedOther.aaa);
     }
 
     @Override
@@ -151,7 +154,7 @@ public class TestArray {
             if (name == null)
                 throw new IllegalArgumentException("Must not be null - name");
             if (!cg_regex0.matcher(name).matches())
-                throw new IllegalArgumentException("name does not match pattern ${'$'}cg_regex0 - ${'$'}name");
+                throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
             this.name = name;
         }
 
@@ -172,9 +175,7 @@ public class TestArray {
             Person typedOther = (Person)other;
             if (!id.equals(typedOther.id))
                 return false;
-            if (!name.equals(typedOther.name))
-                return false;
-            return true;
+            return name.equals(typedOther.name);
         }
 
         @Override
@@ -189,6 +190,7 @@ public class TestArray {
 
 }
 """
+
     }
 
 }

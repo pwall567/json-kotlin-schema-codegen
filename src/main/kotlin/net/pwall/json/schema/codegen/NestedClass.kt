@@ -25,4 +25,9 @@
 
 package net.pwall.json.schema.codegen
 
-class NestedClass(@Suppress("unused") val constraints: Constraints, var className: String)
+class NestedClass(constraints: Constraints, className: String) : ClassDescriptor(constraints, className) {
+
+    @Suppress("unused")
+    val indent = "    "
+
+}

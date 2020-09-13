@@ -1,0 +1,49 @@
+{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}        if (!JSONValidation.isEmail({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} does not match format email - " + {{&propertyName}});
+{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        if (!JSONValidation.isHostname({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} does not match format hostname - " + {{&propertyName}});
+{{/HOSTNAME}}{{#IPV4}}{{&indent}}        if (!JSONValidation.isIPV4({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} does not match format ipv4 - " + {{&propertyName}});
+{{/IPV4}}{{#IPV6}}{{&indent}}        if (!JSONValidation.isIPV6({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} does not match format ipv6 - " + {{&propertyName}});
+{{/IPV6}}{{#PATTERN}}{{&indent}}        if (!{{#value}}{{&staticName}}{{/value}}.matcher({{&propertyName}}).matches())
+{{&indent}}            {{>tniae}}("{{&propertyName}} does not match pattern " + {{#value}}{{&staticName}}{{/value}} + " - " + {{&propertyName}});
+{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        if ({{&propertyName}} > {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} > maximum {{&value}} - " + {{&propertyName}});
+{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        if ({{&propertyName}} > {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&propertyName}} > maximum {{&value}} - " + {{&propertyName}});
+{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        if ({{&propertyName}} < {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} < minimum {{&value}} - " + {{&propertyName}});
+{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        if ({{&propertyName}} < {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&propertyName}} < minimum {{&value}} - " + {{&propertyName}});
+{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        if ({{&propertyName}}.compareTo({{#value}}{{&staticName}}{{/value}}) > 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} > maximum {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        if ({{&propertyName}}.compareTo({{#value}}{{&staticName}}{{/value}}) >= 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} >= exclusive maximum {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#MINIMUM_DECIMAL}}{{&indent}}        if ({{&propertyName}}.compareTo({{#value}}{{&staticName}}{{/value}}) < 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} < minimum {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        if ({{&propertyName}}.compareTo({{#value}}{{&staticName}}{{/value}}) <= 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} <= exclusive minimum {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&propertyName}} % {{&value}} != 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} not a multiple of {{&value}} - " + {{&propertyName}});
+{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&propertyName}} % {{&value}}L != 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} not a multiple of {{&value}} - " + {{&propertyName}});
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        if ({{&propertyName}}.remainder({{#value}}{{&staticName}}{{/value}}) != 0)
+{{&indent}}            {{>tniae}}("{{&propertyName}} not a multiple of {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        if ({{&propertyName}}.size() > {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} length > maximum {{&value}} - " + {{&propertyName}}.size());
+{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        if ({{&propertyName}}.size() < {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} length < minimum {{&value}} - " + {{&propertyName}}.size());
+{{/MIN_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        if ({{&propertyName}}.length() > {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} length > maximum {{&value}} - " + {{&propertyName}}.length());
+{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        if ({{&propertyName}}.length() < {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} length < minimum {{&value}} - " + {{&propertyName}}.length());
+{{/MIN_LENGTH}}{{#CONST_STRING}}{{&indent}}        if (!{{#value}}{{&staticName}}{{/value}}.equals({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} not constant value " + {{#value}}{{&staticName}}{{/value}} + " - " + {{&propertyName}});
+{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        if ({{&propertyName}} != {{&value}})
+{{&indent}}            {{>tniae}}("{{&propertyName}} not constant value {{&value}} - " + {{&propertyName}});
+{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        if ({{&propertyName}} != {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&propertyName}} not constant value {{&value}} - " + {{&propertyName}});
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if (!{{&propertyName}}.equals({{#value}}{{&staticName}}{{/value}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} not constant value {{#value}}{{&value}}{{/value}} - " + {{&propertyName}});
+{{/CONST_DECIMAL}}{{/type}}{{/validations}}

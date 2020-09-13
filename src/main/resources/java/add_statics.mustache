@@ -1,0 +1,5 @@
+{{#statics}}{{#first}}
+{{/first}}{{#type}}{{#PATTERN}}    private static final Pattern {{&staticName}} = Pattern.compile({{#value}}{{&javaString}}{{/value}});
+{{/PATTERN}}{{#STRING}}    private static final String {{&staticName}} = {{#value}}{{&javaString}}{{/value}};
+{{/STRING}}{{#DECIMAL}}    private static final BigDecimal {{&staticName}} = {{#value}}{{#isZero}}BigDecimal.ZERO{{/isZero}}{{^isZero}}new BigDecimal("{{&rawNumber}}"){{/isZero}}{{/value}};
+{{/DECIMAL}}{{/type}}{{/statics}}

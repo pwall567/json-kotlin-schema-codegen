@@ -4,7 +4,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 ### Changed
-- templates: improved output of Java
+- templates: Improved output of Java
+- `CodeGenerator`: Added logging
+- `CodeGenerator`: Major re-organisation
 
 ## [0.4.1] - 2020-08-26
 ### Changed

@@ -1,7 +1,7 @@
-{{#description}}/**
+{{#constraints}}{{#schema}}{{#description}}/**
  * {{&description}}
  */
-{{/description}}interface {{&nameFromURI}} {
+{{/description}}{{/schema}}interface {{&className}} {
 {{#properties}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
 {{/last}}{{/properties}}
-}
+}{{/constraints}}

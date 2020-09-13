@@ -41,4 +41,21 @@ object CodeGeneratorTestUtil {
             fail("Output resolver fail - $baseDirectory $subDirectories $className $suffix")
     }
 
+    fun outputCapture(vararg outputDetails: OutputDetails): OutputResolver =
+            { baseDirectory, subDirectories, className, suffix ->
+                locateWriter(outputDetails.asList(), baseDirectory, subDirectories, className, suffix)
+    }
+
+    private fun locateWriter(outputDetails: List<OutputDetails>, baseDirectory: String, subDirectories: List<String>,
+            className: String, suffix: String): StringWriter {
+        for (entry in outputDetails)
+            if (baseDirectory == entry.expectedBaseDirectory && subDirectories == entry.expectedSubdirectories &&
+                    className == entry.expectedClassName && suffix == entry.expectedSuffix)
+                return entry.stringWriter
+        fail("Output resolver fail - $baseDirectory $subDirectories $className $suffix")
+    }
+
+    data class OutputDetails(val expectedBaseDirectory: String, val expectedSubdirectories: List<String>,
+            val expectedClassName: String, val expectedSuffix: String, val stringWriter: StringWriter)
+
 }

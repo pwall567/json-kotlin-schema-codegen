@@ -31,11 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.log.ConsoleLog
+
 class CodeGeneratorNestedClassTest {
 
     @Test fun `should output deeply nested class`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
-        val codeGenerator = CodeGenerator()
+        val codeGenerator = CodeGenerator(log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -47,7 +49,7 @@ class CodeGeneratorNestedClassTest {
 
     @Test fun `should output deeply nested class in Java`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -103,9 +105,7 @@ public class TestNestedObject {
         if (!(other instanceof TestNestedObject))
             return false;
         TestNestedObject typedOther = (TestNestedObject)other;
-        if (!nested.equals(typedOther.nested))
-            return false;
-        return true;
+        return nested.equals(typedOther.nested);
     }
 
     @Override
@@ -138,9 +138,7 @@ public class TestNestedObject {
             if (!(other instanceof Nested))
                 return false;
             Nested typedOther = (Nested)other;
-            if (!deeper.equals(typedOther.deeper))
-                return false;
-            return true;
+            return deeper.equals(typedOther.deeper);
         }
 
         @Override
@@ -175,9 +173,7 @@ public class TestNestedObject {
             if (!(other instanceof Deeper))
                 return false;
             Deeper typedOther = (Deeper)other;
-            if (!deepest.equals(typedOther.deepest))
-                return false;
-            return true;
+            return deepest.equals(typedOther.deepest);
         }
 
         @Override

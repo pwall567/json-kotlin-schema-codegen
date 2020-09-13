@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorDefaultTest.kt
+ * @(#) NullLog.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
@@ -23,44 +23,24 @@
  * SOFTWARE.
  */
 
-package net.pwall.json.schema.codegen
+package net.pwall.json.schema.codegen.log
 
-import kotlin.test.Test
-import kotlin.test.expect
+object NullLog : Log {
 
-import java.io.File
-import java.io.StringWriter
-
-import net.pwall.json.schema.codegen.log.ConsoleLog
-
-class CodeGeneratorDefaultTest {
-
-    @Test fun `should output class with default value`() {
-        val input = File("src/test/resources/test-default.schema.json")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
-        codeGenerator.baseDirectoryName = "dummy"
-        val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.generate(listOf(input))
-        expect(expectedDefault) { stringWriter.toString() }
+    override fun debug(lazyMessage: () -> Any) {
     }
 
-    companion object {
+    override fun info(lazyMessage: () -> Any) {
+    }
 
-        const val expectedDefault =
-"""package com.example
+    override fun warn(lazyMessage: () -> Any) {
+    }
 
+    override fun error(lazyMessage: () -> Any) {
+    }
 
-data class TestDefault(
-        val aaa: Long = 8,
-        val bbb: String? = null,
-        val ccc: String = "CCC",
-        val ddd: List<Long> = listOf(123, 456)
-)
-"""
-
+    override fun throwError(throwable: Throwable, lazyMessage: () -> Any): Nothing {
+        throw throwable
     }
 
 }

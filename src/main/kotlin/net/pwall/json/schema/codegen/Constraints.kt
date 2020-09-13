@@ -26,13 +26,16 @@
 package net.pwall.json.schema.codegen
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.net.URI
 
 import net.pwall.json.JSONArray
+import net.pwall.json.JSONDecimal
+import net.pwall.json.JSONInteger
+import net.pwall.json.JSONLong
 import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.validation.FormatValidator
-import net.pwall.util.Strings
 
 open class Constraints(val schema: JSONSchema) {
 
@@ -42,13 +45,10 @@ open class Constraints(val schema: JSONSchema) {
     @Suppress("unused")
     val closeBrace = '}'
 
+    @Suppress("unused")
     var uri: URI? = schema.uri
 
-    var packageName: String? = null
-    var description: String? = null
-
-    val systemClasses = mutableListOf<SystemClass>()
-    val imports = mutableListOf<String>()
+    var objectValidationsPresent: Boolean? = null
 
     var localTypeName: String? = null
 
@@ -78,104 +78,19 @@ open class Constraints(val schema: JSONSchema) {
     var exclusiveMinimum: Number? = null
     var maximum: Number? = null
     var exclusiveMaximum: Number? = null
-    var multipleOf: Number? = null
+    var multipleOf = mutableListOf<Number>()
 
     var maxLength: Int? = null
     var minLength: Int? = null
     var format: FormatValidator.FormatType? = null
     var regex: Regex? = null
-    var regexStaticName: String? = null
 
     var enumValues: JSONArray? = null
     var constValue: JSONValue? = null
 
-    val nestedClasses = mutableListOf<NestedClass>()
-
-    val statics = mutableListOf<Static>()
-
-    @Suppress("unused")
-    val nestedClassesPresent: Boolean
-        get() = nestedClasses.isNotEmpty()
-
-    @Suppress("unused")
-    val staticsPresent: Boolean
-        get() = statics.isNotEmpty()
-
-    @Suppress("unused")
-    var validationsPresent: Boolean = false
-
-    @Suppress("unused")
-    val validationsOrNestedClassesPresent: Boolean
-        get() = validationsPresent || nestedClassesPresent
-
-    @Suppress("unused")
-    val validationsOrNestedClassesOrStaticsPresent: Boolean
-        get() = validationsPresent || nestedClassesPresent || staticsPresent
-
     @Suppress("unused")
     val isSystemClass: Boolean
         get() = systemClass != null
-
-    @Suppress("unused")
-    val minimumPresent: Boolean
-        get() = minimum != null
-
-    @Suppress("unused")
-    val exclusiveMinimumPresent: Boolean
-        get() = exclusiveMinimum != null
-
-    @Suppress("unused")
-    val maximumPresent: Boolean
-        get() = maximum != null
-
-    @Suppress("unused")
-    val exclusiveMaximumPresent: Boolean
-        get() = exclusiveMaximum != null
-
-    @Suppress("unused")
-    val multipleOfPresent: Boolean
-        get() = multipleOf != null
-
-    @Suppress("unused")
-    val maxItemsPresent: Boolean
-        get() = maxItems != null
-
-    @Suppress("unused")
-    val minItemsPresent: Boolean
-        get() = minItems != null
-
-    @Suppress("unused")
-    val nameFromURI: String? by lazy {
-        uri?.let {
-            // TODO change to allow name ending with "/schema"
-            val uriName = it.toString().substringBefore('#').substringAfterLast('/')
-            val uriNameWithoutSuffix = when {
-                uriName.endsWith(".schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("-schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("_schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith(".schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriName.endsWith("-schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriName.endsWith("_schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
-                else -> uriName
-            }
-            uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
-                    sanitiseName()
-        }
-    }
-
-    @Suppress("unused")
-    val nameFromTitle: String? by lazy {
-        schema.title?.split(' ')?.joinToString(separator = "") { part -> Strings.capitalise(part) }
-    }
-
-    @Suppress("unused")
-    val nameFromURIOrTitle: String?
-        get() = nameFromURI ?: nameFromTitle
-
-    @Suppress("unused")
-    val nameFromTitleOrURI: String?
-        get() = nameFromTitle ?: nameFromURI
 
     @Suppress("unused")
     val safeDescription: String?
@@ -204,178 +119,90 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val isDecimal: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.NUMBER && !(multipleOf is Long || multipleOf is Int)
+        get() = types.size == 1 && types[0] == JSONSchema.Type.NUMBER && !isIntOrLong
 
     @Suppress("unused")
     val isInt: Boolean
-        get() = isIntOrLong && rangeAllowsInteger()
+        get() = isIntOrLong && (rangeImpliesInt() || constImpliesInt() || enumImpliesInt())
 
     @Suppress("unused")
     val isLong: Boolean
-        get() = isIntOrLong && !rangeAllowsInteger()
+        get() = isIntOrLong && !(rangeImpliesInt() || constImpliesInt() || enumImpliesInt())
 
     @Suppress("unused")
     val isIntOrLong: Boolean
-        get() = types.size == 1 &&
-                (types[0] == JSONSchema.Type.INTEGER ||
-                        types[0] == JSONSchema.Type.NUMBER && (multipleOf is Long || multipleOf is Int)) // ?
+        get() = types.size == 1 && types[0] == JSONSchema.Type.INTEGER
 
     @Suppress("unused")
     val isPrimitive: Boolean
         get() = isIntOrLong || isBoolean
 
-//    fun negate() {
-//        TODO()
-//    }
+    val minimumLong: Long?
+        get() {
+            minimum?.let { min ->
+                exclusiveMinimum?.let { emin ->
+                    return maxOf(min.asLong(), emin.asLong() + 1)
+                }
+                return min.asLong()
+            }
+            return exclusiveMinimum?.let { it.asLong() + 1 }
+        }
 
-//    fun combine(type: String, constraintsList: List<Constraints>) {
-//        TODO()
-//    }
+    val maximumLong: Long?
+        get() {
+            maximum?.let { max ->
+                exclusiveMaximum?.let { emax ->
+                    return minOf(max.asLong(), emax.asLong() - 1)
+                }
+                return max.asLong()
+            }
+            return exclusiveMaximum?.let { it.asLong() - 1 }
+        }
 
-    private fun rangeAllowsInteger(): Boolean = minimumOK() && maximumOK()
+    val validations = mutableListOf<Validation>()
 
-    private fun minimumOK(): Boolean {
-        if (minimum == null && exclusiveMinimum == null)
-            return false
-        if (minimum.belowLimitForInt(Int.MIN_VALUE.toLong()))
-            return false
-        if (exclusiveMinimum.belowLimitForInt(Int.MIN_VALUE.toLong() - 1))
-            return false
-        return true
+    fun addValidation(type: Validation.Type, value: Any? = null) {
+        validations.add(Validation(type, value))
     }
 
-    private fun maximumOK(): Boolean {
-        if (maximum == null && exclusiveMaximum == null)
-            return false
-        if (maximum.aboveLimitForInt(Int.MAX_VALUE.toLong()))
-            return false
-        if (exclusiveMaximum.aboveLimitForInt(Int.MAX_VALUE.toLong() + 1))
-            return false
-        return true
+    private fun constImpliesInt(): Boolean = constValue?.let {
+        when (it) {
+            is JSONInteger -> true
+            is JSONLong -> it.get() in Int.MIN_VALUE..Int.MAX_VALUE
+            is JSONDecimal -> it.get().asLong() in Int.MIN_VALUE..Int.MAX_VALUE
+            else -> false
+        }
+    } ?: false
+
+    private fun enumImpliesInt(): Boolean {
+        enumValues?.let { array ->
+            return array.all {
+                when (it) {
+                    is JSONInteger -> true
+                    is JSONLong -> it.get() in Int.MIN_VALUE..Int.MAX_VALUE
+                    is JSONDecimal -> it.get().asLong() in Int.MIN_VALUE..Int.MAX_VALUE
+                    else -> false
+                }
+            }
+        }
+        return false
     }
+
+    private fun rangeImpliesInt(): Boolean = minimumImpliesInt() && maximumImpliesInt()
+
+    private fun minimumImpliesInt(): Boolean = minimumLong?.let { it >= Int.MIN_VALUE } ?: false
+
+    private fun maximumImpliesInt(): Boolean = maximumLong?.let { it <= Int.MAX_VALUE } ?: false
 
     data class DefaultValue(val defaultValue: Any?, val type: JSONSchema.Type)
 
-    enum class SystemClass(val order: Int) {
-        // collections etc.
-        LIST(0),
-        // math etc.
-        DECIMAL(20),
-        // date, time etc.
-        DATE(40),
-        DATE_TIME(41),
-        TIME(42),
-        DURATION(45),
-        // utility
-        URI(60),
-        UUID(61),
-        // regex
-        REGEX(80),
-        // local
-        VALIDATION(90)
-    }
-
-    enum class StaticType { PATTERN }
-
-    data class Static(val type: StaticType, val staticName: String, val value: Any)
-
     companion object {
 
-        fun String.sanitiseName(): String {
-            for (i in 0 until length) {
-                val ch = this[i]
-                if (!(ch in 'A'..'Z' || ch in 'a'..'z' || ch in '0'..'9')) {
-                    val sb = StringBuilder(substring(0, i))
-                    for (j in i + 1 until length) {
-                        val ch2 = this[j]
-                        if (ch2 in 'A'..'Z' || ch2 in 'a'..'z' || ch2 in '0'..'9')
-                            sb.append(ch)
-                    }
-                    return sb.toString()
-                }
-            }
-            return this
+        fun Number.asLong(): Long = when (this) {
+            is BigDecimal -> this.setScale(0, RoundingMode.DOWN).toLong()
+            is Long -> this
+            else -> this.toLong()
         }
-
-        private fun Number?.belowLimitForInt(limit: Long): Boolean = when (this) {
-            null -> false
-            is BigDecimal -> this < BigDecimal(limit)
-            else -> this.toLong() < limit
-        }
-
-        private fun Number?.aboveLimitForInt(limit: Long): Boolean = when (this) {
-            null -> false
-            is BigDecimal -> this > BigDecimal(limit)
-            else -> this.toLong() > limit
-        }
-
-        fun minimumOf(a: Number?, b: Number?): Number? {
-            return when (a) {
-                null -> b
-                is BigDecimal -> when (b) {
-                    null -> a
-                    is BigDecimal -> if (a < b) a else b
-                    else -> if (a < BigDecimal(b.toLong())) a else b
-                }
-                else -> when (b) {
-                    null -> a
-                    is BigDecimal -> if (BigDecimal(a.toLong()) < b) a else b
-                    else -> if (a.toLong() < b.toLong()) a else b
-                }
-            }
-        }
-
-        fun maximumOf(a: Number?, b: Number?): Number? {
-            return when (a) {
-                null -> b
-                is BigDecimal -> when (b) {
-                    null -> a
-                    is BigDecimal -> if (a > b) a else b
-                    else -> if (a > BigDecimal(b.toLong())) a else b
-                }
-                else -> when (b) {
-                    null -> a
-                    is BigDecimal -> if (BigDecimal(a.toLong()) > b) a else b
-                    else -> if (a.toLong() > b.toLong()) a else b
-                }
-            }
-        }
-
-        fun lcm(a: Number?, b: Number?): Number? { // TODO this isn't really LCM
-            return when (a) {
-                null -> b
-                is BigDecimal -> when (b) {
-                    null -> a
-                    is BigDecimal -> a.multiply(b)
-                    else -> a.multiply(BigDecimal(b.toLong()))
-                }
-                else -> when (b) {
-                    null -> a
-                    is BigDecimal -> BigDecimal(a.toLong()).multiply(b)
-                    else -> pseudoLCM(a.toLong(), b.toLong()).intOrLong()
-                }
-            }
-        }
-
-        private fun pseudoLCM(a: Long, b: Long): Long {
-            require(a > 0 && b > 0)
-            var aVar = a
-            var aZeroBits = 0
-            while ((aVar and 1) == 0L) {
-                aVar = aVar shr 1
-                aZeroBits++
-            }
-            var bVar = b
-            var bZeroBits = 0
-            while ((bVar and 1) == 0L) {
-                bVar = bVar shr 1
-                bZeroBits++
-            }
-            return (aVar * bVar) shl aZeroBits.coerceAtLeast(bZeroBits)
-        }
-
-        private fun Long.intOrLong(): Number =
-                if (this in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) toInt() else this
 
     }
 

@@ -28,12 +28,12 @@ package net.pwall.json.schema.codegen
 import kotlin.test.Test
 import kotlin.test.expect
 
-import java.net.URI
+import java.io.File
 
-import net.pwall.json.JSONObject
-import net.pwall.json.pointer.JSONPointer
+import net.pwall.json.JSONArray
+import net.pwall.json.JSONInteger
+import net.pwall.json.JSONLong
 import net.pwall.json.schema.JSONSchema
-import net.pwall.json.schema.parser.Parser
 
 class ConstraintsTest {
 
@@ -60,26 +60,68 @@ class ConstraintsTest {
         expect(false) { constraints.isLong }
     }
 
-    @Test fun `should convert URI to name usable as class name`() {
+    @Test fun `should recognise type integer when const int added`() {
         val constraints = Constraints(dummySchema)
-        constraints.uri = URI("http://example.com/abc/test")
-        expect("Test") { constraints.nameFromURI }
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.constValue = JSONInteger(5)
+        expect(true) { constraints.isInt }
+        expect(false) { constraints.isLong }
     }
 
-    @Test fun `should convert complex URI to name usable as class name`() {
+    @Test fun `should recognise type integer when small const long added`() {
         val constraints = Constraints(dummySchema)
-        constraints.uri = URI("http://example.com/abc/more-complex-test-name.schema.json#/fragment/extra")
-        expect("MoreComplexTestName") { constraints.nameFromURI }
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.constValue = JSONLong(999)
+        expect(true) { constraints.isInt }
+        expect(false) { constraints.isLong }
     }
 
-    @Test fun `should calculate lcm`() { // well, sorta...
-        expect(15) { Constraints.lcm(3, 5) }
-        expect(20) { Constraints.lcm(10, 4) }
-        expect(256) { Constraints.lcm(256, 16) }
+    @Test fun `should not recognise type integer when const long added`() {
+        val constraints = Constraints(dummySchema)
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.constValue = JSONLong(123456789123456789)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+    }
+
+    @Test fun `should recognise type integer when enum of int added`() {
+        val constraints = Constraints(dummySchema)
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.enumValues = JSONArray(JSONInteger(1), JSONInteger(2), JSONInteger(3), JSONInteger(4))
+        expect(true) { constraints.isInt }
+        expect(false) { constraints.isLong }
+    }
+
+    @Test fun `should recognise type integer when enum of small long added`() {
+        val constraints = Constraints(dummySchema)
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.enumValues = JSONArray(JSONLong(1111), JSONLong(2222), JSONLong(3333), JSONLong(4444))
+        expect(true) { constraints.isInt }
+        expect(false) { constraints.isLong }
+    }
+
+    @Test fun `should not recognise type integer when enum of long added`() {
+        val constraints = Constraints(dummySchema)
+        constraints.types.add(JSONSchema.Type.INTEGER)
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
+        constraints.enumValues = JSONArray(JSONLong(0L), JSONLong(123456789123456789))
+        expect(false) { constraints.isInt }
+        expect(true) { constraints.isLong }
     }
 
     companion object {
-        val dummySchema = Parser().parseSchema(JSONObject(), JSONPointer.root, null)
+        val dummySchema = JSONSchema.parse(File("src/test/resources/empty.schema.json"))
     }
 
 }

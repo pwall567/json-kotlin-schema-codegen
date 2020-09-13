@@ -1,3 +1,0 @@
-{{#maxItemsPresent}}            require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}}.size <= {{&maxItems}}) { "{{&name}} length > maximum - ${{&openBrace}}{{&name}}.size}" }
-{{/maxItemsPresent}}{{#minItemsPresent}}            require({{#nullable}}{{&name}} == null || {{/nullable}}{{&name}}.size >= {{&minItems}}) { "{{&name}} length < minimum - ${{&openBrace}}{{&name}}.size}" }
-{{/minItemsPresent}}

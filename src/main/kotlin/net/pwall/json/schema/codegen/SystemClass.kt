@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorDefaultTest.kt
+ * @(#) SystemClass.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
@@ -25,42 +25,21 @@
 
 package net.pwall.json.schema.codegen
 
-import kotlin.test.Test
-import kotlin.test.expect
-
-import java.io.File
-import java.io.StringWriter
-
-import net.pwall.json.schema.codegen.log.ConsoleLog
-
-class CodeGeneratorDefaultTest {
-
-    @Test fun `should output class with default value`() {
-        val input = File("src/test/resources/test-default.schema.json")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
-        codeGenerator.baseDirectoryName = "dummy"
-        val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.generate(listOf(input))
-        expect(expectedDefault) { stringWriter.toString() }
-    }
-
-    companion object {
-
-        const val expectedDefault =
-"""package com.example
-
-
-data class TestDefault(
-        val aaa: Long = 8,
-        val bbb: String? = null,
-        val ccc: String = "CCC",
-        val ddd: List<Long> = listOf(123, 456)
-)
-"""
-
-    }
-
+enum class SystemClass(val order: Int) {
+    // collections etc.
+    LIST(0),
+    // math etc.
+    DECIMAL(20),
+    // date, time etc.
+    DATE(40),
+    DATE_TIME(41),
+    TIME(42),
+    DURATION(45),
+    // utility
+    URI(60),
+    UUID(61),
+    // regex
+    REGEX(80),
+    // local
+    VALIDATION(90)
 }

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-derived-class",
+  "title": "Dummy",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "http://pwall.net/test-base-class"
+    }
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "required": [ "name" ]
+}
