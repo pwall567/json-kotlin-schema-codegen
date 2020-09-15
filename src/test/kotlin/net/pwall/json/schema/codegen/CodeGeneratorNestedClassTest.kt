@@ -74,7 +74,13 @@ data class TestNestedObject(
 
     data class Deeper(
             val deepest: String
-    )
+    ) {
+
+        init {
+            require(deepest.isNotEmpty()) { "deepest length < minimum 1 - ${'$'}{deepest.length}" }
+        }
+
+    }
 
 }
 """
@@ -159,6 +165,8 @@ public class TestNestedObject {
         ) {
             if (deepest == null)
                 throw new IllegalArgumentException("Must not be null - deepest");
+            if (deepest.length() < 1)
+                throw new IllegalArgumentException("deepest length < minimum 1 - " + deepest.length());
             this.deepest = deepest;
         }
 

@@ -2,6 +2,15 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.6.1] - 2020-09-15
+### Changed
+- `CodeGenerator`: Fixed bug in validation of nested classes
+
+## [0.6] - 2020-09-15
+### Changed
+- templates: Improved validation of nullable properties
+- templates: output enums
+
 ## [0.5] - 2020-09-13
 ### Changed
 - templates: Improved output of Java

@@ -1,7 +1,7 @@
 {{#description}}    /**
      * {{&description}}
      */
-{{/description}}    public static class {{&className}} {
+{{/description}}{{#isObject}}    public static class {{&className}} {
 
 {{#properties}}        private final {{>type}} {{&name}};
 {{/properties}}
@@ -16,3 +16,7 @@
 {{>equals}}
 {{>hashcode}}
     }
+{{/isObject}}{{#isString}}    public enum {{&className}} {
+{{#enumValues}}        {{&.}}{{^last}},{{/last}}
+{{/enumValues}}    }
+{{/isString}}

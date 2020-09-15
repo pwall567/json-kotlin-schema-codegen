@@ -27,10 +27,18 @@
       "type": "string",
       "minLength": 1
     },
+    "minlen2": {
+      "type": "string",
+      "minLength": 1
+    },
     "name": {
       "type": "string",
       "pattern": "^[A-Z][A-Za-z]*$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [ "OPEN", "CLOSED" ]
     }
   },
-  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name" ]
+  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "status" ]
 }

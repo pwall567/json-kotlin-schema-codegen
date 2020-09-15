@@ -11,7 +11,8 @@
           "type": "object",
           "properties": {
             "deepest": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [ "deepest" ]

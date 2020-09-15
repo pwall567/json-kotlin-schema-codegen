@@ -66,6 +66,7 @@ class CodeGenerator(
         var templates: String = "kotlin",
         var suffix: String = "kt",
         var templateName: String = "class",
+        var enumTemplateName: String = "enum",
         var basePackageName: String? = null,
         var baseDirectoryName: String = ".",
         var derivePackageFromStructure: Boolean = true,
@@ -102,6 +103,15 @@ class CodeGenerator(
 
     private val actualTemplate: Template
         get() = template ?: defaultTemplate
+
+    var enumTemplate: Template? = null
+
+    private val defaultEnumTemplate: Template by lazy {
+        actualTemplateParser.parse(actualTemplateParser.resolvePartial(enumTemplateName))
+    }
+
+    private val actualEnumTemplate: Template
+        get() = enumTemplate ?: defaultEnumTemplate
 
     var outputResolver: OutputResolver? = null
 
@@ -145,19 +155,26 @@ class CodeGenerator(
         for (target in targets) {
             processSchema(target.schema, target.constraints)
             log.info { "Generating for target ${target.file}" }
-            // does it look like an object? generate a class
-            if (target.constraints.isObject) {
-                log.info { "-- target class ${target.qualifiedClassName}" }
-                target.validationsPresent = analyseObject(target, target.constraints, targets)
-                target.systemClasses.sortBy { it.order }
-                target.imports.sort()
-                actualOutputResolver(baseDirectoryName, target.subDirectories, target.className, target.suffix).use {
-                    actualTemplate.processTo(it, target)
+            when {
+                target.constraints.isObject -> { // does it look like an object? generate a class
+                    log.info { "-- target class ${target.qualifiedClassName}" }
+                    target.validationsPresent = analyseObject(target, target.constraints, targets)
+                    target.systemClasses.sortBy { it.order }
+                    target.imports.sort()
+                    actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
+                            target.suffix).use {
+                        actualTemplate.processTo(it, target)
+                    }
                 }
+                target.constraints.isString && target.constraints.enumValues != null -> {
+                    actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
+                            target.suffix).use {
+                        actualEnumTemplate.processTo(it, target)
+                    }
+                }
+                // TODO - generate other types of output (other than object) - enum?
+                else -> log.info { "-- nothing to generate" }
             }
-            // TODO - generate other types of output (other than object) - enum?
-            else
-                log.info { "-- nothing to generate" }
         }
         // TODO - generate index - for html
     }
@@ -260,7 +277,8 @@ class CodeGenerator(
                 val innerClassName = property.capitalisedName
                 val innerClass = target.addNestedClass(property, innerClassName)
                 property.localTypeName = innerClass.className
-                return analyseProperties(target, property)
+                innerClass.validationsPresent = analyseProperties(target, property)
+                return false
             }
             property.isArray -> {
                 target.systemClasses.addOnce(SystemClass.LIST)
@@ -275,12 +293,12 @@ class CodeGenerator(
                     }
                 }
                 var validationsPresent = false
-                if (property.maxItems != null) {
-                    property.addValidation(Validation.Type.MAX_ITEMS, property.maxItems)
+                property.minItems?.let {
+                    property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
                     validationsPresent = true
                 }
-                if (property.minItems != null) {
-                    property.addValidation(Validation.Type.MIN_ITEMS, property.minItems)
+                property.maxItems?.let {
+                    property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
                     validationsPresent = true
                 }
                 return validationsPresent
@@ -297,21 +315,28 @@ class CodeGenerator(
                 return analyseDecimal(target, property)
             }
             property.isString -> {
+                property.enumValues?.let { array ->
+                    if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
+                        val innerClassName = property.capitalisedName
+                        val innerClass = target.addNestedClass(property, innerClassName)
+                        property.localTypeName = innerClass.className
+                        return false
+                    }
+                }
                 var validationsPresent = false
                 property.constValue?.let {
                     if (it is JSONString) {
-                        val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str",
-                                StringValue(it.get()))
+                        val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.get()))
                         property.addValidation(Validation.Type.CONST_STRING, stringStatic)
                         validationsPresent = true
                     }
                 }
-                if (property.minLength != null) {
-                    property.addValidation(Validation.Type.MIN_LENGTH, property.minLength)
+                property.minLength?.let {
+                    property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(it))
                     validationsPresent = true
                 }
-                if (property.maxLength != null) {
-                    property.addValidation(Validation.Type.MAX_LENGTH, property.maxLength)
+                property.maxLength?.let {
+                    property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(it))
                     validationsPresent = true
                 }
                 validationsPresent = analyseFormat(target, property) || validationsPresent
@@ -320,6 +345,15 @@ class CodeGenerator(
             }
         }
         return false
+    }
+
+    private fun String.isValidIdentifier(): Boolean {
+        if (!this[0].isJavaIdentifierStart())
+            return false
+        for (i in 1 until length)
+            if (!this[i].isJavaIdentifierPart())
+                return false
+        return true
     }
 
     private fun analyseInt(property: NamedConstraints): Boolean {

@@ -71,8 +71,8 @@ data class TestArray(
 ) {
 
     init {
+        require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
         require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
-        require(aaa.size >= 1) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
     }
 
     data class Person(
@@ -111,10 +111,10 @@ public class TestArray {
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
-        if (aaa.size() > 5)
-            throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
         if (aaa.size() < 1)
             throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.size());
+        if (aaa.size() > 5)
+            throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
         this.aaa = aaa;
     }
 

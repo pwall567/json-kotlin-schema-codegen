@@ -46,7 +46,9 @@ data class TestString(
         val ipv6a: String,
         val maxlen: String,
         val minlen: String,
-        val name: String
+        val minlen2: String? = null,
+        val name: String,
+        val status: Status
 ) {
 
     init {
@@ -55,8 +57,14 @@ data class TestString(
         require(JSONValidation.isIPV4(ipv4a)) { "ipv4a does not match format ipv4 - ${'$'}ipv4a" }
         require(JSONValidation.isIPV6(ipv6a)) { "ipv6a does not match format ipv6 - ${'$'}ipv6a" }
         require(maxlen.length <= 20) { "maxlen length > maximum 20 - ${'$'}{maxlen.length}" }
-        require(minlen.length >= 1) { "minlen length < minimum 1 - ${'$'}{minlen.length}" }
+        require(minlen.isNotEmpty()) { "minlen length < minimum 1 - ${'$'}{minlen.length}" }
+        require(minlen2 == null || minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2?.length}" }
         require(cg_regex0 matches name) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
+    }
+
+    enum class Status {
+        OPEN,
+        CLOSED
     }
 
     companion object {
@@ -82,7 +90,9 @@ public class TestString {
     private final String ipv6a;
     private final String maxlen;
     private final String minlen;
+    private final String minlen2;
     private final String name;
+    private final Status status;
 
     public TestString(
             String email1,
@@ -91,7 +101,9 @@ public class TestString {
             String ipv6a,
             String maxlen,
             String minlen,
-            String name
+            String minlen2,
+            String name,
+            Status status
     ) {
         if (email1 == null)
             throw new IllegalArgumentException("Must not be null - email1");
@@ -123,11 +135,17 @@ public class TestString {
         if (minlen.length() < 1)
             throw new IllegalArgumentException("minlen length < minimum 1 - " + minlen.length());
         this.minlen = minlen;
+        if (minlen2 != null && minlen2.length() < 1)
+            throw new IllegalArgumentException("minlen2 length < minimum 1 - " + minlen2.length());
+        this.minlen2 = minlen2;
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");
         if (!cg_regex0.matcher(name).matches())
             throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
         this.name = name;
+        if (status == null)
+            throw new IllegalArgumentException("Must not be null - status");
+        this.status = status;
     }
 
     public String getEmail1() {
@@ -154,8 +172,16 @@ public class TestString {
         return minlen;
     }
 
+    public String getMinlen2() {
+        return minlen2;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     @Override
@@ -177,7 +203,11 @@ public class TestString {
             return false;
         if (!minlen.equals(typedOther.minlen))
             return false;
-        return name.equals(typedOther.name);
+        if (minlen2 == null ? typedOther.minlen2 != null : !minlen2.equals(typedOther.minlen2))
+            return false;
+        if (!name.equals(typedOther.name))
+            return false;
+        return status.equals(typedOther.status);
     }
 
     @Override
@@ -189,8 +219,15 @@ public class TestString {
         hash ^= ipv6a.hashCode();
         hash ^= maxlen.hashCode();
         hash ^= minlen.hashCode();
+        hash ^= minlen2 != null ? minlen2.hashCode() : 0;
         hash ^= name.hashCode();
+        hash ^= status.hashCode();
         return hash;
+    }
+
+    public enum Status {
+        OPEN,
+        CLOSED
     }
 
 }

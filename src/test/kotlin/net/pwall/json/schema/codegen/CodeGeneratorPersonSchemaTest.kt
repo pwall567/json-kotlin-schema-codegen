@@ -86,7 +86,7 @@ data class TestPerson(
 ) {
 
     init {
-        require(name.length >= 1) { "name length < minimum 1 - ${'$'}{name.length}" }
+        require(name.isNotEmpty()) { "name length < minimum 1 - ${'$'}{name.length}" }
         require(name.length <= 80) { "name length > maximum 80 - ${'$'}{name.length}" }
         require(age >= 0) { "age < minimum 0 - ${'$'}age" }
         require(age <= 120) { "age > maximum 120 - ${'$'}age" }
