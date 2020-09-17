@@ -150,8 +150,7 @@ public class Person {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= id.hashCode();
+        int hash = id.hashCode();
         hash ^= name.hashCode();
         return hash;
     }

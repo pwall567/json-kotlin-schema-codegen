@@ -155,8 +155,7 @@ public class TestPerson {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= name.hashCode();
+        int hash = name.hashCode();
         hash ^= nickname != null ? nickname.hashCode() : 0;
         hash ^= age;
         return hash;

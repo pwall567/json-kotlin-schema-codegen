@@ -212,8 +212,7 @@ public class TestString {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= email1.hashCode();
+        int hash = email1.hashCode();
         hash ^= hostname1.hashCode();
         hash ^= ipv4a.hashCode();
         hash ^= ipv6a.hashCode();

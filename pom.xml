@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.6.1</version>
+  <version>0.7</version>
   <name>JSON Schema Code Generation</name>
   <packaging>jar</packaging>
   <url>https://github.com/pwall567/json-kotlin-schema-codegen</url>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>net.pwall.maven</groupId>
     <artifactId>maven-kotlin</artifactId>
-    <version>1.2</version>
+    <version>2.0</version>
   </parent>
 
   <properties>
@@ -60,12 +60,12 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.7</version>
+      <version>0.8</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-pointer</artifactId>
-      <version>0.2</version>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>net.pwall.mustache</groupId>
       <artifactId>kotlin-mustache</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

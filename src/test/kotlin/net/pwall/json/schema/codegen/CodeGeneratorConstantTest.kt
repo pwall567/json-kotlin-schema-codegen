@@ -136,8 +136,7 @@ public class TestConst {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= aaa;
+        int hash = aaa;
         hash ^= (int)bbb;
         hash ^= ccc.hashCode();
         hash ^= ddd.hashCode();

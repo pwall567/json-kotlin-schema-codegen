@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.7] - 2020-09-17
+### Changed
+- templates: improved generated Java hashCode
+- `pom.xml`: updated Kotlin version to 1.4.0
+
 ## [0.6.1] - 2020-09-15
 ### Changed
 - `CodeGenerator`: Fixed bug in validation of nested classes

@@ -116,9 +116,7 @@ public class TestNestedObject {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= nested.hashCode();
-        return hash;
+        return nested.hashCode();
     }
 
     public static class Nested {
@@ -149,9 +147,7 @@ public class TestNestedObject {
 
         @Override
         public int hashCode() {
-            int hash = 0;
-            hash ^= deeper.hashCode();
-            return hash;
+            return deeper.hashCode();
         }
 
     }
@@ -186,9 +182,7 @@ public class TestNestedObject {
 
         @Override
         public int hashCode() {
-            int hash = 0;
-            hash ^= deepest.hashCode();
-            return hash;
+            return deepest.hashCode();
         }
 
     }

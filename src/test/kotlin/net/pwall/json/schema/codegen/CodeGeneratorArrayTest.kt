@@ -134,9 +134,7 @@ public class TestArray {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash ^= aaa.hashCode();
-        return hash;
+        return aaa.hashCode();
     }
 
     public static class Person {
@@ -180,8 +178,7 @@ public class TestArray {
 
         @Override
         public int hashCode() {
-            int hash = 0;
-            hash ^= id.hashCode();
+            int hash = id.hashCode();
             hash ^= name.hashCode();
             return hash;
         }
