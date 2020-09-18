@@ -1,7 +1,7 @@
 {{#statics}}{{#first}}
     companion object {
 {{/first}}{{#type}}{{#DECIMAL}}        private val {{&staticName}} = {{#value}}{{#isZero}}BigDecimal.ZERO{{/isZero}}{{^isZero}}BigDecimal("{{&rawNumber}}"){{/isZero}}{{/value}}
-{{/DECIMAL}}{{#STRING}}        private const val {{&staticName}} = {{#value}}{{&kotlinString}}{{/value}}
-{{/STRING}}{{#PATTERN}}        private val {{&staticName}} = Regex({{#value}}{{&kotlinString}}{{/value}})
+{{/DECIMAL}}{{#STRING}}        private const val {{&staticName}} = {{&value.kotlinString}}
+{{/STRING}}{{#PATTERN}}        private val {{&staticName}} = Regex({{&value.kotlinString}})
 {{/PATTERN}}{{/type}}{{#last}}    }
 {{/last}}{{/statics}}

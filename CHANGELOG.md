@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `pom.xml`: updated Mustache version
+- templates: make use of advanced Mustache features
+
 ## [0.7] - 2020-09-17
 ### Changed
 - templates: improved generated Java hashCode

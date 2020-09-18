@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.7</version>
+  <version>0.8-SNAPSHOT</version>
   <name>JSON Schema Code Generation</name>
   <packaging>jar</packaging>
   <url>https://github.com/pwall567/json-kotlin-schema-codegen</url>
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>net.pwall.mustache</groupId>
       <artifactId>kotlin-mustache</artifactId>
-      <version>0.6</version>
+      <version>0.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
