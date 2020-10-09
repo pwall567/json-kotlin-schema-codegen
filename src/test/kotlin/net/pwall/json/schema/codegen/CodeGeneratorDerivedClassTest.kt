@@ -7,13 +7,13 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
-import net.pwall.json.schema.codegen.log.ConsoleLog
+import net.pwall.log.LoggerFactory
 
 class CodeGeneratorDerivedClassTest {
 
     @Test fun `should generate base class and derived class`() {
         val input = File("src/test/resources/test-derived-class")
-        val codeGenerator = CodeGenerator(templateName = "open_class", log = ConsoleLog)
+        val codeGenerator = CodeGenerator(templateName = "open_class", loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterBase = StringWriter()
         val outputDetailsBase = OutputDetails("dummy1", emptyList(), "TestBaseClass", "kt", stringWriterBase)

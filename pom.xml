@@ -60,12 +60,12 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.8</version>
+      <version>0.9</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
-      <artifactId>json-kotlin-pointer</artifactId>
-      <version>0.3</version>
+      <artifactId>json-pointer</artifactId>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -80,7 +80,12 @@
     <dependency>
       <groupId>net.pwall.mustache</groupId>
       <artifactId>kotlin-mustache</artifactId>
-      <version>0.7-SNAPSHOT</version>
+      <version>0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>net.pwall.log</groupId>
+      <artifactId>log-front</artifactId>
+      <version>0.1</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

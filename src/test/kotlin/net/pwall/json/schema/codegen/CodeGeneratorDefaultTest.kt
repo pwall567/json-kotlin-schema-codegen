@@ -31,13 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.json.schema.codegen.log.ConsoleLog
+import net.pwall.log.LoggerFactory
 
 class CodeGeneratorDefaultTest {
 
     @Test fun `should output class with default value`() {
         val input = File("src/test/resources/test-default.schema.json")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
+        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

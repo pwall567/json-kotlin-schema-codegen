@@ -29,10 +29,10 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URI
 
-import net.pwall.json.JSONArray
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
+import net.pwall.json.JSONSequence
 import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.validation.FormatValidator
@@ -85,7 +85,7 @@ open class Constraints(val schema: JSONSchema) {
     var format: FormatValidator.FormatType? = null
     var regex: Regex? = null
 
-    var enumValues: JSONArray? = null
+    var enumValues: JSONSequence<*>? = null
     var constValue: JSONValue? = null
 
     @Suppress("unused")

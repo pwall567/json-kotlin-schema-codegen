@@ -31,13 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.json.schema.codegen.log.ConsoleLog
+import net.pwall.log.LoggerFactory
 
 class CodeGeneratorNestedClassTest {
 
     @Test fun `should output deeply nested class`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
+        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -49,7 +49,8 @@ class CodeGeneratorNestedClassTest {
 
     @Test fun `should output deeply nested class in Java`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
+                loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

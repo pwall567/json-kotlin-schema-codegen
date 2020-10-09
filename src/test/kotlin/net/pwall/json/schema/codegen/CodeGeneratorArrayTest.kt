@@ -31,13 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.json.schema.codegen.log.ConsoleLog
+import net.pwall.log.LoggerFactory
 
 class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
+        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -49,7 +49,8 @@ class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object in Java`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
+                loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

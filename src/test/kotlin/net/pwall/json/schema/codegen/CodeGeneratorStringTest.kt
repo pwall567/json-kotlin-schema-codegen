@@ -1,16 +1,18 @@
 package net.pwall.json.schema.codegen
 
-import net.pwall.json.schema.codegen.log.ConsoleLog
-import java.io.File
-import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.expect
+
+import java.io.File
+import java.io.StringWriter
+
+import net.pwall.log.LoggerFactory
 
 class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations`() {
         val input = File("src/test/resources/test-string.schema.json")
-        val codeGenerator = CodeGenerator(log = ConsoleLog)
+        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -22,7 +24,8 @@ class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations in Java`() {
         val input = File("src/test/resources/test-string.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java", log = ConsoleLog)
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
+                loggerFactory = LoggerFactory.getDefault())
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

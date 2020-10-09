@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Unreleased]
 ### Changed
 - `pom.xml`: updated Mustache version
+- `pom.xml`: updated `json-kotlin-schema` version
+- `pom.xml`: changed to use `log-front` library
 - templates: make use of advanced Mustache features
+- several classes: changed to accommodate use of YAML for schema
 
 ## [0.7] - 2020-09-17
 ### Changed

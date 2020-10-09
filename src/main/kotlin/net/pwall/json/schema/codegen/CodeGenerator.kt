@@ -40,8 +40,6 @@ import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.Constraints.Companion.asLong
-import net.pwall.json.schema.codegen.log.Log
-import net.pwall.json.schema.codegen.log.NullLog
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.subschema.AllOfSchema
 import net.pwall.json.schema.subschema.CombinationSchema
@@ -58,6 +56,9 @@ import net.pwall.json.schema.validation.NumberValidator
 import net.pwall.json.schema.validation.PatternValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
+import net.pwall.log.Logger
+import net.pwall.log.LoggerFactory
+import net.pwall.log.NullLoggerFactory
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
@@ -70,8 +71,10 @@ class CodeGenerator(
         var basePackageName: String? = null,
         var baseDirectoryName: String = ".",
         var derivePackageFromStructure: Boolean = true,
-        val log: Log = NullLog
+        loggerFactory: LoggerFactory = NullLoggerFactory()
 ) {
+
+    val log: Logger = loggerFactory.getLogger(this::class.qualifiedName)
 
     var schemaParser: Parser? = null
 
