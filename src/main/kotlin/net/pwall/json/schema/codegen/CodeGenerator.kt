@@ -58,7 +58,6 @@ import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.log.Logger
 import net.pwall.log.LoggerFactory
-import net.pwall.log.NullLoggerFactory
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
@@ -71,7 +70,7 @@ class CodeGenerator(
         var basePackageName: String? = null,
         var baseDirectoryName: String = ".",
         var derivePackageFromStructure: Boolean = true,
-        loggerFactory: LoggerFactory = NullLoggerFactory()
+        loggerFactory: LoggerFactory = LoggerFactory.getDefault()
 ) {
 
     val log: Logger = loggerFactory.getLogger(this::class.qualifiedName)
