@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.8] - 2020-10-09
 ### Changed
 - `pom.xml`: updated Mustache version
 - `pom.xml`: updated `json-kotlin-schema` version
