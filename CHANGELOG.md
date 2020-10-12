@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.9.1] - 2020-10-12
+### Changed
+- `CodeGenerator`: added `generateClasses()` (multiple `generateClass()`)
+
 ## [0.9] - 2020-10-12
 ### Changed
 - `CodeGenerator`: small improvement to logging

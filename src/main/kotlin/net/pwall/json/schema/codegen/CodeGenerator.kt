@@ -187,10 +187,20 @@ class CodeGenerator(
         var packageName = basePackageName
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, File("./none"))
+        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, dummyFile)
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
+    }
+
+    fun generateClasses(schemaList: List<Pair<JSONSchema, String>>, subDirectories: List<String> = emptyList()) {
+        var packageName = basePackageName
+        if (derivePackageFromStructure)
+            subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
+        val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
+                suffix, dummyFile) }
+        for (target in targets)
+            generateTarget(target, targets)
     }
 
     // TODO - how do we allow for "domain primitives" like Amount etc.?
@@ -552,7 +562,7 @@ class CodeGenerator(
     }
 
     private fun String.depluralise(): String = when {
-        this.endsWith("es") -> dropLast(2)
+//        this.endsWith("es") -> dropLast(2) // need a more sophisticated way of handling plurals ending with -es
         this.endsWith('s') -> dropLast(1)
         else -> this
     }
@@ -694,6 +704,8 @@ class CodeGenerator(
     }
 
     companion object {
+
+        val dummyFile = File("./none")
 
         fun String.sanitiseName(): String {
             for (i in 0 until length) {
