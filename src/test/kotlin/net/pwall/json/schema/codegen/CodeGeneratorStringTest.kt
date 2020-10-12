@@ -6,13 +6,11 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.log.LoggerFactory
-
 class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations`() {
         val input = File("src/test/resources/test-string.schema.json")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -24,8 +22,7 @@ class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations in Java`() {
         val input = File("src/test/resources/test-string.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
-                loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

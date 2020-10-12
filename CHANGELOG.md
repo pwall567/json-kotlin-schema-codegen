@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.9] - 2020-10-12
+### Changed
+- `CodeGenerator`: small improvement to logging
+- `CodeGenerator`: added `generateClass()`
+- `pom.xml`: added logback for test only
+- `pom.xml`: updated `yaml-simple` version
+
 ## [0.8] - 2020-10-09
 ### Changed
 - `pom.xml`: updated Mustache version

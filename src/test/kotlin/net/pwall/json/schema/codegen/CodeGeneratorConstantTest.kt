@@ -6,13 +6,11 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.log.LoggerFactory
-
 class CodeGeneratorConstantTest {
 
     @Test fun `should generate correct code for constants`() {
         val input = File("src/test/resources/test-const.schema.json")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -24,8 +22,7 @@ class CodeGeneratorConstantTest {
 
     @Test fun `should generate correct code for constants in Java`() {
         val input = File("src/test/resources/test-const.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
-                loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

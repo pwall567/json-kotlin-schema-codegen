@@ -70,10 +70,8 @@ class CodeGenerator(
         var basePackageName: String? = null,
         var baseDirectoryName: String = ".",
         var derivePackageFromStructure: Boolean = true,
-        loggerFactory: LoggerFactory = LoggerFactory.getDefault()
+        val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
-
-    val log: Logger = loggerFactory.getLogger(this::class.qualifiedName)
 
     var schemaParser: Parser? = null
 
@@ -157,28 +155,42 @@ class CodeGenerator(
         for (target in targets) {
             processSchema(target.schema, target.constraints)
             log.info { "Generating for target ${target.file}" }
-            when {
-                target.constraints.isObject -> { // does it look like an object? generate a class
-                    log.info { "-- target class ${target.qualifiedClassName}" }
-                    target.validationsPresent = analyseObject(target, target.constraints, targets)
-                    target.systemClasses.sortBy { it.order }
-                    target.imports.sort()
-                    actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
-                            target.suffix).use {
-                        actualTemplate.processTo(it, target)
-                    }
-                }
-                target.constraints.isString && target.constraints.enumValues != null -> {
-                    actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
-                            target.suffix).use {
-                        actualEnumTemplate.processTo(it, target)
-                    }
-                }
-                // TODO - generate other types of output (other than object) - enum?
-                else -> log.info { "-- nothing to generate" }
-            }
+            generateTarget(target, targets)
         }
         // TODO - generate index - for html
+    }
+
+    private fun generateTarget(target: Target, targets: List<Target>) {
+        when {
+            target.constraints.isObject -> { // does it look like an object? generate a class
+                log.info { "-- target class ${target.qualifiedClassName}" }
+                target.validationsPresent = analyseObject(target, target.constraints, targets)
+                target.systemClasses.sortBy { it.order }
+                target.imports.sort()
+                actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
+                        target.suffix).use {
+                    actualTemplate.processTo(it, target)
+                }
+            }
+            target.constraints.isString && target.constraints.enumValues != null -> {
+                actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
+                        target.suffix).use {
+                    actualEnumTemplate.processTo(it, target)
+                }
+            }
+            // TODO - generate other types of output (other than object) - enum?
+            else -> log.info { "-- nothing to generate" }
+        }
+    }
+
+    fun generateClass(schema: JSONSchema, className: String, subDirectories: List<String> = emptyList()) {
+        var packageName = basePackageName
+        if (derivePackageFromStructure)
+            subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
+        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, File("./none"))
+        processSchema(target.schema, target.constraints)
+        log.info { "Generating for internal schema" }
+        generateTarget(target, listOf(target))
     }
 
     // TODO - how do we allow for "domain primitives" like Amount etc.?
@@ -196,10 +208,14 @@ class CodeGenerator(
                 uriName.endsWith(".schema.json", ignoreCase = true) -> uriName.dropLast(12)
                 uriName.endsWith("-schema.json", ignoreCase = true) -> uriName.dropLast(12)
                 uriName.endsWith("_schema.json", ignoreCase = true) -> uriName.dropLast(12)
+                uriName.endsWith(".schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
+                uriName.endsWith("-schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
+                uriName.endsWith("_schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
                 uriName.endsWith(".schema", ignoreCase = true) -> uriName.dropLast(7)
                 uriName.endsWith("-schema", ignoreCase = true) -> uriName.dropLast(7)
                 uriName.endsWith("_schema", ignoreCase = true) -> uriName.dropLast(7)
                 uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
+                uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)
                 else -> uriName
             }
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.

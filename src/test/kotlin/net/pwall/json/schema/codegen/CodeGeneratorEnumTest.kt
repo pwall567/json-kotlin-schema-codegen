@@ -4,13 +4,12 @@ import kotlin.test.Test
 import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
-import net.pwall.log.LoggerFactory
 
 class CodeGeneratorEnumTest {
 
     @Test fun `should output deeply nested class`() {
         val input = File("src/test/resources/test-enum.schema.json")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

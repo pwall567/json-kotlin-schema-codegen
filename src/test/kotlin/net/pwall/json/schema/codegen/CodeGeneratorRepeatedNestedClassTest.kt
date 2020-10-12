@@ -31,13 +31,11 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.log.LoggerFactory
-
 class CodeGeneratorRepeatedNestedClassTest {
 
     @Test fun `should correctly output repeated nested class`() {
         val input = File("src/test/resources/test-repeated-object.schema.json")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =

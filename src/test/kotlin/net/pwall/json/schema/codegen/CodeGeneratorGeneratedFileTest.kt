@@ -32,8 +32,6 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.log.LoggerFactory
-
 class CodeGeneratorGeneratedFileTest {
 
     @AfterTest fun `clean up generated sources directory`() {
@@ -53,7 +51,7 @@ class CodeGeneratorGeneratedFileTest {
     @Test fun `should process test directory and write to generated-sources`() {
         val input = File("src/test/resources/test1")
         val outputDirectory = "target/generated-test-sources/json-kotlin-schema/net/pwall/json/schema/test"
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
@@ -62,8 +60,7 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should output test class to Java`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
-                loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -75,7 +72,7 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should use custom templates`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.setTemplateDirectory(File("src/test/resources/dummy-template"))
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()

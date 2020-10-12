@@ -31,13 +31,11 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.log.LoggerFactory
-
 class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -49,8 +47,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to Java`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java",
-                loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
@@ -62,8 +59,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to TypeScript`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts",
-                loggerFactory = LoggerFactory.getDefault())
+        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
         codeGenerator.outputResolver =
