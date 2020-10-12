@@ -257,20 +257,16 @@ class CodeGenerator(
                 if (child is PropertiesSchema)
                     break
                 if (child is AllOfSchema && child.array.size == 1) {
-                    val general = child.array[0]
-                    if (general is JSONSchema.General && general.children.size == 1) {
-                        val ref = general.children[0]
-                        if (ref is RefSchema) {
-                            val refTarget = targets.find { t -> t.schema.uri == ref.target.uri }
-                            if (refTarget != null) {
-                                val baseTarget = Target(refTarget.schema, Constraints(refTarget.schema),
-                                        refTarget.className, refTarget.packageName, refTarget.subDirectories,
-                                        refTarget.suffix, refTarget.file)
-                                target.baseClass = baseTarget
-                                processSchema(baseTarget.schema, baseTarget.constraints)
-                                analyseObject(baseTarget, baseTarget.constraints, targets)
-                                return analyseDerivedObject(target, constraints, baseTarget)
-                            }
+                    child.array[0].findRefChild()?.let { refChild ->
+                        val refTarget = targets.find { t -> t.schema.uri == refChild.target.uri }
+                        if (refTarget != null) {
+                            val baseTarget = Target(refTarget.schema, Constraints(refTarget.schema),
+                                    refTarget.className, refTarget.packageName, refTarget.subDirectories,
+                                    refTarget.suffix, refTarget.file)
+                            target.baseClass = baseTarget
+                            processSchema(baseTarget.schema, baseTarget.constraints)
+                            analyseObject(baseTarget, baseTarget.constraints, targets)
+                            return analyseDerivedObject(target, constraints, baseTarget, targets)
                         }
                     }
                     break
@@ -278,18 +274,19 @@ class CodeGenerator(
             }
         }
         // now carry on and analyse properties
-        return analyseProperties(target, constraints).also { constraints.objectValidationsPresent = it }
+        return analyseProperties(target, constraints, targets).also { constraints.objectValidationsPresent = it }
     }
 
-    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target): Boolean {
+    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target,
+            targets: List<Target>): Boolean {
         constraints.properties.forEach { property ->
             if (refTarget.constraints.properties.any { it.propertyName == property.propertyName })
                 property.baseProperty = true
         }
-        return analyseProperties(target, constraints)
+        return analyseProperties(target, constraints, targets)
     }
 
-    private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
+    private fun analyseProperties(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
         constraints.properties.forEach { property ->
             when {
                 property.name in constraints.required -> property.isRequired = true
@@ -297,28 +294,47 @@ class CodeGenerator(
                 else -> property.nullable = true // should be error, but that would be unhelpful
             }
         }
-        return constraints.properties.fold(false) { result, property -> analyseProperty(target, property) || result }
+        return constraints.properties.fold(false) { result, property ->
+            analyseProperty(target, property, targets) || result
+        }
     }
 
-    private fun analyseProperty(target: Target, property: NamedConstraints): Boolean { // true == validations present
+    private fun analyseProperty(target: Target, property: NamedConstraints, targets: List<Target>): Boolean {
+        // true == validations present
         when {
             property.isObject -> {
-                val innerClassName = property.capitalisedName
-                val innerClass = target.addNestedClass(property, innerClassName)
-                property.localTypeName = innerClass.className
-                innerClass.validationsPresent = analyseProperties(target, property)
+                val refTarget = property.schema.findRefTarget(targets)
+                if (refTarget != null) {
+                    if (refTarget.packageName != target.packageName)
+                        target.imports.add(refTarget.qualifiedClassName)
+                    property.localTypeName = refTarget.className
+                }
+                else {
+                    val innerClassName = property.capitalisedName
+                    val innerClass = target.addNestedClass(property, innerClassName)
+                    property.localTypeName = innerClass.className
+                    innerClass.validationsPresent = analyseProperties(target, property, targets)
+                }
                 return false
             }
             property.isArray -> {
                 target.systemClasses.addOnce(SystemClass.LIST)
                 property.arrayItems?.let {
                     if (it.isObject) {
-                        val innerClassName = it.schema.findRefChild()?.let { ref ->
-                            ref.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
-                        } ?: Strings.capitalise(property.name.depluralise())
-                        val nestedClass = target.addNestedClass(it, innerClassName)
-                        it.localTypeName = nestedClass.className
-                        nestedClass.validationsPresent = analyseProperties(target, it)
+                        val refTarget = it.schema.findRefTarget(targets)
+                        if (refTarget != null) {
+                            if (refTarget.packageName != target.packageName)
+                                target.imports.add(refTarget.qualifiedClassName)
+                            it.localTypeName = refTarget.className
+                        }
+                        else {
+                            val innerClassName = it.schema.findRefChild()?.let { ref ->
+                                ref.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
+                            } ?: Strings.capitalise(property.name.depluralise())
+                            val nestedClass = target.addNestedClass(it, innerClassName)
+                            it.localTypeName = nestedClass.className
+                            nestedClass.validationsPresent = analyseProperties(target, it, targets)
+                        }
                     }
                 }
                 var validationsPresent = false
@@ -570,6 +586,9 @@ class CodeGenerator(
 
     private fun JSONSchema.findRefChild(): RefSchema? =
             ((this as? JSONSchema.General)?.children?.find { it is RefSchema }) as RefSchema?
+
+    private fun JSONSchema.findRefTarget(targets: List<Target>): Target? =
+            findRefChild()?.let { refChild -> targets.find { it.schema === refChild.target } }
 
     private fun <T: Any> MutableList<T>.addOnce(entry: T) {
         if (entry !in this)

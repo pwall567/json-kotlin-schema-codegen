@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft/2019-09/schema",
   "$id": "http://pwall.net/test-base-class",
-  "title": "Bae class",
+  "title": "Base class",
   "type": "object",
   "properties": {
     "id": {

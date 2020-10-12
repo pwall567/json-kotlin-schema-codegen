@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ref-class-outer",
+  "title": "Outer class",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "single": {
+      "$ref": "http://pwall.net/test-ref-class-inner"
+    },
+    "multiple": {
+      "type": "array",
+      "items": {
+        "$ref": "http://pwall.net/test-ref-class-inner"
+      }
+    }
+  },
+  "required": [ "id", "single", "multiple" ]
+}

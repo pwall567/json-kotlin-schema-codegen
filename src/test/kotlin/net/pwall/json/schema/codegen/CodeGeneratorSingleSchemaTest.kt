@@ -23,4 +23,17 @@ class CodeGeneratorSingleSchemaTest {
         expect(CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
     }
 
+    @Test fun `should generate from pre-loaded schema as array`() {
+        val input = File("src/test/resources/example.schema.json")
+        val schema = JSONSchema.parse(input)
+        val codeGenerator = CodeGenerator()
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver =
+                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generateClasses(listOf(schema to "Test"))
+        expect(CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
+    }
+
 }
