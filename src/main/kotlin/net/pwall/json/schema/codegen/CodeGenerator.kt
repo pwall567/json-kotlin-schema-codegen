@@ -198,7 +198,8 @@ class CodeGenerator(
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
         val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
-                suffix, dummyFile) }
+                suffix, dummyFile).also { t -> processSchema(t.schema, t.constraints) } }
+        log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
     }
