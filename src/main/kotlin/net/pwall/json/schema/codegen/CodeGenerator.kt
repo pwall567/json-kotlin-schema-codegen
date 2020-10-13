@@ -348,7 +348,7 @@ class CodeGenerator(
                 return validationsPresent
             }
             property.isInt -> {
-                return analyseInt(property)
+                return analyseInt(property, target)
             }
             property.isLong -> {
                 return analyseLong(property)
@@ -359,43 +359,55 @@ class CodeGenerator(
                 return analyseDecimal(target, property)
             }
             property.isString -> {
-                property.enumValues?.let { array ->
-                    if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
-                        findTargetClass(property, target, targets) { property.name }
-                        property.defaultValue?.let {
-                            if (it.type == JSONSchema.Type.STRING &&
-                                    array.any { a -> a.toString() == it.defaultValue.toString() } ) {
-                                val enumDefault = EnumDefault(property.localTypeName!!, it.defaultValue.toString())
-                                property.defaultValue = Constraints.DefaultValue(enumDefault, JSONSchema.Type.STRING)
-                            }
-                            else
-                                property.defaultValue = null
-                        }
-                        return false
-                    }
-                }
-                var validationsPresent = false
-                property.constValue?.let {
-                    if (it is JSONString) {
-                        val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.get()))
-                        property.addValidation(Validation.Type.CONST_STRING, stringStatic)
-                        validationsPresent = true
-                    }
-                }
-                property.minLength?.let {
-                    property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(it))
-                    validationsPresent = true
-                }
-                property.maxLength?.let {
-                    property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(it))
-                    validationsPresent = true
-                }
-                validationsPresent = analyseFormat(target, property) || validationsPresent
-                validationsPresent = analyseRegex(target, property) || validationsPresent
-                return validationsPresent
+                return analyseString(property, target, targets)
             }
         }
         return false
+    }
+
+    private fun analyseString(property: NamedConstraints, target: Target, targets: List<Target>): Boolean {
+        var validationsPresent = false
+        property.enumValues?.let { array ->
+            if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
+                findTargetClass(property, target, targets) { property.name }
+                property.defaultValue?.let {
+                    if (it.type == JSONSchema.Type.STRING &&
+                            array.any { a -> a.toString() == it.defaultValue.toString() } ) {
+                        val enumDefault = EnumDefault(property.localTypeName!!, it.defaultValue.toString())
+                        property.defaultValue = Constraints.DefaultValue(enumDefault, JSONSchema.Type.STRING)
+                    }
+                    else
+                        property.defaultValue = null
+                }
+                return false
+            }
+            if (array.all { it is JSONString }) {
+                target.systemClasses.addOnce(SystemClass.ARRAYS)
+                target.systemClasses.addOnce(SystemClass.LIST)
+                val arrayStatic = target.addStatic(Target.StaticType.STRING_ARRAY, "cg_array",
+                        array.map { StringValue(it.toString()) })
+                property.addValidation(Validation.Type.ENUM_STRING, arrayStatic)
+                validationsPresent = true
+            }
+        }
+        property.constValue?.let {
+            if (it is JSONString) {
+                val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.get()))
+                property.addValidation(Validation.Type.CONST_STRING, stringStatic)
+                validationsPresent = true
+            }
+        }
+        property.minLength?.let {
+            property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(it))
+            validationsPresent = true
+        }
+        property.maxLength?.let {
+            property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(it))
+            validationsPresent = true
+        }
+        validationsPresent = analyseFormat(target, property) || validationsPresent
+        validationsPresent = analyseRegex(target, property) || validationsPresent
+        return validationsPresent
     }
 
     private fun String.isValidIdentifier(): Boolean {
@@ -407,18 +419,20 @@ class CodeGenerator(
         return true
     }
 
-    private fun analyseInt(property: NamedConstraints): Boolean {
+    private fun analyseInt(property: NamedConstraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
             when (it) {
                 is JSONInteger -> {
                     property.addValidation(Validation.Type.CONST_INT, it.get())
+                    property.enumValues = null
                     result = true
                 }
                 is JSONLong -> {
                     it.get().let { v ->
                         if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
                             property.addValidation(Validation.Type.CONST_INT, v)
+                            property.enumValues = null
                             result = true
                         }
                     }
@@ -427,10 +441,27 @@ class CodeGenerator(
                     it.get().asLong().let { v ->
                         if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
                             property.addValidation(Validation.Type.CONST_INT, v)
+                            property.enumValues = null
                             result = true
                         }
                     }
                 }
+            }
+        }
+        property.enumValues?.let { array ->
+            if (array.all { it is JSONNumberValue }) {
+                target.systemClasses.addOnce(SystemClass.ARRAYS)
+                target.systemClasses.addOnce(SystemClass.LIST)
+                val arrayStatic = target.addStatic(Target.StaticType.INT_ARRAY, "cg_array", array.map {
+                    when (it) {
+                        is JSONInteger -> NumberValue(it.get())
+                        is JSONLong -> NumberValue(it.get())
+                        is JSONDecimal -> NumberValue(it.get())
+                        else -> NumberValue(0)
+                    }
+                })
+                property.addValidation(Validation.Type.ENUM_INT, arrayStatic)
+                result = true
             }
         }
         property.minimumLong?.let {

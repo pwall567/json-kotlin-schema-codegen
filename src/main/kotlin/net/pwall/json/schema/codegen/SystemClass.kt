@@ -27,7 +27,8 @@ package net.pwall.json.schema.codegen
 
 enum class SystemClass(val order: Int) {
     // collections etc.
-    LIST(0),
+    ARRAYS(0),
+    LIST(1),
     // math etc.
     DECIMAL(20),
     // date, time etc.

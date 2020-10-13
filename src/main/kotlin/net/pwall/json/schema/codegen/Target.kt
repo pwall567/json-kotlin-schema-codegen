@@ -84,7 +84,7 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
         return Static(type, "$staticNamePrefix${statics.size}", value).also { statics.add(it) }
     }
 
-    enum class StaticType { DECIMAL, STRING, PATTERN }
+    enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
     data class Static(val type: StaticType, val staticName: String, val value: Any)
 

@@ -35,7 +35,8 @@ class Validation(val type: Type, val value: Any? = null) {
         EMAIL, HOSTNAME, IPV4, IPV6,
         MAX_ITEMS, MIN_ITEMS,
         MAX_LENGTH, MIN_LENGTH,
-        CONST_INT, CONST_LONG, CONST_DECIMAL, CONST_STRING
+        CONST_INT, CONST_LONG, CONST_DECIMAL, CONST_STRING,
+        ENUM_STRING, ENUM_INT
     }
 
 }

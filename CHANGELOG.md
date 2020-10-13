@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `CodeGenerator`: tidied code from previous changes
 - `CodeGenerator`: improved handling of default values
+- `CodeGenerator`: improved validation of enums
 
 ## [0.10] - 2020-10-13
 ### Changed

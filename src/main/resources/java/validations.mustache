@@ -46,4 +46,8 @@
 {{&indent}}            {{>tniae}}("{{&propertyName}} not constant value {{&value}} - " + {{&propertyName}});
 {{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if ({{>nullchk}}!{{&propertyName}}.equals({{&value.staticName}}))
 {{&indent}}            {{>tniae}}("{{&propertyName}} not constant value {{&value.value}} - " + {{&propertyName}});
-{{/CONST_DECIMAL}}{{/type}}{{/validations}}
+{{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} not in enumerated values - " + {{&propertyName}});
+{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        if (!{{&value.staticName}}.contains({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&propertyName}} not in enumerated values - " + {{&propertyName}});
+{{/ENUM_INT}}{{/type}}{{/validations}}

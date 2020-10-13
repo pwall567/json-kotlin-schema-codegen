@@ -2,4 +2,8 @@
 {{/first}}{{#type}}{{#PATTERN}}    private static final Pattern {{&staticName}} = Pattern.compile({{&value.javaString}});
 {{/PATTERN}}{{#STRING}}    private static final String {{&staticName}} = {{&value.javaString}};
 {{/STRING}}{{#DECIMAL}}    private static final BigDecimal {{&staticName}} = {{#value}}{{#isZero}}BigDecimal.ZERO{{/isZero}}{{^isZero}}new BigDecimal("{{&rawNumber}}"){{/isZero}}{{/value}};
-{{/DECIMAL}}{{/type}}{{/statics}}
+{{/DECIMAL}}{{#STRING_ARRAY}}    private static final List{{&openAngleBracket}}String> {{&staticName}} = Arrays.asList(
+{{#value}}            {{&kotlinString}}{{^last}},{{/last}}
+{{/value}}    );
+{{/STRING_ARRAY}}{{#INT_ARRAY}}    private static final List{{&openAngleBracket}}Integer> {{&staticName}} = Arrays.asList({{#value}}{{&.}}{{^last}}, {{/last}}{{/value}});
+{{/INT_ARRAY}}{{/type}}{{/statics}}

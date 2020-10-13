@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-enum-validation",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "string",
+      "enum": [ "ABCDE", "FGHIJ", "!@#*%" ]
+    },
+    "bbb": {
+      "type": "integer",
+      "enum": [ 123, 456, 789 ]
+    }
+  },
+  "required": [ "aaa", "bbb" ]
+}
