@@ -7,7 +7,7 @@ import java.io.StringWriter
 
 class CodeGeneratorEnumTest {
 
-    @Test fun `should output deeply nested class`() {
+    @Test fun `should output enum class`() {
         val input = File("src/test/resources/test-enum.schema.json")
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"

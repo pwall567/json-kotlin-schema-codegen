@@ -48,7 +48,7 @@ data class TestString(
         val minlen: String,
         val minlen2: String? = null,
         val name: String,
-        val status: Status
+        val status: Status = Status.OPEN
 ) {
 
     init {

@@ -173,6 +173,7 @@ class CodeGenerator(
                 }
             }
             target.constraints.isString && target.constraints.enumValues != null -> {
+                log.info { "-- target enum ${target.qualifiedClassName}" }
                 actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
                         target.suffix).use {
                     actualEnumTemplate.processTo(it, target)
@@ -299,43 +300,37 @@ class CodeGenerator(
         }
     }
 
+    private fun findTargetClass(constraints: Constraints, target: Target, targets: List<Target>,
+                defaultName: () -> String) {
+        val refChild = constraints.schema.findRefChild()
+        val refTarget = refChild?.let { targets.find { t -> t.schema === it.target } }
+        if (refTarget != null) {
+            if (refTarget.packageName != target.packageName)
+                target.imports.add(refTarget.qualifiedClassName)
+            constraints.localTypeName = refTarget.className
+        }
+        else {
+            val nestedClassName = refChild?.let {
+                it.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
+            } ?: defaultName()
+            val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
+            nestedClass.validationsPresent = analyseProperties(target, constraints, targets)
+            constraints.localTypeName = nestedClass.className
+        }
+    }
+
     private fun analyseProperty(target: Target, property: NamedConstraints, targets: List<Target>): Boolean {
         // true == validations present
         when {
             property.isObject -> {
-                val refTarget = property.schema.findRefTarget(targets)
-                if (refTarget != null) {
-                    if (refTarget.packageName != target.packageName)
-                        target.imports.add(refTarget.qualifiedClassName)
-                    property.localTypeName = refTarget.className
-                }
-                else {
-                    val innerClassName = property.capitalisedName
-                    val innerClass = target.addNestedClass(property, innerClassName)
-                    property.localTypeName = innerClass.className
-                    innerClass.validationsPresent = analyseProperties(target, property, targets)
-                }
+                findTargetClass(property, target, targets) { property.name }
                 return false
             }
             property.isArray -> {
                 target.systemClasses.addOnce(SystemClass.LIST)
                 property.arrayItems?.let {
-                    if (it.isObject) {
-                        val refTarget = it.schema.findRefTarget(targets)
-                        if (refTarget != null) {
-                            if (refTarget.packageName != target.packageName)
-                                target.imports.add(refTarget.qualifiedClassName)
-                            it.localTypeName = refTarget.className
-                        }
-                        else {
-                            val innerClassName = it.schema.findRefChild()?.let { ref ->
-                                ref.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
-                            } ?: Strings.capitalise(property.name.depluralise())
-                            val nestedClass = target.addNestedClass(it, innerClassName)
-                            it.localTypeName = nestedClass.className
-                            nestedClass.validationsPresent = analyseProperties(target, it, targets)
-                        }
-                    }
+                    if (it.isObject)
+                        findTargetClass(it, target, targets) { property.name.depluralise() }
                 }
                 var validationsPresent = false
                 property.minItems?.let {
@@ -345,6 +340,10 @@ class CodeGenerator(
                 property.maxItems?.let {
                     property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
                     validationsPresent = true
+                }
+                property.defaultValue?.let {
+                    if (it.type != JSONSchema.Type.ARRAY)
+                        property.defaultValue = null
                 }
                 return validationsPresent
             }
@@ -362,9 +361,16 @@ class CodeGenerator(
             property.isString -> {
                 property.enumValues?.let { array ->
                     if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
-                        val innerClassName = property.capitalisedName
-                        val innerClass = target.addNestedClass(property, innerClassName)
-                        property.localTypeName = innerClass.className
+                        findTargetClass(property, target, targets) { property.name }
+                        property.defaultValue?.let {
+                            if (it.type == JSONSchema.Type.STRING &&
+                                    array.any { a -> a.toString() == it.defaultValue.toString() } ) {
+                                val enumDefault = EnumDefault(property.localTypeName!!, it.defaultValue.toString())
+                                property.defaultValue = Constraints.DefaultValue(enumDefault, JSONSchema.Type.STRING)
+                            }
+                            else
+                                property.defaultValue = null
+                        }
                         return false
                     }
                 }
@@ -443,6 +449,10 @@ class CodeGenerator(
             property.addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())
             result = true
         }
+        property.defaultValue?.let {
+            if (it.type != JSONSchema.Type.INTEGER)
+                property.defaultValue = null
+        }
         return result
     }
 
@@ -475,6 +485,10 @@ class CodeGenerator(
             property.addValidation(Validation.Type.MULTIPLE_LONG, multiple.asLong())
             result = true
         }
+        property.defaultValue?.let {
+            if (it.type != JSONSchema.Type.INTEGER)
+                property.defaultValue = null
+        }
         return result
     }
 
@@ -484,7 +498,7 @@ class CodeGenerator(
             if (it is JSONNumberValue) {
                 val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec",
                         NumberValue(it.bigDecimalValue()))
-                property.addValidation(Validation.Type.CONST_DECIMAL, decimalStatic) // TODO template
+                property.addValidation(Validation.Type.CONST_DECIMAL, decimalStatic)
                 result = true
             }
         }
@@ -512,6 +526,10 @@ class CodeGenerator(
             val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(multiple))
             property.addValidation(Validation.Type.MULTIPLE_DECIMAL, decimalStatic)
             result = true
+        }
+        property.defaultValue?.let {
+            if (it.type != JSONSchema.Type.NUMBER && it.type != JSONSchema.Type.INTEGER)
+                property.defaultValue = null
         }
         return result
     }
@@ -587,9 +605,6 @@ class CodeGenerator(
     private fun JSONSchema.findRefChild(): RefSchema? =
             ((this as? JSONSchema.General)?.children?.find { it is RefSchema }) as RefSchema?
 
-    private fun JSONSchema.findRefTarget(targets: List<Target>): Target? =
-            findRefChild()?.let { refChild -> targets.find { it.schema === refChild.target } }
-
     private fun <T: Any> MutableList<T>.addOnce(entry: T) {
         if (entry !in this)
             add(entry)
@@ -610,7 +625,7 @@ class CodeGenerator(
             when (value) {
                 null -> Constraints.DefaultValue(null, JSONSchema.Type.NULL)
                 is JSONInteger -> Constraints.DefaultValue(value.get(), JSONSchema.Type.INTEGER)
-                is JSONString -> Constraints.DefaultValue(value.toJSON(), JSONSchema.Type.STRING)
+                is JSONString -> Constraints.DefaultValue(StringValue(value.get()), JSONSchema.Type.STRING)
                 is JSONBoolean -> Constraints.DefaultValue(value.get(), JSONSchema.Type.BOOLEAN)
                 is JSONArray -> Constraints.DefaultValue(value.map { processDefaultValue(it) }, JSONSchema.Type.ARRAY)
                 is JSONObject -> throw JSONSchemaException("Can't handle object as default value")
@@ -721,6 +736,21 @@ class CodeGenerator(
                 else -> constraints.types.add(it)
             }
         }
+    }
+
+    /**
+     * This class is intended to look like a [StringValue], for when the default value of a string is an enum value.
+     */
+    class EnumDefault(private val className: String, private val defaultValue: String) {
+
+        override fun toString(): String {
+            return "$className.$defaultValue"
+        }
+
+        @Suppress("unused")
+        val kotlinString: String
+            get() = toString()
+
     }
 
     companion object {

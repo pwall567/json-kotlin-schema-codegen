@@ -37,7 +37,8 @@
     },
     "status": {
       "type": "string",
-      "enum": [ "OPEN", "CLOSED" ]
+      "enum": [ "OPEN", "CLOSED" ],
+      "default": "OPEN"
     }
   },
   "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "status" ]

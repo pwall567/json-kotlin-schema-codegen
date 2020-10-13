@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`: tidied code from previous changes
+- `CodeGenerator`: improved handling of default values
+
 ## [0.10] - 2020-10-13
 ### Changed
 - `CodeGenerator`: improved output of references to other classes in same generation run

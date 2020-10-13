@@ -7,8 +7,8 @@
  */
 {{/description}}{{/schema}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
-}}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
+{{/description}}{{/schema}}        val {{&name}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/properties}}){{#validationsOrNestedClassesOrStaticsPresent}} {
 {{#validationsPresent}}
     init {
