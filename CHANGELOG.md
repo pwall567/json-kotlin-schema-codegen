@@ -2,11 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.11] - 2020-10-13
 ### Changed
 - `CodeGenerator`: tidied code from previous changes
 - `CodeGenerator`: improved handling of default values
 - `CodeGenerator`: improved validation of enums
+- `CodeGenerator`: added ability to handle custom validations
 
 ## [0.10] - 2020-10-13
 ### Changed

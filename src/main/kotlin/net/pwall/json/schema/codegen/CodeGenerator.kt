@@ -50,6 +50,7 @@ import net.pwall.json.schema.subschema.RequiredSchema
 import net.pwall.json.schema.validation.ArrayValidator
 import net.pwall.json.schema.validation.ConstValidator
 import net.pwall.json.schema.validation.DefaultValidator
+import net.pwall.json.schema.validation.DelegatingValidator
 import net.pwall.json.schema.validation.EnumValidator
 import net.pwall.json.schema.validation.FormatValidator
 import net.pwall.json.schema.validation.NumberValidator
@@ -692,6 +693,7 @@ class CodeGenerator(
             is StringValidator -> processStringValidator(validator, constraints)
             is TypeValidator -> processTypeValidator(validator, constraints)
             is ArrayValidator -> processArrayValidator(validator, constraints)
+            is DelegatingValidator -> processValidator(validator.validator, constraints)
         }
     }
 
