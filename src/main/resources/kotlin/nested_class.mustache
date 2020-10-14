@@ -1,7 +1,7 @@
 {{#description}}    /**
      * {{&description}}
      */
-{{/description}}{{#isObject}}    data class {{&className}}(
+{{/description}}{{#isObject}}    {{#numberOfProperties}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}            /** {{&safeDescription}} */
 {{/description}}{{/schema}}            val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
@@ -10,6 +10,6 @@
         init {
 {{#properties}}{{>validations}}{{/properties}}        }
 
-    }{{/validationsPresent}}{{/isObject}}{{#isString}}    enum class {{&className}} {
+    }{{/validationsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
 {{#enumValues}}        {{&.}}{{^last}},{{/last}}
 {{/enumValues}}    }{{/isString}}

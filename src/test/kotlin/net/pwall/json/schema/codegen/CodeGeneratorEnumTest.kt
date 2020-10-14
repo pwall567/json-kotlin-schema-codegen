@@ -19,6 +19,18 @@ class CodeGeneratorEnumTest {
         expect(expected) { stringWriter.toString() }
     }
 
+    @Test fun `should output enum class as Java`() {
+        val input = File("src/test/resources/test-enum.schema.json")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver =
+                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestEnum", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(expectedJava) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expected =
@@ -31,6 +43,15 @@ enum class TestEnum {
 }
 """
 
+        const val expectedJava =
+"""package com.example;
+
+public enum TestEnum {
+    FIRST,
+    SECOND,
+    THIRD
+}
+"""
     }
 
 }

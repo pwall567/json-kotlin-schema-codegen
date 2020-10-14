@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.11.1] - 2020-10-14
+### Changed
+- `Constraints`: added `numberOfProperties` to assist templates
+- templates: improve handling of classes with no properties
+- templates: allow standalone enum in Java
+
 ## [0.11] - 2020-10-13
 ### Changed
 - `CodeGenerator`: tidied code from previous changes

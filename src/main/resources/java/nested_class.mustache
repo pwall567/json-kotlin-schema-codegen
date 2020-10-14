@@ -4,16 +4,16 @@
 {{/description}}{{#isObject}}    public static class {{&className}} {
 
 {{#properties}}        private final {{>type}} {{&name}};
-{{/properties}}
-        public {{&className}}(
+{{#last}}
+{{/last}}{{/properties}}{{#numberOfProperties}}        public {{&className}}(
 {{#properties}}                {{>type}} {{&name}}{{^last}},{{/last}}
 {{/properties}}        ) {
 {{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&name}} == null)
                 {{>tniae}}("Must not be null - {{&name}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&name}} = {{&name}};
 {{/properties}}        }
-{{>getters}}
-{{>equals}}
+
+{{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}
     }
 {{/isObject}}{{#isString}}    public enum {{&className}} {

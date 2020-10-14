@@ -4,12 +4,13 @@
 {{&indent}}            return true;
 {{&indent}}        if (!(other instanceof {{&className}}))
 {{&indent}}            return false;
-{{&indent}}        {{&className}} typedOther = ({{&className}})other;
-{{#properties}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&name}} == typedOther.{{&name}};
+{{#properties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
+{{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&name}} == typedOther.{{&name}};
 {{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        return {{&name}} == null ? typedOther.{{&name}} == null : {{&name}}.equals(typedOther.{{&name}});
 {{/nullable}}{{^nullable}}{{&indent}}        return {{&name}}.equals(typedOther.{{&name}});
 {{/nullable}}{{/isPrimitive}}{{/last}}{{^last}}{{#isPrimitive}}{{&indent}}        if ({{&name}} != typedOther.{{&name}})
 {{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        if ({{&name}} == null ? typedOther.{{&name}} != null : !{{&name}}.equals(typedOther.{{&name}}))
 {{/nullable}}{{^nullable}}{{&indent}}        if (!{{&name}}.equals(typedOther.{{&name}}))
 {{/nullable}}{{/isPrimitive}}{{&indent}}            return false;
-{{/last}}{{/properties}}{{&indent}}    }
+{{/last}}{{/properties}}{{^properties}}{{&indent}}        return true;
+{{/properties}}{{&indent}}    }

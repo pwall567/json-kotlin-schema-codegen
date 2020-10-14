@@ -8,16 +8,16 @@
 {{/description}}{{/schema}}public class {{&className}} {
 {{>add_statics}}
 {{#properties}}    private final {{>type}} {{&name}};
-{{/properties}}
-    public {{&className}}(
+{{#last}}
+{{/last}}{{/properties}}{{#numberOfProperties}}    public {{&className}}(
 {{#properties}}            {{>type}} {{&name}}{{^last}},{{/last}}
 {{/properties}}    ) {
 {{#properties}}{{^isPrimitive}}{{^nullable}}        if ({{&name}} == null)
             {{>tniae}}("Must not be null - {{&name}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}        this.{{&name}} = {{&name}};
 {{/properties}}    }
-{{>getters}}
-{{>equals}}
+
+{{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}{{#nestedClasses}}
 {{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}
 }{{/constraints}}

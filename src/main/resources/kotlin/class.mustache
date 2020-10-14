@@ -5,7 +5,7 @@
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&description}}
  */
-{{/description}}{{/schema}}data class {{&className}}(
+{{/description}}{{/schema}}{{#numberOfProperties}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
@@ -15,4 +15,4 @@
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#nestedClasses}}
 {{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsPresent}}{{/constraints}}
+}{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}class {{&className}}{{/numberOfProperties}}{{/constraints}}
