@@ -43,7 +43,9 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
 
+    @Suppress("unused")
     val statics = mutableListOf<Static>()
+    @Suppress("unused")
     val nestedClasses = mutableListOf<NestedClass>()
 
     @Suppress("unused")

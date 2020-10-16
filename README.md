@@ -15,7 +15,7 @@ But for a large subset of schema definitions a viable code representation is pos
 provide conversions for the broadest possible range of JSON Schema definitions.
 
 The library uses a template mechanism (using [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
-templates are provided for Kotlin and Java.
+templates are provided to generate classes in Kotlin and Java.
 
 ## Quick Start
 

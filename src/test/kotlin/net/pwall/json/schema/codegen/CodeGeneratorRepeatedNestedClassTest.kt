@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorRepeatedNestedClassTest {
 
     @Test fun `should correctly output repeated nested class`() {
@@ -38,11 +41,10 @@ class CodeGeneratorRepeatedNestedClassTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestRepeatedObject", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestRepeatedObject", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedRepeated) { stringWriter.toString() }
+        expect(createHeader("TestRepeatedObject") + expectedRepeated) { stringWriter.toString() }
     }
 
     companion object {

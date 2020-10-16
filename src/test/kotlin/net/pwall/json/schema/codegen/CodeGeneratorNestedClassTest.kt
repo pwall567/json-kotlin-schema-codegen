@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorNestedClassTest {
 
     @Test fun `should output deeply nested class`() {
@@ -38,11 +41,10 @@ class CodeGeneratorNestedClassTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestNestedObject", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestNestedObject", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedNested) { stringWriter.toString() }
+        expect(createHeader("TestNestedObject") + expectedNested) { stringWriter.toString() }
     }
 
     @Test fun `should output deeply nested class in Java`() {
@@ -50,11 +52,10 @@ class CodeGeneratorNestedClassTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestNestedObject", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestNestedObject", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedNestedJava) { stringWriter.toString() }
+        expect(createHeader("TestNestedObject") + expectedNestedJava) { stringWriter.toString() }
     }
 
     companion object {

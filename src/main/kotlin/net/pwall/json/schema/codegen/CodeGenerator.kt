@@ -88,7 +88,9 @@ class CodeGenerator(
     private val defaultTemplateParser: MustacheParser by lazy {
         MustacheParser().also {
             it.resolvePartial = { name ->
-                CodeGenerator::class.java.getResourceAsStream("/$templates/$name.mustache").reader()
+                val inputStream = CodeGenerator::class.java.getResourceAsStream("/$templates/$name.mustache") ?:
+                        throw JSONSchemaException("Can't locate template partial /$templates/$name.mustache")
+                inputStream.reader()
             }
         }
     }

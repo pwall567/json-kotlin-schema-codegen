@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorExampleTest {
 
     @Test fun `should output example data class`() {
@@ -38,11 +41,10 @@ class CodeGeneratorExampleTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedExample) { stringWriter.toString() }
+        expect(createHeader("Test") + expectedExample) { stringWriter.toString() }
     }
 
     @Test fun `should output example data class in Java`() {
@@ -50,11 +52,10 @@ class CodeGeneratorExampleTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "Test", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedExampleJava) { stringWriter.toString() }
+        expect(createHeader("Test") + expectedExampleJava) { stringWriter.toString() }
     }
 
     companion object {
@@ -128,10 +129,16 @@ public class Test {
         this.stock = stock;
     }
 
+    /**
+     * Product identifier
+     */
     public BigDecimal getId() {
         return id;
     }
 
+    /**
+     * Name of the product
+     */
     public String getName() {
         return name;
     }

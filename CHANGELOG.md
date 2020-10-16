@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: improved output of comments
+- templates: added header
+
 ## [0.11.1] - 2020-10-14
 ### Changed
 - `Constraints`: added `numberOfProperties` to assist templates

@@ -32,6 +32,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorGeneratedFileTest {
 
     @AfterTest fun `clean up generated sources directory`() {
@@ -55,7 +58,7 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
-        expect(expected2) { File("$outputDirectory/person/Person.kt").readText() }
+        expect(createHeader("Person") + expected2) { File("$outputDirectory/person/Person.kt").readText() }
     }
 
     @Test fun `should output test class to Java`() {
@@ -63,11 +66,10 @@ class CodeGeneratorGeneratedFileTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy1", listOf("person"), "Person", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy1", listOf("person"), "Person", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expected2Java) { stringWriter.toString() }
+        expect(createHeader("Person") + expected2Java) { stringWriter.toString() }
     }
 
     @Test fun `should use custom templates`() {
@@ -76,8 +78,7 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.setTemplateDirectory(File("src/test/resources/dummy-template"))
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", listOf("person"), "Person", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", listOf("person"), "Person", "kt", stringWriter)
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
         expect("// Dummy\n") { stringWriter.toString() }
@@ -126,10 +127,16 @@ public class Person {
         this.name = name;
     }
 
+    /**
+     * Id of the person
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * Name of the person
+     */
     public String getName() {
         return name;
     }

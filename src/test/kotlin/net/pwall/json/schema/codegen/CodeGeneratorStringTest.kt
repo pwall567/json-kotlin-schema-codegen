@@ -1,3 +1,28 @@
+/*
+ * @(#) CodeGeneratorStringTest.kt
+ *
+ * json-kotlin-schema-codegen  JSON Schema Code Generation
+ * Copyright (c) 2020 Peter Wall
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
@@ -6,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations`() {
@@ -13,11 +41,10 @@ class CodeGeneratorStringTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestString", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestString", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expected) { stringWriter.toString() }
+        expect(createHeader("TestString") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for string validations in Java`() {
@@ -25,11 +52,10 @@ class CodeGeneratorStringTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestString", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestString", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestString") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

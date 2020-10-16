@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorDefaultTest {
 
     @Test fun `should output class with default value`() {
@@ -38,11 +41,10 @@ class CodeGeneratorDefaultTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(listOf(input))
-        expect(expectedDefault) { stringWriter.toString() }
+        expect(createHeader("TestDefault") + expectedDefault) { stringWriter.toString() }
     }
 
     companion object {

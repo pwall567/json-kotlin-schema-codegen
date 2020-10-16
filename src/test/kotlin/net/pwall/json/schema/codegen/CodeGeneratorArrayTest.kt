@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object`() {
@@ -38,11 +41,10 @@ class CodeGeneratorArrayTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy1", emptyList(), "TestArray", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArray", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expected) { stringWriter.toString() }
+        expect(createHeader("TestArray") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate nested class for array of object in Java`() {
@@ -50,11 +52,10 @@ class CodeGeneratorArrayTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy1", emptyList(), "TestArray", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArray", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestArray") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

@@ -1,9 +1,9 @@
-{{#packageName}}package {{&packageName}};
+{{>header}}{{#packageName}}package {{&packageName}};
 
 {{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}};
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
- * {{&description}}
+ * {{&safeDescription}}
  */
 {{/description}}{{/schema}}public class {{&className}} {
 {{>add_statics}}

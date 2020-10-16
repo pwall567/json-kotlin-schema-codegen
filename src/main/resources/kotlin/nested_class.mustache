@@ -1,7 +1,7 @@
-{{#description}}    /**
-     * {{&description}}
+{{#schema}}{{#description}}    /**
+     * {{&safeDescription}}
      */
-{{/description}}{{#isObject}}    {{#numberOfProperties}}data class {{&className}}(
+{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}            /** {{&safeDescription}} */
 {{/description}}{{/schema}}            val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}

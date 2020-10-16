@@ -31,6 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+
 class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class`() {
@@ -38,11 +41,10 @@ class CodeGeneratorPersonSchemaTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestPerson", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestPerson", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expected1) { stringWriter.toString() }
+        expect(createHeader("TestPerson") + expected1) { stringWriter.toString() }
     }
 
     @Test fun `should output simple data class to Java`() {
@@ -50,11 +52,10 @@ class CodeGeneratorPersonSchemaTest {
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestPerson", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestPerson", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestPerson") + expectedJava) { stringWriter.toString() }
     }
 
     @Test fun `should output simple data class to TypeScript`() {
@@ -62,11 +63,10 @@ class CodeGeneratorPersonSchemaTest {
         val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
         codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver =
-                CodeGeneratorTestUtil.outputCapture("dummy", emptyList(), "TestPerson", "ts", stringWriter)
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestPerson", "ts", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(expectedTypeScript) { stringWriter.toString() }
+        expect(createHeader("TestPerson") + expectedTypeScript) { stringWriter.toString() }
     }
 
     companion object {
