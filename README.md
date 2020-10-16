@@ -37,6 +37,21 @@ all the files in the directory with filenames ending `.json` or `.yaml` will be 
 It is preferable to process multiple files in this way because the code generator can create references to other classes
 that it knows about - that is, classes generated in the same run.
 
+## Reference
+
+A `CodeGenerator` object is used to perform the generation.
+It takes a number of parameters, many of which can be specified either as constructor parameters or by modifying
+variables in the constructed instance.
+
+### Parameters
+
+- `templates` - the set of templates to use (the default is "kotlin" and the options are "kotlin", "java" or
+"typescript" - typescript coverage is extremely rudimentary at this time)
+- `suffix` - filename suffix to use on generated files (default ".kt")
+- `basePackageName` - the base package name (if directories are supplied to the `generate()` function, the subdirectory
+names are used as sub-package names)
+- `baseDirectoryName` - the base directory to use for generated output
+
 ## Dependency Specification
 
 The latest version of the library is 0.11.1, and it may be obtained from the Maven Central repository.
