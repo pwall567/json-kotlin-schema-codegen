@@ -28,14 +28,16 @@ generation process:
         codeGenerator.generate(File("/path/to/example.schema.json"))
 ```
 
-## Further Explanation
+## Multiple Files
 
 The Code Generator can process a single file or multiple files in one invocation.
 The `generate()` function takes a `vararg` parameter list, and each item may be a file or a directory; in the latter
-all the files in the directory with filenames ending `.json` or `.yaml` will be processed.
+case all files in the directory with filenames ending `.json` or `.yaml` will be processed.
 
 It is preferable to process multiple files in this way because the code generator can create references to other classes
 that it knows about - that is, classes generated in the same run.
+For example, if a `properties` entry consists of a  `$ref` pointing to a schema that is in the list of files to be
+generated, then a reference to an object of that type will be generated instead of a nested class.
 
 ## Reference
 
