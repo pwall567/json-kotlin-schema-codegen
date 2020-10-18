@@ -1,1 +1,2 @@
 language: java # actually Kotlin, but Java is the nearest option available
+script: mvn clean package
