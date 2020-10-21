@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-array-items",
+  "title": "Dummy",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9999
+      },
+      "maxItems": 5,
+      "minItems": 1
+    },
+    "bbb": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$"
+      }
+    }
+  },
+  "required": [ "aaa" ]
+}

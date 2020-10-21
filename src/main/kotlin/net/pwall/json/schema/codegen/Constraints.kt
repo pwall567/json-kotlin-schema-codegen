@@ -52,6 +52,10 @@ open class Constraints(val schema: JSONSchema) {
     val closeAngleBracket = '>'
 
     @Suppress("unused")
+    open val displayName: String
+        get() = "value"
+
+    @Suppress("unused")
     var uri: URI? = schema.uri
 
     var objectValidationsPresent: Boolean? = null

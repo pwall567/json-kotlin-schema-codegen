@@ -36,7 +36,8 @@ class Validation(val type: Type, val value: Any? = null) {
         MAX_ITEMS, MIN_ITEMS,
         MAX_LENGTH, MIN_LENGTH,
         CONST_INT, CONST_LONG, CONST_DECIMAL, CONST_STRING,
-        ENUM_STRING, ENUM_INT
+        ENUM_STRING, ENUM_INT,
+        ARRAY_ITEMS
     }
 
 }

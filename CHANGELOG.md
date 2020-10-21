@@ -2,10 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.12] - 2020-10-21
 ### Changed
 - templates: improved output of comments
 - templates: added header
+- templates: added validation of array items
 
 ## [0.11.1] - 2020-10-14
 ### Changed

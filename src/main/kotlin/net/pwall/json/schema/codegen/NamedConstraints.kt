@@ -36,7 +36,15 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
     val propertyName: String
         get() = name
 
+    @Suppress("unused")
     val capitalisedName: String
         get() = Strings.capitalise(name)
+
+    @Suppress("unused")
+    override val displayName: String
+        get() = name
+
+    @Suppress("unused")
+    val itemIndent = ""
 
 }

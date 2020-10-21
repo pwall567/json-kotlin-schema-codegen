@@ -331,11 +331,32 @@ class CodeGenerator(
             }
             property.isArray -> {
                 target.systemClasses.addOnce(SystemClass.LIST)
-                property.arrayItems?.let {
-                    if (it.isObject)
-                        findTargetClass(it, target, targets) { property.name.depluralise() }
-                }
                 var validationsPresent = false
+                property.arrayItems?.let {
+//                    if (it.isObject)
+//                        findTargetClass(it, target, targets) { property.name.depluralise() }
+                    val itemValidations = when {
+                        it.isObject -> {
+                            findTargetClass(it, target, targets) { property.name.depluralise() }
+                            false
+                        }
+                        it.isInt -> analyseInt(it, target)
+                        it.isLong -> analyseLong(it)
+                        it.isDecimal -> {
+                            target.systemClasses.addOnce(SystemClass.DECIMAL)
+                            it.systemClass = SystemClass.DECIMAL
+                            analyseDecimal(target, it)
+                        }
+                        it.isString -> analyseString(it, target, targets) { property.name.depluralise() }
+                        // TODO array of array?
+                        else -> false
+                    }
+                    if (itemValidations) {
+                        // TODO ???
+                        property.addValidation(Validation.Type.ARRAY_ITEMS)
+                        validationsPresent = true
+                    }
+                }
                 property.minItems?.let {
                     property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
                     validationsPresent = true
@@ -362,17 +383,18 @@ class CodeGenerator(
                 return analyseDecimal(target, property)
             }
             property.isString -> {
-                return analyseString(property, target, targets)
+                return analyseString(property, target, targets) { property.name }
             }
         }
         return false
     }
 
-    private fun analyseString(property: NamedConstraints, target: Target, targets: List<Target>): Boolean {
+    private fun analyseString(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
+            Boolean {
         var validationsPresent = false
         property.enumValues?.let { array ->
             if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
-                findTargetClass(property, target, targets) { property.name }
+                findTargetClass(property, target, targets, defaultName)
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
@@ -422,7 +444,7 @@ class CodeGenerator(
         return true
     }
 
-    private fun analyseInt(property: NamedConstraints, target: Target): Boolean {
+    private fun analyseInt(property: Constraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
             when (it) {
@@ -490,7 +512,7 @@ class CodeGenerator(
         return result
     }
 
-    private fun analyseLong(property: NamedConstraints): Boolean {
+    private fun analyseLong(property: Constraints): Boolean {
         var result = false
         property.constValue?.let {
             when (it) {
@@ -526,7 +548,7 @@ class CodeGenerator(
         return result
     }
 
-    private fun analyseDecimal(target: Target, property: NamedConstraints): Boolean {
+    private fun analyseDecimal(target: Target, property: Constraints): Boolean {
         var result = false
         property.constValue?.let {
             if (it is JSONNumberValue) {
@@ -669,8 +691,9 @@ class CodeGenerator(
     private fun processSubSchema(subSchema: JSONSchema.SubSchema, constraints: Constraints) {
         when (subSchema) {
             is CombinationSchema -> processCombinationSchema(subSchema, constraints)
-            is ItemsSchema -> processSchema (subSchema.itemSchema,
-                    constraints.arrayItems ?: Constraints(subSchema.itemSchema).also { constraints.arrayItems = it })
+            is ItemsSchema -> processSchema(subSchema.itemSchema,
+                    constraints.arrayItems ?: ItemConstraints(subSchema.itemSchema, constraints.displayName).also {
+                            constraints.arrayItems = it })
             is PropertiesSchema -> processPropertySchema(subSchema, constraints)
             is RefSchema -> processSchema(subSchema.target, constraints)
             is RequiredSchema -> subSchema.properties.forEach {
