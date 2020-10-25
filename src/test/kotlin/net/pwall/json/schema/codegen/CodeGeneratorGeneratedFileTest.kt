@@ -59,6 +59,7 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
         expect(createHeader("Person") + expected2) { File("$outputDirectory/person/Person.kt").readText() }
+        codeGenerator.log.debug { "File $outputDirectory/person/Person.kt will be deleted" }
     }
 
     @Test fun `should output test class to Java`() {

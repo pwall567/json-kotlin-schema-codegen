@@ -19,5 +19,5 @@
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}{{#nestedClasses}}
-{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}
 }{{/constraints}}

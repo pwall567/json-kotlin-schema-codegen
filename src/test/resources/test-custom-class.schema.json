@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-custom",
+  "title": "Dummy",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "string",
+      "x-test": "money"
+    },
+    "bbb": {
+      "type": "string",
+      "x-test": "money"
+    }
+  },
+  "required": [
+    "aaa"
+  ]
+}

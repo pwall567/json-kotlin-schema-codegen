@@ -30,10 +30,18 @@ import java.io.File
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 
-
+/**
+ * A code generation target.  The class contains several properties that exist just for the purposes of template
+ * expansion.
+ *
+ * @author  Peter Wall
+ */
 class Target(val schema: JSONSchema, constraints: Constraints, className: String, val packageName: String?,
         val subDirectories: List<String>, val suffix: String, val file: File) :
                 ClassDescriptor(constraints, className) {
+
+    @Suppress("unused")
+    val indent = Indent()
 
     val qualifiedClassName: String
         get() = packageName?.let { "$it.$className" } ?: className
@@ -46,7 +54,7 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
     @Suppress("unused")
     val statics = mutableListOf<Static>()
     @Suppress("unused")
-    val nestedClasses = mutableListOf<NestedClass>()
+    val nestedClasses = mutableListOf<ClassDescriptor>()
 
     @Suppress("unused")
     val staticsPresent: Boolean
@@ -76,7 +84,7 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
                 }
             }
         }
-        val nestedClass = NestedClass(constraints, actualInnerClassName)
+        val nestedClass = ClassDescriptor(constraints, actualInnerClassName)
         nestedClasses.add(nestedClass)
         return nestedClass
     }

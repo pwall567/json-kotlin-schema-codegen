@@ -1,5 +1,5 @@
 /*
- * @(#) NamedConstraints.kt
+ * @(#) Indent.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
@@ -25,15 +25,40 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.json.schema.JSONSchema
+/**
+ * A class to help with indentation during template expansion.
+ *
+ * When the context object for Mustache contains: `val indent: Indent()`, then any references in the template to
+ * `{{&indent}}` will cause nothing to be output.  But if the [increment] value accessor is invoked as a section,
+ * creating a nested context, then within that context a reference to `{{&indent}}` will cause 4 spaces to be output.
+ * This may be repeated to any required depth.
+ *
+ * Example:
+ * ```
+ * {{&indent}}This will not be indented.
+ * {{#indent.increment}}{{&indent}}This will be indented 4 spaces.
+ * {{#indent.increment}}{{&indent}}This will be indented 8 spaces.
+ * {{/indent.increment}}{{/indent.increment}}
+ * ```
+ *
+ * @author  Peter Wall
+ */
+class Indent private constructor(
+        private val spaces: String = "",
+        @Suppress("unused")
+        val level: Int
+) {
 
-class ItemConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
+    constructor() : this("", 0)
 
     @Suppress("unused")
-    val propertyName: String = "it"
+    val increment: Indent
+        get() = Indent("$spaces    ", level + 1)
 
     @Suppress("unused")
-    override val displayName: String
-        get() = "$name item"
+    val indent: Indent
+        get() = this
+
+    override fun toString(): String = spaces
 
 }

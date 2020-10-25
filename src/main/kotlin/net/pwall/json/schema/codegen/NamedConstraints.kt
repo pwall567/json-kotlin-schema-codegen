@@ -44,7 +44,4 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
     override val displayName: String
         get() = name
 
-    @Suppress("unused")
-    val itemIndent = ""
-
 }

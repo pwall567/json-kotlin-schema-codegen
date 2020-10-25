@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.13] - 2020-10-25
+### Changed
+- templates: simplified indentation of generated code
+- templates: added null check on Java array validation
+- `CodeGenerator`: added ability to specify custom generated type for nominated nodes
+
 ## [0.12] - 2020-10-21
 ### Changed
 - templates: improved output of comments

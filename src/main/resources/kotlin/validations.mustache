@@ -1,29 +1,29 @@
-{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}JSONValidation.isEmail({{&propertyName}})) { "{{&displayName}} does not match format email - ${{&propertyName}}" }
-{{/EMAIL}}{{#HOSTNAME}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}JSONValidation.isHostname({{&propertyName}})) { "{{&displayName}} does not match format hostname - ${{&propertyName}}" }
-{{/HOSTNAME}}{{#IPV4}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}JSONValidation.isIPV4({{&propertyName}})) { "{{&displayName}} does not match format ipv4 - ${{&propertyName}}" }
-{{/IPV4}}{{#IPV6}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}JSONValidation.isIPV6({{&propertyName}})) { "{{&displayName}} does not match format ipv6 - ${{&propertyName}}" }
-{{/IPV6}}{{#PATTERN}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&value.staticName}} matches {{&propertyName}}) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&propertyName}}" }
-{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
-{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}L) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
-{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
-{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}L) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
-{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} <= {{&value.staticName}}) { "{{&displayName}} > maximum {{&value.value}} - ${{&propertyName}}" }
-{{/MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#MINIMUM_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&propertyName}}" }
-{{/MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#MULTIPLE_INT}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
-{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
-{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&propertyName}}" }
-{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }
-{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}size >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }
-{{/MIN_ITEMS}}{{#MAX_LENGTH}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.length <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.length}" }
-{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}length >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.length}" }
-{{/MIN_LENGTH}}{{#CONST_STRING}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value ${{&value.staticName}} - ${{&propertyName}}" }
-{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
-{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
-{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
-{{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
-{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}{{&itemIndent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
-{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}{{&itemIndent}}        {{&propertyName}}{{#nullable}}?{{/nullable}}.forEach {
-{{#arrayItems}}{{>validations}}{{/arrayItems}}{{&indent}}{{&itemIndent}}        }
+{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}        require({{>nullchk}}JSONValidation.isEmail({{&propertyName}})) { "{{&displayName}} does not match format email - ${{&propertyName}}" }
+{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        require({{>nullchk}}JSONValidation.isHostname({{&propertyName}})) { "{{&displayName}} does not match format hostname - ${{&propertyName}}" }
+{{/HOSTNAME}}{{#IPV4}}{{&indent}}        require({{>nullchk}}JSONValidation.isIPV4({{&propertyName}})) { "{{&displayName}} does not match format ipv4 - ${{&propertyName}}" }
+{{/IPV4}}{{#IPV6}}{{&indent}}        require({{>nullchk}}JSONValidation.isIPV6({{&propertyName}})) { "{{&displayName}} does not match format ipv6 - ${{&propertyName}}" }
+{{/IPV6}}{{#PATTERN}}{{&indent}}        require({{>nullchk}}{{&value.staticName}} matches {{&propertyName}}) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&propertyName}}" }
+{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
+{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}L) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
+{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
+{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}L) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
+{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value.staticName}}) { "{{&displayName}} > maximum {{&value.value}} - ${{&propertyName}}" }
+{{/MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&propertyName}}" }
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&propertyName}}" }
+{{/MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#MULTIPLE_INT}}{{&indent}}       require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
+{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&propertyName}}" }
+{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }
+{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}size >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }
+{{/MIN_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.length <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.length}" }
+{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}length >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.length}" }
+{{/MIN_LENGTH}}{{#CONST_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value ${{&value.staticName}} - ${{&propertyName}}" }
+{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
+{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
+{{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
+{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
+{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        {{&propertyName}}{{#nullable}}?{{/nullable}}.forEach {
+{{#indent.increment}}{{#arrayItems}}{{>validations}}{{/arrayItems}}{{/indent.increment}}{{&indent}}        }
 {{/ARRAY_ITEMS}}{{/type}}{{/validations}}

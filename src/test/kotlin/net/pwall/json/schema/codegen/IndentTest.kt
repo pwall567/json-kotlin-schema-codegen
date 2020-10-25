@@ -1,5 +1,5 @@
 /*
- * @(#) NestedClass.kt
+ * @(#) IndentTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2020 Peter Wall
@@ -25,9 +25,29 @@
 
 package net.pwall.json.schema.codegen
 
-class NestedClass(constraints: Constraints, className: String) : ClassDescriptor(constraints, className) {
+import kotlin.test.Test
+import kotlin.test.expect
 
-    @Suppress("unused")
-    val indent = "    "
+import java.io.StringReader
+
+import net.pwall.mustache.Template
+
+class IndentTest {
+
+    @Test fun `should output no indent initially`() {
+        val template = Template.parse(StringReader("[{{&indent}}]"))
+        expect("[]") { template.processToString(Indent()) }
+    }
+
+    @Test fun `should output incremented indent`() {
+        val template = Template.parse(StringReader("[{{#indent.increment}}{{&indent}}{{/indent.increment}}]"))
+        expect("[    ]") { template.processToString(Indent()) }
+    }
+
+    @Test fun `should output doubly incremented indent`() {
+        val template = Template.parse(StringReader(
+                "[{{#indent.increment}}{{#indent.increment}}{{&indent}}{{/indent.increment}}{{/indent.increment}}]"))
+        expect("[        ]") { template.processToString(Indent()) }
+    }
 
 }

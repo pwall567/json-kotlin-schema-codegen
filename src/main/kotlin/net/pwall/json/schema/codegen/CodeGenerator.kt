@@ -27,6 +27,7 @@ package net.pwall.json.schema.codegen
 
 import java.io.File
 import java.math.BigDecimal
+import java.net.URI
 
 import net.pwall.json.JSONArray
 import net.pwall.json.JSONBoolean
@@ -43,6 +44,7 @@ import net.pwall.json.schema.codegen.Constraints.Companion.asLong
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.subschema.AllOfSchema
 import net.pwall.json.schema.subschema.CombinationSchema
+import net.pwall.json.schema.subschema.ExtensionSchema
 import net.pwall.json.schema.subschema.ItemsSchema
 import net.pwall.json.schema.subschema.PropertiesSchema
 import net.pwall.json.schema.subschema.RefSchema
@@ -63,16 +65,33 @@ import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
 
+/**
+ * JSON Schema Code Generator.  The class my be parameterised either by constructor parameters or by setting the
+ * appropriate variables after construction.
+ *
+ * @author  Peter Wall
+ */
 class CodeGenerator(
+        /** Template subdirectory name (within the assembled code generator artefact) */
         var templates: String = "kotlin",
+        /** The filename suffix to be applied to generated files */
         var suffix: String = "kt",
+        /** The primary template to use for the generation of a class */
         var templateName: String = "class",
+        /** The primary template to use for the generation of an enum */
         var enumTemplateName: String = "enum",
+        /** The base package name for the generated classes */
         var basePackageName: String? = null,
+        /** The base output directory for generated files */
         var baseDirectoryName: String = ".",
+        /** A boolean flag to indicate the schema files in subdirectories are to be output to sub-packages */
         var derivePackageFromStructure: Boolean = true,
+        /** A [Logger] object for the output of logging messages */
         val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
+
+    private val customClassesByURI = mutableListOf<CustomClassByURI>()
+    private val customClassesByExtension = mutableListOf<CustomClassByExtension>()
 
     var schemaParser: Parser? = null
 
@@ -182,7 +201,6 @@ class CodeGenerator(
                     actualEnumTemplate.processTo(it, target)
                 }
             }
-            // TODO - generate other types of output (other than object) - enum?
             else -> log.info { "-- nothing to generate" }
         }
     }
@@ -207,8 +225,6 @@ class CodeGenerator(
         for (target in targets)
             generateTarget(target, targets)
     }
-
-    // TODO - how do we allow for "domain primitives" like Amount etc.?
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {
         var packageName = basePackageName
@@ -322,8 +338,30 @@ class CodeGenerator(
         }
     }
 
+    private fun findCustomClass(schema: JSONSchema, target: Target): String? {
+        customClassesByExtension.find { it.match(schema) }?.let {
+            return it.applyToTarget(target)
+        }
+        schema.uri?.resolve("#${schema.location}")?.let { uri ->
+            customClassesByURI.find { it.uri == uri }?.let {
+                return it.applyToTarget(target)
+            }
+        }
+        return null
+    }
+
     private fun analyseProperty(target: Target, property: NamedConstraints, targets: List<Target>): Boolean {
         // true == validations present
+        findCustomClass(property.schema, target)?.let {
+            property.localTypeName = it
+            return false
+        }
+        property.schema.findRefChild()?.let { refChild ->
+            findCustomClass(refChild.target, target)?.let {
+                property.localTypeName = it
+                return false
+            }
+        }
         when {
             property.isObject -> {
                 findTargetClass(property, target, targets) { property.name }
@@ -333,8 +371,6 @@ class CodeGenerator(
                 target.systemClasses.addOnce(SystemClass.LIST)
                 var validationsPresent = false
                 property.arrayItems?.let {
-//                    if (it.isObject)
-//                        findTargetClass(it, target, targets) { property.name.depluralise() }
                     val itemValidations = when {
                         it.isObject -> {
                             findTargetClass(it, target, targets) { property.name.depluralise() }
@@ -352,7 +388,6 @@ class CodeGenerator(
                         else -> false
                     }
                     if (itemValidations) {
-                        // TODO ???
                         property.addValidation(Validation.Type.ARRAY_ITEMS)
                         validationsPresent = true
                     }
@@ -433,15 +468,6 @@ class CodeGenerator(
         validationsPresent = analyseFormat(target, property) || validationsPresent
         validationsPresent = analyseRegex(target, property) || validationsPresent
         return validationsPresent
-    }
-
-    private fun String.isValidIdentifier(): Boolean {
-        if (!this[0].isJavaIdentifierStart())
-            return false
-        for (i in 1 until length)
-            if (!this[i].isJavaIdentifierPart())
-                return false
-        return true
     }
 
     private fun analyseInt(property: Constraints, target: Target): Boolean {
@@ -661,11 +687,6 @@ class CodeGenerator(
     private fun JSONSchema.findRefChild(): RefSchema? =
             ((this as? JSONSchema.General)?.children?.find { it is RefSchema }) as RefSchema?
 
-    private fun <T: Any> MutableList<T>.addOnce(entry: T) {
-        if (entry !in this)
-            add(entry)
-    }
-
     private fun processSchema(schema: JSONSchema, constraints: Constraints) {
         when (schema) {
             is JSONSchema.True -> throw JSONSchemaException("Can't generate code for \"true\" schema")
@@ -796,6 +817,14 @@ class CodeGenerator(
         }
     }
 
+    fun addCustomClassByURI(uri: URI, qualifiedClassName: String) {
+        customClassesByURI.add(CustomClassByURI(uri, qualifiedClassName))
+    }
+
+    fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, qualifiedClassName: String) {
+        customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, qualifiedClassName))
+    }
+
     /**
      * This class is intended to look like a [StringValue], for when the default value of a string is an enum value.
      */
@@ -811,9 +840,59 @@ class CodeGenerator(
 
     }
 
+    abstract class CustomClass(private val className: String, private val packageName: String?) {
+
+        fun applyToTarget(target: Target): String {
+            packageName?.let {
+                if (it != target.packageName)
+                    target.imports.addOnce("${it}.$className")
+            }
+            return className
+        }
+
+    }
+
+    class CustomClassByURI(val uri: URI, className: String, packageName: String?) :
+            CustomClass(className, packageName) {
+
+        constructor(uri: URI, qualifiedClassName: String) :
+                this(uri, qualifiedClassName.substringAfterLast('.'),
+                        qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+
+    }
+
+    class CustomClassByExtension(private val extensionId: String, private val extensionValue: Any?, className: String,
+            packageName: String?) : CustomClass(className, packageName) {
+
+        constructor(extensionId: String, extensionValue: Any?, qualifiedClassName: String) :
+                this(extensionId, extensionValue, qualifiedClassName.substringAfterLast('.'),
+                        qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+
+        fun match(schema: JSONSchema): Boolean = when (schema) {
+            is JSONSchema.General -> schema.children.any { match(it) }
+            is ExtensionSchema -> schema.name == extensionId && schema.value == extensionValue
+            else -> false
+        }
+
+    }
+
     companion object {
 
         val dummyFile = File("./none")
+
+        fun <T: Any> MutableList<T>.addOnce(entry: T) {
+            if (entry !in this)
+                add(entry)
+        }
+
+        private fun String.isValidIdentifier(): Boolean {
+            if (!this[0].isJavaIdentifierStart())
+                return false
+            for (i in 1 until length)
+                if (!this[i].isJavaIdentifierPart())
+                    return false
+            return true
+        }
 
         fun String.sanitiseName(): String {
             for (i in 0 until length) {

@@ -14,5 +14,5 @@
     init {
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#nestedClasses}}
-{{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}class {{&className}}{{/numberOfProperties}}{{/constraints}}
