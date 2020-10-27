@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.14] - 2020-10-27
+### Changed
+- `CodeGenerator`: improved handling of custom types
+
 ## [0.13] - 2020-10-25
 ### Changed
 - templates: simplified indentation of generated code
