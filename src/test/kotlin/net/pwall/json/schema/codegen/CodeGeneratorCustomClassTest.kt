@@ -44,8 +44,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/${'$'}defs/personId"),
                 "com.example.person.PersonId")
-        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/person#/properties/name"),
-                "com.example.person.PersonName")
+        codeGenerator.addCustomClassByURI(URI("#/properties/name"), "com.example.person.PersonName")
         codeGenerator.generate(input)
         expect(createHeader("Person") + expected) { stringWriter.toString() }
     }

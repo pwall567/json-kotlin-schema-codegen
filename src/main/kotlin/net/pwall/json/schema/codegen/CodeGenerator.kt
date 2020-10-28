@@ -343,7 +343,7 @@ class CodeGenerator(
             return it.applyToTarget(target)
         }
         schema.uri?.resolve("#${schema.location}")?.let { uri ->
-            customClassesByURI.find { it.uri == uri }?.let {
+            customClassesByURI.find { uri.resolve(it.uri) == uri }?.let {
                 return it.applyToTarget(target)
             }
         }
