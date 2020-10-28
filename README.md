@@ -17,7 +17,7 @@ language.
 But for a large subset of schema definitions a viable code representation is possible, and this library attempts to
 provide conversions for the broadest possible range of JSON Schema definitions.
 
-The library uses a template mechanism (using [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
+The library uses a template mechanism (employing [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
 templates are provided to generate classes in Kotlin and Java.
 
 ## Quick Start
@@ -30,6 +30,47 @@ generation process:
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(File("/path/to/example.schema.json"))
 ```
+The resulting code will be something like this (assuming the schema is the one referred to in the introduction to
+[json-kotlin-schema](https://github.com/pwall567/json-kotlin-schema)):
+```kotlin
+package com.example
+
+import java.math.BigDecimal
+
+data class Test(
+        /** Product identifier */
+        val id: BigDecimal,
+        /** Name of the product */
+        val name: String,
+        val price: BigDecimal,
+        val tags: List<String>? = null,
+        val stock: Stock? = null
+) {
+
+    init {
+        require(price >= cg_dec0) { "price < minimum 0 - ${'$'}price" }
+    }
+
+    data class Stock(
+            val warehouse: BigDecimal? = null,
+            val retail: BigDecimal? = null
+    )
+
+    companion object {
+        private val cg_dec0 = BigDecimal.ZERO
+    }
+
+}
+```
+Some points to note:
+- the generated class is an immutable value object (in Java, getters are generated but not setters)
+- validations in the JSON Schema become initialisation checks in Kotlin
+- nested objects are converted to Kotlin nested classes
+- fields of type `number` are implemented as `BigDecimal` (there is insufficient information in the schema to allow the
+field to be considered an `Int` or `Long`)
+- non-required fields may be nullable and may be omitted from the constructor (including `null` in the `type` array will
+allow a field to be nullable, but not to be omitted from the constructor)
+- a `description` will be converted to a comment in the generated code if available
 
 ## Multiple Files
 
