@@ -319,23 +319,29 @@ class CodeGenerator(
         }
     }
 
+    private fun useTarget(constraints: Constraints, target: Target, otherTarget: Target) {
+        if (otherTarget.packageName != target.packageName)
+            target.imports.addOnce(otherTarget.qualifiedClassName)
+        constraints.localTypeName = otherTarget.className
+    }
+
     private fun findTargetClass(constraints: Constraints, target: Target, targets: List<Target>,
                 defaultName: () -> String) {
+        targets.find { it.schema === constraints.schema }?.let {
+            useTarget(constraints, target, it)
+            return
+        }
         val refChild = constraints.schema.findRefChild()
-        val refTarget = refChild?.let { targets.find { t -> t.schema === it.target } }
-        if (refTarget != null) {
-            if (refTarget.packageName != target.packageName)
-                target.imports.add(refTarget.qualifiedClassName)
-            constraints.localTypeName = refTarget.className
+        refChild?.let { targets.find { t -> t.schema === it.target } }?.let {
+            useTarget(constraints, target, it)
+            return
         }
-        else {
-            val nestedClassName = refChild?.let {
-                it.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
-            } ?: defaultName()
-            val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
-            nestedClass.validationsPresent = analyseProperties(target, constraints, targets)
-            constraints.localTypeName = nestedClass.className
-        }
+        val nestedClassName = refChild?.let {
+            it.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
+        } ?: defaultName()
+        val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
+        nestedClass.validationsPresent = analyseProperties(target, constraints, targets)
+        constraints.localTypeName = nestedClass.className
     }
 
     private fun findCustomClass(schema: JSONSchema, target: Target): String? {
