@@ -821,8 +821,16 @@ class CodeGenerator(
         customClassesByURI.add(CustomClassByURI(uri, qualifiedClassName))
     }
 
+    fun addCustomClassByURI(uri: URI, className: String, packageName: String?) {
+        customClassesByURI.add(CustomClassByURI(uri, className, packageName))
+    }
+
     fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, qualifiedClassName: String) {
         customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, qualifiedClassName))
+    }
+
+    fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, className: String, packageName: String?) {
+        customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, className, packageName))
     }
 
     /**

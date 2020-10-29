@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.14.2] - 2020-10-29
+### Changed
+- `CodeGenerator`: another minor improvement to custom class URI matching
+
 ## [0.14.1] - 2020-10-28
 ### Changed
 - `CodeGenerator`: small improvement to custom class URI matching

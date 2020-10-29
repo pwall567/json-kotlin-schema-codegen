@@ -59,7 +59,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/${'$'}defs/personId"),
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/person#/properties/name"),
-                "com.example.person.PersonName")
+                "PersonName", "com.example.person")
         codeGenerator.generate(input)
         expect(createHeader("Person") + expectedJava) { stringWriter.toString() }
     }
@@ -83,7 +83,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.addCustomClassByExtension("x-test", "money", "com.example.util.Money")
+        codeGenerator.addCustomClassByExtension("x-test", "money", "Money", "com.example.util")
         codeGenerator.generate(input)
         expect(createHeader("TestCustom") + expectedJavaForExtension) { stringWriter.toString() }
     }
