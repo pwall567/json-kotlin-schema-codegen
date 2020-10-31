@@ -34,10 +34,12 @@ import net.pwall.json.JSONBoolean
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
+import net.pwall.json.JSONMapping
 import net.pwall.json.JSONNumberValue
 import net.pwall.json.JSONObject
 import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
+import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.Constraints.Companion.asLong
@@ -159,10 +161,21 @@ class CodeGenerator(
         }
     }
 
+    /**
+     * Generate classes for a set of schema files (specified as a `vararg` array).  Directories will be traversed
+     * recursively.
+     *
+     * @param   inputFiles  the files
+     */
     fun generate(vararg inputFiles: File) {
         generate(inputFiles.asList())
     }
 
+    /**
+     * Generate classes for a set of files (specified as a [List]).  Directories will be traversed recursively.
+     *
+     * @param   inputFiles  the list of files
+     */
     fun generate(inputFiles: List<File>) {
         val targets = mutableListOf<Target>()
         val parser = actualSchemaParser
@@ -205,6 +218,13 @@ class CodeGenerator(
         }
     }
 
+    /**
+     * Generate a single class.
+     *
+     * @param   schema      the [JSONSchema]
+     * @param   className   the class name
+     * @param   subDirectories  list of subdirectory names to use for the output file
+     */
     fun generateClass(schema: JSONSchema, className: String, subDirectories: List<String> = emptyList()) {
         var packageName = basePackageName
         if (derivePackageFromStructure)
@@ -215,6 +235,12 @@ class CodeGenerator(
         generateTarget(target, listOf(target))
     }
 
+    /**
+     * Generate classes as specified by a list of pairs - Schema and class name.
+     *
+     * @param   schemaList  list of [Pair] of [JSONSchema] and [String] (class name)
+     * @param   subDirectories  list of subdirectory names to use for the output files
+     */
     fun generateClasses(schemaList: List<Pair<JSONSchema, String>>, subDirectories: List<String> = emptyList()) {
         var packageName = basePackageName
         if (derivePackageFromStructure)
@@ -224,6 +250,24 @@ class CodeGenerator(
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
+    }
+
+    /**
+     * Generate classes for all definitions in a composite file (e.g. schema definitions embedded in an OpenAPI or
+     * Swagger document).
+     *
+     * @param   base            the base of the composite object
+     * @param   pointer         pointer to the structure containing the schema definitions (e.g. /definitions)
+     * @param   subDirectories  list of subdirectory names to use for the output files
+     * @param   filter          optional filter to select which classes to include (by name)
+     */
+    fun generateAll(base: JSONValue, pointer: JSONPointer, subDirectories: List<String> = emptyList(),
+            filter: (String) -> Boolean = { true }) {
+        val definitions = (pointer.find(base) as? JSONMapping<*>) ?:
+                throw JSONSchemaException("Can't find definitions - $pointer")
+        generateClasses(definitions.keys.filter(filter).map {
+            actualSchemaParser.parseSchema(base, pointer.child(it), URI("https:/pwall.net/internal")) to it
+        }, subDirectories)
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {

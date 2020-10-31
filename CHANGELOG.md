@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.15] - 2020-10-31
+### Changed
+- `CodeGenerator`: added `generateAll()` to simplify output of multiple classes, e.g. form a Swagger API definition
+- `CodeGenerator`: added KDoc
+
 ## [0.14.3] - 2020-10-29
 ### Changed
 - `CodeGenerator`: further improvements to custom class URI matching

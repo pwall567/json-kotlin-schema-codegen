@@ -1,0 +1,43 @@
+swagger: "2.0"
+info:
+  description: Dummy Swagger file to test code generation
+host: pwall.net
+basePath: /test
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /query:
+    get:
+      summary: Query
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/QueryResponse'
+definitions:
+  QueryResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/Person'
+      message:
+        type: string
+    required:
+    - data
+  Person:
+    type: object
+    properties:
+      id:
+        type: integer
+        minimum: 1
+        maximum: 9999
+      name:
+        type: string
+        minLength: 1
+    required:
+    - id
+    - name

@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/pwall567/json-kotlin-schema-codegen.svg?branch=main)](https://travis-ci.org/pwall567/json-kotlin-schema-codegen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.4.0&color=blue&logo=kotlin)](https://github.com/JetBrains/kotlin/releases/tag/v1.4.0)
+[![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
 
 Code generation for JSON Schema.
 
@@ -65,12 +67,12 @@ data class Test(
 Some points to note:
 - the generated class is an immutable value object (in Java, getters are generated but not setters)
 - validations in the JSON Schema become initialisation checks in Kotlin
-- nested objects are converted to Kotlin nested classes
+- nested objects are converted to Kotlin nested classes (or Java static nested classes)
 - fields of type `number` are implemented as `BigDecimal` (there is insufficient information in the schema to allow the
 field to be considered an `Int` or `Long`)
 - non-required fields may be nullable and may be omitted from the constructor (including `null` in the `type` array will
 allow a field to be nullable, but not to be omitted from the constructor)
-- a `description` will be converted to a comment in the generated code if available
+- a `description` will be converted to a KDoc comment in the generated code if available
 
 ## Multiple Files
 
@@ -148,27 +150,36 @@ While the `generate()` functions take a file or files and convert them to an int
 This can be valuable in cases like a Swagger/OpenAPI file which contains a set of schema definitions embedded in another
 file.
 
+#### `generateAll()`
+
+The `generateAll()` function allows the use of a composite file such as a Swagger or OpenAPI file containing several
+schema definitions.
+For example, a Swagger file will typically have a `definitions` section which consists of definitions of the objects
+input to or output from the API.
+Using the `generateAll()` function, the set of definitions can be selected (and optionally filtered) and the classes
+generated for each of them.
+
 ## Dependency Specification
 
-The latest version of the library is 0.14.3, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.15, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.14.3</version>
+      <version>0.15</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.14.3'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.15'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.14.3")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.15")
 ```
 
 Peter Wall
 
-2020-10-29
+2020-10-31
