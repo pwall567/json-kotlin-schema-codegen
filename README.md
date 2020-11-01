@@ -68,10 +68,10 @@ Some points to note:
 - the generated class is an immutable value object (in Java, getters are generated but not setters)
 - validations in the JSON Schema become initialisation checks in Kotlin
 - nested objects are converted to Kotlin nested classes (or Java static nested classes)
-- fields of type `number` are implemented as `BigDecimal` (there is insufficient information in the schema to allow the
-field to be considered an `Int` or `Long`)
-- non-required fields may be nullable and may be omitted from the constructor (including `null` in the `type` array will
-allow a field to be nullable, but not to be omitted from the constructor)
+- fields of type `number` are implemented as `BigDecimal` (there is insufficient information in the schema in this case
+to allow the field to be considered an `Int` or `Long`)
+- non-required fields may be nullable and may be omitted from the constructor (the inclusion of `null` in the `type`
+array will allow a field to be nullable, but not to be omitted from the constructor)
 - a `description` will be converted to a KDoc comment in the generated code if available
 
 ## Multiple Files
