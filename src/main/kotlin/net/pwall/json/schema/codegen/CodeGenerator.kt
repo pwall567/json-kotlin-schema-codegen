@@ -88,6 +88,8 @@ class CodeGenerator(
         var baseDirectoryName: String = ".",
         /** A boolean flag to indicate the schema files in subdirectories are to be output to sub-packages */
         var derivePackageFromStructure: Boolean = true,
+        /** A comment to add to the header of generated files */
+        var generatorComment: String? = null,
         /** A [Logger] object for the output of logging messages */
         val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
@@ -229,7 +231,8 @@ class CodeGenerator(
         var packageName = basePackageName
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, dummyFile)
+        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, dummyFile,
+                generatorComment)
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
@@ -246,7 +249,7 @@ class CodeGenerator(
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
         val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
-                suffix, dummyFile).also { t -> processSchema(t.schema, t.constraints) } }
+                suffix, dummyFile, generatorComment).also { t -> processSchema(t.schema, t.constraints) } }
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
@@ -296,7 +299,8 @@ class CodeGenerator(
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
                     sanitiseName()
         } ?: "GeneratedClass${targets.size}"
-        targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, inputFile))
+        targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, inputFile,
+                generatorComment))
     }
 
     private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
@@ -326,7 +330,7 @@ class CodeGenerator(
                         if (refTarget != null) {
                             val baseTarget = Target(refTarget.schema, Constraints(refTarget.schema),
                                     refTarget.className, refTarget.packageName, refTarget.subDirectories,
-                                    refTarget.suffix, refTarget.file)
+                                    refTarget.suffix, refTarget.file, generatorComment)
                             target.baseClass = baseTarget
                             processSchema(baseTarget.schema, baseTarget.constraints)
                             analyseObject(baseTarget, baseTarget.constraints, targets)
@@ -507,7 +511,7 @@ class CodeGenerator(
                 validationsPresent = true
             }
         }
-        property.minLength?.let {
+        property.minLength?.let { // TODO check for both minLength and maxLength (generate length in 1..40)?
             property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(it))
             validationsPresent = true
         }

@@ -37,8 +37,8 @@ import net.pwall.json.schema.JSONSchemaException
  * @author  Peter Wall
  */
 class Target(val schema: JSONSchema, constraints: Constraints, className: String, val packageName: String?,
-        val subDirectories: List<String>, val suffix: String, val file: File) :
-                ClassDescriptor(constraints, className) {
+        val subDirectories: List<String>, val suffix: String, val file: File,
+        @Suppress("unused") val generatorComment: String? = null) : ClassDescriptor(constraints, className) {
 
     @Suppress("unused")
     val indent = Indent()

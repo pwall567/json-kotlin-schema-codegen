@@ -44,15 +44,48 @@ class CodeGeneratorEmptyClassTest {
         codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestEmpty", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(createHeader("TestEmpty") + expectedExample) { stringWriter.toString() }
+        expect(createHeader("TestEmpty") + expected) { stringWriter.toString() }
+    }
+
+    @Test fun `should output empty class in Java`() {
+        val input = File("src/test/resources/test-empty-object.schema.json")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestEmpty", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(createHeader("TestEmpty") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {
 
-        const val expectedExample =
+        const val expected =
 """package com.example
 
 class TestEmpty
+"""
+
+        const val expectedJava =
+"""package com.example;
+
+public class TestEmpty {
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestEmpty))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+}
 """
 
     }

@@ -134,6 +134,7 @@ function, the subdirectory names are used as sub-package names)
 directory structure will follow the package structure)
 - `derivePackageFromStructure` - a boolean flag (default `true`) to indicate that generated code for schema files in
 subdirectories are to be output to sub-packages following the same structure
+- `generatorComment` - a comment to add to the header of generated files
 
 ### Functions
 
@@ -161,25 +162,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.15, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.16, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.15</version>
+      <version>0.16</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.15'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.16'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.15")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.16")
 ```
 
 Peter Wall
 
-2020-10-31
+2020-11-05

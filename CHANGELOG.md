@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.16] - 2020-11-05
+### Changed
+- `CodeGenerator`: added `generatorComment`
+
 ## [0.15] - 2020-10-31
 ### Changed
 - `CodeGenerator`: added `generateAll()` to simplify output of multiple classes, e.g. form a Swagger API definition
