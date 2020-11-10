@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.17] - 2020-11-10
+### Changed
+- `CodeGenerator`: added `NestedClassNameOption`
+
 ## [0.16] - 2020-11-05
 ### Changed
 - `CodeGenerator`: added `generatorComment`

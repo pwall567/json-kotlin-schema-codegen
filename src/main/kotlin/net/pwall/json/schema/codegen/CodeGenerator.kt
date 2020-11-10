@@ -94,6 +94,13 @@ class CodeGenerator(
         val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
 
+    enum class NestedClassNameOption {
+        USE_NAME_FROM_REF_SCHEMA,
+        USE_NAME_FROM_PROPERTY
+    }
+
+    var nestedClassNameOption = NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
+
     private val customClassesByURI = mutableListOf<CustomClassByURI>()
     private val customClassesByExtension = mutableListOf<CustomClassByExtension>()
 
@@ -384,9 +391,11 @@ class CodeGenerator(
             useTarget(constraints, target, it)
             return
         }
-        val nestedClassName = refChild?.let {
-            it.fragment?.substringAfterLast('/')?.let { s -> Strings.capitalise(s) }
-        } ?: defaultName()
+        val nestedClassName = when (nestedClassNameOption) {
+            NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
+                    refChild?.fragment?.substringAfterLast('/') ?: defaultName()
+            NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
+        }
         val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
         nestedClass.validationsPresent = analyseProperties(target, constraints, targets)
         constraints.localTypeName = nestedClass.className
