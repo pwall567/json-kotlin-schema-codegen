@@ -44,7 +44,8 @@ class CodeGeneratorDerivedClassTest {
         val stringWriterBase = StringWriter()
         val outputDetailsBase = OutputDetails("dummy1", emptyList(), "TestBaseClass", "kt", stringWriterBase)
         val stringWriterDerived = StringWriter()
-        val outputDetailsDerived = OutputDetails("dummy1", emptyList(), "TestDerivedClass", "kt", stringWriterDerived)
+        val outputDetailsDerived = OutputDetails("dummy1", listOf("derived"), "TestDerivedClass", "kt",
+                stringWriterDerived)
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
@@ -73,9 +74,11 @@ open class TestBaseClass(
 """
 
         const val expectedDerived =
-"""package com.example
+"""package com.example.derived
 
 import java.util.UUID
+
+import com.example.TestBaseClass
 
 open class TestDerivedClass(
         id: UUID,

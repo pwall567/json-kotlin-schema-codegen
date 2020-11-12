@@ -211,6 +211,10 @@ class CodeGenerator(
                 target.validationsPresent = analyseObject(target, target.constraints, targets)
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
+                target.baseClass?.let {
+                    if (it.packageName != target.packageName && !target.imports.contains(it.qualifiedClassName))
+                        target.baseImport = it.qualifiedClassName
+                }
                 actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
                         target.suffix).use {
                     actualTemplate.processTo(it, target)

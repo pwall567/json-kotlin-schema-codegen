@@ -47,6 +47,7 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
         get() = packageName?.let { "$it.$className" } ?: className
 
     var baseClass: Target? = null
+    var baseImport: String? = null
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()

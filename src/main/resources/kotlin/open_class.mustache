@@ -1,6 +1,8 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#baseImport}}import {{&.}}
+
+{{/baseImport}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
 * {{&description}}
