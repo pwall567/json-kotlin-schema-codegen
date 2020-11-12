@@ -19,11 +19,12 @@
     init {
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}
-    override fun equals(other: Any?): Boolean = this === other || other is {{&className}}{{#baseClass}} && super.equals(other){{/baseClass}} &&{{#properties}}{{^baseProperty}}
-            {{&propertyName}} == other.{{&propertyName}}{{^last}} &&{{/last}}
-{{/baseProperty}}{{/properties}}
-    override fun hashCode(): Int = {{#baseClass}}super.hashCode() xor{{/baseClass}}{{#properties}}{{^baseProperty}}
-            {{&propertyName}}.hashCode(){{^last}} xor{{/last}}
-{{/baseProperty}}{{/properties}}{{#nestedClasses}}
+    override fun equals(other: Any?): Boolean = this === other || other is {{&className}}{{#baseClass}} && super.equals(other){{/baseClass}}{{#properties}}{{^baseProperty}} &&
+            {{&propertyName}} == other.{{&propertyName}}{{/baseProperty}}{{/properties}}
+
+    override fun hashCode(): Int = {{#baseClass}}super.hashCode(){{#properties}}{{^baseProperty}} xor
+            {{&propertyName}}.hashCode(){{/baseProperty}}{{/properties}}{{/baseClass}}{{^baseClass}}{{#properties}}{{^baseProperty}}
+            {{&propertyName}}.hashCode(){{^last}} xor{{/last}}{{/baseProperty}}{{/properties}}{{^properties}}0{{/properties}}{{/baseClass}}
+{{#nestedClasses}}
 {{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/constraints}}
