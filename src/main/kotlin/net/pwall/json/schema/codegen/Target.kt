@@ -25,8 +25,6 @@
 
 package net.pwall.json.schema.codegen
 
-import java.io.File
-
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 
@@ -37,7 +35,7 @@ import net.pwall.json.schema.JSONSchemaException
  * @author  Peter Wall
  */
 class Target(val schema: JSONSchema, constraints: Constraints, className: String, val packageName: String?,
-        val subDirectories: List<String>, val suffix: String, val file: File,
+        val subDirectories: List<String>, val suffix: String, val file: String,
         @Suppress("unused") val generatorComment: String? = null) : ClassDescriptor(constraints, className) {
 
     @Suppress("unused")

@@ -28,6 +28,8 @@ package net.pwall.json.schema.codegen
 import java.io.File
 import java.math.BigDecimal
 import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
 
 import net.pwall.json.JSONArray
 import net.pwall.json.JSONBoolean
@@ -195,7 +197,39 @@ class CodeGenerator(
                 inputFile.isDirectory -> addTargets(targets, emptyList(), inputFile)
             }
         }
-        // generate all targets
+        generateAllTargets(targets)
+    }
+
+    /**
+     * Generate classes for a set of schema files (specified as a `vararg` array of [Path]).  Directories will be
+     * traversed recursively.
+     *
+     * @param   inputPaths  the files
+     */
+    fun generateFromPaths(vararg inputPaths: Path) {
+        generateFromPaths(inputPaths.asList())
+    }
+
+    /**
+     * Generate classes for a set of files (specified as a [List] of [Path]).  Directories will be traversed
+     * recursively.
+     *
+     * @param   inputPaths  the list of files
+     */
+    fun generateFromPaths(inputPaths: List<Path>) {
+        val targets = mutableListOf<Target>()
+        val parser = actualSchemaParser
+        for (inputPath in inputPaths) {
+            parser.preLoad(inputPath)
+            when {
+                Files.isRegularFile(inputPath) -> addTarget(targets, emptyList(), inputPath)
+                Files.isDirectory(inputPath) -> addTargets(targets, emptyList(), inputPath)
+            }
+        }
+        generateAllTargets(targets)
+    }
+
+    private fun generateAllTargets(targets: List<Target>) {
         for (target in targets) {
             processSchema(target.schema, target.constraints)
             log.info { "Generating for target ${target.file}" }
@@ -242,8 +276,8 @@ class CodeGenerator(
         var packageName = basePackageName
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, dummyFile,
-                generatorComment)
+        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix,
+                dummyFile.toString(), generatorComment)
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
@@ -260,7 +294,7 @@ class CodeGenerator(
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
         val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
-                suffix, dummyFile, generatorComment).also { t -> processSchema(t.schema, t.constraints) } }
+                suffix, dummyFile.toString(), generatorComment).also { t -> processSchema(t.schema, t.constraints) } }
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
@@ -285,11 +319,20 @@ class CodeGenerator(
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {
+        val schema = actualSchemaParser.parse(inputFile)
+        addTarget(targets, subDirectories, schema, inputFile.toString())
+    }
+
+    private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputPath: Path) {
+        val schema = actualSchemaParser.parse(inputPath)
+        addTarget(targets, subDirectories, schema, inputPath.toString())
+    }
+
+    private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, schema: JSONSchema,
+            filename: String) {
         var packageName = basePackageName
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val parser = actualSchemaParser
-        val schema = parser.parse(inputFile)
         val className = schema.uri?.let {
             // TODO change to allow name ending with "/schema"?
             val uriName = it.toString().substringBefore('#').substringAfterLast('/')
@@ -308,15 +351,32 @@ class CodeGenerator(
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
                     sanitiseName()
         } ?: "GeneratedClass${targets.size}"
-        targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, inputFile,
+        targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, filename,
                 generatorComment))
     }
 
     private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
         inputDir.listFiles()?.forEach {
             when {
-                it.isDirectory -> addTargets(targets, subDirectories + it.name.mapDirectoryName(), it)
+                it.isDirectory -> {
+                    if (!it.name.startsWith('.'))
+                        addTargets(targets, subDirectories + it.name.mapDirectoryName(), it)
+                }
                 it.isFile -> addTarget(targets, subDirectories, it)
+            }
+        }
+    }
+
+    private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: Path) {
+        Files.newDirectoryStream(inputDir).use { dir ->
+            dir.forEach {
+                when {
+                    Files.isDirectory(it) -> {
+                        if (!it.fileName.toString().startsWith('.'))
+                            addTargets(targets, subDirectories + it.fileName.toString().mapDirectoryName(), it)
+                    }
+                    Files.isRegularFile(it) -> addTarget(targets, subDirectories, it)
+                }
             }
         }
     }

@@ -30,6 +30,7 @@ import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+import java.nio.file.FileSystems
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -48,6 +49,36 @@ class CodeGeneratorRefClassTest {
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
+        expect(createHeader("TestRefClassOuter") + expectedOuter) { stringWriterOuter.toString() }
+        expect(createHeader("TestRefClassInner") + expectedInner) { stringWriterInner.toString() }
+    }
+
+    @Test fun `should generate class with reference to other generated class using Path`() {
+        val input = FileSystems.getDefault().getPath("src/test/resources/test-ref-class")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.baseDirectoryName = "dummy1"
+        val stringWriterOuter = StringWriter()
+        val outputDetailsOuter = OutputDetails("dummy1", emptyList(), "TestRefClassOuter", "kt", stringWriterOuter)
+        val stringWriterInner = StringWriter()
+        val outputDetailsInner = OutputDetails("dummy1", emptyList(), "TestRefClassInner", "kt", stringWriterInner)
+        codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generateFromPaths(input)
+        expect(createHeader("TestRefClassOuter") + expectedOuter) { stringWriterOuter.toString() }
+        expect(createHeader("TestRefClassInner") + expectedInner) { stringWriterInner.toString() }
+    }
+
+    @Test fun `should generate class with reference to other generated class using Path list`() {
+        val input = FileSystems.getDefault().getPath("src/test/resources/test-ref-class")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.baseDirectoryName = "dummy1"
+        val stringWriterOuter = StringWriter()
+        val outputDetailsOuter = OutputDetails("dummy1", emptyList(), "TestRefClassOuter", "kt", stringWriterOuter)
+        val stringWriterInner = StringWriter()
+        val outputDetailsInner = OutputDetails("dummy1", emptyList(), "TestRefClassInner", "kt", stringWriterInner)
+        codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generateFromPaths(listOf(input))
         expect(createHeader("TestRefClassOuter") + expectedOuter) { stringWriterOuter.toString() }
         expect(createHeader("TestRefClassInner") + expectedInner) { stringWriterInner.toString() }
     }
