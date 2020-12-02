@@ -1,8 +1,8 @@
-{{#properties}}{{#schema}}{{#description}}{{&indent}}    /**
+{{#nonBaseProperties}}{{#schema}}{{#description}}{{&indent}}    /**
 {{&indent}}     * {{&safeDescription}}
 {{&indent}}     */
 {{/description}}{{/schema}}{{&indent}}    public {{>type}} get{{&capitalisedName}}() {
 {{&indent}}        return {{&name}};
 {{&indent}}    }
 
-{{/properties}}
+{{/nonBaseProperties}}

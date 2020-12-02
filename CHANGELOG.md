@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: added base/derived classes in Java
+- templates: improved generated hashCode in Java
+- `CodeGenerator`: allow ".yml" as alternative to ".yaml" file extension
+
 ## [0.18.1] - 2020-11-13
 ### Changed
 - templates: bug fix - derived classes with no additional members

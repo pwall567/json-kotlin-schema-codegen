@@ -244,10 +244,9 @@ public class TestString {
         hash ^= ipv6a.hashCode();
         hash ^= maxlen.hashCode();
         hash ^= minlen.hashCode();
-        hash ^= minlen2 != null ? minlen2.hashCode() : 0;
+        hash ^= (minlen2 != null ? minlen2.hashCode() : 0);
         hash ^= name.hashCode();
-        hash ^= status.hashCode();
-        return hash;
+        return hash ^ status.hashCode();
     }
 
     public enum Status {

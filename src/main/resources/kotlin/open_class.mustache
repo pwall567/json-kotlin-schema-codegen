@@ -11,20 +11,16 @@
 {{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
+{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/baseProperty}}{{/properties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{/baseClass}} {
+{{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{/baseClass}} {
 {{#validationsPresent}}
     init {
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}
-    override fun equals(other: Any?): Boolean = this === other || other is {{&className}}{{#baseClass}} && super.equals(other){{/baseClass}}{{#properties}}{{^baseProperty}} &&
-            {{&propertyName}} == other.{{&propertyName}}{{/baseProperty}}{{/properties}}
-
-    override fun hashCode(): Int = {{#baseClass}}super.hashCode(){{#properties}}{{^baseProperty}} xor
-            {{&propertyName}}.hashCode(){{/baseProperty}}{{/properties}}{{/baseClass}}{{^baseClass}}{{#properties}}{{^baseProperty}}
-            {{&propertyName}}.hashCode(){{^last}} xor{{/last}}{{/baseProperty}}{{/properties}}{{^properties}}0{{/properties}}{{/baseClass}}
+{{>equals}}
+{{>hashcode}}
 {{#nestedClasses}}
 {{#constraints}}{{>nested_class}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/constraints}}

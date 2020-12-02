@@ -78,7 +78,7 @@ array will allow a field to be nullable, but not to be omitted from the construc
 
 The Code Generator can process a single file or multiple files in one invocation.
 The `generate()` function takes a `vararg` parameter list, and each item may be a file or a directory; in the latter
-case all files in the directory with filenames ending `.json` or `.yaml` will be processed.
+case all files in the directory with filenames ending `.json` or `.yaml` (or `.yml`) will be processed.
 
 It is preferable to process multiple files in this way because the code generator can create references to other classes
 that it knows about - that is, classes generated in the same run.

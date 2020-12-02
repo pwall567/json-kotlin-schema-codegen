@@ -1,0 +1,4 @@
+{{#isInt}}{{&name}}{{/isInt}}{{^isInt}}{{#isLong}}(int){{&name}}{{/isLong}}{{^isLong}}{{!
+}}{{#isBoolean}}({{&name}} ? 1 : 0){{/isBoolean}}{{^isBoolean}}{{!
+}}{{#nullable}}({{&name}} != null ? {{&name}}.hashCode() : 0){{/nullable}}{{^nullable}}{{!
+}}{{&name}}.hashCode(){{/nullable}}{{/isBoolean}}{{/isLong}}{{/isInt}}

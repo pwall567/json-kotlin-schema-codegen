@@ -4,7 +4,9 @@
 {{&indent}}            return true;
 {{&indent}}        if (!(other instanceof {{&className}}))
 {{&indent}}            return false;
-{{#properties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
+{{#baseClass}}{{&indent}}        if (!super.equals(other))
+{{&indent}}            return false;
+{{/baseClass}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
 {{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&name}} == typedOther.{{&name}};
 {{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        return {{&name}} == null ? typedOther.{{&name}} == null : {{&name}}.equals(typedOther.{{&name}});
 {{/nullable}}{{^nullable}}{{&indent}}        return {{&name}}.equals(typedOther.{{&name}});
@@ -12,5 +14,5 @@
 {{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        if ({{&name}} == null ? typedOther.{{&name}} != null : !{{&name}}.equals(typedOther.{{&name}}))
 {{/nullable}}{{^nullable}}{{&indent}}        if (!{{&name}}.equals(typedOther.{{&name}}))
 {{/nullable}}{{/isPrimitive}}{{&indent}}            return false;
-{{/last}}{{/properties}}{{^properties}}{{&indent}}        return true;
-{{/properties}}{{&indent}}    }
+{{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
+{{/nonBaseProperties}}{{&indent}}    }

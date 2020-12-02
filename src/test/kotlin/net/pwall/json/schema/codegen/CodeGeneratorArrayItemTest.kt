@@ -150,8 +150,7 @@ public class TestArrayItems {
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
-        hash ^= bbb != null ? bbb.hashCode() : 0;
-        return hash;
+        return hash ^ (bbb != null ? bbb.hashCode() : 0);
     }
 
 }

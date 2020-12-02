@@ -53,6 +53,22 @@ class CodeGeneratorDerivedClassTest {
         expect(createHeader("TestDerivedClass") + expectedDerived) { stringWriterDerived.toString() }
     }
 
+    @Test fun `should generate base class and derived class in Java`() {
+        val input = File("src/test/resources/test-derived-class")
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy1"
+        val stringWriterBase = StringWriter()
+        val outputDetailsBase = OutputDetails("dummy1", emptyList(), "TestBaseClass", "java", stringWriterBase)
+        val stringWriterDerived = StringWriter()
+        val outputDetailsDerived = OutputDetails("dummy1", listOf("derived"), "TestDerivedClass", "java",
+                stringWriterDerived)
+        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(createHeader("TestBaseClass") + expectedBaseJava) { stringWriterBase.toString() }
+        expect(createHeader("TestDerivedClass") + expectedDerivedJava) { stringWriterDerived.toString() }
+    }
+
     companion object {
 
         const val expectedBase =
@@ -90,6 +106,91 @@ open class TestDerivedClass(
 
     override fun hashCode(): Int = super.hashCode() xor
             name.hashCode()
+
+}
+"""
+
+        const val expectedBaseJava =
+"""package com.example;
+
+import java.util.UUID;
+
+public class TestBaseClass {
+
+    private final UUID id;
+
+    public TestBaseClass(
+            UUID id
+    ) {
+        if (id == null)
+            throw new IllegalArgumentException("Must not be null - id");
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestBaseClass))
+            return false;
+        TestBaseClass typedOther = (TestBaseClass)other;
+        return id.equals(typedOther.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+}
+"""
+
+        const val expectedDerivedJava =
+"""package com.example.derived;
+
+import java.util.UUID;
+
+import com.example.TestBaseClass;
+
+public class TestDerivedClass extends TestBaseClass {
+
+    private final String name;
+
+    public TestDerivedClass(
+            UUID id,
+            String name
+    ) {
+        super(id);
+        if (name == null)
+            throw new IllegalArgumentException("Must not be null - name");
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestDerivedClass))
+            return false;
+        if (!super.equals(other))
+            return false;
+        TestDerivedClass typedOther = (TestDerivedClass)other;
+        return name.equals(typedOther.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        return hash ^ name.hashCode();
+    }
 
 }
 """

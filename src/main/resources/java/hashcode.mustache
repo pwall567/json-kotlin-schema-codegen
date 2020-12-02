@@ -1,10 +1,10 @@
 {{&indent}}    @Override
 {{&indent}}    public int hashCode() {
-{{#properties}}{{&indent}}        {{#first}}{{#last}}return{{/last}}{{^last}}int hash ={{/last}}{{/first}}{{^first}}hash ^={{/first}} {{!
-}}{{#isInt}}{{&name}}{{/isInt}}{{^isInt}}{{#isLong}}(int){{&name}}{{/isLong}}{{^isLong}}{{!
-}}{{#isBoolean}}{{&name}} ? 1 : 0{{/isBoolean}}{{^isBoolean}}{{!
-}}{{#nullable}}{{&name}} != null ? {{&name}}.hashCode() : 0{{/nullable}}{{^nullable}}{{!
-}}{{&name}}.hashCode(){{/nullable}}{{/isBoolean}}{{/isLong}}{{/isInt}};
-{{#last}}{{^first}}{{&indent}}        return hash;
-{{/first}}{{/last}}{{/properties}}{{^properties}}{{&indent}}        return 0;
-{{/properties}}{{&indent}}    }
+{{#baseClass}}{{#nonBaseProperties}}{{#first}}{{&indent}}        int hash = super.hashCode();
+{{/first}}{{^last}}{{&indent}}        hash ^= {{>hash_value}};
+{{/last}}{{#last}}{{&indent}}        return hash ^ {{>hash_value}};
+{{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return super.hashCode();
+{{/nonBaseProperties}}{{/baseClass}}{{^baseClass}}{{#properties}}{{&indent}}        {{#first}}{{#last}}return{{/last}}{{^last}}int hash ={{/last}}{{/first}}{{^first}}{{#last}}return hash ^{{/last}}{{^last}}hash ^={{/last}}{{/first}} {{!
+}}{{>hash_value}};
+{{/properties}}{{^properties}}{{&indent}}        return 0;
+{{/properties}}{{/baseClass}}{{&indent}}    }

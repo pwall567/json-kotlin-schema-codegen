@@ -163,8 +163,7 @@ public class TestConst {
         int hash = aaa;
         hash ^= (int)bbb;
         hash ^= ccc.hashCode();
-        hash ^= ddd.hashCode();
-        return hash;
+        return hash ^ ddd.hashCode();
     }
 
 }

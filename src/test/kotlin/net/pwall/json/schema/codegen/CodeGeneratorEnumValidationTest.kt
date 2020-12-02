@@ -141,8 +141,7 @@ public class TestEnumValidation {
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
-        hash ^= bbb;
-        return hash;
+        return hash ^ bbb;
     }
 
 }

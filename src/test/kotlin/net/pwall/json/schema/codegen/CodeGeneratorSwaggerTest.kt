@@ -156,8 +156,7 @@ public class QueryResponse {
     @Override
     public int hashCode() {
         int hash = data.hashCode();
-        hash ^= message != null ? message.hashCode() : 0;
-        return hash;
+        return hash ^ (message != null ? message.hashCode() : 0);
     }
 
 }
@@ -210,8 +209,7 @@ public class Person {
     @Override
     public int hashCode() {
         int hash = id;
-        hash ^= name.hashCode();
-        return hash;
+        return hash ^ name.hashCode();
     }
 
 }

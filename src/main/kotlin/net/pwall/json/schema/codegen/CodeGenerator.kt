@@ -293,18 +293,16 @@ class CodeGenerator(
         val className = schema.uri?.let {
             // TODO change to allow name ending with "/schema"?
             val uriName = it.toString().substringBefore('#').substringAfterLast('/')
-            val uriNameWithoutSuffix = when {
-                uriName.endsWith(".schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("-schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("_schema.json", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith(".schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("-schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith("_schema.yaml", ignoreCase = true) -> uriName.dropLast(12)
-                uriName.endsWith(".schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriName.endsWith("-schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriName.endsWith("_schema", ignoreCase = true) -> uriName.dropLast(7)
+            val uriNameWithoutExtension = when {
                 uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
                 uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)
+                uriName.endsWith(".yml", ignoreCase = true) -> uriName.dropLast(4)
+                else -> uriName
+            }
+            val uriNameWithoutSuffix = when {
+                uriNameWithoutExtension.endsWith(".schema", ignoreCase = true) -> uriName.dropLast(7)
+                uriNameWithoutExtension.endsWith("-schema", ignoreCase = true) -> uriName.dropLast(7)
+                uriNameWithoutExtension.endsWith("_schema", ignoreCase = true) -> uriName.dropLast(7)
                 else -> uriName
             }
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.

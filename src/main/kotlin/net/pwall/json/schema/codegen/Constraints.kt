@@ -82,6 +82,14 @@ open class Constraints(val schema: JSONSchema) {
     val numberOfProperties: Int
         get() = properties.size
 
+    @Suppress("unused")
+    val baseProperties: List<NamedConstraints>
+        get() = properties.filter { it.baseProperty }
+
+    @Suppress("unused")
+    val nonBaseProperties: List<NamedConstraints>
+        get() = properties.filter { !it.baseProperty }
+
     val required = mutableListOf<String>()
 
     var arrayItems: Constraints? = null

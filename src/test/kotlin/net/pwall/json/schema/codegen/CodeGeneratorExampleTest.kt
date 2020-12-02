@@ -178,9 +178,8 @@ public class Test {
         int hash = id.hashCode();
         hash ^= name.hashCode();
         hash ^= price.hashCode();
-        hash ^= tags != null ? tags.hashCode() : 0;
-        hash ^= stock != null ? stock.hashCode() : 0;
-        return hash;
+        hash ^= (tags != null ? tags.hashCode() : 0);
+        return hash ^ (stock != null ? stock.hashCode() : 0);
     }
 
     public static class Stock {
@@ -218,9 +217,8 @@ public class Test {
 
         @Override
         public int hashCode() {
-            int hash = warehouse != null ? warehouse.hashCode() : 0;
-            hash ^= retail != null ? retail.hashCode() : 0;
-            return hash;
+            int hash = (warehouse != null ? warehouse.hashCode() : 0);
+            return hash ^ (retail != null ? retail.hashCode() : 0);
         }
 
     }

@@ -1,21 +1,24 @@
 {{>header}}{{#packageName}}package {{&packageName}};
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}};
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#baseImport}}import {{&.}};
+
+{{/baseImport}}{{#imports}}import {{&.}};
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}public class {{&className}} {
+{{/description}}{{/schema}}public class {{&className}} {{#baseClass}}extends {{&className}} {{/baseClass}}{
 {{>add_statics}}
-{{#properties}}    private final {{>type}} {{&name}};
+{{#nonBaseProperties}}    private final {{>type}} {{&name}};
 {{#last}}
-{{/last}}{{/properties}}{{#numberOfProperties}}    public {{&className}}(
+{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}(
 {{#properties}}            {{>type}} {{&name}}{{^last}},{{/last}}
 {{/properties}}    ) {
-{{#properties}}{{^isPrimitive}}{{^nullable}}        if ({{&name}} == null)
+{{#baseClass}}{{#constraints}}        super({{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}});
+{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&name}} == null)
             {{>tniae}}("Must not be null - {{&name}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}        this.{{&name}} = {{&name}};
-{{/properties}}    }
+{{/nonBaseProperties}}    }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}{{#nestedClasses}}
