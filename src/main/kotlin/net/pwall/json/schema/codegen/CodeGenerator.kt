@@ -343,10 +343,10 @@ class CodeGenerator(
                 else -> uriName
             }
             val uriNameWithoutSuffix = when {
-                uriNameWithoutExtension.endsWith(".schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriNameWithoutExtension.endsWith("-schema", ignoreCase = true) -> uriName.dropLast(7)
-                uriNameWithoutExtension.endsWith("_schema", ignoreCase = true) -> uriName.dropLast(7)
-                else -> uriName
+                uriNameWithoutExtension.endsWith(".schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
+                uriNameWithoutExtension.endsWith("-schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
+                uriNameWithoutExtension.endsWith("_schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
+                else -> uriNameWithoutExtension
             }
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
                     sanitiseName()

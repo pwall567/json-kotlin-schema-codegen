@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.19.1] - 2020-12-02
+### Changed
+- `CodeGenerator`: bug fix - name of generated class
+
 ## [0.19] - 2020-12-02
 ### Changed
 - templates: added base/derived classes in Java
