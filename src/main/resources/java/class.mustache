@@ -1,13 +1,16 @@
 {{>header}}{{#packageName}}package {{&packageName}};
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#baseImport}}import {{&.}};
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}};
+
+{{/markerInterfaceImport}}{{#baseImport}}import {{&.}};
 
 {{/baseImport}}{{#imports}}import {{&.}};
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}public class {{&className}} {{#baseClass}}extends {{&className}} {{/baseClass}}{
+{{/description}}{{/schema}}public class {{&className}} {{#baseClass}}extends {{&className}} {{/baseClass}}{{!
+}}{{#markerInterfaceName}}implements {{&.}} {{/markerInterfaceName}}{
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&name}};
 {{#last}}

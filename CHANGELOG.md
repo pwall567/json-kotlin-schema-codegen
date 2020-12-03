@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`, templates: added ability to add marker interface
+
 ## [0.19.1] - 2020-12-02
 ### Changed
 - `CodeGenerator`: bug fix - name of generated class

@@ -92,6 +92,8 @@ class CodeGenerator(
         var derivePackageFromStructure: Boolean = true,
         /** A comment to add to the header of generated files */
         var generatorComment: String? = null,
+        /** An optional marker interface to add to each generated class */
+        var markerInterface: String? = null,
         /** A [Logger] object for the output of logging messages */
         val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
@@ -277,7 +279,7 @@ class CodeGenerator(
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
         val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix,
-                dummyFile.toString(), generatorComment)
+                dummyFile.toString(), generatorComment, markerInterface)
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
@@ -294,7 +296,8 @@ class CodeGenerator(
         if (derivePackageFromStructure)
             subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
         val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
-                suffix, dummyFile.toString(), generatorComment).also { t -> processSchema(t.schema, t.constraints) } }
+                suffix, dummyFile.toString(), generatorComment, markerInterface).also {
+                        t -> processSchema(t.schema, t.constraints) } }
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
@@ -352,7 +355,7 @@ class CodeGenerator(
                     sanitiseName()
         } ?: "GeneratedClass${targets.size}"
         targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, filename,
-                generatorComment))
+                generatorComment, markerInterface))
     }
 
     private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
@@ -399,7 +402,7 @@ class CodeGenerator(
                         if (refTarget != null) {
                             val baseTarget = Target(refTarget.schema, Constraints(refTarget.schema),
                                     refTarget.className, refTarget.packageName, refTarget.subDirectories,
-                                    refTarget.suffix, refTarget.file, generatorComment)
+                                    refTarget.suffix, refTarget.file, generatorComment, markerInterface)
                             target.baseClass = baseTarget
                             processSchema(baseTarget.schema, baseTarget.constraints)
                             analyseObject(baseTarget, baseTarget.constraints, targets)

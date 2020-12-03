@@ -1,6 +1,8 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}}
+
+{{/markerInterfaceImport}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
@@ -9,10 +11,12 @@
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}){{#validationsOrNestedClassesOrStaticsPresent}} {
+{{/properties}}){{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{#validationsOrNestedClassesOrStaticsPresent}} {
 {{#validationsPresent}}
     init {
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}class {{&className}}{{/numberOfProperties}}{{/constraints}}
+}{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{!
+}}{{^numberOfProperties}}class {{&className}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/numberOfProperties}}{{!
+}}{{/constraints}}

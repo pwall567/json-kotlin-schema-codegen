@@ -1,6 +1,8 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#baseImport}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}}
+
+{{/markerInterfaceImport}}{{#baseImport}}import {{&.}}
 
 {{/baseImport}}{{#imports}}import {{&.}}
 {{#last}}
@@ -14,7 +16,9 @@
 {{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{/baseClass}} {
+{{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{!
+}}{{#markerInterfaceName}}, {{&.}}{{/markerInterfaceName}}{{/baseClass}}{{!
+}}{{^baseClass}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/baseClass}} {
 {{#validationsPresent}}
     init {
 {{#properties}}{{>validations}}{{/properties}}    }

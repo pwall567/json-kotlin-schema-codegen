@@ -36,7 +36,8 @@ import net.pwall.json.schema.JSONSchemaException
  */
 class Target(val schema: JSONSchema, constraints: Constraints, className: String, val packageName: String?,
         val subDirectories: List<String>, val suffix: String, val file: String,
-        @Suppress("unused") val generatorComment: String? = null) : ClassDescriptor(constraints, className) {
+        @Suppress("unused") val generatorComment: String? = null, private val markerInterface: String? = null) :
+        ClassDescriptor(constraints, className) {
 
     @Suppress("unused")
     val indent = Indent()
@@ -46,6 +47,13 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
 
     var baseClass: Target? = null
     var baseImport: String? = null
+
+    @Suppress("unused")
+    val markerInterfaceImport: String?
+        get() = markerInterface?.takeIf { it.substringBeforeLast('.') != packageName }
+    @Suppress("unused")
+    val markerInterfaceName: String?
+        get() = markerInterface?.substringAfterLast('.')
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
