@@ -2,9 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.20] - 2021-01-04
 ### Changed
-- `CodeGenerator`, templates: added ability to add marker interface
+- `CodeGenerator`: templates: added ability to add marker interface
+- `pom.xml`: bumped dependency version
 
 ## [0.19.1] - 2020-12-02
 ### Changed
