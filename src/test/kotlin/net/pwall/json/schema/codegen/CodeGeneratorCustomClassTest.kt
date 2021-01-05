@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorCustomClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,13 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
+import net.pwall.json.pointer.JSONPointer
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+import net.pwall.json.schema.parser.Parser
+import net.pwall.json.schema.validation.FormatValidator
+import net.pwall.json.schema.validation.PatternValidator
 
 class CodeGeneratorCustomClassTest {
 
@@ -86,6 +90,48 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.addCustomClassByExtension("x-test", "money", "Money", "com.example.util")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom") + expectedJavaForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for format`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser = parser
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "kt", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.addCustomClassByFormat("money", "com.example.util.Money")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom") + expectedForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for format in Java`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.schemaParser = parser
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.addCustomClassByFormat("money", "Money", "com.example.util")
         codeGenerator.generate(input)
         expect(createHeader("TestCustom") + expectedJavaForExtension) { stringWriter.toString() }
     }

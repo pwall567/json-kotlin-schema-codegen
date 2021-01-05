@@ -2,7 +2,7 @@
  * @(#) Constraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -104,7 +104,7 @@ open class Constraints(val schema: JSONSchema) {
 
     var maxLength: Int? = null
     var minLength: Int? = null
-    var format: FormatValidator.FormatType? = null
+    var format: FormatValidator.FormatChecker? = null
     var regex: Regex? = null
 
     var enumValues: JSONSequence<*>? = null

@@ -2,7 +2,7 @@
  * @(#) CodeGenerator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -106,6 +106,7 @@ class CodeGenerator(
     var nestedClassNameOption = NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
 
     private val customClassesByURI = mutableListOf<CustomClassByURI>()
+    private val customClassesByFormat = mutableListOf<CustomClassByFormat>()
     private val customClassesByExtension = mutableListOf<CustomClassByExtension>()
 
     var schemaParser: Parser? = null
@@ -484,6 +485,10 @@ class CodeGenerator(
             property.localTypeName = it
             return false
         }
+        customClassesByFormat.find { it.match(property) }?.let {
+            property.localTypeName = it.applyToTarget(target)
+            return false
+        }
         property.schema.findRefChild()?.let { refChild ->
             findCustomClass(refChild.target, target)?.let {
                 property.localTypeName = it
@@ -505,7 +510,7 @@ class CodeGenerator(
                             false
                         }
                         it.isInt -> analyseInt(it, target)
-                        it.isLong -> analyseLong(it)
+                        it.isLong -> analyseLong(it, target)
                         it.isDecimal -> {
                             target.systemClasses.addOnce(SystemClass.DECIMAL)
                             it.systemClass = SystemClass.DECIMAL
@@ -538,7 +543,7 @@ class CodeGenerator(
                 return analyseInt(property, target)
             }
             property.isLong -> {
-                return analyseLong(property)
+                return analyseLong(property, target)
             }
             property.isDecimal -> {
                 target.systemClasses.addOnce(SystemClass.DECIMAL)
@@ -659,6 +664,7 @@ class CodeGenerator(
             property.addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())
             result = true
         }
+        result = analyseFormat(target, property) || result
         property.defaultValue?.let {
             if (it.type != JSONSchema.Type.INTEGER)
                 property.defaultValue = null
@@ -666,7 +672,7 @@ class CodeGenerator(
         return result
     }
 
-    private fun analyseLong(property: Constraints): Boolean {
+    private fun analyseLong(property: Constraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
             when (it) {
@@ -695,6 +701,7 @@ class CodeGenerator(
             property.addValidation(Validation.Type.MULTIPLE_LONG, multiple.asLong())
             result = true
         }
+        result = analyseFormat(target, property) || result
         property.defaultValue?.let {
             if (it.type != JSONSchema.Type.INTEGER)
                 property.defaultValue = null
@@ -745,53 +752,101 @@ class CodeGenerator(
     }
 
     private fun analyseFormat(target: Target, property: Constraints): Boolean {
-        when (property.format) {
-            FormatValidator.FormatType.EMAIL -> {
-                target.systemClasses.addOnce(SystemClass.VALIDATION)
-                property.addValidation(Validation.Type.EMAIL)
-                return true
+        property.format?.let {
+            when (it.name) {
+                FormatValidator.EmailFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.VALIDATION)
+                    property.addValidation(Validation.Type.EMAIL)
+                    return true
+                }
+                FormatValidator.HostnameFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.VALIDATION)
+                    property.addValidation(Validation.Type.HOSTNAME)
+                    return true
+                }
+                FormatValidator.IPV4FormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.VALIDATION)
+                    property.addValidation(Validation.Type.IPV4)
+                    return true
+                }
+                FormatValidator.IPV6FormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.VALIDATION)
+                    property.addValidation(Validation.Type.IPV6)
+                    return true
+                }
+                FormatValidator.DateTimeFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.DATE_TIME)
+                    property.systemClass = SystemClass.DATE_TIME
+                }
+                FormatValidator.DateFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.DATE)
+                    property.systemClass = SystemClass.DATE
+                }
+                FormatValidator.TimeFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.TIME)
+                    property.systemClass = SystemClass.TIME
+                }
+                FormatValidator.DurationFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.DURATION)
+                    property.systemClass = SystemClass.DURATION
+                }
+                FormatValidator.UUIDFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.UUID)
+                    property.systemClass = SystemClass.UUID
+                }
+                FormatValidator.URIFormatChecker.name, FormatValidator.URIReferenceFormatChecker.name -> {
+                    target.systemClasses.addOnce(SystemClass.URI)
+                    property.systemClass = SystemClass.URI
+                }
             }
-            FormatValidator.FormatType.HOSTNAME -> {
-                target.systemClasses.addOnce(SystemClass.VALIDATION)
-                property.addValidation(Validation.Type.HOSTNAME)
-                return true
-            }
-            FormatValidator.FormatType.IPV4 -> {
-                target.systemClasses.addOnce(SystemClass.VALIDATION)
-                property.addValidation(Validation.Type.IPV4)
-                return true
-            }
-            FormatValidator.FormatType.IPV6 -> {
-                target.systemClasses.addOnce(SystemClass.VALIDATION)
-                property.addValidation(Validation.Type.IPV6)
-                return true
-            }
-            FormatValidator.FormatType.DATE_TIME -> {
-                target.systemClasses.addOnce(SystemClass.DATE_TIME)
-                property.systemClass = SystemClass.DATE_TIME
-            }
-            FormatValidator.FormatType.DATE -> {
-                target.systemClasses.addOnce(SystemClass.DATE)
-                property.systemClass = SystemClass.DATE
-            }
-            FormatValidator.FormatType.TIME -> {
-                target.systemClasses.addOnce(SystemClass.TIME)
-                property.systemClass = SystemClass.TIME
-            }
-            FormatValidator.FormatType.DURATION -> {
-                target.systemClasses.addOnce(SystemClass.DURATION)
-                property.systemClass = SystemClass.DURATION
-            }
-            FormatValidator.FormatType.UUID -> {
-                target.systemClasses.addOnce(SystemClass.UUID)
-                property.systemClass = SystemClass.UUID
-            }
-            FormatValidator.FormatType.URI, FormatValidator.FormatType.URI_REFERENCE -> {
-                target.systemClasses.addOnce(SystemClass.URI)
-                property.systemClass = SystemClass.URI
-            }
-            else -> {}
         }
+//        when (property.format?.name) {
+//            FormatValidator.EmailFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.VALIDATION)
+//                property.addValidation(Validation.Type.EMAIL)
+//                return true
+//            }
+//            FormatValidator.HostnameFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.VALIDATION)
+//                property.addValidation(Validation.Type.HOSTNAME)
+//                return true
+//            }
+//            FormatValidator.IPV4FormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.VALIDATION)
+//                property.addValidation(Validation.Type.IPV4)
+//                return true
+//            }
+//            FormatValidator.IPV6FormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.VALIDATION)
+//                property.addValidation(Validation.Type.IPV6)
+//                return true
+//            }
+//            FormatValidator.DateTimeFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.DATE_TIME)
+//                property.systemClass = SystemClass.DATE_TIME
+//            }
+//            FormatValidator.DateFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.DATE)
+//                property.systemClass = SystemClass.DATE
+//            }
+//            FormatValidator.TimeFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.TIME)
+//                property.systemClass = SystemClass.TIME
+//            }
+//            FormatValidator.DurationFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.DURATION)
+//                property.systemClass = SystemClass.DURATION
+//            }
+//            FormatValidator.UUIDFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.UUID)
+//                property.systemClass = SystemClass.UUID
+//            }
+//            FormatValidator.URIFormatChecker.name, FormatValidator.URIReferenceFormatChecker.name -> {
+//                target.systemClasses.addOnce(SystemClass.URI)
+//                property.systemClass = SystemClass.URI
+//            }
+//            else -> {}
+//        }
         return false
     }
 
@@ -886,7 +941,10 @@ class CodeGenerator(
     private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
         if (constraints.format != null)
             throw JSONSchemaException("Duplicate format")
-        constraints.format = formatValidator.type
+        constraints.format = formatValidator.checker.also {
+            if (it is FormatValidator.DelegatingFormatChecker)
+                processValidator(it.validator, constraints)
+        }
     }
 
     private fun processNumberValidator(numberValidator: NumberValidator, constraints: Constraints) {
@@ -953,6 +1011,14 @@ class CodeGenerator(
         customClassesByURI.add(CustomClassByURI(uri, className, packageName))
     }
 
+    fun addCustomClassByFormat(name: String, qualifiedClassName: String) {
+        customClassesByFormat.add(CustomClassByFormat(name, qualifiedClassName))
+    }
+
+    fun addCustomClassByFormat(name: String, className: String, packageName: String?) {
+        customClassesByFormat.add(CustomClassByFormat(name, className, packageName))
+    }
+
     fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, qualifiedClassName: String) {
         customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, qualifiedClassName))
     }
@@ -994,6 +1060,19 @@ class CodeGenerator(
         constructor(uri: URI, qualifiedClassName: String) :
                 this(uri, qualifiedClassName.substringAfterLast('.'),
                         qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+
+    }
+
+    class CustomClassByFormat(val name: String, className: String, packageName: String?) :
+            CustomClass(className, packageName) {
+
+        constructor(name: String, qualifiedClassName: String) :
+                this(name, qualifiedClassName.substringAfterLast('.'),
+                        qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+
+        fun match(constraints: Constraints): Boolean {
+            return constraints.format?.name == name
+        }
 
     }
 
