@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-delegating",
+  "title": "Dummy",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "string",
+      "format": "guid"
+    },
+    "bbb": {
+      "type": "string",
+      "format": "guid"
+    }
+  },
+  "required": [
+    "aaa"
+  ]
+}

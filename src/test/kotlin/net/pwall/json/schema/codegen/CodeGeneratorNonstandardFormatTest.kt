@@ -54,12 +54,32 @@ class CodeGeneratorNonstandardFormatTest {
         codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom") + expected) { stringWriter.toString() }
+        expect(createHeader("TestCustom") + expected1) { stringWriter.toString() }
+    }
+
+    @Test fun `should generate correct code for format delegating to another format`() {
+        val input = File("src/test/resources/test-nonstandard-format-delegating.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            when (keyword) {
+                "guid" -> FormatValidator.DelegatingFormatChecker(keyword,
+                        FormatValidator(null, JSONPointer.root, FormatValidator.UUIDFormatChecker))
+                else -> null
+            }
+        }
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser = parser
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestDelegating", "kt", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(createHeader("TestDelegating") + expected2) { stringWriter.toString() }
     }
 
     companion object {
 
-        const val expected =
+        const val expected1 =
 """package com.example
 
 data class TestCustom(
@@ -71,6 +91,17 @@ data class TestCustom(
     }
 
 }
+"""
+
+        const val expected2 =
+"""package com.example
+
+import java.util.UUID
+
+data class TestDelegating(
+        val aaa: UUID,
+        val bbb: UUID? = null
+)
 """
 
     }

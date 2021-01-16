@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.21.1] - 2021-01-06
+### Changed
+- `CodeGenerator`: fixed bug in ability to specify custom type by format
+
 ## [0.21] - 2021-01-05
 ### Changed
 - `CodeGenerator`: added ability to specify custom type by format

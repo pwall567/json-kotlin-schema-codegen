@@ -940,11 +940,12 @@ class CodeGenerator(
 
     private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
         if (constraints.format != null)
-            throw JSONSchemaException("Duplicate format")
-        constraints.format = formatValidator.checker.also {
-            if (it is FormatValidator.DelegatingFormatChecker)
-                processValidator(it.validator, constraints)
-        }
+            throw JSONSchemaException("Duplicate format - ${formatValidator.location}")
+        val newFormat = formatValidator.checker
+        if (newFormat is FormatValidator.DelegatingFormatChecker)
+            processValidator(newFormat.validator, constraints)
+        if (constraints.format == null) // it may have been set by delegated validator
+            constraints.format = newFormat
     }
 
     private fun processNumberValidator(numberValidator: NumberValidator, constraints: Constraints) {
