@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.22] - 2021-01-17
+### Changed
+- `CodeGenerator`, `Validation`, templates: changed handling of format duration, added json-pointer and
+relative-json-pointer
+- templates: fixed bug in validation of Java nullable fields
+
 ## [0.21.1] - 2021-01-06
 ### Changed
 - `CodeGenerator`: fixed bug in ability to specify custom type by format

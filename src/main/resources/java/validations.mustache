@@ -1,12 +1,18 @@
-{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}        if (!JSONValidation.isEmail({{&propertyName}}))
+{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isEmail({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format email - " + {{&propertyName}});
-{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        if (!JSONValidation.isHostname({{&propertyName}}))
+{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isHostname({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format hostname - " + {{&propertyName}});
-{{/HOSTNAME}}{{#IPV4}}{{&indent}}        if (!JSONValidation.isIPV4({{&propertyName}}))
+{{/HOSTNAME}}{{#IPV4}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isIPV4({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format ipv4 - " + {{&propertyName}});
-{{/IPV4}}{{#IPV6}}{{&indent}}        if (!JSONValidation.isIPV6({{&propertyName}}))
+{{/IPV4}}{{#IPV6}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isIPV6({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format ipv6 - " + {{&propertyName}});
-{{/IPV6}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.matcher({{&propertyName}}).matches())
+{{/IPV6}}{{#DURATION}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isDuration({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} does not match format duration - " + {{&propertyName}});
+{{/DURATION}}{{#JSON_POINTER}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isJSONPointer({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} does not match format json-pointer - " + {{&propertyName}});
+{{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isRelativeJSONPointer({{&propertyName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} does not match format relative-json-pointer - " + {{&propertyName}});
+{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.matcher({{&propertyName}}).matches())
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match pattern " + {{&value.staticName}} + " - " + {{&propertyName}});
 {{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        if ({{&propertyName}} > {{&value}})
 {{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value}} - " + {{&propertyName}});

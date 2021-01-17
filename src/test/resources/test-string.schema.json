@@ -19,6 +19,14 @@
       "type": "string",
       "format": "ipv6"
     },
+    "duration1": {
+      "type": "string",
+      "format": "duration"
+    },
+    "pointer1": {
+      "type": "string",
+      "format": "json-pointer"
+    },
     "maxlen": {
       "type": "string",
       "maxLength": 20

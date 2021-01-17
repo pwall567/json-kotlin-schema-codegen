@@ -70,6 +70,8 @@ data class TestString(
         val hostname1: String,
         val ipv4a: String,
         val ipv6a: String,
+        val duration1: String? = null,
+        val pointer1: String? = null,
         val maxlen: String,
         val minlen: String,
         val minlen2: String? = null,
@@ -82,6 +84,8 @@ data class TestString(
         require(JSONValidation.isHostname(hostname1)) { "hostname1 does not match format hostname - ${'$'}hostname1" }
         require(JSONValidation.isIPV4(ipv4a)) { "ipv4a does not match format ipv4 - ${'$'}ipv4a" }
         require(JSONValidation.isIPV6(ipv6a)) { "ipv6a does not match format ipv6 - ${'$'}ipv6a" }
+        require(duration1 == null || JSONValidation.isDuration(duration1)) { "duration1 does not match format duration - ${'$'}duration1" }
+        require(pointer1 == null || JSONValidation.isJSONPointer(pointer1)) { "pointer1 does not match format json-pointer - ${'$'}pointer1" }
         require(maxlen.length <= 20) { "maxlen length > maximum 20 - ${'$'}{maxlen.length}" }
         require(minlen.isNotEmpty()) { "minlen length < minimum 1 - ${'$'}{minlen.length}" }
         require(minlen2 == null || minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2?.length}" }
@@ -114,6 +118,8 @@ public class TestString {
     private final String hostname1;
     private final String ipv4a;
     private final String ipv6a;
+    private final String duration1;
+    private final String pointer1;
     private final String maxlen;
     private final String minlen;
     private final String minlen2;
@@ -125,6 +131,8 @@ public class TestString {
             String hostname1,
             String ipv4a,
             String ipv6a,
+            String duration1,
+            String pointer1,
             String maxlen,
             String minlen,
             String minlen2,
@@ -151,6 +159,12 @@ public class TestString {
         if (!JSONValidation.isIPV6(ipv6a))
             throw new IllegalArgumentException("ipv6a does not match format ipv6 - " + ipv6a);
         this.ipv6a = ipv6a;
+        if (duration1 != null && !JSONValidation.isDuration(duration1))
+            throw new IllegalArgumentException("duration1 does not match format duration - " + duration1);
+        this.duration1 = duration1;
+        if (pointer1 != null && !JSONValidation.isJSONPointer(pointer1))
+            throw new IllegalArgumentException("pointer1 does not match format json-pointer - " + pointer1);
+        this.pointer1 = pointer1;
         if (maxlen == null)
             throw new IllegalArgumentException("Must not be null - maxlen");
         if (maxlen.length() > 20)
@@ -190,6 +204,14 @@ public class TestString {
         return ipv6a;
     }
 
+    public String getDuration1() {
+        return duration1;
+    }
+
+    public String getPointer1() {
+        return pointer1;
+    }
+
     public String getMaxlen() {
         return maxlen;
     }
@@ -225,6 +247,10 @@ public class TestString {
             return false;
         if (!ipv6a.equals(typedOther.ipv6a))
             return false;
+        if (duration1 == null ? typedOther.duration1 != null : !duration1.equals(typedOther.duration1))
+            return false;
+        if (pointer1 == null ? typedOther.pointer1 != null : !pointer1.equals(typedOther.pointer1))
+            return false;
         if (!maxlen.equals(typedOther.maxlen))
             return false;
         if (!minlen.equals(typedOther.minlen))
@@ -242,6 +268,8 @@ public class TestString {
         hash ^= hostname1.hashCode();
         hash ^= ipv4a.hashCode();
         hash ^= ipv6a.hashCode();
+        hash ^= (duration1 != null ? duration1.hashCode() : 0);
+        hash ^= (pointer1 != null ? pointer1.hashCode() : 0);
         hash ^= maxlen.hashCode();
         hash ^= minlen.hashCode();
         hash ^= (minlen2 != null ? minlen2.hashCode() : 0);
