@@ -29,6 +29,7 @@ definitions:
     required:
     - data
   Person:
+    description: Test Swagger definition.
     type: object
     properties:
       id:

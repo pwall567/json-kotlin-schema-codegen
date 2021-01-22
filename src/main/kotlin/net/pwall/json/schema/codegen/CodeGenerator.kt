@@ -811,53 +811,6 @@ class CodeGenerator(
                 }
             }
         }
-//        when (property.format?.name) {
-//            FormatValidator.EmailFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.VALIDATION)
-//                property.addValidation(Validation.Type.EMAIL)
-//                return true
-//            }
-//            FormatValidator.HostnameFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.VALIDATION)
-//                property.addValidation(Validation.Type.HOSTNAME)
-//                return true
-//            }
-//            FormatValidator.IPV4FormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.VALIDATION)
-//                property.addValidation(Validation.Type.IPV4)
-//                return true
-//            }
-//            FormatValidator.IPV6FormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.VALIDATION)
-//                property.addValidation(Validation.Type.IPV6)
-//                return true
-//            }
-//            FormatValidator.DateTimeFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.DATE_TIME)
-//                property.systemClass = SystemClass.DATE_TIME
-//            }
-//            FormatValidator.DateFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.DATE)
-//                property.systemClass = SystemClass.DATE
-//            }
-//            FormatValidator.TimeFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.TIME)
-//                property.systemClass = SystemClass.TIME
-//            }
-//            FormatValidator.DurationFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.DURATION)
-//                property.systemClass = SystemClass.DURATION
-//            }
-//            FormatValidator.UUIDFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.UUID)
-//                property.systemClass = SystemClass.UUID
-//            }
-//            FormatValidator.URIFormatChecker.name, FormatValidator.URIReferenceFormatChecker.name -> {
-//                target.systemClasses.addOnce(SystemClass.URI)
-//                property.systemClass = SystemClass.URI
-//            }
-//            else -> {}
-//        }
         return false
     }
 

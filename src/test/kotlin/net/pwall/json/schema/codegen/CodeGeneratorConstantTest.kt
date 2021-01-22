@@ -65,11 +65,14 @@ class CodeGeneratorConstantTest {
 
 import java.math.BigDecimal
 
+/**
+ * Test const.
+ */
 data class TestConst(
-        val aaa: Int,
-        val bbb: Long,
-        val ccc: String,
-        val ddd: BigDecimal
+    val aaa: Int,
+    val bbb: Long,
+    val ccc: String,
+    val ddd: BigDecimal
 ) {
 
     init {
@@ -92,6 +95,9 @@ data class TestConst(
 
 import java.math.BigDecimal;
 
+/**
+ * Test const.
+ */
 public class TestConst {
 
     private static final String cg_str0 = "Hello!";

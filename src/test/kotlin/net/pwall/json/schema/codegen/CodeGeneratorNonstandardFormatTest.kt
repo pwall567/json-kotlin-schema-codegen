@@ -82,8 +82,11 @@ class CodeGeneratorNonstandardFormatTest {
         const val expected1 =
 """package com.example
 
+/**
+ * Test non-standard format.
+ */
 data class TestCustom(
-        val ggg: String
+    val ggg: String
 ) {
 
     init {
@@ -98,9 +101,12 @@ data class TestCustom(
 
 import java.util.UUID
 
+/**
+ * Test non-standard format (delegating).
+ */
 data class TestDelegating(
-        val aaa: UUID,
-        val bbb: UUID? = null
+    val aaa: UUID,
+    val bbb: UUID? = null
 )
 """
 

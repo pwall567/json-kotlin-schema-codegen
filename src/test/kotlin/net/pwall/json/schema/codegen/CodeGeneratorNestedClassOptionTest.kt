@@ -69,8 +69,11 @@ class CodeGeneratorNestedClassOptionTest {
 
 import java.util.UUID
 
+/**
+ * Test generation of arrays.
+ */
 data class TestArray(
-        val aaa: List<Aaa>
+    val aaa: List<Aaa>
 ) {
 
     init {
@@ -79,8 +82,8 @@ data class TestArray(
     }
 
     data class Aaa(
-            val id: UUID,
-            val name: String
+        val id: UUID,
+        val name: String
     ) {
 
         init {
@@ -103,6 +106,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * Test generation of arrays.
+ */
 public class TestArray {
 
     private static final Pattern cg_regex0 = Pattern.compile("^[A-Z][A-Za-z]*${'$'}");

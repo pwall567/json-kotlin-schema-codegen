@@ -1,8 +1,8 @@
 {{>header}}{{#packageName}}package {{&packageName}};
 
 {{/packageName}}{{#constraints}}{{#schema}}{{#description}}/**
-* {{&description}}
-*/
+ * {{&description}}
+ */
 {{/description}}{{/schema}}public enum {{&className}} {
 {{#enumValues}}    {{&.}}{{^last}},{{/last}}
 {{/enumValues}}{{&closeBrace}}{{/constraints}}

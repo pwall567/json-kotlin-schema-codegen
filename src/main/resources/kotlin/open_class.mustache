@@ -7,14 +7,14 @@
 {{/baseImport}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
-* {{&description}}
-*/
+ * {{&description}}
+ */
 {{/description}}{{/schema}}open class {{&className}}(
-{{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        {{&name}}: {{>type}}{{^isRequired}} = {{!
+{{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
+{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    val {{&name}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{!
 }}{{#markerInterfaceName}}, {{&.}}{{/markerInterfaceName}}{{/baseClass}}{{!

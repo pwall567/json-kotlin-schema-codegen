@@ -1,7 +1,7 @@
-{{#description}}    /**
+{{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{#isObject}}    public static class {{&className}} {
+{{/description}}{{/schema}}{{#isObject}}    public static class {{&className}} {
 
 {{#properties}}        private final {{>type}} {{&name}};
 {{#last}}

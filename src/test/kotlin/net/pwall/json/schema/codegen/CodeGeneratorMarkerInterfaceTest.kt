@@ -64,12 +64,18 @@ class CodeGeneratorMarkerInterfaceTest {
         const val expected =
 """package com.example
 
+/**
+ * Test empty object.
+ */
 class TestEmpty : Marker
 """
 
         const val expectedJava =
 """package com.example;
 
+/**
+ * Test empty object.
+ */
 public class TestEmpty implements Marker {
 
     @Override
@@ -94,6 +100,9 @@ public class TestEmpty implements Marker {
 
 import com.example.other.Marker
 
+/**
+ * Test empty object.
+ */
 class TestEmpty : Marker
 """
 
@@ -102,6 +111,9 @@ class TestEmpty : Marker
 
 import com.example.other.Marker;
 
+/**
+ * Test empty object.
+ */
 public class TestEmpty implements Marker {
 
     @Override

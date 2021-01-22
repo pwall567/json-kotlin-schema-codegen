@@ -76,8 +76,11 @@ class CodeGeneratorDerivedClassTest {
 
 import java.util.UUID
 
+/**
+ * Test base class.
+ */
 open class TestBaseClass(
-        val id: UUID
+    val id: UUID
 ) {
 
     override fun equals(other: Any?): Boolean = this === other || other is TestBaseClass &&
@@ -96,9 +99,12 @@ import java.util.UUID
 
 import com.example.TestBaseClass
 
+/**
+ * Test derived class.
+ */
 open class TestDerivedClass(
-        id: UUID,
-        val name: String
+    id: UUID,
+    val name: String
 ) : TestBaseClass(id) {
 
     override fun equals(other: Any?): Boolean = this === other || other is TestDerivedClass && super.equals(other) &&
@@ -115,6 +121,9 @@ open class TestDerivedClass(
 
 import java.util.UUID;
 
+/**
+ * Test base class.
+ */
 public class TestBaseClass {
 
     private final UUID id;
@@ -156,6 +165,9 @@ import java.util.UUID;
 
 import com.example.TestBaseClass;
 
+/**
+ * Test derived class.
+ */
 public class TestDerivedClass extends TestBaseClass {
 
     private final String name;

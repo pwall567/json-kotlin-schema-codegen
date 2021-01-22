@@ -2,12 +2,15 @@
   "$schema": "http://json-schema.org/draft/2019-09/schema",
   "$id": "http://pwall.net/test-nested-object",
   "title": "Dummy",
+  "description": "Test nested objects.",
   "type": "object",
   "properties": {
     "nested": {
+      "description": "Test nested object - nested.",
       "type": "object",
       "properties": {
         "deeper": {
+          "description": "Test nested object - deeper.",
           "type": "object",
           "properties": {
             "deepest": {

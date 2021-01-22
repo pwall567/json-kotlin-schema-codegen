@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft/2019-09/schema",
   "$id": "http://pwall.net/test-ref-class-outer",
   "title": "Outer class",
+  "description": "Test outer class.",
   "type": "object",
   "properties": {
     "id": {

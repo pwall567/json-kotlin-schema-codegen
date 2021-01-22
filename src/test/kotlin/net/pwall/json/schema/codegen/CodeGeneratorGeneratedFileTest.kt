@@ -96,10 +96,10 @@ import java.util.UUID
  * A class to represent a person
  */
 data class Person(
-        /** Id of the person */
-        val id: UUID,
-        /** Name of the person */
-        val name: String
+    /** Id of the person */
+    val id: UUID,
+    /** Name of the person */
+    val name: String
 )
 """
 

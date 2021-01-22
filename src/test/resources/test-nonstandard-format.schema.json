@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft/2019-09/schema",
   "$id": "http://pwall.net/test-nonstandard-format",
   "title": "Dummy",
+  "description": "Test non-standard format.",
   "type": "object",
   "properties": {
     "ggg": {

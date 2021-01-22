@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: minor formatting changes, improved tests
+- templates: reduced indentation of Kotlin constructor parameters (from 8 to 4) in line with new Kotlin standard
+
 ## [0.22] - 2021-01-17
 ### Changed
 - `CodeGenerator`, `Validation`, templates: changed handling of format duration, added json-pointer and

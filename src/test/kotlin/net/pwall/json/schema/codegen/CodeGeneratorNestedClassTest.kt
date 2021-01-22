@@ -63,16 +63,27 @@ class CodeGeneratorNestedClassTest {
         const val expectedNested =
 """package com.example
 
+/**
+ * Test nested objects.
+ */
 data class TestNestedObject(
-        val nested: Nested
+    /** Test nested object - nested. */
+    val nested: Nested
 ) {
 
+    /**
+     * Test nested object - nested.
+     */
     data class Nested(
-            val deeper: Deeper
+        /** Test nested object - deeper. */
+        val deeper: Deeper
     )
 
+    /**
+     * Test nested object - deeper.
+     */
     data class Deeper(
-            val deepest: String
+        val deepest: String
     ) {
 
         init {
@@ -87,6 +98,9 @@ data class TestNestedObject(
         const val expectedNestedJava =
 """package com.example;
 
+/**
+ * Test nested objects.
+ */
 public class TestNestedObject {
 
     private final Nested nested;
@@ -99,6 +113,9 @@ public class TestNestedObject {
         this.nested = nested;
     }
 
+    /**
+     * Test nested object - nested.
+     */
     public Nested getNested() {
         return nested;
     }
@@ -118,6 +135,9 @@ public class TestNestedObject {
         return nested.hashCode();
     }
 
+    /**
+     * Test nested object - nested.
+     */
     public static class Nested {
 
         private final Deeper deeper;
@@ -130,6 +150,9 @@ public class TestNestedObject {
             this.deeper = deeper;
         }
 
+        /**
+         * Test nested object - deeper.
+         */
         public Deeper getDeeper() {
             return deeper;
         }
@@ -151,6 +174,9 @@ public class TestNestedObject {
 
     }
 
+    /**
+     * Test nested object - deeper.
+     */
     public static class Deeper {
 
         private final String deepest;

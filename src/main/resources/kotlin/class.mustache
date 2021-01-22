@@ -8,8 +8,8 @@
  * {{&safeDescription}}
  */
 {{/description}}{{/schema}}{{#numberOfProperties}}data class {{&className}}(
-{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        val {{&name}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    val {{&name}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/properties}}){{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{#validationsOrNestedClassesOrStaticsPresent}} {
 {{#validationsPresent}}

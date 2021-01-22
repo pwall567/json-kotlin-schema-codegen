@@ -78,9 +78,9 @@ class CodeGeneratorPersonSchemaTest {
  * A test class.
  */
 data class TestPerson(
-        val name: String,
-        val nickname: String? = null,
-        val age: Int
+    val name: String,
+    val nickname: String? = null,
+    val age: Int
 ) {
 
     init {

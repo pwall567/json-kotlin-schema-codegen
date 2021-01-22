@@ -63,12 +63,18 @@ class CodeGeneratorEmptyClassTest {
         const val expected =
 """package com.example
 
+/**
+ * Test empty object.
+ */
 class TestEmpty
 """
 
         const val expectedJava =
 """package com.example;
 
+/**
+ * Test empty object.
+ */
 public class TestEmpty {
 
     @Override

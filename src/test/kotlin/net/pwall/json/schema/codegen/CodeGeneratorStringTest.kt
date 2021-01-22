@@ -65,18 +65,21 @@ class CodeGeneratorStringTest {
 
 import net.pwall.json.validation.JSONValidation
 
+/**
+ * Test string validations.
+ */
 data class TestString(
-        val email1: String,
-        val hostname1: String,
-        val ipv4a: String,
-        val ipv6a: String,
-        val duration1: String? = null,
-        val pointer1: String? = null,
-        val maxlen: String,
-        val minlen: String,
-        val minlen2: String? = null,
-        val name: String,
-        val status: Status = Status.OPEN
+    val email1: String,
+    val hostname1: String,
+    val ipv4a: String,
+    val ipv6a: String,
+    val duration1: String? = null,
+    val pointer1: String? = null,
+    val maxlen: String,
+    val minlen: String,
+    val minlen2: String? = null,
+    val name: String,
+    val status: Status = Status.OPEN
 ) {
 
     init {
@@ -110,6 +113,9 @@ data class TestString(
 import java.util.regex.Pattern;
 import net.pwall.json.validation.JSONValidation;
 
+/**
+ * Test string validations.
+ */
 public class TestString {
 
     private static final Pattern cg_regex0 = Pattern.compile("^[A-Z][A-Za-z]*${'$'}");

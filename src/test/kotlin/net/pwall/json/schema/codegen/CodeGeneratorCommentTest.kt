@@ -48,6 +48,9 @@ class CodeGeneratorCommentTest {
  */
 package com.example
 
+/**
+ * Test empty object.
+ */
 class TestEmpty
 """
 
@@ -65,6 +68,9 @@ class TestEmpty
  */
 package com.example;
 
+/**
+ * Test empty object.
+ */
 public class TestEmpty {
 
     @Override

@@ -63,17 +63,86 @@ class CodeGeneratorCustomValidatorTest {
         expect(createHeader("TestCustom") + expected) { stringWriter.toString() }
     }
 
+    @Test fun `should generate correct code for custom validation in Java`() {
+        val input = File("src/test/resources/test-custom-validator.schema.json")
+        val parser = Parser()
+        parser.customValidationHandler = { key, uri, location, value ->
+            when (key) {
+                "x-test" -> {
+                    if (value is JSONString && value.get() == "not-empty")
+                        StringValidator(uri, location, StringValidator.ValidationType.MIN_LENGTH, 1)
+                    else
+                        throw RuntimeException("Unknown type")
+                }
+                else -> null
+            }
+        }
+        val schema = parser.parse(input)
+        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "java", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generateClass(schema, "TestCustom")
+        expect(createHeader("TestCustom") + expectedJava) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expected =
 """package com.example
 
+/**
+ * Test custom validator.
+ */
 data class TestCustom(
-        val aaa: String
+    val aaa: String
 ) {
 
     init {
         require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.length}" }
+    }
+
+}
+"""
+
+        const val expectedJava =
+"""package com.example;
+
+/**
+ * Test custom validator.
+ */
+public class TestCustom {
+
+    private final String aaa;
+
+    public TestCustom(
+            String aaa
+    ) {
+        if (aaa == null)
+            throw new IllegalArgumentException("Must not be null - aaa");
+        if (aaa.length() < 1)
+            throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.length());
+        this.aaa = aaa;
+    }
+
+    public String getAaa() {
+        return aaa;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestCustom))
+            return false;
+        TestCustom typedOther = (TestCustom)other;
+        return aaa.equals(typedOther.aaa);
+    }
+
+    @Override
+    public int hashCode() {
+        return aaa.hashCode();
     }
 
 }

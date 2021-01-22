@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft/2019-09/schema",
   "$id": "http://pwall.net/test-array",
   "title": "Dummy",
+  "description": "Test generation of arrays.",
   "type": "object",
   "properties": {
     "aaa": {

@@ -64,9 +64,12 @@ class CodeGeneratorArrayItemTest {
 """package com.example
 
 
+/**
+ * Test array items.
+ */
 data class TestArrayItems(
-        val aaa: List<Int>,
-        val bbb: List<String>? = null
+    val aaa: List<Int>,
+    val bbb: List<String>? = null
 ) {
 
     init {
@@ -94,6 +97,9 @@ data class TestArrayItems(
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Test array items.
+ */
 public class TestArrayItems {
 
     private static final Pattern cg_regex0 = Pattern.compile("^[A-Z]{3}${'$'}");

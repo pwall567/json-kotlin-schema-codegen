@@ -52,27 +52,30 @@ class CodeGeneratorRepeatedNestedClassTest {
         const val expectedRepeated =
 """package com.example
 
+/**
+ * Test repeated object.
+ */
 data class TestRepeatedObject(
-        val nested1: Nested1,
-        val nested2: Nested2
+    val nested1: Nested1,
+    val nested2: Nested2
 ) {
 
     data class Nested1(
-            val internal: Internal
+        val internal: Internal
     )
 
     data class Internal(
-            val prop1: String,
-            val prop2: String
+        val prop1: String,
+        val prop2: String
     )
 
     data class Nested2(
-            val internal: Internal1
+        val internal: Internal1
     )
 
     data class Internal1(
-            val prop1: String,
-            val prop2: String
+        val prop1: String,
+        val prop2: String
     )
 
 }

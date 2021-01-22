@@ -145,10 +145,10 @@ class CodeGeneratorCustomClassTest {
  * A class to represent a person
  */
 data class Person(
-        /** Id of the person */
-        val id: PersonId,
-        /** Name of the person */
-        val name: PersonName
+    /** Id of the person */
+    val id: PersonId,
+    /** Name of the person */
+    val name: PersonName
 )
 """
 
@@ -215,9 +215,12 @@ public class Person {
 
 import com.example.util.Money
 
+/**
+ * Test custom class.
+ */
 data class TestCustom(
-        val aaa: Money,
-        val bbb: Money? = null
+    val aaa: Money,
+    val bbb: Money? = null
 )
 """
 
@@ -226,6 +229,9 @@ data class TestCustom(
 
 import com.example.util.Money;
 
+/**
+ * Test custom class.
+ */
 public class TestCustom {
 
     private final Money aaa;

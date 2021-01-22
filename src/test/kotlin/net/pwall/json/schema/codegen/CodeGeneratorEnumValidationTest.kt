@@ -64,9 +64,12 @@ class CodeGeneratorEnumValidationTest {
 """package com.example
 
 
+/**
+ * Test enum validation.
+ */
 data class TestEnumValidation(
-        val aaa: String,
-        val bbb: Int
+    val aaa: String,
+    val bbb: Int
 ) {
 
     init {
@@ -76,9 +79,9 @@ data class TestEnumValidation(
 
     companion object {
         private val cg_array0 = setOf(
-                "ABCDE",
-                "FGHIJ",
-                "!@#*%"
+            "ABCDE",
+            "FGHIJ",
+            "!@#*%"
         )
         private val cg_array1 = setOf(123, 456, 789)
     }
@@ -92,6 +95,9 @@ data class TestEnumValidation(
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Test enum validation.
+ */
 public class TestEnumValidation {
 
     private static final List<String> cg_array0 = Arrays.asList(

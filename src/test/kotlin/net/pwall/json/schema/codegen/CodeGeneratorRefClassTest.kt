@@ -90,18 +90,24 @@ class CodeGeneratorRefClassTest {
 
 import java.util.UUID
 
+/**
+ * Test outer class.
+ */
 data class TestRefClassOuter(
-        val id: UUID,
-        val single: TestRefClassInner,
-        val multiple: List<TestRefClassInner>
+    val id: UUID,
+    val single: TestRefClassInner,
+    val multiple: List<TestRefClassInner>
 )
 """
 
         const val expectedInner =
 """package com.example
 
+/**
+ * Test inner class.
+ */
 data class TestRefClassInner(
-        val name: String
+    val name: String
 )
 """
 

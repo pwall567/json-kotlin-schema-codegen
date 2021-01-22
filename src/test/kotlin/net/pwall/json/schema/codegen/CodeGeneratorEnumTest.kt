@@ -63,6 +63,9 @@ class CodeGeneratorEnumTest {
         const val expected =
 """package com.example
 
+/**
+ * Test enum.
+ */
 enum class TestEnum {
     FIRST,
     SECOND,
@@ -73,6 +76,9 @@ enum class TestEnum {
         const val expectedJava =
 """package com.example;
 
+/**
+ * Test enum.
+ */
 public enum TestEnum {
     FIRST,
     SECOND,

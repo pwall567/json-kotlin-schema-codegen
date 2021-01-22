@@ -93,17 +93,20 @@ class CodeGeneratorSwaggerTest {
 """package com.example
 
 data class QueryResponse(
-        val data: Person,
-        val message: String? = null
+    val data: Person,
+    val message: String? = null
 )
 """
 
         const val expectedExample2 =
 """package com.example
 
+/**
+ * Test Swagger definition.
+ */
 data class Person(
-        val id: Int,
-        val name: String
+    val id: Int,
+    val name: String
 ) {
 
     init {
@@ -165,6 +168,9 @@ public class QueryResponse {
         const val expectedExample2Java =
 """package com.example;
 
+/**
+ * Test Swagger definition.
+ */
 public class Person {
 
     private final int id;
