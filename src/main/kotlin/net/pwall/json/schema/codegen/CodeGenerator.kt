@@ -907,7 +907,8 @@ class CodeGenerator(
             throw JSONSchemaException("Duplicate format - ${formatValidator.location}")
         val newFormat = formatValidator.checker
         if (newFormat is FormatValidator.DelegatingFormatChecker)
-            processValidator(newFormat.validator, constraints)
+            for (validator in newFormat.validators)
+                processValidator(validator, constraints)
         if (constraints.format == null) // it may have been set by delegated validator
             constraints.format = newFormat
     }

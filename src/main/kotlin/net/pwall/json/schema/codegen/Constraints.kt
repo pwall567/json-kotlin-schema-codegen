@@ -145,11 +145,11 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val isInt: Boolean
-        get() = isIntOrLong && (rangeImpliesInt() || constImpliesInt() || enumImpliesInt())
+        get() = isIntOrLong && (rangeImpliesInt() || constImpliesInt() || enumImpliesInt() || formatImpliesInt())
 
     @Suppress("unused")
     val isLong: Boolean
-        get() = isIntOrLong && !(rangeImpliesInt() || constImpliesInt() || enumImpliesInt())
+        get() = isIntOrLong && !(rangeImpliesInt() || constImpliesInt() || enumImpliesInt() || formatImpliesInt())
 
     @Suppress("unused")
     val isIntOrLong: Boolean
@@ -209,6 +209,8 @@ open class Constraints(val schema: JSONSchema) {
         }
         return false
     }
+
+    private fun formatImpliesInt(): Boolean = format == FormatValidator.Int32FormatChecker
 
     private fun rangeImpliesInt(): Boolean = minimumImpliesInt() && maximumImpliesInt()
 

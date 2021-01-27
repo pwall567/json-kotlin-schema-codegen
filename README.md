@@ -115,6 +115,9 @@ set to `true`.
 This code generator targets the 2019-09 draft of the JSON Schema specification, but it should cover most of draft 07 as
 well.
 
+It also includes support for the `int32` and `int64` format types from the
+[OpenAPI 3.0 Specification](https://swagger.io/specification/).
+
 ## API Reference
 
 A `CodeGenerator` object is used to perform the generation.
@@ -162,25 +165,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.22, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.23, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.22</version>
+      <version>0.23</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.22'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.23'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.22")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.23")
 ```
 
 Peter Wall
 
-2021-01-17
+2021-01-26
