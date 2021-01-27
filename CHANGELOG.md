@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.24] - 2021-01-27
+### Changed
+- templates: output `open class` for object with no specified properties
+
 ## [0.23] - 2021-01-26
 ### Changed
 - templates: minor formatting changes, improved tests

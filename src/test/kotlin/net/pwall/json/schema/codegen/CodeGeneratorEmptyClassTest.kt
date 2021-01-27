@@ -66,7 +66,7 @@ class CodeGeneratorEmptyClassTest {
 /**
  * Test empty object.
  */
-class TestEmpty
+open class TestEmpty
 """
 
         const val expectedJava =

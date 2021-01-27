@@ -18,5 +18,5 @@
 {{/validationsPresent}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}class {{&className}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/numberOfProperties}}{{!
+}}{{^numberOfProperties}}open class {{&className}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/numberOfProperties}}{{!
 }}{{/constraints}}
