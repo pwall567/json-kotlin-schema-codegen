@@ -31,14 +31,13 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 
-import net.pwall.json.JSONArray
 import net.pwall.json.JSONBoolean
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
 import net.pwall.json.JSONMapping
 import net.pwall.json.JSONNumberValue
-import net.pwall.json.JSONObject
+import net.pwall.json.JSONSequence
 import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
 import net.pwall.json.pointer.JSONPointer
@@ -851,8 +850,9 @@ class CodeGenerator(
                 is JSONInteger -> Constraints.DefaultValue(value.get(), JSONSchema.Type.INTEGER)
                 is JSONString -> Constraints.DefaultValue(StringValue(value.get()), JSONSchema.Type.STRING)
                 is JSONBoolean -> Constraints.DefaultValue(value.get(), JSONSchema.Type.BOOLEAN)
-                is JSONArray -> Constraints.DefaultValue(value.map { processDefaultValue(it) }, JSONSchema.Type.ARRAY)
-                is JSONObject -> throw JSONSchemaException("Can't handle object as default value")
+                is JSONSequence<*> -> Constraints.DefaultValue(value.map { processDefaultValue(it) },
+                        JSONSchema.Type.ARRAY)
+                is JSONMapping<*> -> throw JSONSchemaException("Can't handle object as default value")
                 else -> throw JSONSchemaException("Unexpected default value")
             }
 
