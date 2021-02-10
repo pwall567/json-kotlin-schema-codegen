@@ -84,8 +84,7 @@ data class TestPerson(
 ) {
 
     init {
-        require(name.isNotEmpty()) { "name length < minimum 1 - ${'$'}{name.length}" }
-        require(name.length <= 80) { "name length > maximum 80 - ${'$'}{name.length}" }
+        require(name.length in 1..80) { "name length not in range 1..80 - ${'$'}{name.length}" }
         require(age >= 0) { "age < minimum 0 - ${'$'}age" }
         require(age <= 120) { "age > maximum 120 - ${'$'}age" }
     }
@@ -112,10 +111,8 @@ public class TestPerson {
     ) {
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");
-        if (name.length() < 1)
-            throw new IllegalArgumentException("name length < minimum 1 - " + name.length());
-        if (name.length() > 80)
-            throw new IllegalArgumentException("name length > maximum 80 - " + name.length());
+        if (name.length() < 1 || name.length() > 80)
+            throw new IllegalArgumentException("name length not in range 1..80 - " + name.length());
         this.name = name;
         this.nickname = nickname;
         if (age < 0)

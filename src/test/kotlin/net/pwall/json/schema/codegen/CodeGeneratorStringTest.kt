@@ -78,6 +78,8 @@ data class TestString(
     val maxlen: String,
     val minlen: String,
     val minlen2: String? = null,
+    val fixedLen: String? = null,
+    val rangeLen: String? = null,
     val name: String,
     val status: Status = Status.OPEN
 ) {
@@ -92,6 +94,8 @@ data class TestString(
         require(maxlen.length <= 20) { "maxlen length > maximum 20 - ${'$'}{maxlen.length}" }
         require(minlen.isNotEmpty()) { "minlen length < minimum 1 - ${'$'}{minlen.length}" }
         require(minlen2 == null || minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2?.length}" }
+        require(fixedLen == null || fixedLen.length == 3) { "fixedLen length != constant 3 - ${'$'}{fixedLen?.length}" }
+        require(rangeLen == null || rangeLen.length in 1..6) { "rangeLen length not in range 1..6 - ${'$'}{rangeLen?.length}" }
         require(cg_regex0 matches name) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
     }
 
@@ -129,6 +133,8 @@ public class TestString {
     private final String maxlen;
     private final String minlen;
     private final String minlen2;
+    private final String fixedLen;
+    private final String rangeLen;
     private final String name;
     private final Status status;
 
@@ -142,6 +148,8 @@ public class TestString {
             String maxlen,
             String minlen,
             String minlen2,
+            String fixedLen,
+            String rangeLen,
             String name,
             Status status
     ) {
@@ -184,6 +192,12 @@ public class TestString {
         if (minlen2 != null && minlen2.length() < 1)
             throw new IllegalArgumentException("minlen2 length < minimum 1 - " + minlen2.length());
         this.minlen2 = minlen2;
+        if (fixedLen != null && fixedLen.length() != 3)
+            throw new IllegalArgumentException("fixedLen length != constant 3 - " + fixedLen.length());
+        this.fixedLen = fixedLen;
+        if (rangeLen != null && (rangeLen.length() < 1 || rangeLen.length() > 6))
+            throw new IllegalArgumentException("rangeLen length not in range 1..6 - " + rangeLen.length());
+        this.rangeLen = rangeLen;
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");
         if (!cg_regex0.matcher(name).matches())
@@ -230,6 +244,14 @@ public class TestString {
         return minlen2;
     }
 
+    public String getFixedLen() {
+        return fixedLen;
+    }
+
+    public String getRangeLen() {
+        return rangeLen;
+    }
+
     public String getName() {
         return name;
     }
@@ -263,6 +285,10 @@ public class TestString {
             return false;
         if (minlen2 == null ? typedOther.minlen2 != null : !minlen2.equals(typedOther.minlen2))
             return false;
+        if (fixedLen == null ? typedOther.fixedLen != null : !fixedLen.equals(typedOther.fixedLen))
+            return false;
+        if (rangeLen == null ? typedOther.rangeLen != null : !rangeLen.equals(typedOther.rangeLen))
+            return false;
         if (!name.equals(typedOther.name))
             return false;
         return status.equals(typedOther.status);
@@ -279,6 +305,8 @@ public class TestString {
         hash ^= maxlen.hashCode();
         hash ^= minlen.hashCode();
         hash ^= (minlen2 != null ? minlen2.hashCode() : 0);
+        hash ^= (fixedLen != null ? fixedLen.hashCode() : 0);
+        hash ^= (rangeLen != null ? rangeLen.hashCode() : 0);
         hash ^= name.hashCode();
         return hash ^ status.hashCode();
     }

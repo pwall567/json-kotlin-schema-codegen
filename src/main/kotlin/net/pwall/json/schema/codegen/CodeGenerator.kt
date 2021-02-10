@@ -589,12 +589,16 @@ class CodeGenerator(
                 validationsPresent = true
             }
         }
-        property.minLength?.let { // TODO check for both minLength and maxLength (generate length in 1..40)?
-            property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(it))
+        property.minLength?.let { min ->
+            property.maxLength?.let { max ->
+                if (min == max)
+                    property.addValidation(Validation.Type.CONST_LENGTH, NumberValue(min))
+                else
+                    property.addValidation(Validation.Type.RANGE_LENGTH, min to max)
+            } ?: property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(min))
             validationsPresent = true
-        }
-        property.maxLength?.let {
-            property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(it))
+        } ?: property.maxLength?.let { max ->
+            property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(max))
             validationsPresent = true
         }
         validationsPresent = analyseFormat(target, property) || validationsPresent

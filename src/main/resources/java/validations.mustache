@@ -44,7 +44,11 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} length > maximum {{&value}} - " + {{&propertyName}}.length());
 {{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.length() < {{&value}})
 {{&indent}}            {{>tniae}}("{{&displayName}} length < minimum {{&value}} - " + {{&propertyName}}.length());
-{{/MIN_LENGTH}}{{#CONST_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.equals({{&propertyName}}))
+{{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.length() != {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length != constant {{&value}} - " + {{&propertyName}}.length());
+{{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        if ({{#nullable}}{{&propertyName}} != null && ({{/nullable}}{{&propertyName}}.length() < {{&value.first}} || {{&propertyName}}.length() > {{&value.second}}{{#nullable}}){{/nullable}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&propertyName}}.length());
+{{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.equals({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value " + {{&value.staticName}} + " - " + {{&propertyName}});
 {{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        if ({{&propertyName}} != {{&value}})
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value}} - " + {{&propertyName}});

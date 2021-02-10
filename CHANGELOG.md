@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`, `Validation`, templates: added optimisation of string length checks
+
 ## [0.24.1] - 2021-02-03
 ### Changed
 - `CodeGenerator`: bug fix in default values
