@@ -241,6 +241,7 @@ class CodeGenerator(
     }
 
     private fun generateTarget(target: Target, targets: List<Target>) {
+        nameGenerator = NameGenerator()
         when {
             target.constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
@@ -503,23 +504,7 @@ class CodeGenerator(
                 target.systemClasses.addOnce(SystemClass.LIST)
                 var validationsPresent = false
                 property.arrayItems?.let {
-                    val itemValidations = when {
-                        it.isObject -> {
-                            findTargetClass(it, target, targets) { property.name.depluralise() }
-                            false
-                        }
-                        it.isInt -> analyseInt(it, target)
-                        it.isLong -> analyseLong(it, target)
-                        it.isDecimal -> {
-                            target.systemClasses.addOnce(SystemClass.DECIMAL)
-                            it.systemClass = SystemClass.DECIMAL
-                            analyseDecimal(target, it)
-                        }
-                        it.isString -> analyseString(it, target, targets) { property.name.depluralise() }
-                        // TODO array of array?
-                        else -> false
-                    }
-                    if (itemValidations) {
+                    if (analyseArray(it, target, targets) { property.name.depluralise() }) {
                         property.addValidation(Validation.Type.ARRAY_ITEMS)
                         validationsPresent = true
                     }
@@ -554,6 +539,31 @@ class CodeGenerator(
             }
         }
         return false
+    }
+
+    private fun analyseArray(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
+            Boolean {
+        return when {
+            property.isObject -> {
+                findTargetClass(property, target, targets, defaultName)
+                false
+            }
+            property.isInt -> analyseInt(property, target)
+            property.isLong -> analyseLong(property, target)
+            property.isDecimal -> {
+                target.systemClasses.addOnce(SystemClass.DECIMAL)
+                property.systemClass = SystemClass.DECIMAL
+                analyseDecimal(target, property)
+            }
+            property.isString -> analyseString(property, target, targets, defaultName)
+            property.isArray -> property.arrayItems?.let {
+                analyseArray(it, target, targets, defaultName).also { validations ->
+                    if (validations)
+                        property.addValidation(Validation.Type.ARRAY_ITEMS)
+                }
+            } ?: false
+            else -> false
+        }
     }
 
     private fun analyseString(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
@@ -864,8 +874,8 @@ class CodeGenerator(
         when (subSchema) {
             is CombinationSchema -> processCombinationSchema(subSchema, constraints)
             is ItemsSchema -> processSchema(subSchema.itemSchema,
-                    constraints.arrayItems ?: ItemConstraints(subSchema.itemSchema, constraints.displayName).also {
-                            constraints.arrayItems = it })
+                    constraints.arrayItems ?: ItemConstraints(subSchema.itemSchema, constraints.displayName,
+                            nameGenerator.generate()).also { constraints.arrayItems = it })
             is PropertiesSchema -> processPropertySchema(subSchema, constraints)
             is RefSchema -> processSchema(subSchema.target, constraints)
             is RequiredSchema -> subSchema.properties.forEach {
@@ -995,6 +1005,14 @@ class CodeGenerator(
 
     fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, className: String, packageName: String?) {
         customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, className, packageName))
+    }
+
+    private var nameGenerator = NameGenerator()
+
+    class NameGenerator(var suffix: Int = 0) {
+
+        fun generate(): String = "cg_${suffix++}"
+
     }
 
     /**

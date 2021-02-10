@@ -29,6 +29,6 @@
 {{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
 {{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
 {{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
-{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        {{&propertyName}}{{#nullable}}?{{/nullable}}.forEach {
-{{#indent.increment}}{{#arrayItems}}{{>validations}}{{/arrayItems}}{{/indent.increment}}{{&indent}}        }
+{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        {{&propertyName}}{{#nullable}}?{{/nullable}}.forEach { {{#arrayItems}}{{&propertyName}} ->
+{{#indent.increment}}{{>validations}}{{/indent.increment}}{{/arrayItems}}{{&indent}}        }
 {{/ARRAY_ITEMS}}{{/type}}{{/validations}}

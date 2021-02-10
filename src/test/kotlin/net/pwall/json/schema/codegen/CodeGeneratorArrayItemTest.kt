@@ -69,18 +69,24 @@ class CodeGeneratorArrayItemTest {
  */
 data class TestArrayItems(
     val aaa: List<Int>,
-    val bbb: List<String>? = null
+    val bbb: List<String>? = null,
+    val ccc: List<List<String>>? = null
 ) {
 
     init {
-        aaa.forEach {
-            require(it >= 0) { "aaa item < minimum 0 - ${'$'}it" }
-            require(it <= 9999) { "aaa item > maximum 9999 - ${'$'}it" }
+        aaa.forEach { cg_0 ->
+            require(cg_0 >= 0) { "aaa item < minimum 0 - ${'$'}cg_0" }
+            require(cg_0 <= 9999) { "aaa item > maximum 9999 - ${'$'}cg_0" }
         }
         require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
         require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
-        bbb?.forEach {
-            require(cg_regex0 matches it) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}it" }
+        bbb?.forEach { cg_1 ->
+            require(cg_regex0 matches cg_1) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
+        }
+        ccc?.forEach { cg_2 ->
+            cg_2.forEach { cg_3 ->
+                require(cg_3.length <= 3) { "ccc item item length > maximum 3 - ${'$'}{cg_3.length}" }
+            }
         }
     }
 
@@ -106,18 +112,20 @@ public class TestArrayItems {
 
     private final List<Integer> aaa;
     private final List<String> bbb;
+    private final List<List<String>> ccc;
 
     public TestArrayItems(
             List<Integer> aaa,
-            List<String> bbb
+            List<String> bbb,
+            List<List<String>> ccc
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
-        for (int it : aaa) {
-            if (it < 0)
-                throw new IllegalArgumentException("aaa item < minimum 0 - " + it);
-            if (it > 9999)
-                throw new IllegalArgumentException("aaa item > maximum 9999 - " + it);
+        for (int cg_0 : aaa) {
+            if (cg_0 < 0)
+                throw new IllegalArgumentException("aaa item < minimum 0 - " + cg_0);
+            if (cg_0 > 9999)
+                throw new IllegalArgumentException("aaa item > maximum 9999 - " + cg_0);
         }
         if (aaa.size() < 1)
             throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.size());
@@ -125,12 +133,21 @@ public class TestArrayItems {
             throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
         this.aaa = aaa;
         if (bbb != null) {
-            for (String it : bbb) {
-                if (!cg_regex0.matcher(it).matches())
-                    throw new IllegalArgumentException("bbb item does not match pattern " + cg_regex0 + " - " + it);
+            for (String cg_1 : bbb) {
+                if (!cg_regex0.matcher(cg_1).matches())
+                    throw new IllegalArgumentException("bbb item does not match pattern " + cg_regex0 + " - " + cg_1);
             }
         }
         this.bbb = bbb;
+        if (ccc != null) {
+            for (List<String> cg_2 : ccc) {
+                for (String cg_3 : cg_2) {
+                    if (cg_3.length() > 3)
+                        throw new IllegalArgumentException("ccc item item length > maximum 3 - " + cg_3.length());
+                }
+            }
+        }
+        this.ccc = ccc;
     }
 
     public List<Integer> getAaa() {
@@ -139,6 +156,10 @@ public class TestArrayItems {
 
     public List<String> getBbb() {
         return bbb;
+    }
+
+    public List<List<String>> getCcc() {
+        return ccc;
     }
 
     @Override
@@ -150,13 +171,16 @@ public class TestArrayItems {
         TestArrayItems typedOther = (TestArrayItems)other;
         if (!aaa.equals(typedOther.aaa))
             return false;
-        return bbb == null ? typedOther.bbb == null : bbb.equals(typedOther.bbb);
+        if (bbb == null ? typedOther.bbb != null : !bbb.equals(typedOther.bbb))
+            return false;
+        return ccc == null ? typedOther.ccc == null : ccc.equals(typedOther.ccc);
     }
 
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
-        return hash ^ (bbb != null ? bbb.hashCode() : 0);
+        hash ^= (bbb != null ? bbb.hashCode() : 0);
+        return hash ^ (ccc != null ? ccc.hashCode() : 0);
     }
 
 }

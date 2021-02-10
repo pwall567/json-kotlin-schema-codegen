@@ -21,6 +21,16 @@
         "type": "string",
         "pattern": "^[A-Z]{3}$"
       }
+    },
+    "ccc": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 3
+        }
+      }
     }
   },
   "required": [ "aaa" ]

@@ -27,10 +27,7 @@ package net.pwall.json.schema.codegen
 
 import net.pwall.json.schema.JSONSchema
 
-class ItemConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
-
-    @Suppress("unused")
-    val propertyName: String = "it"
+class ItemConstraints(schema: JSONSchema, val name: String, val propertyName: String) : Constraints(schema) {
 
     @Suppress("unused")
     override val displayName: String
