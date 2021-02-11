@@ -1079,13 +1079,13 @@ class CodeGenerator(
 
     }
 
-    class AppendableFilter(private val destination: Appendable) : Appendable {
+    class AppendableFilter(private val destination: Appendable, private val maxNewlines: Int = 2) : Appendable {
 
         private var newlines = 0
 
         override fun append(c: Char): Appendable {
             if (c == '\n') {
-                if (newlines < 2) {
+                if (newlines < maxNewlines) {
                     destination.append(c)
                     newlines++
                 }
