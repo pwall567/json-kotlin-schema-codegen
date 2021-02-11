@@ -63,7 +63,6 @@ class CodeGeneratorEnumValidationTest {
         const val expected =
 """package com.example
 
-
 /**
  * Test enum validation.
  */

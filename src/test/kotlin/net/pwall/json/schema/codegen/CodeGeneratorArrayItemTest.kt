@@ -63,7 +63,6 @@ class CodeGeneratorArrayItemTest {
         const val expected =
 """package com.example
 
-
 /**
  * Test array items.
  */

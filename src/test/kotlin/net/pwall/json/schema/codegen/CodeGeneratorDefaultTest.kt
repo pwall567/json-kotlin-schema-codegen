@@ -52,7 +52,6 @@ class CodeGeneratorDefaultTest {
         const val expectedDefault =
 """package com.example
 
-
 /**
  * Test default values.
  */

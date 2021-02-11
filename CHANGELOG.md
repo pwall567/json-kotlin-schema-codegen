@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `CodeGenerator`, `Validation`, templates: added optimisation of string length checks
 - `CodeGenerator`, `ItemConstraints`, templates: added checks on nested arrays
+- `CodeGenerator`: added output filter to remove excess newlines
 
 ## [0.24.1] - 2021-02-03
 ### Changed

@@ -254,7 +254,7 @@ class CodeGenerator(
                 }
                 actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
                         target.suffix).use {
-                    actualTemplate.processTo(it, target)
+                    actualTemplate.processTo(AppendableFilter(it), target)
                 }
             }
             target.constraints.isString && target.constraints.enumValues != null -> {
@@ -1075,6 +1075,38 @@ class CodeGenerator(
             is JSONSchema.General -> schema.children.any { match(it) }
             is ExtensionSchema -> schema.name == extensionId && schema.value == extensionValue
             else -> false
+        }
+
+    }
+
+    class AppendableFilter(private val destination: Appendable) : Appendable {
+
+        private var newlines = 0
+
+        override fun append(c: Char): Appendable {
+            if (c == '\n') {
+                if (newlines < 2) {
+                    destination.append(c)
+                    newlines++
+                }
+            }
+            else {
+                destination.append(c)
+                newlines = 0
+            }
+            return this
+        }
+
+        override fun append(csq: CharSequence?): Appendable {
+            val text = csq ?: "null"
+            return append(text, 0, text.length)
+        }
+
+        override fun append(csq: CharSequence?, start: Int, end: Int): Appendable {
+            val text = csq ?: "null"
+            for (i in start until end)
+                append(text[i])
+            return this
         }
 
     }
