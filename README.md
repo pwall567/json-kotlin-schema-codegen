@@ -40,13 +40,13 @@ package com.example
 import java.math.BigDecimal
 
 data class Test(
-        /** Product identifier */
-        val id: BigDecimal,
-        /** Name of the product */
-        val name: String,
-        val price: BigDecimal,
-        val tags: List<String>? = null,
-        val stock: Stock? = null
+    /** Product identifier */
+    val id: BigDecimal,
+    /** Name of the product */
+    val name: String,
+    val price: BigDecimal,
+    val tags: List<String>? = null,
+    val stock: Stock? = null
 ) {
 
     init {
@@ -54,8 +54,8 @@ data class Test(
     }
 
     data class Stock(
-            val warehouse: BigDecimal? = null,
-            val retail: BigDecimal? = null
+        val warehouse: BigDecimal? = null,
+        val retail: BigDecimal? = null
     )
 
     companion object {
