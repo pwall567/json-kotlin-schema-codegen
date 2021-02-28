@@ -12,7 +12,14 @@
       },
       "maxItems": 5,
       "minItems": 1
+    },
+    "bbb": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
     }
   },
-  "required": [ "aaa" ]
+  "required": [ "aaa", "bbb" ]
 }

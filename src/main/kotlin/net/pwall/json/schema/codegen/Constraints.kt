@@ -95,6 +95,7 @@ open class Constraints(val schema: JSONSchema) {
     var arrayItems: Constraints? = null
     var minItems: Int? = null
     var maxItems: Int? = null
+    var uniqueItems: Boolean = false
 
     var minimum: Number? = null // Number will be BigDecimal, Long or Int
     var exclusiveMinimum: Number? = null

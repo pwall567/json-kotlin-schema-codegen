@@ -29,6 +29,7 @@ enum class SystemClass(val order: Int) {
     // collections etc.
     ARRAYS(0),
     LIST(1),
+    SET(2),
     // math etc.
     DECIMAL(20),
     // date, time etc.

@@ -12,5 +12,5 @@
 }}{{#isInt}}int{{/isInt}}{{^isInt}}{{! is it a long?
 }}{{#isLong}}long{{/isLong}}{{^isLong}}{{! is it a boolean?
 }}{{#isBoolean}}boolean{{/isBoolean}}{{^isBoolean}}{{! is it an array?
-}}{{#isArray}}List<{{#arrayItems}}{{>boxed_type}}{{/arrayItems}}>{{/isArray}}{{^isArray}}{{! default Object
+}}{{#isArray}}{{#uniqueItems}}Set{{/uniqueItems}}{{^uniqueItems}}List{{/uniqueItems}}<{{#arrayItems}}{{>boxed_type}}{{/arrayItems}}>{{/isArray}}{{^isArray}}{{! default Object
 }}Object{{/isArray}}{{/isBoolean}}{{/isLong}}{{/isInt}}{{/isString}}{{/isLocalType}}{{/isSystemClass}}

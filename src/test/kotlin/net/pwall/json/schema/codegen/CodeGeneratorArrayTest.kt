@@ -69,7 +69,8 @@ import java.util.UUID
  * Test generation of arrays.
  */
 data class TestArray(
-    val aaa: List<Person>
+    val aaa: List<Person>,
+    val bbb: Set<String>
 ) {
 
     init {
@@ -99,6 +100,7 @@ data class TestArray(
 """package com.example;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -110,9 +112,11 @@ public class TestArray {
     private static final Pattern cg_regex0 = Pattern.compile("^[A-Z][A-Za-z]*${'$'}");
 
     private final List<Person> aaa;
+    private final Set<String> bbb;
 
     public TestArray(
-            List<Person> aaa
+            List<Person> aaa,
+            Set<String> bbb
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
@@ -121,10 +125,17 @@ public class TestArray {
         if (aaa.size() > 5)
             throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
         this.aaa = aaa;
+        if (bbb == null)
+            throw new IllegalArgumentException("Must not be null - bbb");
+        this.bbb = bbb;
     }
 
     public List<Person> getAaa() {
         return aaa;
+    }
+
+    public Set<String> getBbb() {
+        return bbb;
     }
 
     @Override
@@ -134,12 +145,15 @@ public class TestArray {
         if (!(other instanceof TestArray))
             return false;
         TestArray typedOther = (TestArray)other;
-        return aaa.equals(typedOther.aaa);
+        if (!aaa.equals(typedOther.aaa))
+            return false;
+        return bbb.equals(typedOther.bbb);
     }
 
     @Override
     public int hashCode() {
-        return aaa.hashCode();
+        int hash = aaa.hashCode();
+        return hash ^ bbb.hashCode();
     }
 
     public static class Person {

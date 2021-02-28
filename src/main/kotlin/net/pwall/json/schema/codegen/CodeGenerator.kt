@@ -62,6 +62,7 @@ import net.pwall.json.schema.validation.NumberValidator
 import net.pwall.json.schema.validation.PatternValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
+import net.pwall.json.schema.validation.UniqueItemsValidator
 import net.pwall.log.Logger
 import net.pwall.log.LoggerFactory
 import net.pwall.mustache.Template
@@ -501,7 +502,7 @@ class CodeGenerator(
                 return false
             }
             property.isArray -> {
-                target.systemClasses.addOnce(SystemClass.LIST)
+                target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
                 var validationsPresent = false
                 property.arrayItems?.let {
                     if (analyseArray(it, target, targets) { property.name.depluralise() }) {
@@ -900,6 +901,7 @@ class CodeGenerator(
             is StringValidator -> processStringValidator(validator, constraints)
             is TypeValidator -> processTypeValidator(validator, constraints)
             is ArrayValidator -> processArrayValidator(validator, constraints)
+            is UniqueItemsValidator -> processUniqueItemsValidator(constraints)
             is DelegatingValidator -> processValidator(validator.validator, constraints)
         }
     }
@@ -948,6 +950,10 @@ class CodeGenerator(
             ArrayValidator.ValidationType.MIN_ITEMS -> constraints.minItems =
                     maximumOf(constraints.minLength, arrayValidator.value)?.toInt()
         }
+    }
+
+    private fun processUniqueItemsValidator(constraints: Constraints) {
+        constraints.uniqueItems = true
     }
 
     private fun processPatternValidator(patternValidator: PatternValidator, constraints: Constraints) {
@@ -1085,15 +1091,13 @@ class CodeGenerator(
 
         override fun append(c: Char): Appendable {
             if (c == '\n') {
-                if (newlines < maxNewlines) {
-                    destination.append(c)
-                    newlines++
-                }
+                if (newlines >= maxNewlines)
+                    return this
+                newlines++
             }
-            else {
-                destination.append(c)
+            else
                 newlines = 0
-            }
+            destination.append(c)
             return this
         }
 
