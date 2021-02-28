@@ -2,4 +2,4 @@
 }}{{#INTEGER}}{{&defaultValue}}{{/INTEGER}}{{!
 }}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
 }}{{#BOOLEAN}}{{&defaultValue}}{{/BOOLEAN}}{{!
-}}{{#ARRAY}}listOf({{#defaultValue}}{{>default_value}}{{^last}}, {{/last}}{{/defaultValue}}){{/ARRAY}}{{/type}}
+}}{{#ARRAY}}{{#uniqueItems}}setOf{{/uniqueItems}}{{^uniqueItems}}listOf{{/uniqueItems}}({{#defaultValue}}{{>default_value}}{{^last}}, {{/last}}{{/defaultValue}}){{/ARRAY}}{{/type}}

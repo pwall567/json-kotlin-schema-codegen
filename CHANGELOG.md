@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.25.1] - 2021-03-01
+### Changed
+- templates: fix bug in support for `uniqueItems`
+
 ## [0.25] - 2021-02-28
 ### Changed
 - `CodeGenerator`, `Validation`, templates: added optimisation of string length checks

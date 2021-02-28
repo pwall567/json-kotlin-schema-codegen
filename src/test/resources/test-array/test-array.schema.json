@@ -18,7 +18,8 @@
       "items": {
         "type": "string"
       },
-      "uniqueItems": true
+      "uniqueItems": true,
+      "default": []
     }
   },
   "required": [ "aaa", "bbb" ]

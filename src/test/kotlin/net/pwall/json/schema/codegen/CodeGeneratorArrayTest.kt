@@ -70,7 +70,7 @@ import java.util.UUID
  */
 data class TestArray(
     val aaa: List<Person>,
-    val bbb: Set<String>
+    val bbb: Set<String> = setOf()
 ) {
 
     init {
