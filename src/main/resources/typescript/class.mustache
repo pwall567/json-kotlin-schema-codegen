@@ -1,7 +1,17 @@
-{{>header}}{{#constraints}}{{#schema}}{{#description}}/**
+{{>header}}
+{{#localImports}}import { {{&className}} } from "./{{&className}}";{{#last}}
+{{/last}}
+{{/localImports}}{{#constraints}}{{#schema}}{{#description}}/**
  * {{&description}}
  */
-{{/description}}{{/schema}}interface {{&className}} {
-{{#properties}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
+{{/description}}{{/schema}}export interface {{&className}} {
+{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
 {{/last}}{{/properties}}
-}{{/constraints}}
+}{{#nestedClasses}}
+
+{{#constraints}}interface {{&className}} {
+{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
+{{/last}}{{/properties}}
+}{{/constraints}}{{/nestedClasses}}{{/constraints}}

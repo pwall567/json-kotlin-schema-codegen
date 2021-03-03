@@ -58,6 +58,17 @@ class CodeGeneratorExampleTest {
         expect(createHeader("Test") + expectedExampleJava) { stringWriter.toString() }
     }
 
+    @Test fun `should output example data class in TypeScript`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "ts", stringWriter)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.generate(input)
+        expect(createHeader("Test") + expectedExampleTypeScript) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expectedExample =
@@ -223,6 +234,24 @@ public class Test {
 
     }
 
+}
+"""
+
+        const val expectedExampleTypeScript =
+"""
+export interface Test {
+    /** Product identifier */
+    id: number,
+    /** Name of the product */
+    name: string,
+    price: number,
+    tags?: string[],
+    stock?: Stock
+}
+
+interface Stock {
+    warehouse?: number,
+    retail?: number
 }
 """
 

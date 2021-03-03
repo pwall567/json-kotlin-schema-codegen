@@ -2,9 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.26] - 2021-03-04
 ### Changed
 - templates: added support for enum in TypeScript
+- `CodeGenerator`, `Target`, templates: improved TypeScript output
+### Added
+- `TargetClass`: abstracts functionality for imports etc.
 
 ## [0.25.1] - 2021-03-01
 ### Changed

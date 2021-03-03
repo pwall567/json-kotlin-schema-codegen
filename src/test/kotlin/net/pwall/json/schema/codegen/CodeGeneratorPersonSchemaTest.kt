@@ -159,10 +159,11 @@ public class TestPerson {
 """
 
         const val expectedTypeScript =
-"""/**
+"""
+/**
  * A test class.
  */
-interface TestPerson {
+export interface TestPerson {
     name: string,
     nickname?: string,
     age: number

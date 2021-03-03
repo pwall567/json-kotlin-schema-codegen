@@ -442,8 +442,7 @@ class CodeGenerator(
     }
 
     private fun useTarget(constraints: Constraints, target: Target, otherTarget: Target) {
-        if (otherTarget.packageName != target.packageName)
-            target.imports.addOnce(otherTarget.qualifiedClassName)
+        target.addImport(otherTarget)
         constraints.localTypeName = otherTarget.className
     }
 
@@ -1036,13 +1035,14 @@ class CodeGenerator(
 
     }
 
-    abstract class CustomClass(private val className: String, private val packageName: String?) {
+    abstract class CustomClass(override val className: String, override val packageName: String?) : TargetClass {
 
         fun applyToTarget(target: Target): String {
-            packageName?.let {
-                if (it != target.packageName)
-                    target.imports.addOnce("${it}.$className")
-            }
+//            packageName?.let {
+//                if (it != target.packageName)
+//                    target.imports.addOnce("${it}.$className")
+//            }
+            target.addImport(this)
             return className
         }
 

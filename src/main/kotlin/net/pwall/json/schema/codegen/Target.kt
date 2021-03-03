@@ -27,6 +27,7 @@ package net.pwall.json.schema.codegen
 
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
+import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
 
 /**
  * A code generation target.  The class contains several properties that exist just for the purposes of template
@@ -34,16 +35,13 @@ import net.pwall.json.schema.JSONSchemaException
  *
  * @author  Peter Wall
  */
-class Target(val schema: JSONSchema, constraints: Constraints, className: String, val packageName: String?,
+class Target(val schema: JSONSchema, constraints: Constraints, className: String, override val packageName: String?,
         val subDirectories: List<String>, val suffix: String, val file: String,
         @Suppress("unused") val generatorComment: String? = null, private val markerInterface: String? = null) :
-        ClassDescriptor(constraints, className) {
+        ClassDescriptor(constraints, className), TargetClass {
 
     @Suppress("unused")
     val indent = Indent()
-
-    val qualifiedClassName: String
-        get() = packageName?.let { "$it.$className" } ?: className
 
     var baseClass: Target? = null
     var baseImport: String? = null
@@ -57,6 +55,7 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
+    val localImports = mutableListOf<LocalImport>()
 
     @Suppress("unused")
     val statics = mutableListOf<Static>()
@@ -101,8 +100,16 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
         return Static(type, "$staticNamePrefix${statics.size}", value).also { statics.add(it) }
     }
 
+    fun addImport(targetClass: TargetClass) {
+        if (targetClass.packageName != packageName)
+            imports.addOnce(targetClass.qualifiedClassName)
+        localImports.addOnce(LocalImport(targetClass.className, targetClass.packageName))
+    }
+
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
     data class Static(val type: StaticType, val staticName: String, val value: Any)
+
+    data class LocalImport(override val className: String, override val packageName: String?) : TargetClass
 
 }
