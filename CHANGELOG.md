@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: added support for enum in TypeScript
+
 ## [0.25.1] - 2021-03-01
 ### Changed
 - templates: fix bug in support for `uniqueItems`

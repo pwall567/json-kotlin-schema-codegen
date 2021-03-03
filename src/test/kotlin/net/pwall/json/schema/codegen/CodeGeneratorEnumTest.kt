@@ -58,6 +58,16 @@ class CodeGeneratorEnumTest {
         expect(createHeader("TestEnum") + expectedJava) { stringWriter.toString() }
     }
 
+    @Test fun `should output enum class as TypeScript`() {
+        val input = File("src/test/resources/test-enum.schema.json")
+        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        codeGenerator.baseDirectoryName = "dummy"
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestEnum", "ts", stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestEnum") + expectedTypeScript) { stringWriter.toString() }
+    }
+
     companion object {
 
         const val expected =
@@ -85,6 +95,17 @@ public enum TestEnum {
     THIRD
 }
 """
+
+        const val expectedTypeScript =
+"""
+/**
+ * Test enum.
+ */
+type TestEnum = "FIRST" |
+    "SECOND" |
+    "THIRD";
+"""
+
     }
 
 }
