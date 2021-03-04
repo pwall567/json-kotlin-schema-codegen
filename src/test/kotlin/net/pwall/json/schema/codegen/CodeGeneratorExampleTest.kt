@@ -241,17 +241,17 @@ public class Test {
 """
 export interface Test {
     /** Product identifier */
-    id: number,
+    id: number;
     /** Name of the product */
-    name: string,
-    price: number,
-    tags?: string[],
-    stock?: Stock
+    name: string;
+    price: number;
+    tags?: string[];
+    stock?: Stock;
 }
 
 interface Stock {
-    warehouse?: number,
-    retail?: number
+    warehouse?: number;
+    retail?: number;
 }
 """
 

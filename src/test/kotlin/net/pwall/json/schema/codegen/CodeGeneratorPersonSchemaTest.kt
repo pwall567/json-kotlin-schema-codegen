@@ -164,9 +164,9 @@ public class TestPerson {
  * A test class.
  */
 export interface TestPerson {
-    name: string,
-    nickname?: string,
-    age: number
+    name: string;
+    nickname?: string;
+    age: number;
 }
 """
 

@@ -101,7 +101,8 @@ public enum TestEnum {
 /**
  * Test enum.
  */
-type TestEnum = "FIRST" |
+export type TestEnum =
+    "FIRST" |
     "SECOND" |
     "THIRD";
 """

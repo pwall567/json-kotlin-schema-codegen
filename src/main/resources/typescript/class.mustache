@@ -6,12 +6,10 @@
  */
 {{/description}}{{/schema}}export interface {{&className}} {
 {{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
-{{/last}}{{/properties}}
-}{{#nestedClasses}}
+{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}};
+{{/properties}}{{&closeBrace}}{{#nestedClasses}}
 
 {{#constraints}}interface {{&className}} {
 {{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}}{{^last}},
-{{/last}}{{/properties}}
-}{{/constraints}}{{/nestedClasses}}{{/constraints}}
+{{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}};
+{{/properties}}{{&closeBrace}}{{/constraints}}{{/nestedClasses}}{{/constraints}}

@@ -2,5 +2,6 @@
 {{#constraints}}{{#schema}}{{#description}}/**
  * {{&description}}
  */
-{{/description}}{{/schema}}type {{&className}} = {{#enumValues}}"{{&.}}"{{^last}} |
-    {{/last}}{{/enumValues}}{{^enumValues}}any{{/enumValues}};{{/constraints}}
+{{/description}}{{/schema}}export type {{&className}} =
+{{#enumValues}}    "{{&.}}"{{^last}} |
+{{/last}}{{/enumValues}}{{^enumValues}}any{{/enumValues}};{{/constraints}}
