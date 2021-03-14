@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorCustomExtraTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,7 @@ import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorCustomExtraTest {
@@ -45,13 +46,12 @@ class CodeGeneratorCustomExtraTest {
     @Test fun `should generate correct classes for custom generation`() {
         val input = File("src/test/resources/example.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter1 = StringWriter()
-        val outputDetails1 = OutputDetails("dummy", emptyList(), "Test", "kt", stringWriter1)
+        val outputDetails1 = OutputDetails(TargetFileName("Test", "kt", dirs), stringWriter1)
         val stringWriter2 = StringWriter()
-        val outputDetails2 = OutputDetails("dummy", emptyList(), "Stock", "kt", stringWriter2)
-        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        val outputDetails2 = OutputDetails(TargetFileName("Stock", "kt", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.Stock")
         val schema: JSONValue = JSON.parse(input)
         val parser = JSONSchema.parser
@@ -59,20 +59,19 @@ class CodeGeneratorCustomExtraTest {
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",
                 parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "Stock"
         ))
-        expect(createHeader("Test") + expectedExample1) { stringWriter1.toString() }
-        expect(createHeader("Stock") + expectedExample2) { stringWriter2.toString() }
+        expect(createHeader("Test.kt") + expectedExample1) { stringWriter1.toString() }
+        expect(createHeader("Stock.kt") + expectedExample2) { stringWriter2.toString() }
     }
 
     @Test fun `should generate correct classes for custom generation in Java`() {
         val input = File("src/test/resources/example.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter1 = StringWriter()
-        val outputDetails1 = OutputDetails("dummy", emptyList(), "Test", "java", stringWriter1)
+        val outputDetails1 = OutputDetails(TargetFileName("Test", "java", dirs), stringWriter1)
         val stringWriter2 = StringWriter()
-        val outputDetails2 = OutputDetails("dummy", emptyList(), "StockEntry", "java", stringWriter2)
-        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        val outputDetails2 = OutputDetails(TargetFileName("StockEntry", "java", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.StockEntry")
         val schema: JSONValue = JSON.parse(input)
         val parser = JSONSchema.parser
@@ -80,8 +79,8 @@ class CodeGeneratorCustomExtraTest {
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",
                 parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "StockEntry"
         ))
-        expect(createHeader("Test") + expectedExample1Java) { stringWriter1.toString() }
-        expect(createHeader("StockEntry") + expectedExample2Java) { stringWriter2.toString() }
+        expect(createHeader("Test.java") + expectedExample1Java) { stringWriter1.toString() }
+        expect(createHeader("StockEntry.java") + expectedExample2Java) { stringWriter2.toString() }
     }
 
     companion object {

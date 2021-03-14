@@ -33,6 +33,7 @@ import java.io.StringWriter
 
 import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.FormatValidator
@@ -49,12 +50,11 @@ class CodeGeneratorNonstandardFormatTest {
         }
         val schema = parser.parse(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom") + expected1) { stringWriter.toString() }
+        expect(createHeader("TestCustom.kt") + expected1) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for format delegating to another format`() {
@@ -69,12 +69,11 @@ class CodeGeneratorNonstandardFormatTest {
         }
         val codeGenerator = CodeGenerator()
         codeGenerator.schemaParser = parser
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestDelegating", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestDelegating", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestDelegating") + expected2) { stringWriter.toString() }
+        expect(createHeader("TestDelegating.kt") + expected2) { stringWriter.toString() }
     }
 
     companion object {

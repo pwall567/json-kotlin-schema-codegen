@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorArrayItemTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorArrayItemTest {
@@ -39,23 +40,21 @@ class CodeGeneratorArrayItemTest {
     @Test fun `should generate correct validations for arrays of integer and string`() {
         val input = File("src/test/resources/test-array-items.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArrayItems", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestArrayItems", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArrayItems") + expected) { stringWriter.toString() }
+        expect(createHeader("TestArrayItems.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct validations for arrays of integer and string in Java`() {
         val input = File("src/test/resources/test-array-items.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArrayItems", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestArrayItems", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArrayItems") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestArrayItems.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

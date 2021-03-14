@@ -2,7 +2,7 @@
  * @(#) OutputResolver.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,5 +30,4 @@ import java.io.Writer
 /**
  * Function to resolve output class details to a [Writer].
  */
-typealias OutputResolver = (baseDirectoryName: String, subdirectories: List<String>, className: String,
-        suffix: String) -> Writer
+typealias OutputResolver = (TargetFileName) -> Writer

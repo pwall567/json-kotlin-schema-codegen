@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.27] - 2021-03-14
+### Changed
+- `CodeGenerator`, `OutputResolver`, `Target`, `TargetClass`: major changes to handling of target file name
+- `CodeGenerator`, templates: added ability to output "index" files
+### Added
+- `TargetFileName`: new
+
 ## [0.26.1] - 2021-03-04
 ### Changed
 - templates: fix bug in enum in TypeScript

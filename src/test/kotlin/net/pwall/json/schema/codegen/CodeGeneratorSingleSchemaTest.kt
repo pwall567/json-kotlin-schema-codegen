@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorSingleSchemaTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.io.StringWriter
 
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorSingleSchemaTest {
@@ -41,24 +42,22 @@ class CodeGeneratorSingleSchemaTest {
         val input = File("src/test/resources/example.schema.json")
         val schema = JSONSchema.parse(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "Test")
-        expect(createHeader("Test") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
     }
 
     @Test fun `should generate from pre-loaded schema as array`() {
         val input = File("src/test/resources/example.schema.json")
         val schema = JSONSchema.parse(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generateClasses(listOf(schema to "Test"))
-        expect(createHeader("Test") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
     }
 
 }

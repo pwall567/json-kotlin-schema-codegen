@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorCustomValidatorTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.io.StringWriter
 
 import net.pwall.json.JSONString
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.StringValidator
@@ -55,12 +56,11 @@ class CodeGeneratorCustomValidatorTest {
         }
         val schema = parser.parse(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom") + expected) { stringWriter.toString() }
+        expect(createHeader("TestCustom.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for custom validation in Java`() {
@@ -79,12 +79,11 @@ class CodeGeneratorCustomValidatorTest {
         }
         val schema = parser.parse(input)
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestCustom", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestCustom.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorNestedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorNestedClassTest {
@@ -39,23 +40,21 @@ class CodeGeneratorNestedClassTest {
     @Test fun `should output deeply nested class`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestNestedObject", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestNestedObject", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedObject") + expectedNested) { stringWriter.toString() }
+        expect(createHeader("TestNestedObject.kt") + expectedNested) { stringWriter.toString() }
     }
 
     @Test fun `should output deeply nested class in Java`() {
         val input = File("src/test/resources/test-nested-object.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestNestedObject", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestNestedObject", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedObject") + expectedNestedJava) { stringWriter.toString() }
+        expect(createHeader("TestNestedObject.java") + expectedNestedJava) { stringWriter.toString() }
     }
 
     companion object {

@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorDerivedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorDerivedClassTest {
@@ -40,33 +41,31 @@ class CodeGeneratorDerivedClassTest {
     @Test fun `should generate base class and derived class`() {
         val input = File("src/test/resources/test-derived-class")
         val codeGenerator = CodeGenerator(templateName = "open_class")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterBase = StringWriter()
-        val outputDetailsBase = OutputDetails("dummy1", emptyList(), "TestBaseClass", "kt", stringWriterBase)
+        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "kt", dirs), stringWriterBase)
         val stringWriterDerived = StringWriter()
-        val outputDetailsDerived = OutputDetails("dummy1", listOf("derived"), "TestDerivedClass", "kt",
+        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "kt", dirs + "derived"),
                 stringWriterDerived)
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(createHeader("TestBaseClass") + expectedBase) { stringWriterBase.toString() }
-        expect(createHeader("TestDerivedClass") + expectedDerived) { stringWriterDerived.toString() }
+        expect(createHeader("TestBaseClass.kt") + expectedBase) { stringWriterBase.toString() }
+        expect(createHeader("TestDerivedClass.kt") + expectedDerived) { stringWriterDerived.toString() }
     }
 
     @Test fun `should generate base class and derived class in Java`() {
         val input = File("src/test/resources/test-derived-class")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterBase = StringWriter()
-        val outputDetailsBase = OutputDetails("dummy1", emptyList(), "TestBaseClass", "java", stringWriterBase)
+        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "java", dirs), stringWriterBase)
         val stringWriterDerived = StringWriter()
-        val outputDetailsDerived = OutputDetails("dummy1", listOf("derived"), "TestDerivedClass", "java",
+        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "java", dirs + "derived"),
                 stringWriterDerived)
-        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.generate(input)
-        expect(createHeader("TestBaseClass") + expectedBaseJava) { stringWriterBase.toString() }
-        expect(createHeader("TestDerivedClass") + expectedDerivedJava) { stringWriterDerived.toString() }
+        expect(createHeader("TestBaseClass.java") + expectedBaseJava) { stringWriterBase.toString() }
+        expect(createHeader("TestDerivedClass.java") + expectedDerivedJava) { stringWriterDerived.toString() }
     }
 
     companion object {

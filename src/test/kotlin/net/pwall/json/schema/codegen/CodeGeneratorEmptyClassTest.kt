@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorEmptyClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorEmptyClassTest {
@@ -39,23 +40,21 @@ class CodeGeneratorEmptyClassTest {
     @Test fun `should output empty class`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestEmpty", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(createHeader("TestEmpty") + expected) { stringWriter.toString() }
+        expect(createHeader("TestEmpty.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should output empty class in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestEmpty", "java", stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(input)
-        expect(createHeader("TestEmpty") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestEmpty.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

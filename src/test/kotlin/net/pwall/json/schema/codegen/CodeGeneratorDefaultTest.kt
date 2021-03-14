@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorDefaultTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorDefaultTest {
@@ -39,12 +40,11 @@ class CodeGeneratorDefaultTest {
     @Test fun `should output class with default value`() {
         val input = File("src/test/resources/test-default.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestDefault", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestDefault", "kt", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.generate(listOf(input))
-        expect(createHeader("TestDefault") + expectedDefault) { stringWriter.toString() }
+        expect(createHeader("TestDefault.kt") + expectedDefault) { stringWriter.toString() }
     }
 
     companion object {

@@ -2,7 +2,7 @@
  * @(#) Target.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,10 +35,23 @@ import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
  *
  * @author  Peter Wall
  */
-class Target(val schema: JSONSchema, constraints: Constraints, className: String, override val packageName: String?,
-        val subDirectories: List<String>, val suffix: String, val file: String,
-        @Suppress("unused") val generatorComment: String? = null, private val markerInterface: String? = null) :
-        ClassDescriptor(constraints, className), TargetClass {
+class Target(
+    /** Schema to generate from */
+    val schema: JSONSchema,
+    /** [Constraints] describing target */
+    constraints: Constraints,
+    /** Target file */
+    @Suppress("unused") val targetFile: TargetFileName,
+    /** Source identifier (e.g. schema filename) */
+    val source: String,
+    /** Generator comment */
+    @Suppress("unused") val generatorComment: String? = null,
+    /** Marker interface to be implemented (if any) */
+    private val markerInterface: String? = null
+) : ClassDescriptor(constraints, targetFile.className), TargetClass {
+
+    override val packageName: String?
+        get() = targetFile.packageName
 
     @Suppress("unused")
     val indent = Indent()
@@ -55,7 +68,8 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
-    val localImports = mutableListOf<LocalImport>()
+    @Suppress("unused")
+    val localImports = mutableListOf<TargetClass>()
 
     @Suppress("unused")
     val statics = mutableListOf<Static>()
@@ -90,26 +104,21 @@ class Target(val schema: JSONSchema, constraints: Constraints, className: String
                 }
             }
         }
-        val nestedClass = ClassDescriptor(constraints, actualInnerClassName)
-        nestedClasses.add(nestedClass)
-        return nestedClass
+        return ClassDescriptor(constraints, actualInnerClassName).also { nestedClasses.add(it) }
     }
 
-    fun addStatic(type: StaticType, staticNamePrefix: String, value: Any): Static {
-        statics.find { it.type == type && it.value == value }?.let { return it }
-        return Static(type, "$staticNamePrefix${statics.size}", value).also { statics.add(it) }
-    }
+    fun addStatic(type: StaticType, prefix: String, value: Any): Static =
+            statics.find { it.type == type && it.value == value } ?:
+                    Static(type, "$prefix${statics.size}", value).also { statics.add(it) }
 
     fun addImport(targetClass: TargetClass) {
-        if (targetClass.packageName != packageName)
+        if (!samePackage(targetClass))
             imports.addOnce(targetClass.qualifiedClassName)
-        localImports.addOnce(LocalImport(targetClass.className, targetClass.packageName))
+        localImports.addOnce(targetClass)
     }
 
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
     data class Static(val type: StaticType, val staticName: String, val value: Any)
-
-    data class LocalImport(override val className: String, override val packageName: String?) : TargetClass
 
 }

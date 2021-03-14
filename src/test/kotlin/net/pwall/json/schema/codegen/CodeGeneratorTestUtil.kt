@@ -31,6 +31,8 @@ import java.io.StringWriter
 
 object CodeGeneratorTestUtil {
 
+    val dirs = listOf("com", "example")
+
     fun createHeader(name: String) =
 """/*
  * $name
@@ -43,31 +45,25 @@ object CodeGeneratorTestUtil {
  */
 """
 
-    fun outputCapture(expectedBaseDirectory: String, expectedSubdirectories: List<String>, expectedClassName: String,
-            expectedSuffix: String, stringWriter: StringWriter): OutputResolver =
-            { baseDirectory, subDirectories, className, suffix ->
-        if (baseDirectory == expectedBaseDirectory && subDirectories == expectedSubdirectories &&
-                className == expectedClassName && suffix == expectedSuffix)
+    fun outputCapture(expectedTargetFileName: TargetFileName, stringWriter: StringWriter): OutputResolver =
+            { targetFileName ->
+        if (targetFileName == expectedTargetFileName)
             stringWriter
         else
-            fail("Output resolver fail - $baseDirectory $subDirectories $className $suffix")
+            fail("Output resolver fail - $targetFileName")
     }
 
-    fun outputCapture(vararg outputDetails: OutputDetails): OutputResolver =
-            { baseDirectory, subDirectories, className, suffix ->
-                locateWriter(outputDetails.asList(), baseDirectory, subDirectories, className, suffix)
+    fun outputCapture(vararg outputDetails: OutputDetails): OutputResolver = { targetFileName ->
+                locateWriter(outputDetails.asList(), targetFileName)
     }
 
-    private fun locateWriter(outputDetails: List<OutputDetails>, baseDirectory: String, subDirectories: List<String>,
-            className: String, suffix: String): StringWriter {
+    private fun locateWriter(outputDetails: List<OutputDetails>, targetFileName: TargetFileName): StringWriter {
         for (entry in outputDetails)
-            if (baseDirectory == entry.expectedBaseDirectory && subDirectories == entry.expectedSubdirectories &&
-                    className == entry.expectedClassName && suffix == entry.expectedSuffix)
+            if (targetFileName == entry.expectedTargetFileName)
                 return entry.stringWriter
-        fail("Output resolver fail - $baseDirectory $subDirectories $className $suffix")
+        fail("Output resolver fail - $targetFileName")
     }
 
-    data class OutputDetails(val expectedBaseDirectory: String, val expectedSubdirectories: List<String>,
-            val expectedClassName: String, val expectedSuffix: String, val stringWriter: StringWriter)
+    data class OutputDetails(val expectedTargetFileName: TargetFileName, val stringWriter: StringWriter)
 
 }

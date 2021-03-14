@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorExampleTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorExampleTest {
@@ -39,34 +40,31 @@ class CodeGeneratorExampleTest {
     @Test fun `should output example data class`() {
         val input = File("src/test/resources/example.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test") + expectedExample) { stringWriter.toString() }
+        expect(createHeader("Test.kt") + expectedExample) { stringWriter.toString() }
     }
 
     @Test fun `should output example data class in Java`() {
         val input = File("src/test/resources/example.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test") + expectedExampleJava) { stringWriter.toString() }
+        expect(createHeader("Test.java") + expectedExampleJava) { stringWriter.toString() }
     }
 
     @Test fun `should output example data class in TypeScript`() {
         val input = File("src/test/resources/example.schema.json")
         val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "Test", "ts", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "ts", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test") + expectedExampleTypeScript) { stringWriter.toString() }
+        expect(createHeader("Test.ts") + expectedExampleTypeScript) { stringWriter.toString() }
     }
 
     companion object {

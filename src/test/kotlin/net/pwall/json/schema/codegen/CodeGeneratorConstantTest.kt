@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorConstantTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorConstantTest {
@@ -39,23 +40,21 @@ class CodeGeneratorConstantTest {
     @Test fun `should generate correct code for constants`() {
         val input = File("src/test/resources/test-const.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestConst", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestConst", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestConst") + expected) { stringWriter.toString() }
+        expect(createHeader("TestConst.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for constants in Java`() {
         val input = File("src/test/resources/test-const.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestConst", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestConst", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestConst") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestConst.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

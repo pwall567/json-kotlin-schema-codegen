@@ -1,3 +1,28 @@
+/*
+ * @(#) CodeGeneratorMultipleTest.kt
+ *
+ * json-kotlin-schema-codegen  JSON Schema Code Generation
+ * Copyright (c) 2021 Peter Wall
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
@@ -5,11 +30,12 @@ import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
 import net.pwall.json.JSON
 import net.pwall.json.pointer.JSONPointer
-
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorMultipleTest {
@@ -17,45 +43,46 @@ class CodeGeneratorMultipleTest {
     @Test fun `should generate classes for multiple schemata`() {
         val input = File("src/test/resources/test-multiple-schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterA = StringWriter()
-        val outputDetailsA = OutputDetails("dummy1", emptyList(), "TypeA", "kt", stringWriterA)
+        val outputDetailsA = OutputDetails(TargetFileName("TypeA", "kt", dirs), stringWriterA)
         val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails("dummy1", emptyList(), "TypeB", "kt", stringWriterB)
-        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        val outputDetailsB = OutputDetails(TargetFileName("TypeB", "kt", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA") + expectedTypeA) { stringWriterA.toString() }
-        expect(createHeader("TypeB") + expectedTypeB) { stringWriterB.toString() }
+        expect(createHeader("TypeA.kt") + expectedTypeA) { stringWriterA.toString() }
+        expect(createHeader("TypeB.kt") + expectedTypeB) { stringWriterB.toString() }
     }
 
     @Test fun `should generate classes for multiple schemata in Java`() {
         val input = File("src/test/resources/test-multiple-schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterA = StringWriter()
-        val outputDetailsA = OutputDetails("dummy1", emptyList(), "TypeA", "java", stringWriterA)
+        val outputDetailsA = OutputDetails(TargetFileName("TypeA", "java", dirs), stringWriterA)
         val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails("dummy1", emptyList(), "TypeB", "java", stringWriterB)
-        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        val outputDetailsB = OutputDetails(TargetFileName("TypeB", "java", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA") + expectedTypeAJava) { stringWriterA.toString() }
-        expect(createHeader("TypeB") + expectedTypeBJava) { stringWriterB.toString() }
+        expect(createHeader("TypeA.java") + expectedTypeAJava) { stringWriterA.toString() }
+        expect(createHeader("TypeB.java") + expectedTypeBJava) { stringWriterB.toString() }
     }
 
     @Test fun `should generate classes for multiple schemata in TypeScript`() {
         val input = File("src/test/resources/test-multiple-schema.json")
         val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriterA = StringWriter()
-        val outputDetailsA = OutputDetails("dummy1", emptyList(), "TypeA", "ts", stringWriterA)
+        val outputDetailsA = OutputDetails(TargetFileName("TypeA", "ts"), stringWriterA)
         val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails("dummy1", emptyList(), "TypeB", "ts", stringWriterB)
-        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        val outputDetailsB = OutputDetails(TargetFileName("TypeB", "ts"), stringWriterB)
+        val stringWriterIndex = StringWriter()
+        val outputDetailsIndex = OutputDetails(TargetFileName("index", "js"), stringWriterIndex)
+        codeGenerator.indexFileName = TargetFileName("index", "js")
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsIndex)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA") + expectedTypeATypeScript) { stringWriterA.toString() }
-        expect(createHeader("TypeB") + expectedTypeBTypeScript) { stringWriterB.toString() }
+        expect(createHeader("TypeA.ts") + expectedTypeATypeScript) { stringWriterA.toString() }
+        expect(createHeader("TypeB.ts") + expectedTypeBTypeScript) { stringWriterB.toString() }
+        expect(createHeader("index.js") + expectedIndexTypeScript) { stringWriterIndex.toString() }
     }
 
     companion object {
@@ -204,6 +231,16 @@ export interface TypeB {
 }
 """
 
+        const val expectedIndexTypeScript =
+"""
+import { TypeA } from "./TypeA";
+import { TypeB } from "./TypeB";
+
+module.exports = {
+    TypeA,
+    TypeB
+};
+"""
     }
 
 }

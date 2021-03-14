@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorArrayTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorArrayTest {
@@ -39,23 +40,21 @@ class CodeGeneratorArrayTest {
     @Test fun `should generate nested class for array of object`() {
         val input = File("src/test/resources/test-array")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArray", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestArray", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArray") + expected) { stringWriter.toString() }
+        expect(createHeader("TestArray.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate nested class for array of object in Java`() {
         val input = File("src/test/resources/test-array")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy1", emptyList(), "TestArray", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestArray", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArray") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestArray.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

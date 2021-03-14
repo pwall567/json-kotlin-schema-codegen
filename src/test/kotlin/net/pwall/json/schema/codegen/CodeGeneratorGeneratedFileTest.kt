@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorGeneratedFileTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorGeneratedFileTest {
@@ -53,33 +54,34 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should process test directory and write to generated-sources`() {
         val input = File("src/test/resources/test1")
-        val outputDirectory = "target/generated-test-sources/json-kotlin-schema/net/pwall/json/schema/test"
+        val outputDirectory = "target/generated-test-sources/json-kotlin-schema"
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
-        expect(createHeader("Person") + expected2) { File("$outputDirectory/person/Person.kt").readText() }
+        expect(createHeader("Person.kt") + expected2) {
+            File("$outputDirectory/net/pwall/json/schema/test/person/Person.kt").readText()
+        }
         codeGenerator.log.debug { "File $outputDirectory/person/Person.kt will be deleted" }
     }
 
     @Test fun `should output test class to Java`() {
         val input = File("src/test/resources/test1")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy1"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy1", listOf("person"), "Person", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "java", dirs + "person"), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Person") + expected2Java) { stringWriter.toString() }
+        expect(createHeader("Person.java") + expected2Java) { stringWriter.toString() }
     }
 
     @Test fun `should use custom templates`() {
         val input = File("src/test/resources/test1")
         val codeGenerator = CodeGenerator()
         codeGenerator.setTemplateDirectory(File("src/test/resources/dummy-template"))
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", listOf("person"), "Person", "kt", stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt",
+                listOf("net", "pwall", "json", "schema", "test", "person")), stringWriter)
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
         expect("// Dummy\n") { stringWriter.toString() }

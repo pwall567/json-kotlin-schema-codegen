@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorSwaggerTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ import java.io.StringWriter
 import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.yaml.YAMLSimple
 
@@ -43,48 +44,45 @@ class CodeGeneratorSwaggerTest {
         val input = File("src/test/resources/test-swagger.yaml")
         val swaggerDoc = YAMLSimple.process(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter1 = StringWriter()
-        val outputDetails1 = OutputDetails("dummy", emptyList(), "QueryResponse", "kt", stringWriter1)
+        val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "kt", dirs), stringWriter1)
         val stringWriter2 = StringWriter()
-        val outputDetails2 = OutputDetails("dummy", emptyList(), "Person", "kt", stringWriter2)
-        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        val outputDetails2 = OutputDetails(TargetFileName("Person", "kt", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions"))
-        expect(createHeader("QueryResponse") + expectedExample1) { stringWriter1.toString() }
-        expect(createHeader("Person") + expectedExample2) { stringWriter2.toString() }
+        expect(createHeader("QueryResponse.kt") + expectedExample1) { stringWriter1.toString() }
+        expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
     }
 
     @Test fun `should generate classes from Swagger file applying filter`() {
         val input = File("src/test/resources/test-swagger.yaml")
         val swaggerDoc = YAMLSimple.process(input)
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter1 = StringWriter()
-        val outputDetails1 = OutputDetails("dummy", emptyList(), "QueryResponse", "kt", stringWriter1)
+        val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "kt", dirs), stringWriter1)
         val stringWriter2 = StringWriter()
-        val outputDetails2 = OutputDetails("dummy", emptyList(), "Person", "kt", stringWriter2)
-        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        val outputDetails2 = OutputDetails(TargetFileName("Person", "kt", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions")) { it == "Person" }
         expect("") { stringWriter1.toString() }
-        expect(createHeader("Person") + expectedExample2) { stringWriter2.toString() }
+        expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
     }
 
     @Test fun `should generate classes from Swagger file in Java`() {
         val input = File("src/test/resources/test-swagger.yaml")
         val swaggerDoc = YAMLSimple.process(input)
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter1 = StringWriter()
-        val outputDetails1 = OutputDetails("dummy", emptyList(), "QueryResponse", "java", stringWriter1)
+        val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "java", dirs), stringWriter1)
         val stringWriter2 = StringWriter()
-        val outputDetails2 = OutputDetails("dummy", emptyList(), "Person", "java", stringWriter2)
-        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        val outputDetails2 = OutputDetails(TargetFileName("Person", "java", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions"))
-        expect(createHeader("QueryResponse") + expectedExample1Java) { stringWriter1.toString() }
-        expect(createHeader("Person") + expectedExample2Java) { stringWriter2.toString() }
+        expect(createHeader("QueryResponse.java") + expectedExample1Java) { stringWriter1.toString() }
+        expect(createHeader("Person.java") + expectedExample2Java) { stringWriter2.toString() }
     }
 
     companion object {

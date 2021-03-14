@@ -151,12 +151,23 @@ class CodeGenerator(
     private val actualEnumTemplate: Template
         get() = enumTemplate ?: defaultEnumTemplate
 
+    var indexFileName: TargetFileName? = null
+
+    var indexTemplateName: String = "index"
+
+    var indexTemplate: Template? = null
+
+    private val defaultIndexTemplate: Template by lazy {
+        actualTemplateParser.parse(actualTemplateParser.resolvePartial(indexTemplateName))
+    }
+
+    private val actualIndexTemplate: Template
+        get() = indexTemplate ?: defaultIndexTemplate
+
     var outputResolver: OutputResolver? = null
 
-    private val defaultOutputResolver: OutputResolver = { baseDirectory, subDirectories, className, suffix ->
-        var dir = checkDirectory(File(baseDirectory))
-        subDirectories.forEach { dir = checkDirectory(File(dir, it)) }
-        File(dir, "$className.$suffix").writer()
+    private val defaultOutputResolver: OutputResolver = { targetFileName ->
+        targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
     }
 
     private val actualOutputResolver: OutputResolver
@@ -235,11 +246,22 @@ class CodeGenerator(
     private fun generateAllTargets(targets: List<Target>) {
         for (target in targets) {
             processSchema(target.schema, target.constraints)
-            log.info { "Generating for target ${target.file}" }
+            log.info { "Generating for ${target.source}" }
             generateTarget(target, targets)
         }
-        // TODO - generate index - for html
+        generateIndex(targets)
     }
+
+    private fun generateIndex(targets: List<Target>) {
+        indexFileName?.let { name ->
+            log.info { "-- index $name" }
+            actualOutputResolver(name).use {
+                actualIndexTemplate.processTo(AppendableFilter(it), TargetIndex(targets, name, generatorComment))
+            }
+        }
+    }
+
+    data class TargetIndex(val targets: List<Target>, val targetFile: TargetFileName, val generatorComment: String?)
 
     private fun generateTarget(target: Target, targets: List<Target>) {
         nameGenerator = NameGenerator()
@@ -253,15 +275,13 @@ class CodeGenerator(
                     if (it.packageName != target.packageName && !target.imports.contains(it.qualifiedClassName))
                         target.baseImport = it.qualifiedClassName
                 }
-                actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
-                        target.suffix).use {
+                actualOutputResolver(target.targetFile).use {
                     actualTemplate.processTo(AppendableFilter(it), target)
                 }
             }
             target.constraints.isString && target.constraints.enumValues != null -> {
                 log.info { "-- target enum ${target.qualifiedClassName}" }
-                actualOutputResolver(baseDirectoryName, target.subDirectories, target.className,
-                        target.suffix).use {
+                actualOutputResolver(target.targetFile).use {
                     actualEnumTemplate.processTo(it, target)
                 }
             }
@@ -277,14 +297,18 @@ class CodeGenerator(
      * @param   subDirectories  list of subdirectory names to use for the output file
      */
     fun generateClass(schema: JSONSchema, className: String, subDirectories: List<String> = emptyList()) {
-        var packageName = basePackageName
-        if (derivePackageFromStructure)
-            subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val target = Target(schema, Constraints(schema), className, packageName, subDirectories, suffix,
-                dummyFile.toString(), generatorComment, markerInterface)
+        val target = Target(
+            schema = schema,
+            constraints = Constraints(schema),
+            targetFile = TargetFileName(className, suffix, getOutputDirs(subDirectories)),
+            source = internalSchema,
+            generatorComment = generatorComment,
+            markerInterface = markerInterface
+        )
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
+        generateIndex(listOf(target))
     }
 
     /**
@@ -294,15 +318,20 @@ class CodeGenerator(
      * @param   subDirectories  list of subdirectory names to use for the output files
      */
     fun generateClasses(schemaList: List<Pair<JSONSchema, String>>, subDirectories: List<String> = emptyList()) {
-        var packageName = basePackageName
-        if (derivePackageFromStructure)
-            subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
-        val targets = schemaList.map { Target(it.first, Constraints(it.first), it.second, packageName, subDirectories,
-                suffix, dummyFile.toString(), generatorComment, markerInterface).also {
-                        t -> processSchema(t.schema, t.constraints) } }
+        val targets = schemaList.map {
+            Target(
+                schema = it.first,
+                constraints = Constraints(it.first),
+                targetFile = TargetFileName(it.second, suffix, getOutputDirs(subDirectories)),
+                source = internalSchema,
+                generatorComment = generatorComment,
+                markerInterface = markerInterface
+            ).also { t -> processSchema(t.schema, t.constraints) }
+        }
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
+        generateIndex(targets)
     }
 
     /**
@@ -323,6 +352,14 @@ class CodeGenerator(
         }, subDirectories)
     }
 
+    private fun getOutputDirs(subDirectories: List<String>): List<String> {
+        val outputDir = basePackageName?.split('.') ?: emptyList()
+        return if (derivePackageFromStructure)
+            outputDir + subDirectories
+        else
+            outputDir
+    }
+
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {
         val schema = actualSchemaParser.parse(inputFile)
         addTarget(targets, subDirectories, schema, inputFile.toString())
@@ -334,10 +371,7 @@ class CodeGenerator(
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, schema: JSONSchema,
-            filename: String) {
-        var packageName = basePackageName
-        if (derivePackageFromStructure)
-            subDirectories.forEach { packageName = if (packageName.isNullOrEmpty()) it else "$packageName.$it" }
+            source: String) {
         val className = schema.uri?.let {
             // TODO change to allow name ending with "/schema"?
             val uriName = it.toString().substringBefore('#').substringAfterLast('/')
@@ -356,8 +390,14 @@ class CodeGenerator(
             uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
                     sanitiseName()
         } ?: "GeneratedClass${targets.size}"
-        targets.add(Target(schema, Constraints(schema), className, packageName, subDirectories, suffix, filename,
-                generatorComment, markerInterface))
+        targets.add(Target(
+            schema = schema,
+            constraints = Constraints(schema),
+            targetFile = TargetFileName(className, suffix, getOutputDirs(subDirectories)),
+            source = source,
+            generatorComment = generatorComment,
+            markerInterface = markerInterface
+        ))
     }
 
     private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
@@ -402,9 +442,14 @@ class CodeGenerator(
                     child.array[0].findRefChild()?.let { refChild ->
                         val refTarget = targets.find { t -> t.schema.uri == refChild.target.uri }
                         if (refTarget != null) {
-                            val baseTarget = Target(refTarget.schema, Constraints(refTarget.schema),
-                                    refTarget.className, refTarget.packageName, refTarget.subDirectories,
-                                    refTarget.suffix, refTarget.file, generatorComment, markerInterface)
+                            val baseTarget = Target(
+                                schema = refTarget.schema,
+                                constraints = Constraints(refTarget.schema),
+                                targetFile = refTarget.targetFile,
+                                source = refTarget.source,
+                                generatorComment = generatorComment,
+                                markerInterface = markerInterface
+                            )
                             target.baseClass = baseTarget
                             processSchema(baseTarget.schema, baseTarget.constraints)
                             analyseObject(baseTarget, baseTarget.constraints, targets)
@@ -1038,10 +1083,6 @@ class CodeGenerator(
     abstract class CustomClass(override val className: String, override val packageName: String?) : TargetClass {
 
         fun applyToTarget(target: Target): String {
-//            packageName?.let {
-//                if (it != target.packageName)
-//                    target.imports.addOnce("${it}.$className")
-//            }
             target.addImport(this)
             return className
         }
@@ -1117,7 +1158,7 @@ class CodeGenerator(
 
     companion object {
 
-        val dummyFile = File("./none")
+        const val internalSchema = "internal schema"
 
         fun <T: Any> MutableList<T>.addOnce(entry: T) {
             if (entry !in this)

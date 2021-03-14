@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorIntegerTest {
@@ -39,23 +40,21 @@ class CodeGeneratorIntegerTest {
     @Test fun `should generate correct code for integer formats`() {
         val input = File("src/test/resources/test-integer-format.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestIntegerFormat", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestIntegerFormat", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestIntegerFormat") + expected) { stringWriter.toString() }
+        expect(createHeader("TestIntegerFormat.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for integer formats in Java`() {
         val input = File("src/test/resources/test-integer-format.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestIntegerFormat", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestIntegerFormat", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestIntegerFormat") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestIntegerFormat.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {

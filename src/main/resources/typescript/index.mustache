@@ -1,0 +1,6 @@
+{{>header}}
+{{#targets}}import { {{&className}} } from "./{{&className}}";
+{{/targets}}
+module.exports = {
+{{#targets}}    {{&className}}{{^last}},{{/last}}
+{{/targets}}{{!}}};

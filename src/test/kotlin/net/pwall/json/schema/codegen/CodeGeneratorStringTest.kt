@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorStringTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.io.File
 import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorStringTest {
@@ -39,23 +40,21 @@ class CodeGeneratorStringTest {
     @Test fun `should generate correct code for string validations`() {
         val input = File("src/test/resources/test-string.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestString", "kt", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestString", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestString") + expected) { stringWriter.toString() }
+        expect(createHeader("TestString.kt") + expected) { stringWriter.toString() }
     }
 
     @Test fun `should generate correct code for string validations in Java`() {
         val input = File("src/test/resources/test-string.schema.json")
         val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
-        codeGenerator.baseDirectoryName = "dummy"
         val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture("dummy", emptyList(), "TestString", "java", stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestString", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestString") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("TestString.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {
