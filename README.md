@@ -126,9 +126,8 @@ variables in the constructed instance.
 
 ### Parameters
 
-- `templates` - the set of templates to use (the default is "kotlin" and the options are "kotlin", "java" or
-"typescript" - typescript coverage is extremely rudimentary at this time)
-- `suffix` - filename suffix to use on generated files (default ".kt")
+- `targetLanguage` - a `TargetLanguage` `enum` specifying the target language for code generation (the options are
+`KOTLIN`, `JAVA` or `TYPESCRIPT` - TypeScript coverage is not as advanced as that of the others at this time)
 - `templateName` - the primary template to use for the generation of a class
 - `enumTemplateName` - the primary template to use for the generation of an enum
 - `basePackageName` - the base package name for the generated classes (if directories are supplied to the `generate()`
@@ -165,25 +164,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.27, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.28, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.27</version>
+      <version>0.28</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.27'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.28'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.27")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.28")
 ```
 
 Peter Wall
 
-2021-03-14
+2021-03-23

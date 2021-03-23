@@ -290,7 +290,7 @@ public class TestString {
             return false;
         if (!name.equals(typedOther.name))
             return false;
-        return status.equals(typedOther.status);
+        return status == typedOther.status;
     }
 
     @Override

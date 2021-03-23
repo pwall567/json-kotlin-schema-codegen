@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Unreleased]
 ### Changed
 - `CodeGenerator`, templates: changed handling of target language
+- `CodeGenerator`, `Constraints`, templates: improved handling of enums
 ### Added
 - `TargetLanguage`: new
 

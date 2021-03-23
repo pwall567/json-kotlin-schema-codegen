@@ -5,13 +5,15 @@
   "type": "object",
   "properties": {
     "aaa": {
-      "type": "string",
       "enum": [ "ABCDE", "FGHIJ", "!@#*%" ]
     },
     "bbb": {
       "type": "integer",
       "enum": [ 123, 456, 789 ]
+    },
+    "ccc": {
+      "enum": [ "xxx", "yyy", "zzz" ]
     }
   },
-  "required": [ "aaa", "bbb" ]
+  "required": [ "aaa", "bbb", "ccc" ]
 }

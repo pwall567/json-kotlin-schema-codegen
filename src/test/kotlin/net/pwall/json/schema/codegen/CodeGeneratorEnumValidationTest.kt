@@ -67,12 +67,19 @@ class CodeGeneratorEnumValidationTest {
  */
 data class TestEnumValidation(
     val aaa: String,
-    val bbb: Int
+    val bbb: Int,
+    val ccc: Ccc
 ) {
 
     init {
         require(aaa in cg_array0) { "aaa not in enumerated values - ${'$'}aaa" }
         require(bbb in cg_array1) { "bbb not in enumerated values - ${'$'}bbb" }
+    }
+
+    enum class Ccc {
+        xxx,
+        yyy,
+        zzz
     }
 
     companion object {
@@ -107,10 +114,12 @@ public class TestEnumValidation {
 
     private final String aaa;
     private final int bbb;
+    private final Ccc ccc;
 
     public TestEnumValidation(
             String aaa,
-            int bbb
+            int bbb,
+            Ccc ccc
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
@@ -120,6 +129,9 @@ public class TestEnumValidation {
         if (!cg_array1.contains(bbb))
             throw new IllegalArgumentException("bbb not in enumerated values - " + bbb);
         this.bbb = bbb;
+        if (ccc == null)
+            throw new IllegalArgumentException("Must not be null - ccc");
+        this.ccc = ccc;
     }
 
     public String getAaa() {
@@ -128,6 +140,10 @@ public class TestEnumValidation {
 
     public int getBbb() {
         return bbb;
+    }
+
+    public Ccc getCcc() {
+        return ccc;
     }
 
     @Override
@@ -139,13 +155,22 @@ public class TestEnumValidation {
         TestEnumValidation typedOther = (TestEnumValidation)other;
         if (!aaa.equals(typedOther.aaa))
             return false;
-        return bbb == typedOther.bbb;
+        if (bbb != typedOther.bbb)
+            return false;
+        return ccc == typedOther.ccc;
     }
 
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
-        return hash ^ bbb;
+        hash ^= bbb;
+        return hash ^ ccc.hashCode();
+    }
+
+    public enum Ccc {
+        xxx,
+        yyy,
+        zzz
     }
 
 }

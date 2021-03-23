@@ -617,6 +617,7 @@ class CodeGenerator(
         var validationsPresent = false
         property.enumValues?.let { array ->
             if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
+                property.isEnumClass = true
                 findTargetClass(property, target, targets, defaultName)
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&

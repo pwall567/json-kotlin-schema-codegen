@@ -33,6 +33,7 @@ import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
 import net.pwall.json.JSONSequence
+import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.validation.FormatValidator
@@ -65,6 +66,8 @@ open class Constraints(val schema: JSONSchema) {
     @Suppress("unused")
     val isLocalType: Boolean
         get() = localTypeName != null
+
+    var isEnumClass = false
 
     val types = mutableListOf<JSONSchema.Type>()
 
@@ -133,8 +136,10 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val isString: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.STRING || types.isEmpty() && properties.isEmpty() &&
-                arrayItems == null && (format != null || regex != null || maxLength != null || minLength != null) // ???
+        get() = types.size == 1 && types[0] == JSONSchema.Type.STRING ||
+                types.isEmpty() && properties.isEmpty() && arrayItems == null &&
+                        (format != null || regex != null || maxLength != null || minLength != null ||
+                                constValue is JSONString || enumImpliesString())
 
     @Suppress("unused")
     val isBoolean: Boolean
@@ -207,6 +212,13 @@ open class Constraints(val schema: JSONSchema) {
                     else -> false
                 }
             }
+        }
+        return false
+    }
+
+    private fun enumImpliesString(): Boolean {
+        enumValues?.let { array ->
+            return array.all { it is JSONString }
         }
         return false
     }

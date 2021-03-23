@@ -8,11 +8,13 @@
 {{&indent}}            return false;
 {{/baseClass}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
 {{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&name}} == typedOther.{{&name}};
-{{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        return {{&name}} == null ? typedOther.{{&name}} == null : {{&name}}.equals(typedOther.{{&name}});
+{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        return {{&name}} == typedOther.{{&name}};
+{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        return {{&name}} == null ? typedOther.{{&name}} == null : {{&name}}.equals(typedOther.{{&name}});
 {{/nullable}}{{^nullable}}{{&indent}}        return {{&name}}.equals(typedOther.{{&name}});
-{{/nullable}}{{/isPrimitive}}{{/last}}{{^last}}{{#isPrimitive}}{{&indent}}        if ({{&name}} != typedOther.{{&name}})
-{{/isPrimitive}}{{^isPrimitive}}{{#nullable}}{{&indent}}        if ({{&name}} == null ? typedOther.{{&name}} != null : !{{&name}}.equals(typedOther.{{&name}}))
+{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{/last}}{{^last}}{{#isPrimitive}}{{&indent}}        if ({{&name}} != typedOther.{{&name}})
+{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        if ({{&name}} != typedOther.{{&name}})
+{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        if ({{&name}} == null ? typedOther.{{&name}} != null : !{{&name}}.equals(typedOther.{{&name}}))
 {{/nullable}}{{^nullable}}{{&indent}}        if (!{{&name}}.equals(typedOther.{{&name}}))
-{{/nullable}}{{/isPrimitive}}{{&indent}}            return false;
+{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{&indent}}            return false;
 {{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
 {{/nonBaseProperties}}{{&indent}}    }
