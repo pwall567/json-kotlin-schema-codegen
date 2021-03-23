@@ -56,7 +56,7 @@ class CodeGeneratorMultipleTest {
 
     @Test fun `should generate classes for multiple schemata in Java`() {
         val input = File("src/test/resources/test-multiple-schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriterA = StringWriter()
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "java", dirs), stringWriterA)
         val stringWriterB = StringWriter()
@@ -70,7 +70,7 @@ class CodeGeneratorMultipleTest {
 
     @Test fun `should generate classes for multiple schemata in TypeScript`() {
         val input = File("src/test/resources/test-multiple-schema.json")
-        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        val codeGenerator = CodeGenerator(TargetLanguage.TYPESCRIPT)
         val stringWriterA = StringWriter()
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "ts"), stringWriterA)
         val stringWriterB = StringWriter()

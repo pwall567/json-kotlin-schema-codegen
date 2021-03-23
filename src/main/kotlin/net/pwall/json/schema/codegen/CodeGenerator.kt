@@ -26,6 +26,7 @@
 package net.pwall.json.schema.codegen
 
 import java.io.File
+import java.io.Reader
 import java.math.BigDecimal
 import java.net.URI
 import java.nio.file.Files
@@ -76,10 +77,8 @@ import net.pwall.util.Strings
  * @author  Peter Wall
  */
 class CodeGenerator(
-        /** Template subdirectory name (within the assembled code generator artefact) */
-        var templates: String = "kotlin",
-        /** The filename suffix to be applied to generated files */
-        var suffix: String = "kt",
+        /** Target language */
+        var targetLanguage: TargetLanguage = TargetLanguage.KOTLIN,
         /** The primary template to use for the generation of a class */
         var templateName: String = "class",
         /** The primary template to use for the generation of an enum */
@@ -121,13 +120,15 @@ class CodeGenerator(
     var templateParser: MustacheParser? = null
 
     private val defaultTemplateParser: MustacheParser by lazy {
-        MustacheParser().also {
-            it.resolvePartial = { name ->
-                val inputStream = CodeGenerator::class.java.getResourceAsStream("/$templates/$name.mustache") ?:
-                        throw JSONSchemaException("Can't locate template partial /$templates/$name.mustache")
-                inputStream.reader()
-            }
+        MustacheParser().also { parser ->
+            parser.resolvePartial = ::partialResolver
         }
+    }
+
+    private fun partialResolver(name: String): Reader {
+        for (dir in targetLanguage.directories)
+            CodeGenerator::class.java.getResourceAsStream("/$dir/$name.mustache")?.let { return it.reader() }
+        throw JSONSchemaException("Can't locate template partial $name")
     }
 
     private val actualTemplateParser: MustacheParser
@@ -300,7 +301,7 @@ class CodeGenerator(
         val target = Target(
             schema = schema,
             constraints = Constraints(schema),
-            targetFile = TargetFileName(className, suffix, getOutputDirs(subDirectories)),
+            targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
             source = internalSchema,
             generatorComment = generatorComment,
             markerInterface = markerInterface
@@ -322,7 +323,7 @@ class CodeGenerator(
             Target(
                 schema = it.first,
                 constraints = Constraints(it.first),
-                targetFile = TargetFileName(it.second, suffix, getOutputDirs(subDirectories)),
+                targetFile = TargetFileName(it.second, targetLanguage.ext, getOutputDirs(subDirectories)),
                 source = internalSchema,
                 generatorComment = generatorComment,
                 markerInterface = markerInterface
@@ -393,7 +394,7 @@ class CodeGenerator(
         targets.add(Target(
             schema = schema,
             constraints = Constraints(schema),
-            targetFile = TargetFileName(className, suffix, getOutputDirs(subDirectories)),
+            targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
             source = source,
             generatorComment = generatorComment,
             markerInterface = markerInterface

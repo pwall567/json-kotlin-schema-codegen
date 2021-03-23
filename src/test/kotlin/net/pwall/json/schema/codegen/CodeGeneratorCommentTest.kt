@@ -47,7 +47,7 @@ class CodeGeneratorCommentTest {
 
     @Test fun `should output generator comment in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         codeGenerator.generatorComment = "Created for test purposes"
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"

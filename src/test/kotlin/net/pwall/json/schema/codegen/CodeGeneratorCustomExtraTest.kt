@@ -65,7 +65,7 @@ class CodeGeneratorCustomExtraTest {
 
     @Test fun `should generate correct classes for custom generation in Java`() {
         val input = File("src/test/resources/example.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("Test", "java", dirs), stringWriter1)
         val stringWriter2 = StringWriter()

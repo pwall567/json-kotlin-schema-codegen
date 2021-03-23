@@ -1,0 +1,7 @@
+codegen:
+  schemaFiles:
+  - src/test/resources/test-nonstandard-format.schema.json
+  extension: # import ?
+  - format: not-empty
+    schema:
+      minLength: 1

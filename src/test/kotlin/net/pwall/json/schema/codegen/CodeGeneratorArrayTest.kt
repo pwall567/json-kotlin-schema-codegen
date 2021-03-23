@@ -49,7 +49,7 @@ class CodeGeneratorArrayTest {
 
     @Test fun `should generate nested class for array of object in Java`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestArray", "java", dirs), stringWriter)

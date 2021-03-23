@@ -55,7 +55,7 @@ class CodeGeneratorDerivedClassTest {
 
     @Test fun `should generate base class and derived class in Java`() {
         val input = File("src/test/resources/test-derived-class")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriterBase = StringWriter()
         val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "java", dirs), stringWriterBase)
         val stringWriterDerived = StringWriter()

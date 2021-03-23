@@ -78,7 +78,7 @@ class CodeGeneratorCustomValidatorTest {
             }
         }
         val schema = parser.parse(input)
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)

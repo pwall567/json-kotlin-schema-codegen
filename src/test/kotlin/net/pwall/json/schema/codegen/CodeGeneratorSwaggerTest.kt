@@ -73,7 +73,7 @@ class CodeGeneratorSwaggerTest {
     @Test fun `should generate classes from Swagger file in Java`() {
         val input = File("src/test/resources/test-swagger.yaml")
         val swaggerDoc = YAMLSimple.process(input)
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "java", dirs), stringWriter1)
         val stringWriter2 = StringWriter()

@@ -50,7 +50,7 @@ class CodeGeneratorMarkerInterfaceTest {
 
     @Test fun `should output marker interface in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.markerInterface = "com.example.Marker"
@@ -72,7 +72,7 @@ class CodeGeneratorMarkerInterfaceTest {
 
     @Test fun `should output marker interface in different package in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.markerInterface = "com.example.other.Marker"

@@ -49,7 +49,7 @@ class CodeGeneratorEnumTest {
 
     @Test fun `should output enum class as Java`() {
         val input = File("src/test/resources/test-enum.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnum", "java", dirs), stringWriter)
@@ -59,7 +59,7 @@ class CodeGeneratorEnumTest {
 
     @Test fun `should output enum class as TypeScript`() {
         val input = File("src/test/resources/test-enum.schema.json")
-        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        val codeGenerator = CodeGenerator(TargetLanguage.TYPESCRIPT)
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnum", "ts"), stringWriter)
         codeGenerator.generate(input)

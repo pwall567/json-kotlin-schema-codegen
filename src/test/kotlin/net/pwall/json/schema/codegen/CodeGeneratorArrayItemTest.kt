@@ -49,7 +49,7 @@ class CodeGeneratorArrayItemTest {
 
     @Test fun `should generate correct validations for arrays of integer and string in Java`() {
         val input = File("src/test/resources/test-array-items.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestArrayItems", "java", dirs), stringWriter)

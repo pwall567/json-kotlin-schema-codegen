@@ -57,7 +57,7 @@ class CodeGeneratorCustomClassTest {
 
     @Test fun `should use specified custom class in Java`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "java", dirs + "person"), stringWriter)
@@ -82,7 +82,7 @@ class CodeGeneratorCustomClassTest {
 
     @Test fun `should use specified custom class for extension in Java`() {
         val input = File("src/test/resources/test-custom-class.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
@@ -121,7 +121,7 @@ class CodeGeneratorCustomClassTest {
             else
                 null
         }
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         codeGenerator.schemaParser = parser
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"

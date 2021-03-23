@@ -49,7 +49,7 @@ class CodeGeneratorConstantTest {
 
     @Test fun `should generate correct code for constants in Java`() {
         val input = File("src/test/resources/test-const.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestConst", "java", dirs), stringWriter)

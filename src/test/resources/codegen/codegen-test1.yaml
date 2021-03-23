@@ -1,0 +1,8 @@
+codegen:
+  schemaFiles:
+  - src/test/resources/test1
+  package: com.example.person
+  external: # import ?
+    - uri: http://pwall.net/test/schema/utility#/$defs/personId
+      className: PersonId
+      package: com.example.person

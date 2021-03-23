@@ -67,7 +67,7 @@ class CodeGeneratorGeneratedFileTest {
 
     @Test fun `should output test class to Java`() {
         val input = File("src/test/resources/test1")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "java", dirs + "person"), stringWriter)

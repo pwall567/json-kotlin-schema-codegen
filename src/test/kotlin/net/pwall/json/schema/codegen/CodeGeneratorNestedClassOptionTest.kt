@@ -52,7 +52,7 @@ class CodeGeneratorNestedClassOptionTest {
 
     @Test fun `should generate nested class for array of object in Java`() {
         val input = File("src/test/resources/test-array")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         codeGenerator.nestedClassNameOption = CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"

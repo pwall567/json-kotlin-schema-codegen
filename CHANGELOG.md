@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`, templates: changed handling of target language
+### Added
+- `TargetLanguage`: new
+
 ## [0.27] - 2021-03-14
 ### Changed
 - `CodeGenerator`, `OutputResolver`, `Target`, `TargetClass`: major changes to handling of target file name

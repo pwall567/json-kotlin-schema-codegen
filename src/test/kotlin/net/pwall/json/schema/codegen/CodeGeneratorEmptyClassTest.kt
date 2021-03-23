@@ -49,7 +49,7 @@ class CodeGeneratorEmptyClassTest {
 
     @Test fun `should output empty class in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"

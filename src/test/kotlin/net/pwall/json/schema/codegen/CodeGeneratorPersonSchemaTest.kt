@@ -49,7 +49,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to Java`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestPerson", "java", dirs), stringWriter)
@@ -59,7 +59,7 @@ class CodeGeneratorPersonSchemaTest {
 
     @Test fun `should output simple data class to TypeScript`() {
         val input = File("src/test/resources/simple")
-        val codeGenerator = CodeGenerator(templates = "typescript", suffix = "ts")
+        val codeGenerator = CodeGenerator(TargetLanguage.TYPESCRIPT)
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestPerson", "ts"), stringWriter)
         codeGenerator.generate(input)

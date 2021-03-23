@@ -49,7 +49,7 @@ class CodeGeneratorIntegerTest {
 
     @Test fun `should generate correct code for integer formats in Java`() {
         val input = File("src/test/resources/test-integer-format.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestIntegerFormat", "java", dirs), stringWriter)

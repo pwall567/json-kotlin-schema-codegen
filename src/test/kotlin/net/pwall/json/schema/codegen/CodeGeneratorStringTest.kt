@@ -49,7 +49,7 @@ class CodeGeneratorStringTest {
 
     @Test fun `should generate correct code for string validations in Java`() {
         val input = File("src/test/resources/test-string.schema.json")
-        val codeGenerator = CodeGenerator(templates = "java", suffix = "java")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestString", "java", dirs), stringWriter)
