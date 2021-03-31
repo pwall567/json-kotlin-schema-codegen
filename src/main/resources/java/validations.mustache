@@ -38,7 +38,11 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum {{&value.value}} - " + {{&propertyName}});
 {{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) <= 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum 0 - " + {{&propertyName}});
-{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&propertyName}} % {{&value}} != 0)
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_INT}}{{&indent}}        if ({{&propertyName}} < {{&value.first}} || {{&propertyName}} > {{&value.second}})
+{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&propertyName}});
+{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        if ({{&propertyName}} < {{&value.first}}L || {{&propertyName}} > {{&value.second}}L)
+{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&propertyName}});
+{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&propertyName}} % {{&value}} != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&propertyName}});
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&propertyName}} % {{&value}}L != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&propertyName}});

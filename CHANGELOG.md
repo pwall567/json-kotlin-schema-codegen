@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Unreleased]
 ### Changed
 - `CodeGenerator`, `Validation`, templates: optimised decimal comparisons
+- `CodeGenerator`, `Validation`, templates: optimised integer and long range checks
 
 ## [0.28] - 2021-03-23
 ### Changed

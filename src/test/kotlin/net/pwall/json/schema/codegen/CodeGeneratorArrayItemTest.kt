@@ -73,8 +73,7 @@ data class TestArrayItems(
 
     init {
         aaa.forEach { cg_0 ->
-            require(cg_0 >= 0) { "aaa item < minimum 0 - ${'$'}cg_0" }
-            require(cg_0 <= 9999) { "aaa item > maximum 9999 - ${'$'}cg_0" }
+            require(cg_0 in 0..9999) { "aaa item not in range 0..9999 - ${'$'}cg_0" }
         }
         require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
         require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
@@ -120,10 +119,8 @@ public class TestArrayItems {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
         for (int cg_0 : aaa) {
-            if (cg_0 < 0)
-                throw new IllegalArgumentException("aaa item < minimum 0 - " + cg_0);
-            if (cg_0 > 9999)
-                throw new IllegalArgumentException("aaa item > maximum 9999 - " + cg_0);
+            if (cg_0 < 0 || cg_0 > 9999)
+                throw new IllegalArgumentException("aaa item not in range 0..9999 - " + cg_0);
         }
         if (aaa.size() < 1)
             throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.size());

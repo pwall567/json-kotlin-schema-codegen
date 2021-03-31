@@ -108,8 +108,7 @@ data class Person(
 ) {
 
     init {
-        require(id >= 1) { "id < minimum 1 - ${'$'}id" }
-        require(id <= 9999) { "id > maximum 9999 - ${'$'}id" }
+        require(id in 1..9999) { "id not in range 1..9999 - ${'$'}id" }
         require(name.isNotEmpty()) { "name length < minimum 1 - ${'$'}{name.length}" }
     }
 
@@ -178,10 +177,8 @@ public class Person {
             int id,
             String name
     ) {
-        if (id < 1)
-            throw new IllegalArgumentException("id < minimum 1 - " + id);
-        if (id > 9999)
-            throw new IllegalArgumentException("id > maximum 9999 - " + id);
+        if (id < 1 || id > 9999)
+            throw new IllegalArgumentException("id not in range 1..9999 - " + id);
         this.id = id;
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");

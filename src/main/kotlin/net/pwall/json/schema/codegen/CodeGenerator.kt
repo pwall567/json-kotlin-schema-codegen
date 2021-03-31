@@ -708,17 +708,14 @@ class CodeGenerator(
                 result = true
             }
         }
-        property.minimumLong?.let {
-            if (it in Int.MIN_VALUE..Int.MAX_VALUE) {
-                property.addValidation(Validation.Type.MINIMUM_INT, it)
-                result = true
-            }
-        }
-        property.maximumLong?.let {
-            if (it in Int.MIN_VALUE..Int.MAX_VALUE) {
-                property.addValidation(Validation.Type.MAXIMUM_INT, it)
-                result = true
-            }
+        property.minimumLong?.takeIf { minV -> minV in Int.MIN_VALUE..Int.MAX_VALUE }?.let { minV ->
+            property.maximumLong?.takeIf { maxV -> maxV in Int.MIN_VALUE..Int.MAX_VALUE }?.let { maxV ->
+                property.addValidation(Validation.Type.RANGE_INT, minV to maxV)
+            } ?: property.addValidation(Validation.Type.MINIMUM_INT, minV)
+            result = true
+        } ?: property.maximumLong?.takeIf { it in Int.MIN_VALUE..Int.MAX_VALUE }?.let {
+            property.addValidation(Validation.Type.MAXIMUM_INT, it)
+            result = true
         }
         for (multiple in property.multipleOf) {
             property.addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())

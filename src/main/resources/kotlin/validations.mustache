@@ -18,7 +18,9 @@
 {{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= BigDecimal.ZERO) { "{{&displayName}} < minimum 0 - ${{&propertyName}}" }
 {{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
 {{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > BigDecimal.ZERO) { "{{&displayName}} <= exclusive minimum 0 - ${{&propertyName}}" }
-{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#MULTIPLE_INT}}{{&indent}}       require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&propertyName}}" }
+{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{#value}}{{&first}}L..{{&second}}L{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&propertyName}}" }
+{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
 {{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&propertyName}}" }
 {{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }

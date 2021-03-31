@@ -82,8 +82,7 @@ data class TestPerson(
 
     init {
         require(name.length in 1..80) { "name length not in range 1..80 - ${'$'}{name.length}" }
-        require(age >= 0) { "age < minimum 0 - ${'$'}age" }
-        require(age <= 120) { "age > maximum 120 - ${'$'}age" }
+        require(age in 0..120) { "age not in range 0..120 - ${'$'}age" }
     }
 
 }
@@ -112,10 +111,8 @@ public class TestPerson {
             throw new IllegalArgumentException("name length not in range 1..80 - " + name.length());
         this.name = name;
         this.nickname = nickname;
-        if (age < 0)
-            throw new IllegalArgumentException("age < minimum 0 - " + age);
-        if (age > 120)
-            throw new IllegalArgumentException("age > maximum 120 - " + age);
+        if (age < 0 || age > 120)
+            throw new IllegalArgumentException("age not in range 0..120 - " + age);
         this.age = age;
     }
 
