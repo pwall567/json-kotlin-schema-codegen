@@ -10,6 +10,6 @@
         init {
 {{#properties}}{{>validations}}{{/properties}}        }
 
-    }{{/validationsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
+    }{{/validationsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
 {{#enumValues}}        {{&.}}{{^last}},{{/last}}
 {{/enumValues}}    }{{/isString}}
