@@ -54,11 +54,16 @@
       "type": "string",
       "pattern": "^[A-Z][A-Za-z]*$"
     },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 250
+    },
     "status": {
       "type": "string",
       "enum": [ "OPEN", "CLOSED" ],
       "default": "OPEN"
     }
   },
-  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "status" ]
+  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "uri", "status" ]
 }

@@ -62,6 +62,7 @@ class CodeGeneratorStringTest {
         const val expected =
 """package com.example
 
+import java.net.URI
 import net.pwall.json.validation.JSONValidation
 
 /**
@@ -80,6 +81,7 @@ data class TestString(
     val fixedLen: String? = null,
     val rangeLen: String? = null,
     val name: String,
+    val uri: URI,
     val status: Status = Status.OPEN
 ) {
 
@@ -113,6 +115,7 @@ data class TestString(
         const val expectedJava =
 """package com.example;
 
+import java.net.URI;
 import java.util.regex.Pattern;
 import net.pwall.json.validation.JSONValidation;
 
@@ -135,6 +138,7 @@ public class TestString {
     private final String fixedLen;
     private final String rangeLen;
     private final String name;
+    private final URI uri;
     private final Status status;
 
     public TestString(
@@ -150,6 +154,7 @@ public class TestString {
             String fixedLen,
             String rangeLen,
             String name,
+            URI uri,
             Status status
     ) {
         if (email1 == null)
@@ -202,6 +207,9 @@ public class TestString {
         if (!cg_regex0.matcher(name).matches())
             throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
         this.name = name;
+        if (uri == null)
+            throw new IllegalArgumentException("Must not be null - uri");
+        this.uri = uri;
         if (status == null)
             throw new IllegalArgumentException("Must not be null - status");
         this.status = status;
@@ -255,6 +263,10 @@ public class TestString {
         return name;
     }
 
+    public URI getUri() {
+        return uri;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -290,6 +302,8 @@ public class TestString {
             return false;
         if (!name.equals(typedOther.name))
             return false;
+        if (!uri.equals(typedOther.uri))
+            return false;
         return status == typedOther.status;
     }
 
@@ -307,6 +321,7 @@ public class TestString {
         hash ^= (fixedLen != null ? fixedLen.hashCode() : 0);
         hash ^= (rangeLen != null ? rangeLen.hashCode() : 0);
         hash ^= name.hashCode();
+        hash ^= uri.hashCode();
         return hash ^ status.hashCode();
     }
 

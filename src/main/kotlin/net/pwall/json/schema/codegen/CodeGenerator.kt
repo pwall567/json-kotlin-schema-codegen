@@ -614,7 +614,9 @@ class CodeGenerator(
 
     private fun analyseString(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
             Boolean {
-        var validationsPresent = false
+        var validationsPresent = analyseFormat(target, property)
+        if (property.systemClass != null)
+            return false
         property.enumValues?.let { array ->
             if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
                 property.isEnumClass = true
@@ -658,7 +660,6 @@ class CodeGenerator(
             property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(max))
             validationsPresent = true
         }
-        validationsPresent = analyseFormat(target, property) || validationsPresent
         validationsPresent = analyseRegex(target, property) || validationsPresent
         return validationsPresent
     }
