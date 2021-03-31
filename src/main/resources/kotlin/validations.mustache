@@ -11,10 +11,14 @@
 {{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
 {{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}L) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
 {{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value.staticName}}) { "{{&displayName}} > maximum {{&value.value}} - ${{&propertyName}}" }
-{{/MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&propertyName}}" }
-{{/MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#MULTIPLE_INT}}{{&indent}}       require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
+{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= BigDecimal.ZERO) { "{{&displayName}} > maximum 0 - ${{&propertyName}}" }
+{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&propertyName}}" }
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} < BigDecimal.ZERO) { "{{&displayName}} >= exclusive maximum 0 - ${{&propertyName}}" }
+{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&propertyName}}" }
+{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= BigDecimal.ZERO) { "{{&displayName}} < minimum 0 - ${{&propertyName}}" }
+{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}} > BigDecimal.ZERO) { "{{&displayName}} <= exclusive minimum 0 - ${{&propertyName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#MULTIPLE_INT}}{{&indent}}       require({{>nullchk}}{{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
 {{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&propertyName}}" }
 {{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}{{#nullable}}?{{/nullable}}.size}" }
@@ -26,8 +30,9 @@
 {{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value ${{&value.staticName}} - ${{&propertyName}}" }
 {{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
 {{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
-{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
-{{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) == 0) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
+{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        require({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) == 0) { "{{&displayName}} not constant value 0 - ${{&propertyName}}" }
+{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
 {{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
 {{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        {{&propertyName}}{{#nullable}}?{{/nullable}}.forEach { {{#arrayItems}}{{&propertyName}} ->
 {{#indent.increment}}{{>validations}}{{/indent.increment}}{{/arrayItems}}{{&indent}}        }

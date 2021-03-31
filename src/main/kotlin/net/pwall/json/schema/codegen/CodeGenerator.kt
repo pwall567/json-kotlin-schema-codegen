@@ -773,30 +773,50 @@ class CodeGenerator(
         var result = false
         property.constValue?.let {
             if (it is JSONNumberValue) {
-                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec",
-                        NumberValue(it.bigDecimalValue()))
-                property.addValidation(Validation.Type.CONST_DECIMAL, decimalStatic)
+                if (it.isZero())
+                    property.addValidation(Validation.Type.CONST_DECIMAL_ZERO)
+                else {
+                    val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec",
+                            NumberValue(it.bigDecimalValue()))
+                    property.addValidation(Validation.Type.CONST_DECIMAL, decimalStatic)
+                }
                 result = true
             }
         }
         property.minimum?.let {
-            val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-            property.addValidation(Validation.Type.MINIMUM_DECIMAL, decimalStatic)
+            if (it.isZero())
+                property.addValidation(Validation.Type.MINIMUM_DECIMAL_ZERO)
+            else {
+                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
+                property.addValidation(Validation.Type.MINIMUM_DECIMAL, decimalStatic)
+            }
             result = true
         }
         property.exclusiveMinimum?.let {
-            val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-            property.addValidation(Validation.Type.EXCLUSIVE_MINIMUM_DECIMAL, decimalStatic)
+            if (it.isZero())
+                property.addValidation(Validation.Type.EXCLUSIVE_MINIMUM_DECIMAL_ZERO)
+            else {
+                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
+                property.addValidation(Validation.Type.EXCLUSIVE_MINIMUM_DECIMAL, decimalStatic)
+            }
             result = true
         }
         property.maximum?.let {
-            val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-            property.addValidation(Validation.Type.MAXIMUM_DECIMAL, decimalStatic)
+            if (it.isZero())
+                property.addValidation(Validation.Type.MAXIMUM_DECIMAL_ZERO)
+            else {
+                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
+                property.addValidation(Validation.Type.MAXIMUM_DECIMAL, decimalStatic)
+            }
             result = true
         }
         property.exclusiveMaximum?.let {
-            val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-            property.addValidation(Validation.Type.EXCLUSIVE_MAXIMUM_DECIMAL, decimalStatic)
+            if (it.isZero())
+                property.addValidation(Validation.Type.EXCLUSIVE_MAXIMUM_DECIMAL_ZERO)
+            else {
+                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
+                property.addValidation(Validation.Type.EXCLUSIVE_MAXIMUM_DECIMAL, decimalStatic)
+            }
             result = true
         }
         for (multiple in property.multipleOf) {
@@ -809,6 +829,15 @@ class CodeGenerator(
                 property.defaultValue = null
         }
         return result
+    }
+
+    private fun Number.isZero(): Boolean = when (this) {
+        is BigDecimal -> this.compareTo(BigDecimal.ZERO) == 0
+        is Long -> this == 0L
+        is Int -> this == 0
+        is Double -> this == 0.0
+        is Float -> this == 0.0F
+        else -> false
     }
 
     private fun analyseFormat(target: Target, property: Constraints): Boolean {
@@ -1061,7 +1090,7 @@ class CodeGenerator(
 
     private var nameGenerator = NameGenerator()
 
-    class NameGenerator(var suffix: Int = 0) {
+    class NameGenerator(private var suffix: Int = 0) {
 
         fun generate(): String = "cg_${suffix++}"
 

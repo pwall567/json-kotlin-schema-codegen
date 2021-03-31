@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 ### Changed
+- `CodeGenerator`, `Validation`, templates: optimised decimal comparisons
+
+## [0.28] - 2021-03-23
+### Changed
 - `CodeGenerator`, templates: changed handling of target language
 - `CodeGenerator`, `Constraints`, templates: improved handling of enums
 ### Added

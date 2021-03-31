@@ -24,13 +24,21 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} < minimum {{&value}} - " + {{&propertyName}});
 {{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) > 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value.value}} - " + {{&propertyName}});
-{{/MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) >= 0)
+{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) > 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} > maximum 0 - " + {{&propertyName}});
+{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) >= 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} >= exclusive maximum {{&value.value}} - " + {{&propertyName}});
-{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) < 0)
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) >= 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} >= exclusive maximum 0 - " + {{&propertyName}});
+{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) < 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} < minimum {{&value.value}} - " + {{&propertyName}});
-{{/MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) <= 0)
+{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) < 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} < minimum 0 - " + {{&propertyName}});
+{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) <= 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum {{&value.value}} - " + {{&propertyName}});
-{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&propertyName}} % {{&value}} != 0)
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) <= 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum 0 - " + {{&propertyName}});
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&propertyName}} % {{&value}} != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&propertyName}});
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&propertyName}} % {{&value}}L != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&propertyName}});
@@ -54,9 +62,11 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value}} - " + {{&propertyName}});
 {{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        if ({{&propertyName}} != {{&value}}L)
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value}} - " + {{&propertyName}});
-{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if ({{>nullchk}}!{{&propertyName}}.equals({{&value.staticName}}))
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo({{&value.staticName}}) != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value.value}} - " + {{&propertyName}});
-{{/CONST_DECIMAL}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&propertyName}}))
+{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&propertyName}}.compareTo(BigDecimal.ZERO) != 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} not constant value 0 - " + {{&propertyName}});
+{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&propertyName}});
 {{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        if (!{{&value.staticName}}.contains({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&propertyName}});

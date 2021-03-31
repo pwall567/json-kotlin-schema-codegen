@@ -78,7 +78,7 @@ data class TestConst(
         require(aaa == 8) { "aaa not constant value 8 - ${'$'}aaa" }
         require(bbb == 123456789123456789L) { "bbb not constant value 123456789123456789 - ${'$'}bbb" }
         require(ccc == cg_str0) { "ccc not constant value ${'$'}cg_str0 - ${'$'}ccc" }
-        require(ddd == cg_dec1) { "ddd not constant value 1.5 - ${'$'}ddd" }
+        require(ddd.compareTo(cg_dec1) == 0) { "ddd not constant value 1.5 - ${'$'}ddd" }
     }
 
     companion object {
@@ -126,7 +126,7 @@ public class TestConst {
         this.ccc = ccc;
         if (ddd == null)
             throw new IllegalArgumentException("Must not be null - ddd");
-        if (!ddd.equals(cg_dec1))
+        if (ddd.compareTo(cg_dec1) != 0)
             throw new IllegalArgumentException("ddd not constant value 1.5 - " + ddd);
         this.ddd = ddd;
     }

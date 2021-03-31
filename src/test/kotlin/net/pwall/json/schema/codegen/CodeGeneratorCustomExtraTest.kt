@@ -101,11 +101,7 @@ data class Test(
 ) {
 
     init {
-        require(price >= cg_dec0) { "price < minimum 0 - ${'$'}price" }
-    }
-
-    companion object {
-        private val cg_dec0 = BigDecimal.ZERO
+        require(price >= BigDecimal.ZERO) { "price < minimum 0 - ${'$'}price" }
     }
 
 }
@@ -130,8 +126,6 @@ import java.math.BigDecimal;
 
 public class Test {
 
-    private static final BigDecimal cg_dec0 = BigDecimal.ZERO;
-
     private final BigDecimal id;
     private final String name;
     private final BigDecimal price;
@@ -153,7 +147,7 @@ public class Test {
         this.name = name;
         if (price == null)
             throw new IllegalArgumentException("Must not be null - price");
-        if (price.compareTo(cg_dec0) < 0)
+        if (price.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("price < minimum 0 - " + price);
         this.price = price;
         this.tags = tags;
