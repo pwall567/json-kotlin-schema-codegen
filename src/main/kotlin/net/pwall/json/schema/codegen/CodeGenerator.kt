@@ -746,11 +746,12 @@ class CodeGenerator(
                 }
             }
         }
-        property.minimumLong?.let {
-            property.addValidation(Validation.Type.MINIMUM_LONG, it)
+        property.minimumLong?.let { minV ->
+            property.maximumLong?.let { maxV ->
+                property.addValidation(Validation.Type.RANGE_LONG, minV to maxV)
+            } ?: property.addValidation(Validation.Type.MINIMUM_LONG, minV)
             result = true
-        }
-        property.maximumLong?.let {
+        } ?: property.maximumLong?.let {
             property.addValidation(Validation.Type.MAXIMUM_LONG, it)
             result = true
         }
