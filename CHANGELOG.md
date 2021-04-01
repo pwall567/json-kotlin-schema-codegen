@@ -2,11 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.29] - 2021-03-31
 ### Changed
 - `CodeGenerator`, `Validation`, templates: optimised decimal comparisons
 - `CodeGenerator`, `Validation`, templates: optimised integer and long range checks
-- `CodeGenerator`: bug fix - no longer outputs checks for strings with format causing them to be other class
+- `CodeGenerator`: bug fix - no longer outputs checks for strings with format causing them to be non-string class
 - templates: use `open class` for empty inner class
 
 ## [0.28] - 2021-03-23
