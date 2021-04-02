@@ -78,7 +78,7 @@ data class TestArrayItems(
         require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
         require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
         bbb?.forEach { cg_1 ->
-            require(cg_regex0 matches cg_1) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
+            require(cg_regex0.containsMatchIn(cg_1)) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
         }
         ccc?.forEach { cg_2 ->
             cg_2.forEach { cg_3 ->
@@ -132,7 +132,7 @@ public class TestArrayItems {
         this.aaa = aaa;
         if (bbb != null) {
             for (String cg_1 : bbb) {
-                if (!cg_regex0.matcher(cg_1).matches())
+                if (!cg_regex0.matcher(cg_1).find())
                     throw new IllegalArgumentException("bbb item does not match pattern " + cg_regex0 + " - " + cg_1);
             }
         }

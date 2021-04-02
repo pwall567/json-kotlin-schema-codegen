@@ -97,7 +97,7 @@ data class TestString(
         require(minlen2 == null || minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2?.length}" }
         require(fixedLen == null || fixedLen.length == 3) { "fixedLen length != constant 3 - ${'$'}{fixedLen?.length}" }
         require(rangeLen == null || rangeLen.length in 1..6) { "rangeLen length not in range 1..6 - ${'$'}{rangeLen?.length}" }
-        require(cg_regex0 matches name) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
+        require(cg_regex0.containsMatchIn(name)) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
     }
 
     enum class Status {
@@ -204,7 +204,7 @@ public class TestString {
         this.rangeLen = rangeLen;
         if (name == null)
             throw new IllegalArgumentException("Must not be null - name");
-        if (!cg_regex0.matcher(name).matches())
+        if (!cg_regex0.matcher(name).find())
             throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
         this.name = name;
         if (uri == null)

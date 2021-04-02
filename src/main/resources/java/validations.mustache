@@ -12,7 +12,7 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format json-pointer - " + {{&propertyName}});
 {{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isRelativeJSONPointer({{&propertyName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match format relative-json-pointer - " + {{&propertyName}});
-{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.matcher({{&propertyName}}).matches())
+{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.matcher({{&propertyName}}).find())
 {{&indent}}            {{>tniae}}("{{&displayName}} does not match pattern " + {{&value.staticName}} + " - " + {{&propertyName}});
 {{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        if ({{&propertyName}} > {{&value}})
 {{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value}} - " + {{&propertyName}});

@@ -5,7 +5,7 @@
 {{/IPV6}}{{#DURATION}}{{&indent}}        require({{>nullchk}}JSONValidation.isDuration({{&propertyName}})) { "{{&displayName}} does not match format duration - ${{&propertyName}}" }
 {{/DURATION}}{{#JSON_POINTER}}{{&indent}}        require({{>nullchk}}JSONValidation.isJSONPointer({{&propertyName}})) { "{{&displayName}} does not match format json-pointer - ${{&propertyName}}" }
 {{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        require({{>nullchk}}JSONValidation.isRelativeJSONPointer({{&propertyName}})) { "{{&displayName}} does not match format relative-json-pointer - ${{&propertyName}}" }
-{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        require({{>nullchk}}{{&value.staticName}} matches {{&propertyName}}) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&propertyName}}" }
+{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        require({{>nullchk}}{{&value.staticName}}.containsMatchIn({{&propertyName}})) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&propertyName}}" }
 {{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
 {{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        require({{>nullchk}}{{&propertyName}} <= {{&value}}L) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
 {{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        require({{>nullchk}}{{&propertyName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }

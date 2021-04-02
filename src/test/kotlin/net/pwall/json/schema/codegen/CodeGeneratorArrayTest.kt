@@ -83,7 +83,7 @@ data class TestArray(
     ) {
 
         init {
-            require(cg_regex0 matches name) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
+            require(cg_regex0.containsMatchIn(name)) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
         }
 
     }
@@ -169,7 +169,7 @@ public class TestArray {
             this.id = id;
             if (name == null)
                 throw new IllegalArgumentException("Must not be null - name");
-            if (!cg_regex0.matcher(name).matches())
+            if (!cg_regex0.matcher(name).find())
                 throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
             this.name = name;
         }
