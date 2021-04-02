@@ -29,8 +29,11 @@
         "items": {
           "type": "string",
           "maxLength": 3
-        }
-      }
+        },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "minItems": 1
     }
   },
   "required": [ "aaa" ]

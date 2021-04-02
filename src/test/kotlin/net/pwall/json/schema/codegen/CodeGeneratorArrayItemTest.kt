@@ -84,7 +84,10 @@ data class TestArrayItems(
             cg_2.forEach { cg_3 ->
                 require(cg_3.length <= 3) { "ccc item item length > maximum 3 - ${'$'}{cg_3.length}" }
             }
+            require(cg_2.size >= 2) { "ccc item length < minimum 2 - ${'$'}{cg_2.size}" }
+            require(cg_2.size <= 2) { "ccc item length > maximum 2 - ${'$'}{cg_2.size}" }
         }
+        require(ccc == null || ccc.isNotEmpty()) { "ccc length < minimum 1 - ${'$'}{ccc?.size}" }
     }
 
     companion object {
@@ -140,8 +143,14 @@ public class TestArrayItems {
                     if (cg_3.length() > 3)
                         throw new IllegalArgumentException("ccc item item length > maximum 3 - " + cg_3.length());
                 }
+                if (cg_2.size() < 2)
+                    throw new IllegalArgumentException("ccc item length < minimum 2 - " + cg_2.size());
+                if (cg_2.size() > 2)
+                    throw new IllegalArgumentException("ccc item length > maximum 2 - " + cg_2.size());
             }
         }
+        if (ccc != null && ccc.size() < 1)
+            throw new IllegalArgumentException("ccc length < minimum 1 - " + ccc.size());
         this.ccc = ccc;
     }
 

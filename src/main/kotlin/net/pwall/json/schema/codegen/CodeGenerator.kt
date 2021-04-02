@@ -483,7 +483,7 @@ class CodeGenerator(
             }
         }
         return constraints.properties.fold(false) { result, property ->
-            analyseProperty(target, property, targets) || result
+            analyseProperty(target, targets, property, property.name) || result
         }
     }
 
@@ -525,7 +525,7 @@ class CodeGenerator(
         return null
     }
 
-    private fun analyseProperty(target: Target, property: NamedConstraints, targets: List<Target>): Boolean {
+    private fun analyseProperty(target: Target, targets: List<Target>, property: Constraints, name: String): Boolean {
         // true == validations present
         findCustomClass(property.schema, target)?.let {
             property.localTypeName = it
@@ -541,59 +541,12 @@ class CodeGenerator(
                 return false
             }
         }
-        when {
-            property.isObject -> {
-                findTargetClass(property, target, targets) { property.name }
-                return false
-            }
-            property.isArray -> {
-                target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
-                var validationsPresent = false
-                property.arrayItems?.let {
-                    if (analyseArray(it, target, targets) { property.name.depluralise() }) {
-                        property.addValidation(Validation.Type.ARRAY_ITEMS)
-                        validationsPresent = true
-                    }
-                }
-                property.minItems?.let {
-                    property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
-                    validationsPresent = true
-                }
-                property.maxItems?.let {
-                    property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
-                    validationsPresent = true
-                }
-                property.defaultValue?.let {
-                    if (it.type != JSONSchema.Type.ARRAY)
-                        property.defaultValue = null
-                }
-                return validationsPresent
-            }
-            property.isInt -> {
-                return analyseInt(property, target)
-            }
-            property.isLong -> {
-                return analyseLong(property, target)
-            }
-            property.isDecimal -> {
-                target.systemClasses.addOnce(SystemClass.DECIMAL)
-                property.systemClass = SystemClass.DECIMAL
-                return analyseDecimal(target, property)
-            }
-            property.isString -> {
-                return analyseString(property, target, targets) { property.name }
-            }
-        }
-        return false
-    }
-
-    private fun analyseArray(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
-            Boolean {
         return when {
             property.isObject -> {
-                findTargetClass(property, target, targets, defaultName)
+                findTargetClass(property, target, targets) { name }
                 false
             }
+            property.isArray -> analyseArray(target, targets, property, name)
             property.isInt -> analyseInt(property, target)
             property.isLong -> analyseLong(property, target)
             property.isDecimal -> {
@@ -601,15 +554,33 @@ class CodeGenerator(
                 property.systemClass = SystemClass.DECIMAL
                 analyseDecimal(target, property)
             }
-            property.isString -> analyseString(property, target, targets, defaultName)
-            property.isArray -> property.arrayItems?.let {
-                analyseArray(it, target, targets, defaultName).also { validations ->
-                    if (validations)
-                        property.addValidation(Validation.Type.ARRAY_ITEMS)
-                }
-            } ?: false
+            property.isString -> analyseString(property, target, targets) { name }
             else -> false
         }
+    }
+
+    private fun analyseArray(target: Target, targets: List<Target>, property: Constraints, name: String): Boolean {
+        target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
+        var validationsPresent = false
+        property.arrayItems?.let {
+            if (analyseProperty(target, targets, it, name.depluralise())) {
+                property.addValidation(Validation.Type.ARRAY_ITEMS)
+                validationsPresent = true
+            }
+        }
+        property.minItems?.let {
+            property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
+            validationsPresent = true
+        }
+        property.maxItems?.let {
+            property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
+            validationsPresent = true
+        }
+        property.defaultValue?.let {
+            if (it.type != JSONSchema.Type.ARRAY)
+                property.defaultValue = null
+        }
+        return validationsPresent
     }
 
     private fun analyseString(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
