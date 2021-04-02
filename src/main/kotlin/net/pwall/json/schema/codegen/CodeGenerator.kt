@@ -568,12 +568,16 @@ class CodeGenerator(
                 validationsPresent = true
             }
         }
-        property.minItems?.let {
-            property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
+        property.minItems?.let { minI ->
+            property.maxItems?.let { maxI ->
+                if (minI == maxI)
+                    property.addValidation(Validation.Type.CONST_ITEMS, NumberValue(minI))
+                else
+                    property.addValidation(Validation.Type.RANGE_ITEMS, minI to maxI)
+            } ?: property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(minI))
             validationsPresent = true
-        }
-        property.maxItems?.let {
-            property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
+        } ?: property.maxItems?.let { maxI ->
+            property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(maxI))
             validationsPresent = true
         }
         property.defaultValue?.let {

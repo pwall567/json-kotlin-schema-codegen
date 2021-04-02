@@ -75,8 +75,7 @@ data class TestArrayItems(
         aaa.forEach { cg_0 ->
             require(cg_0 in 0..9999) { "aaa item not in range 0..9999 - ${'$'}cg_0" }
         }
-        require(aaa.isNotEmpty()) { "aaa length < minimum 1 - ${'$'}{aaa.size}" }
-        require(aaa.size <= 5) { "aaa length > maximum 5 - ${'$'}{aaa.size}" }
+        require(aaa.size in 1..5) { "aaa length not in range 1..5 - ${'$'}{aaa.size}" }
         bbb?.forEach { cg_1 ->
             require(cg_regex0.containsMatchIn(cg_1)) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
         }
@@ -84,8 +83,7 @@ data class TestArrayItems(
             cg_2.forEach { cg_3 ->
                 require(cg_3.length <= 3) { "ccc item item length > maximum 3 - ${'$'}{cg_3.length}" }
             }
-            require(cg_2.size >= 2) { "ccc item length < minimum 2 - ${'$'}{cg_2.size}" }
-            require(cg_2.size <= 2) { "ccc item length > maximum 2 - ${'$'}{cg_2.size}" }
+            require(cg_2.size == 2) { "ccc item length not constant value 2 - ${'$'}{cg_2.size}" }
         }
         require(ccc == null || ccc.isNotEmpty()) { "ccc length < minimum 1 - ${'$'}{ccc?.size}" }
     }
@@ -125,10 +123,8 @@ public class TestArrayItems {
             if (cg_0 < 0 || cg_0 > 9999)
                 throw new IllegalArgumentException("aaa item not in range 0..9999 - " + cg_0);
         }
-        if (aaa.size() < 1)
-            throw new IllegalArgumentException("aaa length < minimum 1 - " + aaa.size());
-        if (aaa.size() > 5)
-            throw new IllegalArgumentException("aaa length > maximum 5 - " + aaa.size());
+        if (aaa.size() < 1 || aaa.size() > 5)
+            throw new IllegalArgumentException("aaa length not in range 1..5 - " + aaa.size());
         this.aaa = aaa;
         if (bbb != null) {
             for (String cg_1 : bbb) {
@@ -143,10 +139,8 @@ public class TestArrayItems {
                     if (cg_3.length() > 3)
                         throw new IllegalArgumentException("ccc item item length > maximum 3 - " + cg_3.length());
                 }
-                if (cg_2.size() < 2)
-                    throw new IllegalArgumentException("ccc item length < minimum 2 - " + cg_2.size());
-                if (cg_2.size() > 2)
-                    throw new IllegalArgumentException("ccc item length > maximum 2 - " + cg_2.size());
+                if (cg_2.size() != 2)
+                    throw new IllegalArgumentException("ccc item length not constant value 2 - " + cg_2.size());
             }
         }
         if (ccc != null && ccc.size() < 1)
