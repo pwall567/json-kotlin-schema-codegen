@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - `CodeGenerator`: reorganised array validations (particularly nested arrays)
 - templates: improve pattern validation
 - `CodeGenerator`, `Validation`, templates: optimised array length validations
+- templates: optimised generation for multiple validations on same property
 
 ## [0.29] - 2021-03-31
 ### Changed

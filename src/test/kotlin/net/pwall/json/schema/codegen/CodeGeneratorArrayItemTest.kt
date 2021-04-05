@@ -72,20 +72,20 @@ data class TestArrayItems(
 ) {
 
     init {
-        aaa.forEach { cg_0 ->
+        for (cg_0 in aaa)
             require(cg_0 in 0..9999) { "aaa item not in range 0..9999 - ${'$'}cg_0" }
-        }
         require(aaa.size in 1..5) { "aaa length not in range 1..5 - ${'$'}{aaa.size}" }
-        bbb?.forEach { cg_1 ->
-            require(cg_regex0.containsMatchIn(cg_1)) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
-        }
-        ccc?.forEach { cg_2 ->
-            cg_2.forEach { cg_3 ->
-                require(cg_3.length <= 3) { "ccc item item length > maximum 3 - ${'$'}{cg_3.length}" }
+        if (bbb != null)
+            for (cg_1 in bbb)
+                require(cg_regex0.containsMatchIn(cg_1)) { "bbb item does not match pattern ${'$'}cg_regex0 - ${'$'}cg_1" }
+        if (ccc != null) {
+            for (cg_2 in ccc) {
+                for (cg_3 in cg_2)
+                    require(cg_3.length <= 3) { "ccc item item length > maximum 3 - ${'$'}{cg_3.length}" }
+                require(cg_2.size == 2) { "ccc item length not constant value 2 - ${'$'}{cg_2.size}" }
             }
-            require(cg_2.size == 2) { "ccc item length not constant value 2 - ${'$'}{cg_2.size}" }
+            require(ccc.isNotEmpty()) { "ccc length < minimum 1 - ${'$'}{ccc.size}" }
         }
-        require(ccc == null || ccc.isNotEmpty()) { "ccc length < minimum 1 - ${'$'}{ccc?.size}" }
     }
 
     companion object {

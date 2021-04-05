@@ -90,13 +90,18 @@ data class TestString(
         require(JSONValidation.isHostname(hostname1)) { "hostname1 does not match format hostname - ${'$'}hostname1" }
         require(JSONValidation.isIPV4(ipv4a)) { "ipv4a does not match format ipv4 - ${'$'}ipv4a" }
         require(JSONValidation.isIPV6(ipv6a)) { "ipv6a does not match format ipv6 - ${'$'}ipv6a" }
-        require(duration1 == null || JSONValidation.isDuration(duration1)) { "duration1 does not match format duration - ${'$'}duration1" }
-        require(pointer1 == null || JSONValidation.isJSONPointer(pointer1)) { "pointer1 does not match format json-pointer - ${'$'}pointer1" }
+        if (duration1 != null)
+            require(JSONValidation.isDuration(duration1)) { "duration1 does not match format duration - ${'$'}duration1" }
+        if (pointer1 != null)
+            require(JSONValidation.isJSONPointer(pointer1)) { "pointer1 does not match format json-pointer - ${'$'}pointer1" }
         require(maxlen.length <= 20) { "maxlen length > maximum 20 - ${'$'}{maxlen.length}" }
         require(minlen.isNotEmpty()) { "minlen length < minimum 1 - ${'$'}{minlen.length}" }
-        require(minlen2 == null || minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2?.length}" }
-        require(fixedLen == null || fixedLen.length == 3) { "fixedLen length != constant 3 - ${'$'}{fixedLen?.length}" }
-        require(rangeLen == null || rangeLen.length in 1..6) { "rangeLen length not in range 1..6 - ${'$'}{rangeLen?.length}" }
+        if (minlen2 != null)
+            require(minlen2.isNotEmpty()) { "minlen2 length < minimum 1 - ${'$'}{minlen2.length}" }
+        if (fixedLen != null)
+            require(fixedLen.length == 3) { "fixedLen length != constant 3 - ${'$'}{fixedLen.length}" }
+        if (rangeLen != null)
+            require(rangeLen.length in 1..6) { "rangeLen length not in range 1..6 - ${'$'}{rangeLen.length}" }
         require(cg_regex0.containsMatchIn(name)) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
     }
 
