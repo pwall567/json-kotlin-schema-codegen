@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.30] - 2021-04-05
 ### Changed
 - `CodeGenerator`: reorganised array validations (particularly nested arrays)
 - templates: improve pattern validation
