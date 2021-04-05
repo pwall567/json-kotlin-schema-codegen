@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - templates: improve pattern validation
 - `CodeGenerator`, `Validation`, templates: optimised array length validations
 - templates: optimised generation for multiple validations on same property
+- `CodeGenerator`: fixed bug in mapping custom classes
 ### Added
 - integration test (initial simple test of generated code)
 - integration test (tests of complex generated code)

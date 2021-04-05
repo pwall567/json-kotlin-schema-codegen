@@ -31,8 +31,8 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
-import net.pwall.json.pointer.JSONPointer
 
+import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -48,7 +48,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt", dirs + "person"), stringWriter)
-        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/${'$'}defs/personId"),
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/\$defs/personId"),
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("#/properties/name"), "com.example.person.PersonName")
         codeGenerator.generate(input)

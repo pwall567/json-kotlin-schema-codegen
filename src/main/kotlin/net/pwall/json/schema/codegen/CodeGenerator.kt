@@ -349,7 +349,8 @@ class CodeGenerator(
         val definitions = (pointer.find(base) as? JSONMapping<*>) ?:
                 throw JSONSchemaException("Can't find definitions - $pointer")
         generateClasses(definitions.keys.filter(filter).map {
-            actualSchemaParser.parseSchema(base, pointer.child(it), URI("https:/pwall.net/internal")) to it
+            val uri = (((base as? JSONMapping<*>)?.get("\$id") as? JSONString)?.get()) ?: "https:/pwall.net/internal"
+            actualSchemaParser.parseSchema(base, pointer.child(it), URI(uri)) to it
         }, subDirectories)
     }
 
