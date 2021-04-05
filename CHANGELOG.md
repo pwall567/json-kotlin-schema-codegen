@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - templates: optimised generation for multiple validations on same property
 ### Added
 - integration test (initial simple test of generated code)
+- integration test (tests of complex generated code)
 
 ## [0.29] - 2021-03-31
 ### Changed

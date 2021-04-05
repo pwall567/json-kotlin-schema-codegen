@@ -39,12 +39,14 @@ class CodeGeneratorArrayItemTest {
 
     @Test fun `should generate correct validations for arrays of integer and string`() {
         val input = File("src/test/resources/test-array-items.schema.json")
+        val outputDirectory = "target/generated-test-sources/kotlin"
         val codeGenerator = CodeGenerator()
-        val stringWriter = StringWriter()
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestArrayItems", "kt", dirs), stringWriter)
+        codeGenerator.baseDirectoryName = outputDirectory
+        codeGenerator.basePackageName = "net.pwall.json.schema.codegen.test"
         codeGenerator.generate(input)
-        expect(createHeader("TestArrayItems.kt") + expected) { stringWriter.toString() }
+        expect(createHeader("TestArrayItems.kt") + expected) {
+            File("$outputDirectory/net/pwall/json/schema/codegen/test/TestArrayItems.kt").readText()
+        }
     }
 
     @Test fun `should generate correct validations for arrays of integer and string in Java`() {
@@ -60,7 +62,7 @@ class CodeGeneratorArrayItemTest {
     companion object {
 
         const val expected =
-"""package com.example
+"""package net.pwall.json.schema.codegen.test
 
 /**
  * Test array items.
