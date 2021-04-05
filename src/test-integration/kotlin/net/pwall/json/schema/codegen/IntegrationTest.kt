@@ -47,15 +47,22 @@ class IntegrationTest {
     @Test fun `should compile complex code with array validations`() {
         val testAAA = listOf(123, 456)
         val testBBB = listOf("AUD", "NZD")
-        val test1 = TestArrayItems(testAAA, testBBB, listOf(testBBB))
-        expect(testAAA) { test1.aaa }
-        expect(testBBB) { test1.bbb }
-        expect(1) { test1.ccc?.size }
-        expect(testBBB) { test1.ccc?.first() }
-        val test2 = TestArrayItems(testAAA, testBBB)
-        expect(testAAA) { test2.aaa }
-        expect(testBBB) { test2.bbb }
-        expect(null) { test2.ccc }
+        with (TestArrayItems(testAAA, testBBB, listOf(testBBB))) {
+            expect(testAAA) { aaa }
+            expect(testBBB) { bbb }
+            expect(1) { ccc?.size }
+            expect(testBBB) { ccc?.first() }
+        }
+        with (TestArrayItems(testAAA, testBBB)) {
+            expect(testAAA) { aaa }
+            expect(testBBB) { bbb }
+            expect(null) { ccc }
+        }
+        with (TestArrayItems(testAAA)) {
+            expect(testAAA) { aaa }
+            expect(null) { bbb }
+            expect(null) { ccc }
+        }
     }
 
     @Test fun `should compile complex code with array validations - error cases`() {
