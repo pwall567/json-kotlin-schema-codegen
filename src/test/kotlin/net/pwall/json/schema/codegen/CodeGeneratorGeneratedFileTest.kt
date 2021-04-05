@@ -25,7 +25,6 @@
 
 package net.pwall.json.schema.codegen
 
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.expect
 
@@ -38,23 +37,9 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorGeneratedFileTest {
 
-    @AfterTest fun `clean up generated sources directory`() {
-        File("target/generated-test-sources/json-kotlin-schema").deleteAll()
-    }
-
-    private fun File.deleteAll() {
-        when {
-            isDirectory -> {
-                listFiles()?.forEach { it.deleteAll() }
-                delete()
-            }
-            isFile -> delete()
-        }
-    }
-
     @Test fun `should process test directory and write to generated-sources`() {
         val input = File("src/test/resources/test1")
-        val outputDirectory = "target/generated-test-sources/json-kotlin-schema"
+        val outputDirectory = "target/generated-test-sources/kotlin"
         val codeGenerator = CodeGenerator()
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
