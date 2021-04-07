@@ -77,24 +77,24 @@ import net.pwall.util.Strings
  * @author  Peter Wall
  */
 class CodeGenerator(
-        /** Target language */
-        var targetLanguage: TargetLanguage = TargetLanguage.KOTLIN,
-        /** The primary template to use for the generation of a class */
-        var templateName: String = "class",
-        /** The primary template to use for the generation of an enum */
-        var enumTemplateName: String = "enum",
-        /** The base package name for the generated classes */
-        var basePackageName: String? = null,
-        /** The base output directory for generated files */
-        var baseDirectoryName: String = ".",
-        /** A boolean flag to indicate the schema files in subdirectories are to be output to sub-packages */
-        var derivePackageFromStructure: Boolean = true,
-        /** A comment to add to the header of generated files */
-        var generatorComment: String? = null,
-        /** An optional marker interface to add to each generated class */
-        var markerInterface: String? = null,
-        /** A [Logger] object for the output of logging messages */
-        val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
+    /** Target language */
+    var targetLanguage: TargetLanguage = TargetLanguage.KOTLIN,
+    /** The primary template to use for the generation of a class */
+    var templateName: String = "class",
+    /** The primary template to use for the generation of an enum */
+    var enumTemplateName: String = "enum",
+    /** The base package name for the generated classes */
+    var basePackageName: String? = null,
+    /** The base output directory for generated files */
+    var baseDirectoryName: String = ".",
+    /** A boolean flag to indicate the schema files in subdirectories are to be output to sub-packages */
+    var derivePackageFromStructure: Boolean = true,
+    /** A comment to add to the header of generated files */
+    var generatorComment: String? = null,
+    /** An optional marker interface to add to each generated class */
+    var markerInterface: String? = null,
+    /** A [Logger] object for the output of logging messages */
+    val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
 
     enum class NestedClassNameOption {
@@ -297,7 +297,11 @@ class CodeGenerator(
      * @param   className   the class name
      * @param   subDirectories  list of subdirectory names to use for the output file
      */
-    fun generateClass(schema: JSONSchema, className: String, subDirectories: List<String> = emptyList()) {
+    fun generateClass(
+        schema: JSONSchema,
+        className: String,
+        subDirectories: List<String> = emptyList()
+    ) {
         val target = Target(
             schema = schema,
             constraints = Constraints(schema),
@@ -318,7 +322,10 @@ class CodeGenerator(
      * @param   schemaList  list of [Pair] of [JSONSchema] and [String] (class name)
      * @param   subDirectories  list of subdirectory names to use for the output files
      */
-    fun generateClasses(schemaList: List<Pair<JSONSchema, String>>, subDirectories: List<String> = emptyList()) {
+    fun generateClasses(
+        schemaList: List<Pair<JSONSchema, String>>,
+        subDirectories: List<String> = emptyList()
+    ) {
         val targets = schemaList.map {
             Target(
                 schema = it.first,
@@ -344,12 +351,16 @@ class CodeGenerator(
      * @param   subDirectories  list of subdirectory names to use for the output files
      * @param   filter          optional filter to select which classes to include (by name)
      */
-    fun generateAll(base: JSONValue, pointer: JSONPointer, subDirectories: List<String> = emptyList(),
-            filter: (String) -> Boolean = { true }) {
+    fun generateAll(
+        base: JSONValue,
+        pointer: JSONPointer,
+        subDirectories: List<String> = emptyList(),
+        filter: (String) -> Boolean = { true }
+    ) {
         val definitions = (pointer.find(base) as? JSONMapping<*>) ?:
                 throw JSONSchemaException("Can't find definitions - $pointer")
         generateClasses(definitions.keys.filter(filter).map {
-            val uri = (((base as? JSONMapping<*>)?.get("\$id") as? JSONString)?.get()) ?: "https:/pwall.net/internal"
+            val uri = Parser.getIdOrNull(base) ?: "https:/pwall.net/internal"
             actualSchemaParser.parseSchema(base, pointer.child(it), URI(uri)) to it
         }, subDirectories)
     }

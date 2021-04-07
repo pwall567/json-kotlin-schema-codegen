@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `pom.xml`: bumped dependency version
+- `CodeGenerator`: minor optimisations
+
 ## [0.30] - 2021-04-05
 ### Changed
 - `CodeGenerator`: reorganised array validations (particularly nested arrays)
