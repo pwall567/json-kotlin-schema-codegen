@@ -126,7 +126,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
-        codeGenerator.addCustomClassByFormat("money", "Money", "com.example.util")
+        codeGenerator.addCustomClassByFormat("money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
         expect(createHeader("TestCustom.java") + expectedJavaForExtension) { stringWriter.toString() }
     }

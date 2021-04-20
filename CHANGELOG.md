@@ -2,10 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.31] - 2021-04-20
 ### Changed
-- `pom.xml`: bumped dependency version
+- `pom.xml`: bumped dependency versions (with consequent changes)
 - `CodeGenerator`: minor optimisations
+- `ClassId`, `ClassName`: clarified use of package and directory structure
 
 ## [0.30] - 2021-04-05
 ### Changed

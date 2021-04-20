@@ -605,7 +605,7 @@ class CodeGenerator(
         if (property.systemClass != null)
             return false
         property.enumValues?.let { array ->
-            if (array.all { it is JSONString && it.get().isValidIdentifier() }) {
+            if (array.all { it is JSONString && it.value.isValidIdentifier() }) {
                 property.isEnumClass = true
                 findTargetClass(property, target, targets, defaultName)
                 property.defaultValue?.let {
@@ -630,7 +630,7 @@ class CodeGenerator(
         }
         property.constValue?.let {
             if (it is JSONString) {
-                val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.get()))
+                val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.value))
                 property.addValidation(Validation.Type.CONST_STRING, stringStatic)
                 validationsPresent = true
             }
@@ -656,12 +656,12 @@ class CodeGenerator(
         property.constValue?.let {
             when (it) {
                 is JSONInteger -> {
-                    property.addValidation(Validation.Type.CONST_INT, it.get())
+                    property.addValidation(Validation.Type.CONST_INT, it.value)
                     property.enumValues = null
                     result = true
                 }
                 is JSONLong -> {
-                    it.get().let { v ->
+                    it.value.let { v ->
                         if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
                             property.addValidation(Validation.Type.CONST_INT, v)
                             property.enumValues = null
@@ -670,7 +670,7 @@ class CodeGenerator(
                     }
                 }
                 is JSONDecimal -> {
-                    it.get().asLong().let { v ->
+                    it.value.asLong().let { v ->
                         if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
                             property.addValidation(Validation.Type.CONST_INT, v)
                             property.enumValues = null
@@ -686,9 +686,9 @@ class CodeGenerator(
                 target.systemClasses.addOnce(SystemClass.LIST)
                 val arrayStatic = target.addStatic(Target.StaticType.INT_ARRAY, "cg_array", array.map {
                     when (it) {
-                        is JSONInteger -> NumberValue(it.get())
-                        is JSONLong -> NumberValue(it.get())
-                        is JSONDecimal -> NumberValue(it.get())
+                        is JSONInteger -> NumberValue(it.value)
+                        is JSONLong -> NumberValue(it.value)
+                        is JSONDecimal -> NumberValue(it.value)
                         else -> NumberValue(0)
                     }
                 })
@@ -722,15 +722,15 @@ class CodeGenerator(
         property.constValue?.let {
             when (it) {
                 is JSONInteger -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.get())
+                    property.addValidation(Validation.Type.CONST_LONG, it.value)
                     result = true
                 }
                 is JSONLong -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.get())
+                    property.addValidation(Validation.Type.CONST_LONG, it.value)
                     result = true
                 }
                 is JSONDecimal -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.get().asLong())
+                    property.addValidation(Validation.Type.CONST_LONG, it.value.asLong())
                 }
             }
         }
@@ -923,9 +923,9 @@ class CodeGenerator(
     private fun processDefaultValue(value: JSONValue?): Constraints.DefaultValue =
             when (value) {
                 null -> Constraints.DefaultValue(null, JSONSchema.Type.NULL)
-                is JSONInteger -> Constraints.DefaultValue(value.get(), JSONSchema.Type.INTEGER)
-                is JSONString -> Constraints.DefaultValue(StringValue(value.get()), JSONSchema.Type.STRING)
-                is JSONBoolean -> Constraints.DefaultValue(value.get(), JSONSchema.Type.BOOLEAN)
+                is JSONInteger -> Constraints.DefaultValue(value.value, JSONSchema.Type.INTEGER)
+                is JSONString -> Constraints.DefaultValue(StringValue(value.value), JSONSchema.Type.STRING)
+                is JSONBoolean -> Constraints.DefaultValue(value.value, JSONSchema.Type.BOOLEAN)
                 is JSONSequence<*> -> Constraints.DefaultValue(value.map { processDefaultValue(it) },
                         JSONSchema.Type.ARRAY)
                 is JSONMapping<*> -> throw JSONSchemaException("Can't handle object as default value")
@@ -1050,20 +1050,32 @@ class CodeGenerator(
         }
     }
 
+    @Deprecated("Use addCustomClassByURI(uri, targetClass)")
     fun addCustomClassByURI(uri: URI, qualifiedClassName: String) {
         customClassesByURI.add(CustomClassByURI(uri, qualifiedClassName))
     }
 
-    fun addCustomClassByURI(uri: URI, className: String, packageName: String?) {
+    @Deprecated("Use addCustomClassByURI(uri, targetClass)")
+    fun addCustomClassByURI(uri: URI, className: String, packageName: String? = null) {
         customClassesByURI.add(CustomClassByURI(uri, className, packageName))
     }
 
+    fun addCustomClassByURI(uri: URI, classId: ClassId) {
+        customClassesByURI.add(CustomClassByURI(uri, classId.className, classId.packageName))
+    }
+
+    @Deprecated("Use addCustomClassByFormat(name, targetClass)")
     fun addCustomClassByFormat(name: String, qualifiedClassName: String) {
         customClassesByFormat.add(CustomClassByFormat(name, qualifiedClassName))
     }
 
+    @Deprecated("Use addCustomClassByFormat(name, targetClass)")
     fun addCustomClassByFormat(name: String, className: String, packageName: String?) {
         customClassesByFormat.add(CustomClassByFormat(name, className, packageName))
+    }
+
+    fun addCustomClassByFormat(name: String, classId: ClassId) {
+        customClassesByFormat.add(CustomClassByFormat(name, classId.className, classId.packageName))
     }
 
     fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, qualifiedClassName: String) {
@@ -1097,7 +1109,7 @@ class CodeGenerator(
 
     }
 
-    abstract class CustomClass(override val className: String, override val packageName: String?) : TargetClass {
+    abstract class CustomClass(override val className: String, override val packageName: String?) : ClassId {
 
         fun applyToTarget(target: Target): String {
             target.addImport(this)
@@ -1111,7 +1123,7 @@ class CodeGenerator(
 
         constructor(uri: URI, qualifiedClassName: String) :
                 this(uri, qualifiedClassName.substringAfterLast('.'),
-                        qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+                        qualifiedClassName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() })
 
     }
 
@@ -1120,7 +1132,7 @@ class CodeGenerator(
 
         constructor(name: String, qualifiedClassName: String) :
                 this(name, qualifiedClassName.substringAfterLast('.'),
-                        qualifiedClassName.substringBeforeLast('.').takeIf { it.isNotEmpty() })
+                        qualifiedClassName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() })
 
         fun match(constraints: Constraints): Boolean {
             return constraints.format?.name == name

@@ -1,5 +1,5 @@
 /*
- * @(#) TargetClass.kt
+ * @(#) ClassName.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2021 Peter Wall
@@ -25,15 +25,4 @@
 
 package net.pwall.json.schema.codegen
 
-interface TargetClass {
-
-    val packageName: String?
-
-    val className: String
-
-    val qualifiedClassName: String
-        get() = packageName?.let { "$it.$className" } ?: className
-
-    fun samePackage(other: TargetClass): Boolean = packageName == other.packageName
-
-}
+data class ClassName(override val className: String, override val packageName: String? = null) : ClassId

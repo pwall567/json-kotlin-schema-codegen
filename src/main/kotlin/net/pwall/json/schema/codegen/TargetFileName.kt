@@ -33,8 +33,7 @@ import java.io.File
  *
  * @author  Peter Wall
  */
-data class TargetFileName(val name: String, val ext: String? = null, val dirs: List<String> = emptyList()) :
-        TargetClass {
+data class TargetFileName(val name: String, val ext: String? = null, val dirs: List<String> = emptyList()) : ClassId {
 
     override val className: String
         get() = name

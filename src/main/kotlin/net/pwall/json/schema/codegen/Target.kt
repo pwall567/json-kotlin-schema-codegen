@@ -48,7 +48,7 @@ class Target(
     @Suppress("unused") val generatorComment: String? = null,
     /** Marker interface to be implemented (if any) */
     private val markerInterface: String? = null
-) : ClassDescriptor(constraints, targetFile.className), TargetClass {
+) : ClassDescriptor(constraints, targetFile.className), ClassId {
 
     override val packageName: String?
         get() = targetFile.packageName
@@ -69,7 +69,7 @@ class Target(
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
     @Suppress("unused")
-    val localImports = mutableListOf<TargetClass>()
+    val localImports = mutableListOf<ClassId>()
 
     @Suppress("unused")
     val statics = mutableListOf<Static>()
@@ -111,10 +111,10 @@ class Target(
             statics.find { it.type == type && it.value == value } ?:
                     Static(type, "$prefix${statics.size}", value).also { statics.add(it) }
 
-    fun addImport(targetClass: TargetClass) {
-        if (!samePackage(targetClass))
-            imports.addOnce(targetClass.qualifiedClassName)
-        localImports.addOnce(targetClass)
+    fun addImport(classId: ClassId) {
+        if (!samePackage(classId))
+            imports.addOnce(classId.qualifiedClassName)
+        localImports.addOnce(classId)
     }
 
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }

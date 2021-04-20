@@ -196,8 +196,8 @@ open class Constraints(val schema: JSONSchema) {
     private fun constImpliesInt(): Boolean = constValue?.let {
         when (it) {
             is JSONInteger -> true
-            is JSONLong -> it.get() in Int.MIN_VALUE..Int.MAX_VALUE
-            is JSONDecimal -> it.get().asLong() in Int.MIN_VALUE..Int.MAX_VALUE
+            is JSONLong -> it.value in Int.MIN_VALUE..Int.MAX_VALUE
+            is JSONDecimal -> it.value.asLong() in Int.MIN_VALUE..Int.MAX_VALUE
             else -> false
         }
     } ?: false
@@ -207,8 +207,8 @@ open class Constraints(val schema: JSONSchema) {
             return array.all {
                 when (it) {
                     is JSONInteger -> true
-                    is JSONLong -> it.get() in Int.MIN_VALUE..Int.MAX_VALUE
-                    is JSONDecimal -> it.get().asLong() in Int.MIN_VALUE..Int.MAX_VALUE
+                    is JSONLong -> it.value in Int.MIN_VALUE..Int.MAX_VALUE
+                    is JSONDecimal -> it.value.asLong() in Int.MIN_VALUE..Int.MAX_VALUE
                     else -> false
                 }
             }
