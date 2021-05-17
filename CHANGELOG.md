@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.32] - 2021-05-17
+### Changed
+- templates: modified index template for TypeScript 
+
 ## [0.31] - 2021-04-20
 ### Changed
 - `pom.xml`: bumped dependency versions (with consequent changes)

@@ -76,13 +76,13 @@ class CodeGeneratorMultipleTest {
         val stringWriterB = StringWriter()
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "ts"), stringWriterB)
         val stringWriterIndex = StringWriter()
-        val outputDetailsIndex = OutputDetails(TargetFileName("index", "js"), stringWriterIndex)
-        codeGenerator.indexFileName = TargetFileName("index", "js")
+        val outputDetailsIndex = OutputDetails(TargetFileName("index", "d.ts"), stringWriterIndex)
+        codeGenerator.indexFileName = TargetFileName("index", "d.ts")
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsIndex)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.ts") + expectedTypeATypeScript) { stringWriterA.toString() }
         expect(createHeader("TypeB.ts") + expectedTypeBTypeScript) { stringWriterB.toString() }
-        expect(createHeader("index.js") + expectedIndexTypeScript) { stringWriterIndex.toString() }
+        expect(createHeader("index.d.ts") + expectedIndexTypeScript) { stringWriterIndex.toString() }
     }
 
     companion object {
@@ -236,10 +236,8 @@ export interface TypeB {
 import { TypeA } from "./TypeA";
 import { TypeB } from "./TypeB";
 
-module.exports = {
-    TypeA,
-    TypeB
-};
+export { TypeA };
+export { TypeB };
 """
     }
 
