@@ -5,7 +5,7 @@
 [![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.4.0&color=blue&logo=kotlin)](https://github.com/JetBrains/kotlin/releases/tag/v1.4.0)
 [![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
 
-Code generation for JSON Schema.
+Code generation for JSON Schema (Draft 07).
 
 ## Background
 
@@ -16,11 +16,11 @@ conformity to the specified schema is to generate code directly from the schema 
 
 This is not always possible &ndash; some characteristics described by a schema may not be representable in the
 implementation language.
-But for a large subset of schema definitions a viable code representation is possible, and this library attempts to
+But for a large subset of schema definitions a viable code representation is achievable, and this library attempts to
 provide conversions for the broadest possible range of JSON Schema definitions.
 
 The library uses a template mechanism (employing [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
-templates are provided to generate classes in Kotlin and Java.
+templates are provided to generate classes in Kotlin and Java, or interfaces in TypeScript.
 
 ## Quick Start
 
@@ -50,7 +50,7 @@ data class Test(
 ) {
 
     init {
-        require(price >= cg_dec0) { "price < minimum 0 - ${'$'}price" }
+        require(price >= cg_dec0) { "price < minimum 0 - $price" }
     }
 
     data class Stock(
@@ -112,8 +112,8 @@ set to `true`.
 
 ## JSON Schema Version
 
-This code generator targets the 2019-09 draft of the JSON Schema specification, but it should cover most of draft 07 as
-well.
+This code generator targets the Draft-07 of the JSON Schema specification, and it includes some features from Draft
+2019-09.
 
 It also includes support for the `int32` and `int64` format types from the
 [OpenAPI 3.0 Specification](https://swagger.io/specification/).
@@ -185,4 +185,4 @@ The latest version of the library is 0.32, and it may be obtained from the Maven
 
 Peter Wall
 
-2021-05-17
+2021-05-18
