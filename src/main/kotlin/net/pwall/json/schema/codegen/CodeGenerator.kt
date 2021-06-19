@@ -911,12 +911,10 @@ class CodeGenerator(
 
     private fun processSchema(schema: JSONSchema, constraints: Constraints) {
         when (schema) {
-            is JSONSchema.True -> throw JSONSchemaException("Can't generate code for \"true\" schema")
-            is JSONSchema.False -> throw JSONSchemaException("Can't generate code for \"false\" schema")
-            is JSONSchema.Not -> throw JSONSchemaException("Can't generate code for \"not\" schema")
             is JSONSchema.SubSchema -> processSubSchema(schema, constraints)
             is JSONSchema.Validator -> processValidator(schema, constraints)
             is JSONSchema.General -> schema.children.forEach { processSchema(it, constraints) }
+            else -> {} // for now, just ignore boolean and "not" schema
         }
     }
 
@@ -946,9 +944,9 @@ class CodeGenerator(
     }
 
     private fun processCombinationSchema(combinationSchema: CombinationSchema, constraints: Constraints) {
-        if (combinationSchema.name != "allOf") // can only handle allOf currently
-            throw JSONSchemaException("Can't generate code for \"${combinationSchema.name}\" schema")
-        combinationSchema.array.forEach { processSchema(it, constraints) }
+        if (combinationSchema.name == "allOf")
+            combinationSchema.array.forEach { processSchema(it, constraints) }
+        // for now, ignore "anyOf" and "oneOf"
     }
 
     private fun processValidator(validator: JSONSchema.Validator, constraints: Constraints) {
