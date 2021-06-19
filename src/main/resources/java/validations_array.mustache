@@ -1,2 +1,2 @@
-{{&indent}}        for ({{#arrayItems}}{{>type}} {{&propertyName}}{{/arrayItems}} : {{&propertyName}}) {
+{{&indent}}        for ({{#arrayItems}}{{>type}} {{&javaName}}{{/arrayItems}} : {{&javaName}}) {
 {{#indent.increment}}{{#arrayItems}}{{>validations}}{{/arrayItems}}{{/indent.increment}}{{&indent}}        }

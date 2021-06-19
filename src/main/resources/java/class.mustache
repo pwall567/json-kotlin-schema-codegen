@@ -12,15 +12,15 @@
 {{/description}}{{/schema}}public class {{&className}} {{#baseClass}}extends {{&className}} {{/baseClass}}{{!
 }}{{#markerInterfaceName}}implements {{&.}} {{/markerInterfaceName}}{
 {{>add_statics}}
-{{#nonBaseProperties}}    private final {{>type}} {{&name}};
+{{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
 {{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}(
-{{#properties}}            {{>type}} {{&name}}{{^last}},{{/last}}
+{{#properties}}            {{>type}} {{&javaName}}{{^last}},{{/last}}
 {{/properties}}    ) {
-{{#baseClass}}{{#constraints}}        super({{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}});
-{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&name}} == null)
-            {{>tniae}}("Must not be null - {{&name}}");
-{{/nullable}}{{/isPrimitive}}{{>validations}}        this.{{&name}} = {{&name}};
+{{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
+{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
+            {{>tniae}}("Must not be null - {{&javaName}}");
+{{/nullable}}{{/isPrimitive}}{{>validations}}        this.{{&javaName}} = {{&javaName}};
 {{/nonBaseProperties}}    }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}

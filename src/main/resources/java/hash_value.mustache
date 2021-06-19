@@ -1,4 +1,4 @@
-{{#isInt}}{{&name}}{{/isInt}}{{^isInt}}{{#isLong}}(int){{&name}}{{/isLong}}{{^isLong}}{{!
-}}{{#isBoolean}}({{&name}} ? 1 : 0){{/isBoolean}}{{^isBoolean}}{{!
-}}{{#nullable}}({{&name}} != null ? {{&name}}.hashCode() : 0){{/nullable}}{{^nullable}}{{!
-}}{{&name}}.hashCode(){{/nullable}}{{/isBoolean}}{{/isLong}}{{/isInt}}
+{{#isInt}}{{&javaName}}{{/isInt}}{{^isInt}}{{#isLong}}(int){{&javaName}}{{/isLong}}{{^isLong}}{{!
+}}{{#isBoolean}}({{&javaName}} ? 1 : 0){{/isBoolean}}{{^isBoolean}}{{!
+}}{{#nullable}}({{&javaName}} != null ? {{&javaName}}.hashCode() : 0){{/nullable}}{{^nullable}}{{!
+}}{{&javaName}}.hashCode(){{/nullable}}{{/isBoolean}}{{/isLong}}{{/isInt}}

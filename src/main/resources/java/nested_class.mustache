@@ -3,14 +3,14 @@
      */
 {{/description}}{{/schema}}{{#isObject}}    public static class {{&className}} {
 
-{{#properties}}        private final {{>type}} {{&name}};
+{{#properties}}        private final {{>type}} {{&javaName}};
 {{#last}}
 {{/last}}{{/properties}}{{#numberOfProperties}}        public {{&className}}(
-{{#properties}}                {{>type}} {{&name}}{{^last}},{{/last}}
+{{#properties}}                {{>type}} {{&javaName}}{{^last}},{{/last}}
 {{/properties}}        ) {
-{{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&name}} == null)
-                {{>tniae}}("Must not be null - {{&name}}");
-{{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&name}} = {{&name}};
+{{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
+                {{>tniae}}("Must not be null - {{&javaName}}");
+{{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&javaName}} = {{&javaName}};
 {{/properties}}        }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
