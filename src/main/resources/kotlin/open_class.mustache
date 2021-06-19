@@ -11,12 +11,12 @@
  */
 {{/description}}{{/schema}}open class {{&className}}(
 {{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}    {{&name}}: {{>type}}{{^isRequired}} = {{!
+{{/description}}{{/schema}}    {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}},
 {{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}    val {{&name}}: {{>type}}{{^isRequired}} = {{!
+{{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&name}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{!
+{{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&kotlinName}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{!
 }}{{#markerInterfaceName}}, {{&.}}{{/markerInterfaceName}}{{/baseClass}}{{!
 }}{{^baseClass}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/baseClass}} {
 {{#validationsPresent}}

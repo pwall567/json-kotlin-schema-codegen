@@ -48,7 +48,7 @@ class Target(
     @Suppress("unused") val generatorComment: String? = null,
     /** Marker interface to be implemented (if any) */
     private val markerInterface: String? = null
-) : ClassDescriptor(constraints, targetFile.className), ClassId {
+) : ClassDescriptor(constraints, NamedConstraints.checkJavaName(targetFile.className)), ClassId {
 
     override val packageName: String?
         get() = targetFile.packageName
@@ -93,13 +93,14 @@ class Target(
         get() = validationsPresent || nestedClassesPresent || staticsPresent
 
     fun addNestedClass(constraints: Constraints, innerClassName: String): ClassDescriptor {
-        var actualInnerClassName = innerClassName
-        if (nestedClasses.any { it.className == innerClassName }) {
+        val safeInnerClassName = NamedConstraints.checkJavaName(innerClassName)
+        var actualInnerClassName = safeInnerClassName
+        if (nestedClasses.any { it.className == safeInnerClassName }) {
             for (i in 1..1000) {
                 if (i == 1000)
-                    throw JSONSchemaException("Too many identically named inner classes - $innerClassName")
-                if (!nestedClasses.any { it.className == "$innerClassName$i" }) {
-                    actualInnerClassName = "$innerClassName$i"
+                    throw JSONSchemaException("Too many identically named inner classes - $safeInnerClassName")
+                if (!nestedClasses.any { it.className == "$safeInnerClassName$i" }) {
+                    actualInnerClassName = "$safeInnerClassName$i"
                     break
                 }
             }

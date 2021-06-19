@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`: changed code generation to ignore "oneOf", "anyOf" and "not"
+- `ItemConstraints`, `NamedConstraints`, templates: allow for property names that are not valid Kotlin
+
 ## [0.33] - 2021-05-20
 ### Changed
 - `pom.xml`: updated dependency version

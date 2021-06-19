@@ -1,46 +1,46 @@
-{{#type}}{{#EMAIL}}{{&indent}}        require(JSONValidation.isEmail({{&propertyName}})) { "{{&displayName}} does not match format email - ${{&propertyName}}" }
-{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        require(JSONValidation.isHostname({{&propertyName}})) { "{{&displayName}} does not match format hostname - ${{&propertyName}}" }
-{{/HOSTNAME}}{{#IPV4}}{{&indent}}        require(JSONValidation.isIPV4({{&propertyName}})) { "{{&displayName}} does not match format ipv4 - ${{&propertyName}}" }
-{{/IPV4}}{{#IPV6}}{{&indent}}        require(JSONValidation.isIPV6({{&propertyName}})) { "{{&displayName}} does not match format ipv6 - ${{&propertyName}}" }
-{{/IPV6}}{{#DURATION}}{{&indent}}        require(JSONValidation.isDuration({{&propertyName}})) { "{{&displayName}} does not match format duration - ${{&propertyName}}" }
-{{/DURATION}}{{#JSON_POINTER}}{{&indent}}        require(JSONValidation.isJSONPointer({{&propertyName}})) { "{{&displayName}} does not match format json-pointer - ${{&propertyName}}" }
-{{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        require(JSONValidation.isRelativeJSONPointer({{&propertyName}})) { "{{&displayName}} does not match format relative-json-pointer - ${{&propertyName}}" }
-{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        require({{&value.staticName}}.containsMatchIn({{&propertyName}})) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&propertyName}}" }
-{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        require({{&propertyName}} <= {{&value}}) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
-{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        require({{&propertyName}} <= {{&value}}L) { "{{&displayName}} > maximum {{&value}} - ${{&propertyName}}" }
-{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        require({{&propertyName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
-{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        require({{&propertyName}} >= {{&value}}L) { "{{&displayName}} < minimum {{&value}} - ${{&propertyName}}" }
-{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        require({{&propertyName}} <= {{&value.staticName}}) { "{{&displayName}} > maximum {{&value.value}} - ${{&propertyName}}" }
-{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&propertyName}} <= BigDecimal.ZERO) { "{{&displayName}} > maximum 0 - ${{&propertyName}}" }
-{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        require({{&propertyName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&propertyName}} < BigDecimal.ZERO) { "{{&displayName}} >= exclusive maximum 0 - ${{&propertyName}}" }
-{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        require({{&propertyName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&propertyName}}" }
-{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&propertyName}} >= BigDecimal.ZERO) { "{{&displayName}} < minimum 0 - ${{&propertyName}}" }
-{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{&propertyName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&propertyName}}" }
-{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&propertyName}} > BigDecimal.ZERO) { "{{&displayName}} <= exclusive minimum 0 - ${{&propertyName}}" }
-{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_INT}}{{&indent}}        require({{&propertyName}} in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&propertyName}}" }
-{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        require({{&propertyName}} in {{#value}}{{&first}}L..{{&second}}L{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&propertyName}}" }
-{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        require({{&propertyName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
-{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{&propertyName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&propertyName}}" }
-{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{&propertyName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&propertyName}}" }
-{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{&propertyName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}.size}" }
-{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        require({{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}size >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}.size}" }
-{{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        require({{&propertyName}}.size == {{&value}}) { "{{&displayName}} length not constant value {{&value}} - ${{&openBrace}}{{&propertyName}}.size}" }
-{{/CONST_ITEMS}}{{#RANGE_ITEMS}}{{&indent}}        require({{&propertyName}}.size in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&propertyName}}.size}" }
-{{/RANGE_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        require({{&propertyName}}.length <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&propertyName}}.length}" }
-{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        require({{&propertyName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}length >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&propertyName}}.length}" }
-{{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        require({{&propertyName}}.{{#value}}length == {{&rawNumber}}{{/value}}) { "{{&displayName}} length != constant {{&value}} - ${{&openBrace}}{{&propertyName}}.length}" }
-{{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        require({{&propertyName}}.{{#value}}length in {{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&propertyName}}.length}" }
-{{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        require({{&propertyName}} == {{&value.staticName}}) { "{{&displayName}} not constant value ${{&value.staticName}} - ${{&propertyName}}" }
-{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        require({{&propertyName}} == {{&value}}) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
-{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        require({{&propertyName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&propertyName}}" }
-{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{&propertyName}}.compareTo({{&value.staticName}}) == 0) { "{{&displayName}} not constant value {{&value.value}} - ${{&propertyName}}" }
-{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        require({{&propertyName}}.compareTo(BigDecimal.ZERO) == 0) { "{{&displayName}} not constant value 0 - ${{&propertyName}}" }
-{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        require({{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
-{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{&propertyName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&propertyName}}" }
-{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        for ({{&arrayItems.propertyName}} in {{&propertyName}}){{#arrayItems}}{{#indent.increment}}{{#validations}}{{!
+{{#type}}{{#EMAIL}}{{&indent}}        require(JSONValidation.isEmail({{&kotlinName}})) { "{{&displayName}} does not match format email - ${{&kotlinName}}" }
+{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        require(JSONValidation.isHostname({{&kotlinName}})) { "{{&displayName}} does not match format hostname - ${{&kotlinName}}" }
+{{/HOSTNAME}}{{#IPV4}}{{&indent}}        require(JSONValidation.isIPV4({{&kotlinName}})) { "{{&displayName}} does not match format ipv4 - ${{&kotlinName}}" }
+{{/IPV4}}{{#IPV6}}{{&indent}}        require(JSONValidation.isIPV6({{&kotlinName}})) { "{{&displayName}} does not match format ipv6 - ${{&kotlinName}}" }
+{{/IPV6}}{{#DURATION}}{{&indent}}        require(JSONValidation.isDuration({{&kotlinName}})) { "{{&displayName}} does not match format duration - ${{&kotlinName}}" }
+{{/DURATION}}{{#JSON_POINTER}}{{&indent}}        require(JSONValidation.isJSONPointer({{&kotlinName}})) { "{{&displayName}} does not match format json-pointer - ${{&kotlinName}}" }
+{{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        require(JSONValidation.isRelativeJSONPointer({{&kotlinName}})) { "{{&displayName}} does not match format relative-json-pointer - ${{&kotlinName}}" }
+{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        require({{&value.staticName}}.containsMatchIn({{&kotlinName}})) { "{{&displayName}} does not match pattern ${{&value.staticName}} - ${{&kotlinName}}" }
+{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        require({{&kotlinName}} <= {{&value}}) { "{{&displayName}} > maximum {{&value}} - ${{&kotlinName}}" }
+{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        require({{&kotlinName}} <= {{&value}}L) { "{{&displayName}} > maximum {{&value}} - ${{&kotlinName}}" }
+{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        require({{&kotlinName}} >= {{&value}}) { "{{&displayName}} < minimum {{&value}} - ${{&kotlinName}}" }
+{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        require({{&kotlinName}} >= {{&value}}L) { "{{&displayName}} < minimum {{&value}} - ${{&kotlinName}}" }
+{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        require({{&kotlinName}} <= {{&value.staticName}}) { "{{&displayName}} > maximum {{&value.value}} - ${{&kotlinName}}" }
+{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}} <= BigDecimal.ZERO) { "{{&displayName}} > maximum 0 - ${{&kotlinName}}" }
+{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        require({{&kotlinName}} < {{&value.staticName}}) { "{{&displayName}} >= exclusive maximum {{&value.value}} - ${{&kotlinName}}" }
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}} < BigDecimal.ZERO) { "{{&displayName}} >= exclusive maximum 0 - ${{&kotlinName}}" }
+{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        require({{&kotlinName}} >= {{&value.staticName}}) { "{{&displayName}} < minimum {{&value.value}} - ${{&kotlinName}}" }
+{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}} >= BigDecimal.ZERO) { "{{&displayName}} < minimum 0 - ${{&kotlinName}}" }
+{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        require({{&kotlinName}} > {{&value.staticName}}) { "{{&displayName}} <= exclusive minimum {{&value.value}} - ${{&kotlinName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}} > BigDecimal.ZERO) { "{{&displayName}} <= exclusive minimum 0 - ${{&kotlinName}}" }
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_INT}}{{&indent}}        require({{&kotlinName}} in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&kotlinName}}" }
+{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        require({{&kotlinName}} in {{#value}}{{&first}}L..{{&second}}L{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&kotlinName}}" }
+{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        require({{&kotlinName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&kotlinName}}" }
+{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{&kotlinName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&kotlinName}}" }
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{&kotlinName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&kotlinName}}" }
+{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{&kotlinName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
+{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        require({{&kotlinName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}size >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
+{{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        require({{&kotlinName}}.size == {{&value}}) { "{{&displayName}} length not constant value {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
+{{/CONST_ITEMS}}{{#RANGE_ITEMS}}{{&indent}}        require({{&kotlinName}}.size in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
+{{/RANGE_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        require({{&kotlinName}}.length <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
+{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}length >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
+{{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}length == {{&rawNumber}}{{/value}}) { "{{&displayName}} length != constant {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
+{{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}length in {{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
+{{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        require({{&kotlinName}} == {{&value.staticName}}) { "{{&displayName}} not constant value ${{&value.staticName}} - ${{&kotlinName}}" }
+{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        require({{&kotlinName}} == {{&value}}) { "{{&displayName}} not constant value {{&value}} - ${{&kotlinName}}" }
+{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        require({{&kotlinName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&kotlinName}}" }
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{&kotlinName}}.compareTo({{&value.staticName}}) == 0) { "{{&displayName}} not constant value {{&value.value}} - ${{&kotlinName}}" }
+{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}}.compareTo(BigDecimal.ZERO) == 0) { "{{&displayName}} not constant value 0 - ${{&kotlinName}}" }
+{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        require({{&kotlinName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&kotlinName}}" }
+{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{&kotlinName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&kotlinName}}" }
+{{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        for ({{&arrayItems.kotlinName}} in {{&kotlinName}}){{#arrayItems}}{{#indent.increment}}{{#validations}}{{!
 }}{{#first}}{{^last}} {{&openBrace}}{{/last}}
-{{#nullable}}{{&indent}}        if ({{&propertyName}} != null){{^last}} {{&openBrace}}{{/last}}
+{{#nullable}}{{&indent}}        if ({{&kotlinName}} != null){{^last}} {{&openBrace}}{{/last}}
 {{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{/nullable}}{{!
 }}{{^nullable}}{{>validations_2}}{{/nullable}}{{/first}}{{!
 }}{{^first}}{{#nullable}}{{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{/nullable}}{{^nullable}}{{>validations_2}}{{/nullable}}{{!

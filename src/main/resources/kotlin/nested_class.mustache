@@ -3,7 +3,7 @@
      */
 {{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}data class {{&className}}(
 {{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        val {{&name}}: {{>type}}{{^isRequired}} = {{!
+{{/description}}{{/schema}}        val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/properties}}    ){{#validationsPresent}} {
 

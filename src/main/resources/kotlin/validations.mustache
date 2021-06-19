@@ -1,4 +1,4 @@
-{{#validations}}{{#first}}{{#nullable}}{{&indent}}        if ({{&propertyName}} != null){{^last}} {{&openBrace}}{{/last}}
+{{#validations}}{{#first}}{{#nullable}}{{&indent}}        if ({{&kotlinName}} != null){{^last}} {{&openBrace}}{{/last}}
 {{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{/nullable}}{{!
 }}{{^nullable}}{{>validations_2}}{{/nullable}}{{/first}}{{!
 }}{{^first}}{{#nullable}}{{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{/nullable}}{{^nullable}}{{>validations_2}}{{/nullable}}{{!

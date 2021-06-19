@@ -2,7 +2,7 @@
  * @(#) NamedConstraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,11 +37,126 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
         get() = name
 
     @Suppress("unused")
-    val capitalisedName: String
-        get() = Strings.capitalise(name)
-
-    @Suppress("unused")
     override val displayName: String
         get() = name
+
+    @Suppress("unused")
+    val kotlinName: String
+        get() = checkKotlinName(name)
+
+    @Suppress("unused")
+    val javaName: String
+        get() = checkJavaName(name)
+
+    @Suppress("unused")
+    val capitalisedName: String
+        get() = Strings.capitalise(javaName)
+
+    companion object {
+
+        private val kotlinNameRegex = Regex("^[A-Za-z_][A-Za-z0-9_]+$")
+
+        private val javaNameRegex = Regex("^[A-Za-z_$][A-Za-z0-9_$]+$")
+
+        private val kotlinReserved = setOf(
+            "as",
+            "as?",
+            "break",
+            "class",
+            "continue",
+            "do",
+            "else",
+            "false",
+            "for",
+            "fun",
+            "if",
+            "in",
+            "!in",
+            "interface",
+            "is",
+            "!is",
+            "null",
+            "object",
+            "package",
+            "return",
+            "super",
+            "this",
+            "throw",
+            "true",
+            "try",
+            "typealias",
+            "typeof",
+            "val",
+            "var",
+            "when",
+            "while"
+        )
+
+        private val javaReserved = setOf(
+            "abstract",
+            "assert",
+            "boolean",
+            "break",
+            "byte",
+            "case",
+            "catch",
+            "class",
+            "const",
+            "continue",
+            "default",
+            "do",
+            "double",
+            "else",
+            "enum",
+            "extends",
+            "false",
+            "final",
+            "finally",
+            "float",
+            "for",
+            "goto",
+            "if",
+            "implements",
+            "import",
+            "instanceof",
+            "int",
+            "interface",
+            "long",
+            "native",
+            "new",
+            "null",
+            "package",
+            "private",
+            "protected",
+            "public",
+            "return",
+            "short",
+            "static",
+            "staticfp",
+            "super",
+            "switch",
+            "synchronized",
+            "this",
+            "throw",
+            "throws",
+            "transient",
+            "true",
+            "try",
+            "void",
+            "volatile",
+            "while"
+        )
+
+        fun checkKotlinName(name: String): String =
+                if (kotlinNameRegex.containsMatchIn(name) && name !in kotlinReserved) name else "`$name`"
+
+        fun checkJavaName(name: String): String = when {
+            !javaNameRegex.containsMatchIn(name) ->
+                    name.replace(Regex("^[^A-Za-z$]+"), "_").replace(Regex("[^A-Za-z0-9$]+"), "_")
+            name in javaReserved -> "${name}_"
+            else -> name
+        }
+
+    }
 
 }

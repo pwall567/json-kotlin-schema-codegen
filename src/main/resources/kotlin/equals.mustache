@@ -1,2 +1,2 @@
     override fun equals(other: Any?): Boolean = this === other || other is {{&className}}{{#baseClass}} && super.equals(other){{/baseClass}}{{#nonBaseProperties}} &&
-            {{&propertyName}} == other.{{&propertyName}}{{/nonBaseProperties}}
+            {{&kotlinName}} == other.{{&kotlinName}}{{/nonBaseProperties}}

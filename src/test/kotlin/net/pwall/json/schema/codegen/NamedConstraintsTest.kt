@@ -1,8 +1,8 @@
 /*
- * @(#) ItemConstraints.kt
+ * @(#) NamedConstraintsTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,26 +25,22 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.json.schema.JSONSchema
-import net.pwall.json.schema.codegen.NamedConstraints.Companion.checkJavaName
-import net.pwall.json.schema.codegen.NamedConstraints.Companion.checkKotlinName
+import kotlin.test.Test
+import kotlin.test.expect
 
-class ItemConstraints(
-    schema: JSONSchema,
-    val name: String,
-    @Suppress("unused") val propertyName: String
-) : Constraints(schema) {
+class NamedConstraintsTest {
 
-    @Suppress("unused")
-    override val displayName: String
-        get() = "$name item"
+    @Test fun `should detect and modify illegal Kotlin names`(){
+        expect("name") { NamedConstraints.checkKotlinName("name") }
+        expect("`hyphenated-name`") { NamedConstraints.checkKotlinName("hyphenated-name") }
+        expect("`class`") { NamedConstraints.checkKotlinName("class") }
+        expect("`123test123`") { NamedConstraints.checkKotlinName("123test123") }
+    }
 
-    @Suppress("unused")
-    val kotlinName: String
-        get() = checkKotlinName(propertyName)
-
-    @Suppress("unused")
-    val javaName: String
-        get() = checkJavaName(propertyName)
+    @Test fun `should detect and modify illegal Java names`(){
+        expect("name") { NamedConstraints.checkJavaName("name") }
+        expect("hyphenated_name") { NamedConstraints.checkJavaName("hyphenated-name") }
+        expect("_test123") { NamedConstraints.checkJavaName("123test123") }
+    }
 
 }
