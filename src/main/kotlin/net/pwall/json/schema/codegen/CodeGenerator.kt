@@ -280,13 +280,13 @@ class CodeGenerator(
                     actualTemplate.processTo(AppendableFilter(it), target)
                 }
             }
-            target.constraints.isString && target.constraints.enumValues != null -> {
+            target.constraints.isString && target.constraints.enumValues.let { it != null && allIdentifier(it) } -> {
                 log.info { "-- target enum ${target.qualifiedClassName}" }
                 actualOutputResolver(target.targetFile).use {
                     actualEnumTemplate.processTo(it, target)
                 }
             }
-            else -> log.info { "-- nothing to generate" }
+            else -> log.info { "-- nothing to generate for ${target.className}" }
         }
     }
 
@@ -605,7 +605,7 @@ class CodeGenerator(
         if (property.systemClass != null)
             return false
         property.enumValues?.let { array ->
-            if (array.all { it is JSONString && it.value.isValidIdentifier() }) {
+            if (allIdentifier(array)) {
                 property.isEnumClass = true
                 findTargetClass(property, target, targets, defaultName)
                 property.defaultValue?.let {
@@ -1190,6 +1190,10 @@ class CodeGenerator(
         fun <T: Any> MutableList<T>.addOnce(entry: T) {
             if (entry !in this)
                 add(entry)
+        }
+
+        fun allIdentifier(array: JSONSequence<*>): Boolean {
+            return array.all { it is JSONString && it.value.isValidIdentifier() }
         }
 
         private fun String.isValidIdentifier(): Boolean {
