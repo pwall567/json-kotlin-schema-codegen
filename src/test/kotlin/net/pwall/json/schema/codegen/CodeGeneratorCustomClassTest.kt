@@ -55,6 +55,32 @@ class CodeGeneratorCustomClassTest {
         expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
     }
 
+    @Test fun `should use specified custom class when specified as name and package`() {
+        val input = File("src/test/resources/test1")
+        val codeGenerator = CodeGenerator()
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt", dirs + "person"), stringWriter)
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/\$defs/personId"),
+                "com.example.person.PersonId")
+        codeGenerator.addCustomClassByURI(URI("#/properties/name"), "PersonName", "com.example.person")
+        codeGenerator.generate(input)
+        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class when specified as ClassName`() {
+        val input = File("src/test/resources/test1")
+        val codeGenerator = CodeGenerator()
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt", dirs + "person"), stringWriter)
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/\$defs/personId"),
+                "com.example.person.PersonId")
+        codeGenerator.addCustomClassByURI(URI("#/properties/name"), ClassName("PersonName", "com.example.person"))
+        codeGenerator.generate(input)
+        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+    }
+
     @Test fun `should use specified custom class in Java`() {
         val input = File("src/test/resources/test1")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
@@ -76,6 +102,28 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByExtension("x-test", "money", "com.example.util.Money")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for extension when specified as name and package`() {
+        val input = File("src/test/resources/test-custom-class.schema.json")
+        val codeGenerator = CodeGenerator()
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.addCustomClassByExtension("x-test", "money", "Money", "com.example.util")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for extension when specified as ClassName`() {
+        val input = File("src/test/resources/test-custom-class.schema.json")
+        val codeGenerator = CodeGenerator()
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.addCustomClassByExtension("x-test", "money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
         expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
     }
@@ -107,6 +155,46 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByFormat("money", "com.example.util.Money")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for format when specified as name and package`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser = parser
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.addCustomClassByFormat("money", "Money", "com.example.util")
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class for format when specified as ClassName`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser = parser
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.addCustomClassByFormat("money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
         expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
     }

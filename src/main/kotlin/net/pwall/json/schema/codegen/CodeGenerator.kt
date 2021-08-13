@@ -1048,12 +1048,10 @@ class CodeGenerator(
         }
     }
 
-    @Deprecated("Use addCustomClassByURI(uri, targetClass)")
     fun addCustomClassByURI(uri: URI, qualifiedClassName: String) {
         customClassesByURI.add(CustomClassByURI(uri, qualifiedClassName))
     }
 
-    @Deprecated("Use addCustomClassByURI(uri, targetClass)")
     fun addCustomClassByURI(uri: URI, className: String, packageName: String? = null) {
         customClassesByURI.add(CustomClassByURI(uri, className, packageName))
     }
@@ -1062,12 +1060,10 @@ class CodeGenerator(
         customClassesByURI.add(CustomClassByURI(uri, classId.className, classId.packageName))
     }
 
-    @Deprecated("Use addCustomClassByFormat(name, targetClass)")
     fun addCustomClassByFormat(name: String, qualifiedClassName: String) {
         customClassesByFormat.add(CustomClassByFormat(name, qualifiedClassName))
     }
 
-    @Deprecated("Use addCustomClassByFormat(name, targetClass)")
     fun addCustomClassByFormat(name: String, className: String, packageName: String?) {
         customClassesByFormat.add(CustomClassByFormat(name, className, packageName))
     }
@@ -1082,6 +1078,11 @@ class CodeGenerator(
 
     fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, className: String, packageName: String?) {
         customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, className, packageName))
+    }
+
+    fun addCustomClassByExtension(extensionId: String, extensionValue: Any?, classId: ClassId) {
+        customClassesByExtension.add(CustomClassByExtension(extensionId, extensionValue, classId.className,
+                classId.packageName))
     }
 
     private var nameGenerator = NameGenerator()
