@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.35] - 2021-08-13
+### Changed
+- `Target`: check for repeated use of same reference and generate nested class only once
+
 ## [0.34] - 2021-06-20
 ### Changed
 - `CodeGenerator`: changed code generation to ignore "oneOf", "anyOf" and "not"

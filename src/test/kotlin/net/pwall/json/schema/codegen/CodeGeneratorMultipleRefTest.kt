@@ -1,8 +1,8 @@
 /*
- * @(#) CodeGeneratorRepeatedNestedClassTest.kt
+ * @(#) CodeGeneratorMultipleRefTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,42 +35,31 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
-class CodeGeneratorRepeatedNestedClassTest {
+class CodeGeneratorMultipleRefTest {
 
-    @Test fun `should correctly output repeated nested class`() {
-        val input = File("src/test/resources/test-repeated-object.schema.json")
+    @Test fun `should reuse nested class on multiple references`() {
+        val input = File("src/test/resources/test-multiple-ref.schema.json")
         val codeGenerator = CodeGenerator()
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestRepeatedObject", "kt", dirs), stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestMultipleRef", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestRepeatedObject.kt") + expectedRepeated) { stringWriter.toString() }
+        expect(createHeader("TestMultipleRef.kt") + expected) { stringWriter.toString() }
     }
 
     companion object {
 
-        const val expectedRepeated =
+        const val expected =
 """package com.example
 
-/**
- * Test repeated object.
- */
-data class TestRepeatedObject(
-    val nested1: Nested1,
-    val nested2: Nested2
+data class TestMultipleRef(
+    val aaa: TwoPart? = null,
+    val bbb: TwoPart? = null
 ) {
 
-    data class Nested1(
-        val internal: Internal
-    )
-
-    data class Internal(
-        val prop1: String,
-        val prop2: String
-    )
-
-    data class Nested2(
-        val internal: Internal
+    data class TwoPart(
+        val a1: Long? = null,
+        val a2: Long? = null
     )
 
 }

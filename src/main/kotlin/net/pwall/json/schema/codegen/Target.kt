@@ -28,6 +28,7 @@ package net.pwall.json.schema.codegen
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
+import net.pwall.json.schema.subschema.RefSchema
 
 /**
  * A code generation target.  The class contains several properties that exist just for the purposes of template
@@ -95,7 +96,9 @@ class Target(
     fun addNestedClass(constraints: Constraints, innerClassName: String): ClassDescriptor {
         val safeInnerClassName = NamedConstraints.checkJavaName(innerClassName)
         var actualInnerClassName = safeInnerClassName
-        if (nestedClasses.any { it.className == safeInnerClassName }) {
+        nestedClasses.find { it.className == safeInnerClassName }?.let { nestedClass ->
+            if (sameReference(nestedClass.constraints, constraints))
+                return nestedClass
             for (i in 1..1000) {
                 if (i == 1000)
                     throw JSONSchemaException("Too many identically named inner classes - $safeInnerClassName")
@@ -107,6 +110,16 @@ class Target(
         }
         return ClassDescriptor(constraints, actualInnerClassName).also { nestedClasses.add(it) }
     }
+
+    private fun sameReference(constraints1: Constraints, constraints2: Constraints): Boolean {
+        getRefSchema(constraints1)?.let { if (it === getRefSchema(constraints2)) return true }
+        return false
+    }
+
+    private fun getRefSchema(constraints: Constraints): JSONSchema? =
+        (constraints.schema as? JSONSchema.General)?.let {
+            (it.children.singleOrNull() as? RefSchema)?.target
+        }
 
     fun addStatic(type: StaticType, prefix: String, value: Any): Static =
             statics.find { it.type == type && it.value == value } ?:

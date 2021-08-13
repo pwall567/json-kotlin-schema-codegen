@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-multiple-ref",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "$ref": "#/$defs/twoPart"
+    },
+    "bbb": {
+      "$ref": "#/$defs/twoPart"
+    }
+  },
+  "$defs": {
+    "twoPart": {
+      "type": "object",
+      "properties": {
+        "a1": {
+          "type": "integer"
+        },
+        "a2": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

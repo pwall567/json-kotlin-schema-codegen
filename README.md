@@ -1,6 +1,6 @@
 # json-kotlin-schema-codegen
 
-[![Build Status](https://travis-ci.org/pwall567/json-kotlin-schema-codegen.svg?branch=main)](https://travis-ci.org/pwall567/json-kotlin-schema-codegen)
+[![Build Status](https://travis-ci.com/pwall567/json-kotlin-schema-codegen.svg?branch=main)](https://travis-ci.com/pwall567/json-kotlin-schema-codegen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.4.0&color=blue&logo=kotlin)](https://github.com/JetBrains/kotlin/releases/tag/v1.4.0)
 [![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
@@ -77,8 +77,9 @@ array will allow a field to be nullable, but not to be omitted from the construc
 ## Multiple Files
 
 The Code Generator can process a single file or multiple files in one invocation.
-The `generate()` function takes a `vararg` parameter list, and each item may be a file or a directory; in the latter
-case all files in the directory with filenames ending `.json` or `.yaml` (or `.yml`) will be processed.
+The `generate()` function takes either a `List` or a `vararg` parameter array, and each item may be a file or a
+directory.
+In the latter case all files in the directory with filenames ending `.json` or `.yaml` (or `.yml`) will be processed.
 
 It is preferable to process multiple files in this way because the code generator can create references to other classes
 that it knows about &ndash; that is, classes generated in the same run.
@@ -164,25 +165,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.34, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.35, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.34</version>
+      <version>0.35</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.34'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.35'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.34")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.35")
 ```
 
 Peter Wall
 
-2021-06-20
+2021-08-13
