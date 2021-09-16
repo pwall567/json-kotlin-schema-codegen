@@ -120,8 +120,8 @@ class CodeGenerator(
     var templateParser: MustacheParser? = null
 
     private val defaultTemplateParser: MustacheParser by lazy {
-        MustacheParser().also { parser ->
-            parser.resolvePartial = ::partialResolver
+        MustacheParser { name ->
+            partialResolver(name)
         }
     }
 
@@ -137,7 +137,8 @@ class CodeGenerator(
     var template: Template? = null
 
     private val defaultTemplate: Template by lazy {
-        actualTemplateParser.parse(actualTemplateParser.resolvePartial(templateName))
+        val resolver = actualTemplateParser.resolvePartial
+        actualTemplateParser.parse(actualTemplateParser.resolver(templateName))
     }
 
     private val actualTemplate: Template
@@ -146,7 +147,8 @@ class CodeGenerator(
     var enumTemplate: Template? = null
 
     private val defaultEnumTemplate: Template by lazy {
-        actualTemplateParser.parse(actualTemplateParser.resolvePartial(enumTemplateName))
+        val resolver = actualTemplateParser.resolvePartial
+        actualTemplateParser.parse(actualTemplateParser.resolver(enumTemplateName))
     }
 
     private val actualEnumTemplate: Template
@@ -159,7 +161,8 @@ class CodeGenerator(
     var indexTemplate: Template? = null
 
     private val defaultIndexTemplate: Template by lazy {
-        actualTemplateParser.parse(actualTemplateParser.resolvePartial(indexTemplateName))
+        val resolver = actualTemplateParser.resolvePartial
+        actualTemplateParser.parse(actualTemplateParser.resolver(indexTemplateName))
     }
 
     private val actualIndexTemplate: Template
@@ -696,12 +699,12 @@ class CodeGenerator(
                 result = true
             }
         }
-        property.minimumLong?.takeIf { minV -> minV in Int.MIN_VALUE..Int.MAX_VALUE }?.let { minV ->
-            property.maximumLong?.takeIf { maxV -> maxV in Int.MIN_VALUE..Int.MAX_VALUE }?.let { maxV ->
+        property.minimumLong?.takeIf { minV -> minV in (Int.MIN_VALUE + 1)..Int.MAX_VALUE }?.let { minV ->
+            property.maximumLong?.takeIf { maxV -> maxV in Int.MIN_VALUE until Int.MAX_VALUE }?.let { maxV ->
                 property.addValidation(Validation.Type.RANGE_INT, minV to maxV)
             } ?: property.addValidation(Validation.Type.MINIMUM_INT, minV)
             result = true
-        } ?: property.maximumLong?.takeIf { it in Int.MIN_VALUE..Int.MAX_VALUE }?.let {
+        } ?: property.maximumLong?.takeIf { it in Int.MIN_VALUE until Int.MAX_VALUE }?.let {
             property.addValidation(Validation.Type.MAXIMUM_INT, it)
             result = true
         }
@@ -734,12 +737,12 @@ class CodeGenerator(
                 }
             }
         }
-        property.minimumLong?.let { minV ->
-            property.maximumLong?.let { maxV ->
+        property.minimumLong?.takeIf { it > Long.MIN_VALUE }?.let { minV ->
+            property.maximumLong?.takeIf { it < Long.MAX_VALUE }?.let { maxV ->
                 property.addValidation(Validation.Type.RANGE_LONG, minV to maxV)
             } ?: property.addValidation(Validation.Type.MINIMUM_LONG, minV)
             result = true
-        } ?: property.maximumLong?.let {
+        } ?: property.maximumLong?.takeIf { it < Long.MAX_VALUE }?.let {
             property.addValidation(Validation.Type.MAXIMUM_LONG, it)
             result = true
         }

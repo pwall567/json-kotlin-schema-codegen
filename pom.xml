@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.35</version>
+  <version>0.36</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -51,9 +51,9 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>jcenter</id>
-      <name>JCenter</name>
-      <url>https://jcenter.bintray.com/</url>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2/</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.21</version>
+      <version>0.24</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -81,12 +81,12 @@
     <dependency>
       <groupId>net.pwall.mustache</groupId>
       <artifactId>kotlin-mustache</artifactId>
-      <version>0.7</version>
+      <version>0.8</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.log</groupId>
       <artifactId>log-front</artifactId>
-      <version>2.0</version>
+      <version>2.3</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

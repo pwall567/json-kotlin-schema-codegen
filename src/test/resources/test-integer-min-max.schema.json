@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-integer-min-max",
+  "description": "Test integer minimum and maximum.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "bbb": {
+      "type": "integer",
+      "maximum": 2147483647,
+      "minimum": -2147483648
+    },
+    "ccc": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "ddd": {
+      "type": "integer",
+      "minimum": -9223372036854775808,
+      "maximum": 9223372036854775807
+    }
+  },
+  "required": [ "aaa", "bbb", "ccc", "ddd" ]
+}

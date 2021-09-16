@@ -2,9 +2,15 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.36] - 2021-09-17
+### Changed
+- `CodeGenerator`: removed generation of unnecessary min-max checks
+- `pom.xml`: bumped dependency versions
+
 ## [0.35] - 2021-08-13
 ### Changed
 - `Target`: check for repeated use of same reference and generate nested class only once
+- `CodeGenerator`: simplify specification of custom classes
 
 ## [0.34] - 2021-06-20
 ### Changed
