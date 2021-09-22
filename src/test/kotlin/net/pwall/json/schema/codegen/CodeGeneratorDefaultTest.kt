@@ -52,6 +52,12 @@ class CodeGeneratorDefaultTest {
         const val expectedDefault =
 """package com.example
 
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.net.URI
+import java.util.UUID
+
 /**
  * Test default values.
  */
@@ -59,7 +65,12 @@ data class TestDefault(
     val aaa: Long = 8,
     val bbb: String? = null,
     val ccc: String = "CCC",
-    val ddd: List<Long> = listOf(123, 456)
+    val ddd: List<Long> = listOf(123, 456),
+    val eee: OffsetDateTime = OffsetDateTime.parse("2021-09-22T10:26:09.123+10:00"),
+    val fff: LocalDate = LocalDate.parse("2021-09-22"),
+    val ggg: OffsetTime = OffsetTime.parse("10:27:26"),
+    val hhh: URI = URI("http://json-schema.org/draft/2019-09/schema"),
+    val iii: UUID = UUID.fromString("9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a")
 )
 """
 

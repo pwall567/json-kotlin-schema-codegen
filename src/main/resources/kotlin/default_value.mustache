@@ -1,5 +1,11 @@
 {{#type}}{{#NULL}}null{{/NULL}}{{!
 }}{{#INTEGER}}{{&defaultValue}}{{/INTEGER}}{{!
-}}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
+}}{{#STRING}}{{#isSystemClass}}{{#systemClass}}{{#DATE_TIME}}OffsetDateTime.parse({{&defaultValue.kotlinString}}){{/DATE_TIME}}{{!
+}}{{#DATE}}LocalDate.parse({{&defaultValue.kotlinString}}){{/DATE}}{{!
+}}{{#TIME}}OffsetTime.parse({{&defaultValue.kotlinString}}){{/TIME}}{{!
+}}{{#URI}}URI({{&defaultValue.kotlinString}}){{/URI}}{{!
+}}{{#UUID}}UUID.fromString({{&defaultValue.kotlinString}}){{/UUID}}{{!
+}}{{/systemClass}}{{/isSystemClass}}{{!
+}}{{^isSystemClass}}{{&defaultValue.kotlinString}}{{/isSystemClass}}{{/STRING}}{{!
 }}{{#BOOLEAN}}{{&defaultValue}}{{/BOOLEAN}}{{!
 }}{{#ARRAY}}{{#uniqueItems}}setOf{{/uniqueItems}}{{^uniqueItems}}listOf{{/uniqueItems}}({{#defaultValue}}{{>default_value}}{{^last}}, {{/last}}{{/defaultValue}}){{/ARRAY}}{{/type}}

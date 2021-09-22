@@ -2,6 +2,26 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.41] - 2021-09-22
+### Changed
+- templates: improved default value handling
+
+## [0.40] - 2021-09-21
+### Changed
+- `pom.xml`: bumped dependency versions
+
+## [0.39] - 2021-09-21
+### Changed
+- `pom.xml`: bumped dependency versions
+
+## [0.38] - 2021-09-21
+### Changed
+- `pom.xml`: bumped dependency versions
+
+## [0.37] - 2021-09-21
+### Changed
+- `pom.xml`: bumped dependency versions
+
 ## [0.36] - 2021-09-17
 ### Changed
 - `CodeGenerator`: removed generation of unnecessary min-max checks

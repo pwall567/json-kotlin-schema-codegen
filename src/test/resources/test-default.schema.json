@@ -23,6 +23,31 @@
         "type": "integer"
       },
       "default": [ 123, 456 ]
+    },
+    "eee": {
+      "type": "string",
+      "format": "date-time",
+      "default": "2021-09-22T10:26:09.123+10:00"
+    },
+    "fff": {
+      "type": "string",
+      "format": "date",
+      "default": "2021-09-22"
+    },
+    "ggg": {
+      "type": "string",
+      "format": "time",
+      "default": "10:27:26"
+    },
+    "hhh": {
+      "type": "string",
+      "format": "uri",
+      "default": "http://json-schema.org/draft/2019-09/schema"
+    },
+    "iii": {
+      "type": "string",
+      "format": "uuid",
+      "default": "9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a"
     }
   }
 }
