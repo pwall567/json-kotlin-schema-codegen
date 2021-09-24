@@ -38,7 +38,9 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum {{&value.value}} - " + {{&javaName}});
 {{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) <= 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum 0 - " + {{&javaName}});
-{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_INT}}{{&indent}}        if ({{&javaName}} < {{&value.first}} || {{&javaName}} > {{&value.second}})
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_DECIMAL}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.compareTo({{&value.first.staticName}}) < 0 || {{&javaName}}.compareTo({{&value.second.staticName}}) > 0{{#nullable}}){{/nullable}})
+{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first.value}}..{{&second.value}}{{/value}} - " + {{&javaName}});
+{{/RANGE_DECIMAL}}{{#RANGE_INT}}{{&indent}}        if ({{&javaName}} < {{&value.first}} || {{&javaName}} > {{&value.second}})
 {{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});
 {{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        if ({{&javaName}} < {{&value.first}}L || {{&javaName}} > {{&value.second}}L)
 {{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});

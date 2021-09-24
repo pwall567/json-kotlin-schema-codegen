@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-decimal-min-max",
+  "description": "Test decimal minimum and maximum.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000.00
+    },
+    "bbb": {
+      "type": "number",
+      "exclusiveMaximum": 0,
+      "minimum": -10000.00
+    },
+    "ccc": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    }
+  },
+  "required": [ "aaa", "bbb", "ccc" ]
+}

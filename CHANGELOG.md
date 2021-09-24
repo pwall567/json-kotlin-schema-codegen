@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`, `Validation`, templates: improved decimal range checks
+
 ## [0.41] - 2021-09-22
 ### Changed
 - templates: improved default value handling

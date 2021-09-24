@@ -1,7 +1,7 @@
 {{#statics}}{{#first}}
 {{/first}}{{#type}}{{#PATTERN}}    private static final Pattern {{&staticName}} = Pattern.compile({{&value.javaString}});
 {{/PATTERN}}{{#STRING}}    private static final String {{&staticName}} = {{&value.javaString}};
-{{/STRING}}{{#DECIMAL}}    private static final BigDecimal {{&staticName}} = {{#value}}{{#isZero}}BigDecimal.ZERO{{/isZero}}{{^isZero}}new BigDecimal("{{&rawNumber}}"){{/isZero}}{{/value}};
+{{/STRING}}{{#DECIMAL}}    private static final BigDecimal {{&staticName}} = {{#value}}{{#isZero}}BigDecimal.ZERO{{/isZero}}{{^isZero}}{{#isOne}}BigDecimal.ONE{{/isOne}}{{^isOne}}new BigDecimal("{{&rawNumber}}"){{/isOne}}{{/isZero}}{{/value}};
 {{/DECIMAL}}{{#STRING_ARRAY}}    private static final List{{&openAngleBracket}}String> {{&staticName}} = Arrays.asList(
 {{#value}}            {{&kotlinString}}{{^last}},{{/last}}
 {{/value}}    );

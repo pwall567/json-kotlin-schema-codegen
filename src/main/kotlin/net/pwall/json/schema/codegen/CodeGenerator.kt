@@ -772,12 +772,26 @@ class CodeGenerator(
                 result = true
             }
         }
-        property.minimum?.let {
+        property.minimum?.let { minV ->
+            property.maximum?.let { maxV ->
+                val decimalStatic1 = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(minV))
+                val decimalStatic2 = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(maxV))
+                property.addValidation(Validation.Type.RANGE_DECIMAL, decimalStatic1 to decimalStatic2)
+            } ?: run {
+                if (minV.isZero())
+                    property.addValidation(Validation.Type.MINIMUM_DECIMAL_ZERO)
+                else {
+                    val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(minV))
+                    property.addValidation(Validation.Type.MINIMUM_DECIMAL, decimalStatic)
+                }
+            }
+            result = true
+        } ?: property.maximum?.let {
             if (it.isZero())
-                property.addValidation(Validation.Type.MINIMUM_DECIMAL_ZERO)
+                property.addValidation(Validation.Type.MAXIMUM_DECIMAL_ZERO)
             else {
                 val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-                property.addValidation(Validation.Type.MINIMUM_DECIMAL, decimalStatic)
+                property.addValidation(Validation.Type.MAXIMUM_DECIMAL, decimalStatic)
             }
             result = true
         }
@@ -787,15 +801,6 @@ class CodeGenerator(
             else {
                 val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
                 property.addValidation(Validation.Type.EXCLUSIVE_MINIMUM_DECIMAL, decimalStatic)
-            }
-            result = true
-        }
-        property.maximum?.let {
-            if (it.isZero())
-                property.addValidation(Validation.Type.MAXIMUM_DECIMAL_ZERO)
-            else {
-                val decimalStatic = target.addStatic(Target.StaticType.DECIMAL, "cg_dec", NumberValue(it))
-                property.addValidation(Validation.Type.MAXIMUM_DECIMAL, decimalStatic)
             }
             result = true
         }

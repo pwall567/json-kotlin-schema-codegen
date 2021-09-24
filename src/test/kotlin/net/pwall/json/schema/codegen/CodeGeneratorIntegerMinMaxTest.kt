@@ -20,7 +20,7 @@ class CodeGeneratorIntegerMinMaxTest {
         expect(createHeader("TestIntegerMinMax.kt") + expected) { stringWriter.toString() }
     }
 
-    @Test fun `should generate correct code for integer formats in Java`() {
+    @Test fun `should generate correct code for integers with min and max near limits in Java`() {
         val input = File("src/test/resources/test-integer-min-max.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
