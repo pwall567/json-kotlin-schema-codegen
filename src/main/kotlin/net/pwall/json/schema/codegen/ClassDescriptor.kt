@@ -29,4 +29,20 @@ open class ClassDescriptor(val constraints: Constraints, val className: String) 
 
     var validationsPresent: Boolean = false
 
+    var baseClass: ClassDescriptor? = null
+
+    val derivedClasses = mutableListOf<ClassDescriptor>()
+
+    @Suppress("unused")
+    val hasBaseClass: Boolean
+        get() = baseClass != null
+
+    @Suppress("unused")
+    val hasBaseClassWithProperties: Boolean
+        get() = baseClass.let { it != null &&  it.constraints.properties.isNotEmpty() }
+
+    @Suppress("unused")
+    val validationsOrBaseClassWithPropertiesPresent: Boolean
+        get() = validationsPresent || hasBaseClassWithProperties
+
 }

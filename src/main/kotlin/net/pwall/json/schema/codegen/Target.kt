@@ -46,9 +46,7 @@ class Target(
     /** Source identifier (e.g. schema filename) */
     val source: String,
     /** Generator comment */
-    @Suppress("unused") val generatorComment: String? = null,
-    /** Marker interface to be implemented (if any) */
-    private val markerInterface: String? = null
+    @Suppress("unused") val generatorComment: String? = null
 ) : ClassDescriptor(constraints, NamedConstraints.checkJavaName(targetFile.className)), ClassId {
 
     override val packageName: String?
@@ -57,15 +55,8 @@ class Target(
     @Suppress("unused")
     val indent = Indent()
 
-    var baseClass: Target? = null
-    var baseImport: String? = null
-
     @Suppress("unused")
-    val markerInterfaceImport: String?
-        get() = markerInterface?.takeIf { it.substringBeforeLast('.') != packageName }
-    @Suppress("unused")
-    val markerInterfaceName: String?
-        get() = markerInterface?.substringAfterLast('.')
+    val interfaces = mutableListOf<ClassId>()
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
@@ -90,8 +81,18 @@ class Target(
         get() = validationsPresent || nestedClassesPresent
 
     @Suppress("unused")
-    val validationsOrNestedClassesOrStaticsPresent: Boolean
-        get() = validationsPresent || nestedClassesPresent || staticsPresent
+    val validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent: Boolean
+        get() = validationsPresent || nestedClassesPresent || staticsPresent || hasBaseClassWithProperties
+
+    fun addInterface(classId: ClassId) {
+        interfaces.add(classId)
+        addImport(classId)
+    }
+
+    fun setBase(baseClass: Target) {
+        this.baseClass = baseClass
+        addImport(baseClass)
+    }
 
     fun addNestedClass(constraints: Constraints, innerClassName: String): ClassDescriptor {
         val safeInnerClassName = NamedConstraints.checkJavaName(innerClassName)

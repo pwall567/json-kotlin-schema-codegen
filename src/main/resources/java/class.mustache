@@ -1,22 +1,18 @@
 {{>header}}{{#packageName}}package {{&packageName}};
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}};
-
-{{/markerInterfaceImport}}{{#baseImport}}import {{&.}};
-
-{{/baseImport}}{{#imports}}import {{&.}};
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}};
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}public class {{&className}} {{#baseClass}}extends {{&className}} {{/baseClass}}{{!
-}}{{#markerInterfaceName}}implements {{&.}} {{/markerInterfaceName}}{
+{{/description}}{{/schema}}public class {{&className}}{{>extends_implements}} {
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
 {{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}(
-{{#properties}}            {{>type}} {{&javaName}}{{^last}},{{/last}}
-{{/properties}}    ) {
+{{#baseClass}}{{#constraints}}{{#properties}}            {{>type}} {{&javaName}},
+{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}            {{>type}} {{&javaName}}{{^last}},{{/last}}
+{{/nonBaseProperties}}    ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
 {{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");

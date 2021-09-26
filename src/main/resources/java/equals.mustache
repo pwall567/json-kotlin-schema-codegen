@@ -4,9 +4,9 @@
 {{&indent}}            return true;
 {{&indent}}        if (!(other instanceof {{&className}}))
 {{&indent}}            return false;
-{{#baseClass}}{{&indent}}        if (!super.equals(other))
+{{#hasBaseClassWithProperties}}{{&indent}}        if (!super.equals(other))
 {{&indent}}            return false;
-{{/baseClass}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
+{{/hasBaseClassWithProperties}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
 {{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&javaName}} == typedOther.{{&javaName}};
 {{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        return {{&javaName}} == typedOther.{{&javaName}};
 {{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        return {{&javaName}} == null ? typedOther.{{&javaName}} == null : {{&javaName}}.equals(typedOther.{{&javaName}});

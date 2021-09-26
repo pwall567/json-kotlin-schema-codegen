@@ -42,7 +42,7 @@ class CodeGeneratorMarkerInterfaceTest {
         val codeGenerator = CodeGenerator()
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.markerInterface = "com.example.Marker"
+        codeGenerator.markerInterface = ClassName("Marker", "com.example")
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.kt") + expected) { stringWriter.toString() }
@@ -53,7 +53,7 @@ class CodeGeneratorMarkerInterfaceTest {
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.markerInterface = "com.example.Marker"
+        codeGenerator.markerInterface = ClassName("Marker", "com.example")
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.java") + expectedJava) { stringWriter.toString() }
@@ -64,7 +64,7 @@ class CodeGeneratorMarkerInterfaceTest {
         val codeGenerator = CodeGenerator()
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.markerInterface = "com.example.other.Marker"
+        codeGenerator.markerInterface = ClassName("Marker", "com.example.other")
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.kt") + expectedExternal) { stringWriter.toString() }
@@ -75,7 +75,7 @@ class CodeGeneratorMarkerInterfaceTest {
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.markerInterface = "com.example.other.Marker"
+        codeGenerator.markerInterface = ClassName("Marker", "com.example.other")
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.java") + expectedExternalJava) { stringWriter.toString() }

@@ -92,7 +92,7 @@ class CodeGenerator(
     /** A comment to add to the header of generated files */
     var generatorComment: String? = null,
     /** An optional marker interface to add to each generated class */
-    var markerInterface: String? = null,
+    var markerInterface: ClassId? = null,
     /** A [Logger] object for the output of logging messages */
     val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
 ) {
@@ -250,6 +250,8 @@ class CodeGenerator(
     private fun generateAllTargets(targets: List<Target>) {
         for (target in targets) {
             processSchema(target.schema, target.constraints)
+        }
+        for (target in targets) {
             log.info { "Generating for ${target.source}" }
             generateTarget(target, targets)
         }
@@ -269,16 +271,20 @@ class CodeGenerator(
 
     private fun generateTarget(target: Target, targets: List<Target>) {
         nameGenerator = NameGenerator()
+        findOneOfDerivedClasses(target.constraints, target, targets)
         when {
             target.constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
                 target.validationsPresent = analyseObject(target, target.constraints, targets)
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
-                target.baseClass?.let {
-                    if (it.packageName != target.packageName && !target.imports.contains(it.qualifiedClassName))
-                        target.baseImport = it.qualifiedClassName
+                actualOutputResolver(target.targetFile).use {
+                    actualTemplate.processTo(AppendableFilter(it), target)
                 }
+            }
+            target.constraints.oneOfSchemata.any { it.isObject } -> {
+                // it wasn't an object, but it had a oneOf with object children
+                log.info { "-- target class ${target.qualifiedClassName}" }
                 actualOutputResolver(target.targetFile).use {
                     actualTemplate.processTo(AppendableFilter(it), target)
                 }
@@ -290,6 +296,27 @@ class CodeGenerator(
                 }
             }
             else -> log.info { "-- nothing to generate for ${target.className}" }
+        }
+    }
+
+    private fun findOneOfDerivedClasses(constraints: Constraints, target: Target, targets: List<Target>) {
+        for (i in constraints.oneOfSchemata.indices) {
+            val oneOfItem = constraints.oneOfSchemata[i]
+            oneOfItem.schema.findTarget(targets)?.also {
+                it.setBase(target)
+                target.derivedClasses.add(it)
+            } ?: run {
+                val nestedClass = target.addNestedClass(oneOfItem, Strings.toIdentifier(i))
+                nestedClass.baseClass = target
+                nestedClass.validationsPresent = analyseProperties(target, oneOfItem, targets)
+                target.derivedClasses.add(nestedClass)
+            }
+        }
+    }
+
+    private fun JSONSchema.findTarget(targets: List<Target>): Target? {
+        return (this as? JSONSchema.General)?.children?.singleOrNull()?.let { ref ->
+            if (ref is RefSchema) targets.find { it.schema === ref.target } else null
         }
     }
 
@@ -310,9 +337,9 @@ class CodeGenerator(
             constraints = Constraints(schema),
             targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
             source = internalSchema,
-            generatorComment = generatorComment,
-            markerInterface = markerInterface
+            generatorComment = generatorComment
         )
+        markerInterface?.let { target.addInterface(it) }
         processSchema(target.schema, target.constraints)
         log.info { "Generating for internal schema" }
         generateTarget(target, listOf(target))
@@ -335,9 +362,11 @@ class CodeGenerator(
                 constraints = Constraints(it.first),
                 targetFile = TargetFileName(it.second, targetLanguage.ext, getOutputDirs(subDirectories)),
                 source = internalSchema,
-                generatorComment = generatorComment,
-                markerInterface = markerInterface
-            ).also { t -> processSchema(t.schema, t.constraints) }
+                generatorComment = generatorComment
+            ).also { t ->
+                markerInterface?.let { i -> t.addInterface(i) }
+                processSchema(t.schema, t.constraints)
+            }
         }
         log.info { "Generating for internal schema" }
         for (target in targets)
@@ -411,9 +440,8 @@ class CodeGenerator(
             constraints = Constraints(schema),
             targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
             source = source,
-            generatorComment = generatorComment,
-            markerInterface = markerInterface
-        ))
+            generatorComment = generatorComment
+        ).also { t -> markerInterface?.let { t.addInterface(it) } })
     }
 
     private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
@@ -463,10 +491,10 @@ class CodeGenerator(
                                 constraints = Constraints(refTarget.schema),
                                 targetFile = refTarget.targetFile,
                                 source = refTarget.source,
-                                generatorComment = generatorComment,
-                                markerInterface = markerInterface
+                                generatorComment = generatorComment
                             )
-                            target.baseClass = baseTarget
+                            markerInterface?.let { i -> baseTarget.addInterface(i) }
+                            target.setBase(baseTarget)
                             processSchema(baseTarget.schema, baseTarget.constraints)
                             analyseObject(baseTarget, baseTarget.constraints, targets)
                             return analyseDerivedObject(target, constraints, baseTarget, targets)
@@ -915,7 +943,7 @@ class CodeGenerator(
     }
 
     private fun JSONSchema.findRefChild(): RefSchema? =
-            ((this as? JSONSchema.General)?.children?.find { it is RefSchema }) as RefSchema?
+            (this as? JSONSchema.General)?.children?.filterIsInstance<RefSchema>()?.firstOrNull()
 
     private fun processSchema(schema: JSONSchema, constraints: Constraints) {
         when (schema) {
@@ -952,9 +980,15 @@ class CodeGenerator(
     }
 
     private fun processCombinationSchema(combinationSchema: CombinationSchema, constraints: Constraints) {
-        if (combinationSchema.name == "allOf")
-            combinationSchema.array.forEach { processSchema(it, constraints) }
-        // for now, ignore "anyOf" and "oneOf"
+        when (combinationSchema.name) {
+            "allOf" -> combinationSchema.array.forEach { processSchema(it, constraints) }
+            "oneOf" -> {
+                constraints.oneOfSchemata = combinationSchema.array.map { schema ->
+                    Constraints(schema).also { processSchema(schema, it) }
+                }
+            }
+            "anyOf" -> {} // ignore for now - not sure what we can usefully do
+        }
     }
 
     private fun processValidator(validator: JSONSchema.Validator, constraints: Constraints) {

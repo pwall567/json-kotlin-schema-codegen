@@ -1,10 +1,6 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}}
-
-{{/markerInterfaceImport}}{{#baseImport}}import {{&.}}
-
-{{/baseImport}}{{#imports}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&description}}
@@ -17,8 +13,8 @@
 {{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
 {{/nonBaseProperties}}){{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{&kotlinName}}{{^last}}, {{/last}}{{/properties}}{{/constraints}}){{!
-}}{{#markerInterfaceName}}, {{&.}}{{/markerInterfaceName}}{{/baseClass}}{{!
-}}{{^baseClass}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/baseClass}} {
+}}{{#interfaces}}, {{&className}}{{/interfaces}}{{/baseClass}}{{!
+}}{{^baseClass}}{{#interfaces}}{{#first}} :{{/first}}{{^first}},{{/first}} {{&className}}{{/interfaces}}{{/baseClass}} {
 {{#validationsPresent}}
     init {
 {{#properties}}{{>validations}}{{/properties}}    }

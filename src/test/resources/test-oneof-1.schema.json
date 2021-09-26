@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test/schema/test-oneof-1",
+  "$defs": {
+    "TypeA": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TypeB"
+        },
+        {
+          "$ref": "#/$defs/TypeC"
+        }
+      ]
+    },
+    "TypeB": {
+      "type": "object",
+      "properties": {
+        "xxx": {
+          "type": "string"
+        }
+      },
+      "required": [ "xxx" ]
+    },
+    "TypeC": {
+      "type": "object",
+      "properties": {
+        "yyy": {
+          "type": "string"
+        }
+      },
+      "required": [ "yyy" ]
+    }
+  },
+  "$ref": "#/$defs/TypeA"
+}

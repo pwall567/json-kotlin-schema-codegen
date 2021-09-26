@@ -1,22 +1,28 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{#constraints}}{{>system_imports}}{{#markerInterfaceImport}}import {{&.}}
-
-{{/markerInterfaceImport}}{{#imports}}import {{&.}}
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}{{#numberOfProperties}}data class {{&className}}(
-{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}(
+{{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
+{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}){{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{#validationsOrNestedClassesOrStaticsPresent}} {
-{{#validationsPresent}}
-    init {
+{{/properties}}){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}} {
+
+{{#validationsPresent}}    init {
 {{#properties}}{{>validations}}{{/properties}}    }
-{{/validationsPresent}}{{#nestedClasses}}
+{{/validationsPresent}}{{#hasBaseClassWithProperties}}{{>equals}}
+{{>hashcode}}
+{{/hasBaseClassWithProperties}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsPresent}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}open class {{&className}}{{#markerInterfaceName}} : {{&.}}{{/markerInterfaceName}}{{/numberOfProperties}}{{!
-}}{{/constraints}}
+}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{!
+}}{{^numberOfProperties}}open class {{&className}}{{>extends_implements}}{{!
+}}{{#nestedClasses}}{{#first}} {
+{{/first}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{#last}}
+}{{/last}}{{/nestedClasses}}{{/numberOfProperties}}{{/constraints}}

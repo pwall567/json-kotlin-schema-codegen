@@ -2,9 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.43] - 2021-09-26
+### Changed
+- templates: fixed bug in handling of `oneOf` constructs
+
+## [0.42] - 2021-09-26
 ### Changed
 - `CodeGenerator`, `Validation`, templates: improved decimal range checks
+- `CodeGenerator`, `Constraints`, `Target`, `ClassDescriptor`, templates: added handling of `oneOf` constructs
 
 ## [0.41] - 2021-09-22
 ### Changed

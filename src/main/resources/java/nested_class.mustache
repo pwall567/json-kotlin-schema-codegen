@@ -1,14 +1,16 @@
 {{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{/schema}}{{#isObject}}    public static class {{&className}} {
+{{/description}}{{/schema}}{{#isObject}}    public static class {{&className}}{{>extends_implements}} {
 
 {{#properties}}        private final {{>type}} {{&javaName}};
 {{#last}}
 {{/last}}{{/properties}}{{#numberOfProperties}}        public {{&className}}(
-{{#properties}}                {{>type}} {{&javaName}}{{^last}},{{/last}}
+{{#baseClass}}{{#constraints}}{{#properties}}                {{>type}} {{&javaName}},
+{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}                {{>type}} {{&javaName}}{{^last}},{{/last}}
 {{/properties}}        ) {
-{{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
+{{#baseClass}}{{#constraints}}{{#properties}}{{#first}}            super({{/first}}{{^first}}, {{/first}}{{&javaName}}{{#last}});
+{{/last}}{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
                 {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&javaName}} = {{&javaName}};
 {{/properties}}        }

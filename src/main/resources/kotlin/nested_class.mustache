@@ -1,15 +1,21 @@
 {{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}data class {{&className}}(
-{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
+{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}(
+{{#baseClass}}{{#constraints}}{{#properties}}        {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
+{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}    ){{#validationsPresent}} {
+{{/properties}}    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
 
-        init {
+{{#validationsPresent}}        init {
 {{#properties}}{{>validations}}{{/properties}}        }
 
-    }{{/validationsPresent}}{{/numberOfProperties}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
+{{/validationsPresent}}{{#hasBaseClassWithProperties}}
+{{>equals}}
+{{>hashcode}}
+
+{{/hasBaseClassWithProperties}}    }{{/validationsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
 {{#enumValues}}        {{&.}}{{^last}},{{/last}}
 {{/enumValues}}    }{{/isString}}

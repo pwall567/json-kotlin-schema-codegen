@@ -100,6 +100,8 @@ open class Constraints(val schema: JSONSchema) {
     var maxItems: Int? = null
     var uniqueItems: Boolean = false
 
+    var oneOfSchemata: List<Constraints> = emptyList()
+
     var minimum: Number? = null // Number will be BigDecimal, Long or Int
     var exclusiveMinimum: Number? = null
     var maximum: Number? = null
@@ -128,26 +130,26 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val isObject: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.OBJECT || types.isEmpty() && properties.isNotEmpty() // ?
+        get() = isType(JSONSchema.Type.OBJECT) || types.isEmpty() && properties.isNotEmpty() // ?
 
     @Suppress("unused")
     val isArray: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.ARRAY || types.isEmpty() && arrayItems != null // ???
+        get() = isType(JSONSchema.Type.ARRAY) || types.isEmpty() && arrayItems != null // ???
 
     @Suppress("unused")
     val isString: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.STRING ||
+        get() = isType(JSONSchema.Type.STRING) ||
                 types.isEmpty() && properties.isEmpty() && arrayItems == null &&
                         (format != null || regex != null || maxLength != null || minLength != null ||
                                 constValue is JSONString || enumImpliesString())
 
     @Suppress("unused")
     val isBoolean: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.BOOLEAN
+        get() = isType(JSONSchema.Type.BOOLEAN)
 
     @Suppress("unused")
     val isDecimal: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.NUMBER && !isIntOrLong
+        get() = isType(JSONSchema.Type.NUMBER)
 
     @Suppress("unused")
     val isInt: Boolean
@@ -159,7 +161,7 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val isIntOrLong: Boolean
-        get() = types.size == 1 && types[0] == JSONSchema.Type.INTEGER
+        get() = isType(JSONSchema.Type.INTEGER)
 
     @Suppress("unused")
     val isPrimitive: Boolean
@@ -192,6 +194,8 @@ open class Constraints(val schema: JSONSchema) {
     fun addValidation(type: Validation.Type, value: Any? = null) {
         validations.add(Validation(type, value))
     }
+
+    private fun isType(type: JSONSchema.Type): Boolean = types.size == 1 && types[0] == type
 
     private fun constImpliesInt(): Boolean = constValue?.let {
         when (it) {
