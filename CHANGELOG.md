@@ -2,6 +2,22 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.47] - 2021-09-28
+### Changed
+- `CodeGenerator`: fixed another problem with `oneOf`
+
+## [0.46] - 2021-09-28
+### Changed
+- `Target`, `ClassDescriptor`: fixed problem with `oneOf`
+
+## [0.45] - 2021-09-27
+### Changed
+- `CodeGenerator`, `Constraints`, templates: restructure handling of `oneOf`
+
+## [0.44] - 2021-09-27
+### Changed
+- `CodeGenerator`, templates: another attempt to fix bug in handling of `oneOf`
+
 ## [0.43] - 2021-09-26
 ### Changed
 - templates: fixed bug in handling of `oneOf` constructs

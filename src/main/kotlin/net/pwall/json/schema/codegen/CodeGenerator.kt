@@ -144,6 +144,18 @@ class CodeGenerator(
     private val actualTemplate: Template
         get() = template ?: defaultTemplate
 
+    var interfaceTemplateName = "interface"
+
+    var interfaceTemplate: Template? = null
+
+    private val defaultInterfaceTemplate: Template by lazy {
+        val resolver = actualTemplateParser.resolvePartial
+        actualTemplateParser.parse(actualTemplateParser.resolver(interfaceTemplateName))
+    }
+
+    private val actualInterfaceTemplate: Template
+        get() = interfaceTemplate ?: defaultInterfaceTemplate
+
     var enumTemplate: Template? = null
 
     private val defaultEnumTemplate: Template by lazy {
@@ -248,9 +260,7 @@ class CodeGenerator(
     }
 
     private fun generateAllTargets(targets: List<Target>) {
-        for (target in targets) {
-            processSchema(target.schema, target.constraints)
-        }
+        processTargetCrossReferences(targets)
         for (target in targets) {
             log.info { "Generating for ${target.source}" }
             generateTarget(target, targets)
@@ -269,9 +279,15 @@ class CodeGenerator(
 
     data class TargetIndex(val targets: List<Target>, val targetFile: TargetFileName, val generatorComment: String?)
 
+    private fun processTargetCrossReferences(targets: List<Target>) {
+        for (target in targets)
+            processSchema(target.schema, target.constraints)
+        for (target in targets)
+            findOneOfDerivedClasses(target.constraints, target, targets)
+    }
+
     private fun generateTarget(target: Target, targets: List<Target>) {
         nameGenerator = NameGenerator()
-        findOneOfDerivedClasses(target.constraints, target, targets)
         when {
             target.constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
@@ -284,9 +300,9 @@ class CodeGenerator(
             }
             target.constraints.oneOfSchemata.any { it.isObject } -> {
                 // it wasn't an object, but it had a oneOf with object children
-                log.info { "-- target class ${target.qualifiedClassName}" }
+                log.info { "-- target interface ${target.qualifiedClassName}" }
                 actualOutputResolver(target.targetFile).use {
-                    actualTemplate.processTo(AppendableFilter(it), target)
+                    actualInterfaceTemplate.processTo(AppendableFilter(it), target)
                 }
             }
             target.constraints.isString && target.constraints.enumValues.let { it != null && allIdentifier(it) } -> {
@@ -302,10 +318,38 @@ class CodeGenerator(
     private fun findOneOfDerivedClasses(constraints: Constraints, target: Target, targets: List<Target>) {
         for (i in constraints.oneOfSchemata.indices) {
             val oneOfItem = constraints.oneOfSchemata[i]
-            oneOfItem.schema.findTarget(targets)?.also {
-                it.setBase(target)
-                target.derivedClasses.add(it)
-            } ?: run {
+            val oneOfTarget = oneOfItem.schema.findTarget(targets)
+            if (oneOfTarget != null) {
+                if (!constraints.isObject) {
+                    oneOfTarget.addInterface(target)
+                    target.derivedClasses.add(oneOfTarget)
+                }
+                else {
+                    // create a nested class with current as a base class and oneOfTarget properties, and remove (merge?) overlapping properties
+                    val nestedConstraints = Constraints(oneOfItem.schema) // ?
+                    for (property in constraints.properties) {
+                        nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
+                            it.copyFrom(property)
+                            it.baseProperty = true
+                        })
+                    }
+                    for (property in oneOfTarget.constraints.properties) {
+                        val existingProperty = nestedConstraints.properties.find { it.name == property.name }
+                        if (existingProperty != null)
+                            existingProperty.validations.addAll(property.validations)
+                        else {
+                            nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
+                                it.copyFrom(property)
+                            })
+                        }
+                    }
+                    val nestedClass = target.addNestedClass(nestedConstraints, Strings.toIdentifier(i))
+                    nestedClass.baseClass = target
+                    nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, targets)
+                    target.derivedClasses.add(nestedClass)
+                }
+            }
+            else {
                 val nestedClass = target.addNestedClass(oneOfItem, Strings.toIdentifier(i))
                 nestedClass.baseClass = target
                 nestedClass.validationsPresent = analyseProperties(target, oneOfItem, targets)
@@ -340,10 +384,11 @@ class CodeGenerator(
             generatorComment = generatorComment
         )
         markerInterface?.let { target.addInterface(it) }
-        processSchema(target.schema, target.constraints)
+        val targets = listOf(target)
+        processTargetCrossReferences(targets)
         log.info { "Generating for internal schema" }
-        generateTarget(target, listOf(target))
-        generateIndex(listOf(target))
+        generateTarget(target, targets)
+        generateIndex(targets)
     }
 
     /**
@@ -365,9 +410,9 @@ class CodeGenerator(
                 generatorComment = generatorComment
             ).also { t ->
                 markerInterface?.let { i -> t.addInterface(i) }
-                processSchema(t.schema, t.constraints)
             }
         }
+        processTargetCrossReferences(targets)
         log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target, targets)
@@ -585,10 +630,6 @@ class CodeGenerator(
             }
         }
         return when {
-            property.isObject -> {
-                findTargetClass(property, target, targets) { name }
-                false
-            }
             property.isArray -> analyseArray(target, targets, property, name)
             property.isInt -> analyseInt(property, target)
             property.isLong -> analyseLong(property, target)
@@ -598,7 +639,11 @@ class CodeGenerator(
                 analyseDecimal(target, property)
             }
             property.isString -> analyseString(property, target, targets) { name }
-            else -> false
+            property.isBoolean -> false
+            else -> {
+                findTargetClass(property, target, targets) { name }
+                false
+            }
         }
     }
 

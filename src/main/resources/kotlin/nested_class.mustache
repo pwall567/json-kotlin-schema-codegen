@@ -4,10 +4,10 @@
 {{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}(
 {{#baseClass}}{{#constraints}}{{#properties}}        {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
+{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
 {{/description}}{{/schema}}        val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
 }}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
+{{/nonBaseProperties}}    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
 
 {{#validationsPresent}}        init {
 {{#properties}}{{>validations}}{{/properties}}        }

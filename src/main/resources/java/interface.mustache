@@ -1,0 +1,12 @@
+{{>header}}{{#packageName}}package {{&packageName}};
+
+{{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}};
+{{#last}}
+{{/last}}{{/imports}}{{#schema}}{{#description}}/**
+* {{&safeDescription}}
+*/
+{{/description}}{{/schema}}public interface {{&className}}{{>extends_implements}} {
+{{>add_statics}}
+{{#nestedClasses}}
+  {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}
+}{{/constraints}}

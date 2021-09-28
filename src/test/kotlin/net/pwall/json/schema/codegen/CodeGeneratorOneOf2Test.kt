@@ -56,6 +56,32 @@ open class TypeA(
     val aaa: Long? = null
 ) {
 
+    class A(
+        aaa: Long? = null,
+        val xxx: String? = null
+    ) : TypeA(aaa) {
+
+        override fun equals(other: Any?): Boolean = this === other || other is A && super.equals(other) &&
+                xxx == other.xxx
+
+        override fun hashCode(): Int = super.hashCode() xor
+                xxx.hashCode()
+
+    }
+
+    class B(
+        aaa: Long? = null,
+        val yyy: String? = null
+    ) : TypeA(aaa) {
+
+        override fun equals(other: Any?): Boolean = this === other || other is B && super.equals(other) &&
+                yyy == other.yyy
+
+        override fun hashCode(): Int = super.hashCode() xor
+                yyy.hashCode()
+
+    }
+
     class C(
         aaa: Long? = null,
         val zzz: String? = null
@@ -93,35 +119,17 @@ open class TypeA(
         const val expectedTypeB =
 """package com.example
 
-class TypeB(
-    aaa: Long? = null,
+data class TypeB(
     val xxx: String
-) : TypeA(aaa) {
-
-    override fun equals(other: Any?): Boolean = this === other || other is TypeB && super.equals(other) &&
-            xxx == other.xxx
-
-    override fun hashCode(): Int = super.hashCode() xor
-            xxx.hashCode()
-
-}
+)
 """
 
         const val expectedTypeC =
 """package com.example
 
-class TypeC(
-    aaa: Long? = null,
+data class TypeC(
     val yyy: String
-) : TypeA(aaa) {
-
-    override fun equals(other: Any?): Boolean = this === other || other is TypeC && super.equals(other) &&
-            yyy == other.yyy
-
-    override fun hashCode(): Int = super.hashCode() xor
-            yyy.hashCode()
-
-}
+)
 """
 
         const val expectedTypeAJava =
@@ -154,6 +162,78 @@ public class TypeA {
     @Override
     public int hashCode() {
         return (int)aaa;
+    }
+
+    public static class A extends TypeA {
+
+        private final String xxx;
+
+        public A(
+                long aaa,
+                String xxx
+        ) {
+            super(aaa);
+            this.xxx = xxx;
+        }
+
+        public String getXxx() {
+            return xxx;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (!(other instanceof A))
+                return false;
+            if (!super.equals(other))
+                return false;
+            A typedOther = (A)other;
+            return xxx == null ? typedOther.xxx == null : xxx.equals(typedOther.xxx);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            return hash ^ (xxx != null ? xxx.hashCode() : 0);
+        }
+
+    }
+
+    public static class B extends TypeA {
+
+        private final String yyy;
+
+        public B(
+                long aaa,
+                String yyy
+        ) {
+            super(aaa);
+            this.yyy = yyy;
+        }
+
+        public String getYyy() {
+            return yyy;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (!(other instanceof B))
+                return false;
+            if (!super.equals(other))
+                return false;
+            B typedOther = (B)other;
+            return yyy == null ? typedOther.yyy == null : yyy.equals(typedOther.yyy);
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = super.hashCode();
+            return hash ^ (yyy != null ? yyy.hashCode() : 0);
+        }
+
     }
 
     public static class C extends TypeA {
@@ -236,15 +316,13 @@ public class TypeA {
         const val expectedTypeBJava =
 """package com.example;
 
-public class TypeB extends TypeA {
+public class TypeB {
 
     private final String xxx;
 
     public TypeB(
-            long aaa,
             String xxx
     ) {
-        super(aaa);
         if (xxx == null)
             throw new IllegalArgumentException("Must not be null - xxx");
         this.xxx = xxx;
@@ -260,16 +338,13 @@ public class TypeB extends TypeA {
             return true;
         if (!(other instanceof TypeB))
             return false;
-        if (!super.equals(other))
-            return false;
         TypeB typedOther = (TypeB)other;
         return xxx.equals(typedOther.xxx);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        return hash ^ xxx.hashCode();
+        return xxx.hashCode();
     }
 
 }
@@ -278,15 +353,13 @@ public class TypeB extends TypeA {
         const val expectedTypeCJava =
 """package com.example;
 
-public class TypeC extends TypeA {
+public class TypeC {
 
     private final String yyy;
 
     public TypeC(
-            long aaa,
             String yyy
     ) {
-        super(aaa);
         if (yyy == null)
             throw new IllegalArgumentException("Must not be null - yyy");
         this.yyy = yyy;
@@ -302,16 +375,13 @@ public class TypeC extends TypeA {
             return true;
         if (!(other instanceof TypeC))
             return false;
-        if (!super.equals(other))
-            return false;
         TypeC typedOther = (TypeC)other;
         return yyy.equals(typedOther.yyy);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        return hash ^ yyy.hashCode();
+        return yyy.hashCode();
     }
 
 }

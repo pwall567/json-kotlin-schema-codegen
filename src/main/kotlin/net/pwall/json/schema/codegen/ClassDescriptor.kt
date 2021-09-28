@@ -31,6 +31,8 @@ open class ClassDescriptor(val constraints: Constraints, val className: String) 
 
     var baseClass: ClassDescriptor? = null
 
+    val interfaces = mutableListOf<ClassId>()
+
     val derivedClasses = mutableListOf<ClassDescriptor>()
 
     @Suppress("unused")

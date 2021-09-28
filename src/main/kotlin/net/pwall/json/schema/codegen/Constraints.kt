@@ -106,7 +106,7 @@ open class Constraints(val schema: JSONSchema) {
     var exclusiveMinimum: Number? = null
     var maximum: Number? = null
     var exclusiveMaximum: Number? = null
-    var multipleOf = mutableListOf<Number>()
+    val multipleOf = mutableListOf<Number>()
 
     var maxLength: Int? = null
     var minLength: Int? = null
@@ -234,6 +234,36 @@ open class Constraints(val schema: JSONSchema) {
     private fun minimumImpliesInt(): Boolean = minimumLong?.let { it >= Int.MIN_VALUE } ?: false
 
     private fun maximumImpliesInt(): Boolean = maximumLong?.let { it <= Int.MAX_VALUE } ?: false
+
+    fun copyFrom(other: Constraints) {
+        uri = other.uri
+        objectValidationsPresent = other.objectValidationsPresent
+        localTypeName = other.localTypeName
+        isEnumClass = other.isEnumClass
+        types.addAll(other.types)
+        systemClass = other.systemClass
+        nullable = other.nullable
+        isRequired = other.isRequired
+        defaultValue = other.defaultValue
+        for (property in other.properties)
+            properties.add(NamedConstraints(property.schema, property.name).also { it.copyFrom(property) })
+        arrayItems = other.arrayItems?.let { Constraints(it.schema).also { a -> a.copyFrom(it) } }
+        minItems = other.minItems
+        maxItems = other.maxItems
+        uniqueItems = other.uniqueItems
+        oneOfSchemata = other.oneOfSchemata // ?
+        minimum = other.minimum
+        exclusiveMinimum = other.exclusiveMinimum
+        maximum = other.maximum
+        exclusiveMaximum = other.exclusiveMaximum
+        multipleOf.addAll(other.multipleOf)
+        maxLength = other.maxLength
+        minLength = other.minLength
+        format = other.format
+        regex = other.regex
+        enumValues = other.enumValues
+        constValue = other.constValue
+    }
 
     data class DefaultValue(val defaultValue: Any?, val type: JSONSchema.Type)
 

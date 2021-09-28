@@ -52,7 +52,7 @@ class CodeGeneratorOneOf1Test {
         const val expectedTypeA =
 """package com.example
 
-open class TypeA
+interface TypeA
 """
 
         const val expectedTypeB =
@@ -60,7 +60,7 @@ open class TypeA
 
 data class TypeB(
     val xxx: String
-) : TypeA()
+) : TypeA
 """
 
         const val expectedTypeC =
@@ -68,27 +68,13 @@ data class TypeB(
 
 data class TypeC(
     val yyy: String
-) : TypeA()
+) : TypeA
 """
 
         const val expectedTypeAJava =
 """package com.example;
 
-public class TypeA {
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other)
-            return true;
-        if (!(other instanceof TypeA))
-            return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return 0;
-    }
+public interface TypeA {
 
 }
 """
@@ -96,14 +82,13 @@ public class TypeA {
         const val expectedTypeBJava =
 """package com.example;
 
-public class TypeB extends TypeA {
+public class TypeB implements TypeA {
 
     private final String xxx;
 
     public TypeB(
             String xxx
     ) {
-        super();
         if (xxx == null)
             throw new IllegalArgumentException("Must not be null - xxx");
         this.xxx = xxx;
@@ -134,14 +119,13 @@ public class TypeB extends TypeA {
         const val expectedTypeCJava =
             """package com.example;
 
-public class TypeC extends TypeA {
+public class TypeC implements TypeA {
 
     private final String yyy;
 
     public TypeC(
             String yyy
     ) {
-        super();
         if (yyy == null)
             throw new IllegalArgumentException("Must not be null - yyy");
         this.yyy = yyy;

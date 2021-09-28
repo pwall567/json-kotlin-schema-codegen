@@ -3,17 +3,17 @@
      */
 {{/description}}{{/schema}}{{#isObject}}    public static class {{&className}}{{>extends_implements}} {
 
-{{#properties}}        private final {{>type}} {{&javaName}};
+{{#nonBaseProperties}}        private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/properties}}{{#numberOfProperties}}        public {{&className}}(
+{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}        public {{&className}}(
 {{#baseClass}}{{#constraints}}{{#properties}}                {{>type}} {{&javaName}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}                {{>type}} {{&javaName}}{{^last}},{{/last}}
-{{/properties}}        ) {
+{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}                {{>type}} {{&javaName}}{{^last}},{{/last}}
+{{/nonBaseProperties}}        ) {
 {{#baseClass}}{{#constraints}}{{#properties}}{{#first}}            super({{/first}}{{^first}}, {{/first}}{{&javaName}}{{#last}});
-{{/last}}{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
+{{/last}}{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
                 {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&javaName}} = {{&javaName}};
-{{/properties}}        }
+{{/nonBaseProperties}}        }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}

@@ -55,9 +55,6 @@ class Target(
     @Suppress("unused")
     val indent = Indent()
 
-    @Suppress("unused")
-    val interfaces = mutableListOf<ClassId>()
-
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
     @Suppress("unused")
