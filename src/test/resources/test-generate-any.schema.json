@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test/schema/test-generate-any",
+  "properties": {
+    "aaa": {
+      "description": "No details, so should generate type Any"
+    }
+  },
+  "required": [ "aaa" ]
+}

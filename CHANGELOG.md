@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.49] - 2021-11-04
+### Changed
+- `CodeGenerator`: fixed bug - use of `Any` type when property has no attributes
+
+## [0.48] - 2021-10-07
+### Changed
+- `pom.xml`: bumped dependency version
+
 ## [0.47] - 2021-09-28
 ### Changed
 - `CodeGenerator`: fixed another problem with `oneOf`

@@ -630,6 +630,10 @@ class CodeGenerator(
             }
         }
         return when {
+            property.isObject -> {
+                findTargetClass(property, target, targets) { name }
+                false
+            }
             property.isArray -> analyseArray(target, targets, property, name)
             property.isInt -> analyseInt(property, target)
             property.isLong -> analyseLong(property, target)
@@ -639,11 +643,7 @@ class CodeGenerator(
                 analyseDecimal(target, property)
             }
             property.isString -> analyseString(property, target, targets) { name }
-            property.isBoolean -> false
-            else -> {
-                findTargetClass(property, target, targets) { name }
-                false
-            }
+            else -> false
         }
     }
 
