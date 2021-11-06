@@ -111,6 +111,17 @@ Most JSON deserialisation libraries have a means of specifying that additional p
 [`json-kotlin`](https://github.com/pwall567/json-kotlin) the `allowExtra` variable (`Boolean`) in `JSONConfig` must be
 set to `true`.
 
+## Custom Classes
+
+The code generator can use custom types for properties and array items.
+This can be valuable when, for example, an organisation has its own custom classes for what are sometimes called
+"domain primitives" &ndash; value objects representing a fundamental concept for the functional area.
+
+A common example of a domain primitive is a class to hold a money value, taking a `String` in its constructor and
+storing the value as either a `Long` of cents or a `BigDecimal`.
+
+
+
 ## JSON Schema Version
 
 This code generator targets the Draft-07 of the JSON Schema specification, and it includes some features from Draft
@@ -165,25 +176,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.49, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.50, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.49</version>
+      <version>0.50</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.49'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.50'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.49")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.50")
 ```
 
 Peter Wall
 
-2021-11-04
+2021-11-05

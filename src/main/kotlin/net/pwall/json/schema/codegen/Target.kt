@@ -78,8 +78,8 @@ class Target(
         get() = validationsPresent || nestedClassesPresent
 
     @Suppress("unused")
-    val validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent: Boolean
-        get() = validationsPresent || nestedClassesPresent || staticsPresent || hasBaseClassWithProperties
+    val validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass: Boolean
+        get() = validationsPresent || nestedClassesPresent || staticsPresent || hasBaseClassWithPropertiesOrIsBaseClass
 
     fun addInterface(classId: ClassId) {
         interfaces.add(classId)

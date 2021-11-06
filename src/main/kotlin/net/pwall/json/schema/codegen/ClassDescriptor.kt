@@ -44,6 +44,10 @@ open class ClassDescriptor(val constraints: Constraints, val className: String) 
         get() = baseClass.let { it != null &&  it.constraints.properties.isNotEmpty() }
 
     @Suppress("unused")
+    val hasBaseClassWithPropertiesOrIsBaseClass: Boolean
+        get() = hasBaseClassWithProperties || derivedClasses.isNotEmpty()
+
+    @Suppress("unused")
     val validationsOrBaseClassWithPropertiesPresent: Boolean
         get() = validationsPresent || hasBaseClassWithProperties
 

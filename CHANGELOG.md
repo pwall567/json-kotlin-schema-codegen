@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.50] - 2021-11-05
+### Changed
+- `CodeGenerator`, `ClassDescriptor`, `Target`, templates: fixed bug in handing of bases classes with `anyOf`
+
 ## [0.49] - 2021-11-04
 ### Changed
 - `CodeGenerator`: fixed bug - use of `Any` type when property has no attributes

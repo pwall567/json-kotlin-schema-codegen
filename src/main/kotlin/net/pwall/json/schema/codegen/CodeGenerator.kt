@@ -263,7 +263,7 @@ class CodeGenerator(
         processTargetCrossReferences(targets)
         for (target in targets) {
             log.info { "Generating for ${target.source}" }
-            generateTarget(target, targets)
+            generateTarget(target)
         }
         generateIndex(targets)
     }
@@ -280,18 +280,20 @@ class CodeGenerator(
     data class TargetIndex(val targets: List<Target>, val targetFile: TargetFileName, val generatorComment: String?)
 
     private fun processTargetCrossReferences(targets: List<Target>) {
-        for (target in targets)
+        for (target in targets) {
             processSchema(target.schema, target.constraints)
+            if (target.constraints.isObject)
+                target.validationsPresent = analyseObject(target, target.constraints, targets)
+        }
         for (target in targets)
             findOneOfDerivedClasses(target.constraints, target, targets)
     }
 
-    private fun generateTarget(target: Target, targets: List<Target>) {
+    private fun generateTarget(target: Target) {
         nameGenerator = NameGenerator()
         when {
             target.constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
-                target.validationsPresent = analyseObject(target, target.constraints, targets)
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
                 actualOutputResolver(target.targetFile).use {
@@ -333,6 +335,7 @@ class CodeGenerator(
                             it.baseProperty = true
                         })
                     }
+                    nestedConstraints.required.addAll(constraints.required)
                     for (property in oneOfTarget.constraints.properties) {
                         val existingProperty = nestedConstraints.properties.find { it.name == property.name }
                         if (existingProperty != null)
@@ -342,6 +345,8 @@ class CodeGenerator(
                                 it.copyFrom(property)
                             })
                         }
+                        if (oneOfTarget.constraints.required.contains(property.name))
+                            nestedConstraints.required.add(property.name)
                     }
                     val nestedClass = target.addNestedClass(nestedConstraints, Strings.toIdentifier(i))
                     nestedClass.baseClass = target
@@ -387,7 +392,7 @@ class CodeGenerator(
         val targets = listOf(target)
         processTargetCrossReferences(targets)
         log.info { "Generating for internal schema" }
-        generateTarget(target, targets)
+        generateTarget(target)
         generateIndex(targets)
     }
 
@@ -415,7 +420,7 @@ class CodeGenerator(
         processTargetCrossReferences(targets)
         log.info { "Generating for internal schema" }
         for (target in targets)
-            generateTarget(target, targets)
+            generateTarget(target)
         generateIndex(targets)
     }
 
@@ -531,6 +536,7 @@ class CodeGenerator(
                     child.array[0].findRefChild()?.let { refChild ->
                         val refTarget = targets.find { t -> t.schema.uri == refChild.target.uri }
                         if (refTarget != null) {
+                            refTarget.derivedClasses.add(target)
                             val baseTarget = Target(
                                 schema = refTarget.schema,
                                 constraints = Constraints(refTarget.schema),

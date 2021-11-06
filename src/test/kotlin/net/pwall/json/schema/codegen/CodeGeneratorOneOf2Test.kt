@@ -56,9 +56,15 @@ open class TypeA(
     val aaa: Long? = null
 ) {
 
+    override fun equals(other: Any?): Boolean = this === other || other is TypeA &&
+            aaa == other.aaa
+
+    override fun hashCode(): Int =
+            aaa.hashCode()
+
     class A(
         aaa: Long? = null,
-        val xxx: String? = null
+        val xxx: String
     ) : TypeA(aaa) {
 
         override fun equals(other: Any?): Boolean = this === other || other is A && super.equals(other) &&
@@ -71,7 +77,7 @@ open class TypeA(
 
     class B(
         aaa: Long? = null,
-        val yyy: String? = null
+        val yyy: String
     ) : TypeA(aaa) {
 
         override fun equals(other: Any?): Boolean = this === other || other is B && super.equals(other) &&
@@ -173,6 +179,8 @@ public class TypeA {
                 String xxx
         ) {
             super(aaa);
+            if (xxx == null)
+                throw new IllegalArgumentException("Must not be null - xxx");
             this.xxx = xxx;
         }
 
@@ -189,13 +197,13 @@ public class TypeA {
             if (!super.equals(other))
                 return false;
             A typedOther = (A)other;
-            return xxx == null ? typedOther.xxx == null : xxx.equals(typedOther.xxx);
+            return xxx.equals(typedOther.xxx);
         }
 
         @Override
         public int hashCode() {
             int hash = super.hashCode();
-            return hash ^ (xxx != null ? xxx.hashCode() : 0);
+            return hash ^ xxx.hashCode();
         }
 
     }
@@ -209,6 +217,8 @@ public class TypeA {
                 String yyy
         ) {
             super(aaa);
+            if (yyy == null)
+                throw new IllegalArgumentException("Must not be null - yyy");
             this.yyy = yyy;
         }
 
@@ -225,13 +235,13 @@ public class TypeA {
             if (!super.equals(other))
                 return false;
             B typedOther = (B)other;
-            return yyy == null ? typedOther.yyy == null : yyy.equals(typedOther.yyy);
+            return yyy.equals(typedOther.yyy);
         }
 
         @Override
         public int hashCode() {
             int hash = super.hashCode();
-            return hash ^ (yyy != null ? yyy.hashCode() : 0);
+            return hash ^ yyy.hashCode();
         }
 
     }

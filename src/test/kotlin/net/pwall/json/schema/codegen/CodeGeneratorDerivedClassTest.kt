@@ -85,7 +85,7 @@ open class TestBaseClass(
     override fun equals(other: Any?): Boolean = this === other || other is TestBaseClass &&
             id == other.id
 
-    override fun hashCode(): Int = 
+    override fun hashCode(): Int =
             id.hashCode()
 
 }

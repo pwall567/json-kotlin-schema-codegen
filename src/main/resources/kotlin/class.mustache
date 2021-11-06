@@ -9,18 +9,18 @@
 {{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/properties}}){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}} {
+{{/baseProperty}}{{/properties}}){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
 {{#validationsPresent}}    init {
 {{#properties}}{{>validations}}{{/properties}}    }
-{{/validationsPresent}}{{#hasBaseClassWithProperties}}{{>equals}}
+{{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}{{>equals}}
 {{>hashcode}}
-{{/hasBaseClassWithProperties}}{{#nestedClasses}}
+{{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{!
+}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{!
 }}{{^numberOfProperties}}open class {{&className}}{{>extends_implements}}{{!
 }}{{#nestedClasses}}{{#first}} {
 {{/first}}
