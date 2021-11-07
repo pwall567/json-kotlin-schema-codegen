@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.52] - 2021-11-07
+### Changed
+- `pom.xml`: updated to Kotlin 1.5.20
+
+## [0.51] - 2021-11-07
+### Changed
+- `CodeGenerator`, templates: fixed more bugs in handing of bases classes with `anyOf`
+
 ## [0.50] - 2021-11-05
 ### Changed
 - `CodeGenerator`, `ClassDescriptor`, `Target`, templates: fixed bug in handing of bases classes with `anyOf`

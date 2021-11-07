@@ -106,7 +106,8 @@ open class TestDerivedClass(
     val name: String
 ) : TestBaseClass(id) {
 
-    override fun equals(other: Any?): Boolean = this === other || other is TestDerivedClass && super.equals(other) &&
+    override fun equals(other: Any?): Boolean = this === other || other is TestDerivedClass &&
+            super.equals(other) &&
             name == other.name
 
     override fun hashCode(): Int = super.hashCode() xor

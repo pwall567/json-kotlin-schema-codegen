@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-complex-base",
+  "description": "Test complex base class.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "object",
+      "properties": {
+        "xxx": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [ "xxx" ]
+    },
+    "qqq": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [ "aaa", "qqq" ]
+}

@@ -71,9 +71,9 @@ class StringValue(val rawString: String) {
                 }
                 else -> {
                     sb1.append("\\u")
-                    sb1.appendHex(ch.toInt())
+                    sb1.appendHex(ch.code)
                     sb2.append("\\u")
-                    sb2.appendHex(ch.toInt())
+                    sb2.appendHex(ch.code)
                 }
             }
         }
@@ -97,7 +97,7 @@ class StringValue(val rawString: String) {
                     '\u000C' -> append("\\f")
                     else -> {
                         append("\\u")
-                        appendHex(ch.toInt())
+                        appendHex(ch.code)
                     }
                 }
             }

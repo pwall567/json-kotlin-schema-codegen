@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.50</version>
+  <version>0.52</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>net.pwall.maven</groupId>
     <artifactId>maven-kotlin</artifactId>
-    <version>2.1</version>
+    <version>3.0</version>
   </parent>
 
   <properties>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.29</version>
+      <version>0.30</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>net.pwall.mustache</groupId>
       <artifactId>kotlin-mustache</artifactId>
-      <version>0.8</version>
+      <version>0.9</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.log</groupId>
@@ -100,7 +100,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
+      <version>1.2.6</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -163,19 +163,6 @@
       <plugin>
         <groupId>org.jetbrains.dokka</groupId>
         <artifactId>dokka-maven-plugin</artifactId>
-        <configuration>
-          <sourceDirectories>
-            <dir>src/main/kotlin</dir>
-          </sourceDirectories>
-          <externalDocumentationLinks>
-            <link>
-              <url>https://pwall.net/oss/jsonutil/</url>
-            </link>
-            <link>
-              <url>https://pwall.net/oss/json-kotlin/</url>
-            </link>
-          </externalDocumentationLinks>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

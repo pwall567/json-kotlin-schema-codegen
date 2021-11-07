@@ -561,14 +561,24 @@ class CodeGenerator(
 
     private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target,
             targets: List<Target>): Boolean {
+        analysePropertiesRequired(constraints)
+        var validationsPresent = false
         constraints.properties.forEach { property ->
-            if (refTarget.constraints.properties.any { it.propertyName == property.propertyName })
+            val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
+            if (baseConstraints != null) {
                 property.baseProperty = true
+                property.localTypeName = baseConstraints.localTypeName
+                baseConstraints.systemClass?.let { target.systemClasses.addOnce(it) }
+            }
+            else {
+                if (analyseProperty(target, targets, property, property.name))
+                    validationsPresent = true
+            }
         }
-        return analyseProperties(target, constraints, targets)
+        return validationsPresent
     }
 
-    private fun analyseProperties(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
+    private fun analysePropertiesRequired(constraints: Constraints) {
         constraints.properties.forEach { property ->
             when {
                 property.name in constraints.required -> property.isRequired = true
@@ -576,6 +586,10 @@ class CodeGenerator(
                 else -> property.nullable = true // should be error, but that would be unhelpful
             }
         }
+    }
+
+    private fun analyseProperties(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
+        analysePropertiesRequired(constraints)
         return constraints.properties.fold(false) { result, property ->
             analyseProperty(target, targets, property, property.name) || result
         }

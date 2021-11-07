@@ -16,7 +16,8 @@
 
 {{#validationsPresent}}    init {
 {{#properties}}{{>validations}}{{/properties}}    }
-{{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}{{>equals}}
+{{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}
+{{>equals}}
 {{>hashcode}}
 {{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
