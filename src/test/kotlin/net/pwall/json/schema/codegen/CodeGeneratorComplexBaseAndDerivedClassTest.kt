@@ -29,6 +29,7 @@ import kotlin.test.Test
 import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
+import java.net.URI
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -46,6 +47,8 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         val outputDetailsB = OutputDetails(TargetFileName("TestComplexBaseDerived", "kt", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-complex-base#/\$defs/extra"),
+                "com.example.extra.Extra")
         codeGenerator.generate(inputA, inputB)
         expect(createHeader("TestComplexBase.kt") + expectedA) { stringWriterA.toString() }
         expect(createHeader("TestComplexBaseDerived.kt") + expectedB) { stringWriterB.toString() }
@@ -61,6 +64,8 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         val outputDetailsB = OutputDetails(TargetFileName("TestComplexBaseDerived", "java", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-complex-base#/\$defs/extra"),
+                "com.example.extra.Extra")
         codeGenerator.generate(inputA, inputB)
         expect(createHeader("TestComplexBase.java") + expectedAJava) { stringWriterA.toString() }
         expect(createHeader("TestComplexBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
@@ -71,12 +76,15 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         const val expectedA =
 """package com.example
 
+import com.example.extra.Extra
+
 /**
  * Test complex base class.
  */
 open class TestComplexBase(
     val aaa: Aaa,
-    val qqq: String
+    val qqq: String,
+    val sss: Extra
 ) {
 
     init {
@@ -85,11 +93,13 @@ open class TestComplexBase(
 
     override fun equals(other: Any?): Boolean = this === other || other is TestComplexBase &&
             aaa == other.aaa &&
-            qqq == other.qqq
+            qqq == other.qqq &&
+            sss == other.sss
 
     override fun hashCode(): Int =
             aaa.hashCode() xor
-            qqq.hashCode()
+            qqq.hashCode() xor
+            sss.hashCode()
 
     data class Aaa(
         val xxx: String
@@ -107,14 +117,17 @@ open class TestComplexBase(
         const val expectedB =
 """package com.example
 
+import com.example.extra.Extra
+
 /**
  * Test complex base derived class.
  */
 class TestComplexBaseDerived(
     aaa: Aaa,
     qqq: String,
+    sss: Extra,
     val bbb: String
-) : TestComplexBase(aaa, qqq) {
+) : TestComplexBase(aaa, qqq, sss) {
 
     init {
         require(bbb.isNotEmpty()) { "bbb length < minimum 1 - ${'$'}{bbb.length}" }
@@ -133,6 +146,8 @@ class TestComplexBaseDerived(
         const val expectedAJava =
 """package com.example;
 
+import com.example.extra.Extra;
+
 /**
  * Test complex base class.
  */
@@ -140,10 +155,12 @@ public class TestComplexBase {
 
     private final Aaa aaa;
     private final String qqq;
+    private final Extra sss;
 
     public TestComplexBase(
             Aaa aaa,
-            String qqq
+            String qqq,
+            Extra sss
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
@@ -153,6 +170,9 @@ public class TestComplexBase {
         if (qqq.length() < 1)
             throw new IllegalArgumentException("qqq length < minimum 1 - " + qqq.length());
         this.qqq = qqq;
+        if (sss == null)
+            throw new IllegalArgumentException("Must not be null - sss");
+        this.sss = sss;
     }
 
     public Aaa getAaa() {
@@ -161,6 +181,10 @@ public class TestComplexBase {
 
     public String getQqq() {
         return qqq;
+    }
+
+    public Extra getSss() {
+        return sss;
     }
 
     @Override
@@ -172,13 +196,16 @@ public class TestComplexBase {
         TestComplexBase typedOther = (TestComplexBase)other;
         if (!aaa.equals(typedOther.aaa))
             return false;
-        return qqq.equals(typedOther.qqq);
+        if (!qqq.equals(typedOther.qqq))
+            return false;
+        return sss.equals(typedOther.sss);
     }
 
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
-        return hash ^ qqq.hashCode();
+        hash ^= qqq.hashCode();
+        return hash ^ sss.hashCode();
     }
 
     public static class Aaa {
@@ -222,6 +249,8 @@ public class TestComplexBase {
         const val expectedBJava =
 """package com.example;
 
+import com.example.extra.Extra;
+
 /**
  * Test complex base derived class.
  */
@@ -232,9 +261,10 @@ public class TestComplexBaseDerived extends TestComplexBase {
     public TestComplexBaseDerived(
             Aaa aaa,
             String qqq,
+            Extra sss,
             String bbb
     ) {
-        super(aaa, qqq);
+        super(aaa, qqq, sss);
         if (bbb == null)
             throw new IllegalArgumentException("Must not be null - bbb");
         if (bbb.length() < 1)

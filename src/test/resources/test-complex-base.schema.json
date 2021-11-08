@@ -3,6 +3,11 @@
   "$id": "http://pwall.net/test-complex-base",
   "description": "Test complex base class.",
   "type": "object",
+  "$defs": {
+    "extra": {
+      "type": "string"
+    }
+  },
   "properties": {
     "aaa": {
       "type": "object",
@@ -17,7 +22,10 @@
     "qqq": {
       "type": "string",
       "minLength": 1
+    },
+    "sss": {
+      "$ref": "#/$defs/extra"
     }
   },
-  "required": [ "aaa", "qqq" ]
+  "required": [ "aaa", "qqq", "sss" ]
 }

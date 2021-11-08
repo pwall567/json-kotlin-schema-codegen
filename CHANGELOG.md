@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.54] - 2021-11-07
+### Changed
+- `CodeGenerator`, templates: more bug fixes
+
+## [0.53] - 2021-11-07
+### Changed
+- `CodeGenerator`, templates: more bug fixes
+
 ## [0.52] - 2021-11-07
 ### Changed
 - `pom.xml`: updated to Kotlin 1.5.20

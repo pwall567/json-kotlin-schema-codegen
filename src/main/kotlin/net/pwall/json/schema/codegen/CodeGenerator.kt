@@ -567,8 +567,14 @@ class CodeGenerator(
             val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
             if (baseConstraints != null) {
                 property.baseProperty = true
-                property.localTypeName = baseConstraints.localTypeName
-                baseConstraints.systemClass?.let { target.systemClasses.addOnce(it) }
+                val customClass = findCustomClass(baseConstraints.schema, target) ?:
+                        baseConstraints.schema.findRefChild()?.let { findCustomClass(it.target, target) }
+                if (customClass != null)
+                    property.localTypeName = customClass
+                else {
+                    property.localTypeName = baseConstraints.localTypeName
+                    baseConstraints.systemClass?.let { target.systemClasses.addOnce(it) }
+                }
             }
             else {
                 if (analyseProperty(target, targets, property, property.name))
