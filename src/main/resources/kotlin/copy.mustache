@@ -1,0 +1,3 @@
+{{&indent}}    fun copy(
+{{#properties}}{{&indent}}        {{&kotlinName}}: {{>type}} = this.{{&kotlinName}}{{^last}},{{/last}}
+{{/properties}}{{&indent}}    ) = {{&className}}({{#properties}}{{&kotlinName}}{{^last}}, {{/last}}{{/properties}})

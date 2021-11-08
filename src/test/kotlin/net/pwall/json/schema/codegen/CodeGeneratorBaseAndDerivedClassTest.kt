@@ -84,6 +84,12 @@ open class TestBase(
     override fun hashCode(): Int =
             aaa.hashCode()
 
+    fun copy(
+        aaa: String = this.aaa
+    ) = TestBase(aaa)
+
+    operator fun component1() = aaa
+
 }
 """
 
@@ -104,6 +110,15 @@ class TestBaseDerived(
 
     override fun hashCode(): Int = super.hashCode() xor
             bbb.hashCode()
+
+    fun copy(
+        aaa: String = this.aaa,
+        bbb: String = this.bbb
+    ) = TestBaseDerived(aaa, bbb)
+
+    operator fun component1() = aaa
+
+    operator fun component2() = bbb
 
 }
 """

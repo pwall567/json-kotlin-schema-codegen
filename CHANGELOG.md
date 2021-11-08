@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.55] - 2021-11-07
+### Changed
+- `CodeGenerator`, templates: added copy and component function when generated class not a data class
+
 ## [0.54] - 2021-11-07
 ### Changed
 - `CodeGenerator`, templates: more bug fixes

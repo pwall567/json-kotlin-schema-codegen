@@ -101,6 +101,18 @@ open class TestComplexBase(
             qqq.hashCode() xor
             sss.hashCode()
 
+    fun copy(
+        aaa: Aaa = this.aaa,
+        qqq: String = this.qqq,
+        sss: Extra = this.sss
+    ) = TestComplexBase(aaa, qqq, sss)
+
+    operator fun component1() = aaa
+
+    operator fun component2() = qqq
+
+    operator fun component3() = sss
+
     data class Aaa(
         val xxx: String
     ) {
@@ -139,6 +151,21 @@ class TestComplexBaseDerived(
 
     override fun hashCode(): Int = super.hashCode() xor
             bbb.hashCode()
+
+    fun copy(
+        aaa: Aaa = this.aaa,
+        qqq: String = this.qqq,
+        sss: Extra = this.sss,
+        bbb: String = this.bbb
+    ) = TestComplexBaseDerived(aaa, qqq, sss, bbb)
+
+    operator fun component1() = aaa
+
+    operator fun component2() = qqq
+
+    operator fun component3() = sss
+
+    operator fun component4() = bbb
 
 }
 """

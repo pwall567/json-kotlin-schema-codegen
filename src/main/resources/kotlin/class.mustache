@@ -19,6 +19,8 @@
 {{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}
 {{>equals}}
 {{>hashcode}}
+{{>copy}}
+{{>component}}
 {{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{!

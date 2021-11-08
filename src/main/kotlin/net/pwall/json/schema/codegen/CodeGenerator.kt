@@ -326,41 +326,41 @@ class CodeGenerator(
                     oneOfTarget.addInterface(target)
                     target.derivedClasses.add(oneOfTarget)
                 }
-                else {
-                    // create a nested class with current as a base class and oneOfTarget properties, and remove (merge?) overlapping properties
-                    val nestedConstraints = Constraints(oneOfItem.schema) // ?
-                    for (property in constraints.properties) {
-                        nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
-                            it.copyFrom(property)
-                            it.baseProperty = true
-                        })
-                    }
-                    nestedConstraints.required.addAll(constraints.required)
-                    for (property in oneOfTarget.constraints.properties) {
-                        val existingProperty = nestedConstraints.properties.find { it.name == property.name }
-                        if (existingProperty != null)
-                            existingProperty.validations.addAll(property.validations)
-                        else {
-                            nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
-                                it.copyFrom(property)
-                            })
-                        }
-                        if (oneOfTarget.constraints.required.contains(property.name))
-                            nestedConstraints.required.add(property.name)
-                    }
-                    val nestedClass = target.addNestedClass(nestedConstraints, Strings.toIdentifier(i))
-                    nestedClass.baseClass = target
-                    nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, targets)
-                    target.derivedClasses.add(nestedClass)
-                }
+                else
+                    createCombinedClass(i, constraints, oneOfTarget.constraints, target, targets)
             }
-            else {
-                val nestedClass = target.addNestedClass(oneOfItem, Strings.toIdentifier(i))
-                nestedClass.baseClass = target
-                nestedClass.validationsPresent = analyseProperties(target, oneOfItem, targets)
-                target.derivedClasses.add(nestedClass)
-            }
+            else
+                createCombinedClass(i, constraints, oneOfItem, target, targets)
         }
+    }
+
+    private fun createCombinedClass(i: Int, constraints: Constraints, additionalConstraints: Constraints,
+            target: Target, targets: List<Target>) {
+        // create a nested class with current as a base class and oneOfTarget properties, and remove (merge?) overlapping properties
+        val nestedConstraints = Constraints(constraints.schema)
+        for (property in constraints.properties) {
+            nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
+                it.copyFrom(property)
+                it.baseProperty = true
+            })
+        }
+        nestedConstraints.required.addAll(constraints.required)
+        for (property in additionalConstraints.properties) {
+            val existingProperty = nestedConstraints.properties.find { it.name == property.name }
+            if (existingProperty != null)
+                existingProperty.validations.addAll(property.validations)
+            else {
+                nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
+                    it.copyFrom(property)
+                })
+            }
+            if (additionalConstraints.required.contains(property.name))
+                nestedConstraints.required.add(property.name)
+        }
+        val nestedClass = target.addNestedClass(nestedConstraints, Strings.toIdentifier(i))
+        nestedClass.baseClass = target
+        nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, targets)
+        target.derivedClasses.add(nestedClass)
     }
 
     private fun JSONSchema.findTarget(targets: List<Target>): Target? {

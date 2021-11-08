@@ -87,6 +87,12 @@ open class TypeA(
     override fun hashCode(): Int =
             aaa.hashCode()
 
+    fun copy(
+        aaa: Long? = this.aaa
+    ) = TypeA(aaa)
+
+    operator fun component1() = aaa
+
     class A(
         aaa: Long? = null,
         val xxx: String
@@ -98,6 +104,15 @@ open class TypeA(
 
         override fun hashCode(): Int = super.hashCode() xor
                 xxx.hashCode()
+
+        fun copy(
+            aaa: Long? = this.aaa,
+            xxx: String = this.xxx
+        ) = A(aaa, xxx)
+
+        operator fun component1() = aaa
+
+        operator fun component2() = xxx
 
     }
 
@@ -113,6 +128,15 @@ open class TypeA(
         override fun hashCode(): Int = super.hashCode() xor
                 yyy.hashCode()
 
+        fun copy(
+            aaa: Long? = this.aaa,
+            yyy: String = this.yyy
+        ) = B(aaa, yyy)
+
+        operator fun component1() = aaa
+
+        operator fun component2() = yyy
+
     }
 
     class C(
@@ -126,6 +150,15 @@ open class TypeA(
 
         override fun hashCode(): Int = super.hashCode() xor
                 zzz.hashCode()
+
+        fun copy(
+            aaa: Long? = this.aaa,
+            zzz: String? = this.zzz
+        ) = C(aaa, zzz)
+
+        operator fun component1() = aaa
+
+        operator fun component2() = zzz
 
     }
 
@@ -145,6 +178,15 @@ open class TypeA(
 
         override fun hashCode(): Int = super.hashCode() xor
                 qqq.hashCode()
+
+        fun copy(
+            aaa: Long? = this.aaa,
+            qqq: String? = this.qqq
+        ) = D(aaa, qqq)
+
+        operator fun component1() = aaa
+
+        operator fun component2() = qqq
 
     }
 
