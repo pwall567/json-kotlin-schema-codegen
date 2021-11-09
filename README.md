@@ -111,6 +111,19 @@ Most JSON deserialisation libraries have a means of specifying that additional p
 [`json-kotlin`](https://github.com/pwall567/json-kotlin) the `allowExtra` variable (`Boolean`) in `JSONConfig` must be
 set to `true`.
 
+## `data class`
+
+The code generator will create a `data class` whenever possible.
+This has a number of advantages, including the automatic provision of `equals` and `hashCode` functions, keeping the
+generated code as concise and readable as possible.
+
+Unfortunately, it is not always possible to use a `data class`.
+When the generated code involves inheritance, with one class extending another, the base class will be generated as an
+`open class` and the derived class as a plain `class`.
+
+In these cases the code generator will supply the missing functions &ndash; `equals`, `hashCode`, `toString`, `copy` and
+the `component[n]` functions that would otherwise be created automatically for a `data class`. 
+
 ## Custom Classes
 
 The code generator can use custom types for properties and array items.
@@ -120,7 +133,44 @@ This can be valuable when, for example, an organisation has its own custom class
 A common example of a domain primitive is a class to hold a money value, taking a `String` in its constructor and
 storing the value as either a `Long` of cents or a `BigDecimal`.
 
+There are three ways of specifying a custom class to the code generator:
 
+1. URI
+1. Custom `format` types
+1. Custom keywords
+
+### URI
+
+An individual item in a schema may be nominated by the URI of the element itself.
+For example, in the schema mentioned in the [Quick Start](#quick-start) section there is a field named `price`.
+To specify that the code generator is to use a `Money` class for this field, use:
+```kotlin
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test#/properties/price"), "com.example.Money")
+```
+The base URI can be **either** the URL used to locate the schema file **or** the URI in the `$id` of the schema.
+
+A distinct advantage of this technique is that when a `$ref` is used to share a common definition of a field type, the
+destination of the `$ref` can be specified to the code generator function shown above, and all references to it will use
+the nominated class.
+It is also the least obtrusive approach &ndash; it does not require modification to the schema or non-standard syntax.
+
+### Format
+
+The JSON Schema specification allows for non-standard `format` types.
+For example, if the specification of the property in the schema contained `"format": "x-local-money"`, then the
+following will cause the property to use a custom class:
+```kotlin
+        codeGenerator.addCustomClassByFormat("x-local-money", "com.example.Money")
+```
+
+### Custom Keyword
+
+The JSON Schema specification also allows for completely non-standard keywords.
+For example, the schema could contain `"x-local-type": "money"`, in which case the following would invoke the use of the
+custom class:
+```kotlin
+        codeGenerator.addCustomClassByExtension("x-local-type", "money", "com.example.Money")
+```
 
 ## JSON Schema Version
 
@@ -138,17 +188,17 @@ variables in the constructed instance.
 
 ### Parameters
 
-- `targetLanguage` - a `TargetLanguage` `enum` specifying the target language for code generation (the options are
-`KOTLIN`, `JAVA` or `TYPESCRIPT` - TypeScript coverage is not as advanced as that of the others at this time)
-- `templateName` - the primary template to use for the generation of a class
-- `enumTemplateName` - the primary template to use for the generation of an enum
-- `basePackageName` - the base package name for the generated classes (if directories are supplied to the `generate()`
-function, the subdirectory names are used as sub-package names)
-- `baseDirectoryName` - the base directory to use for generated output (in line with the Java convention, output
+- `targetLanguage` &ndash; a `TargetLanguage` `enum` specifying the target language for code generation (the options are
+`KOTLIN`, `JAVA` or `TYPESCRIPT` &ndash; TypeScript coverage is not as advanced as that of the others at this time)
+- `templateName` &ndash; the primary template to use for the generation of a class
+- `enumTemplateName` &ndash; the primary template to use for the generation of an enum
+- `basePackageName` &ndash; the base package name for the generated classes (if directories are supplied to the
+`generate()` function, the subdirectory names are used as sub-package names)
+- `baseDirectoryName` &ndash; the base directory to use for generated output (in line with the Java convention, output
 directory structure will follow the package structure)
-- `derivePackageFromStructure` - a boolean flag (default `true`) to indicate that generated code for schema files in
-subdirectories are to be output to sub-packages following the same structure
-- `generatorComment` - a comment to add to the header of generated files
+- `derivePackageFromStructure` &ndash; a boolean flag (default `true`) to indicate that generated code for schema files
+in subdirectories are to be output to sub-packages following the same structure
+- `generatorComment` &ndash; a comment to add to the header of generated files
 
 ### Functions
 
@@ -176,25 +226,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.55, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.59, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.55</version>
+      <version>0.59</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.55'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.59'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.55")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.59")
 ```
 
 Peter Wall
 
-2021-11-08
+2021-11-09

@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorBaseAndDerivedClassTest.kt
+ * @(#) CodeGeneratorBaseAndEmptyDerivedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2021 Peter Wall
@@ -34,36 +34,36 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
-class CodeGeneratorBaseAndDerivedClassTest {
+class CodeGeneratorBaseAndEmptyDerivedClassTest {
 
     @Test fun `should generate base and derived classes`() {
         val inputA = File("src/test/resources/test-base.schema.json")
-        val inputB = File("src/test/resources/test-base-derived.schema.json")
+        val inputB = File("src/test/resources/test-base-empty-derived.schema.json")
         val codeGenerator = CodeGenerator()
         val stringWriterA = StringWriter()
         val outputDetailsA = OutputDetails(TargetFileName("TestBase", "kt", dirs), stringWriterA)
         val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails(TargetFileName("TestBaseDerived", "kt", dirs), stringWriterB)
+        val outputDetailsB = OutputDetails(TargetFileName("TestBaseEmptyDerived", "kt", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
         expect(createHeader("TestBase.kt") + expectedA) { stringWriterA.toString() }
-        expect(createHeader("TestBaseDerived.kt") + expectedB) { stringWriterB.toString() }
+        expect(createHeader("TestBaseEmptyDerived.kt") + expectedB) { stringWriterB.toString() }
     }
 
     @Test fun `should generate base and derived classes in Java`() {
         val inputA = File("src/test/resources/test-base.schema.json")
-        val inputB = File("src/test/resources/test-base-derived.schema.json")
+        val inputB = File("src/test/resources/test-base-empty-derived.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriterA = StringWriter()
         val outputDetailsA = OutputDetails(TargetFileName("TestBase", "java", dirs), stringWriterA)
         val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails(TargetFileName("TestBaseDerived", "java", dirs), stringWriterB)
+        val outputDetailsB = OutputDetails(TargetFileName("TestBaseEmptyDerived", "java", dirs), stringWriterB)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
         expect(createHeader("TestBase.java") + expectedAJava) { stringWriterA.toString() }
-        expect(createHeader("TestBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
+        expect(createHeader("TestBaseEmptyDerived.java") + expectedBJava) { stringWriterB.toString() }
     }
 
     companion object {
@@ -99,28 +99,23 @@ open class TestBase(
 """package com.example
 
 /**
- * Test base derived class.
+ * Test base with empty derived class.
  */
-class TestBaseDerived(
-    aaa: String,
-    val bbb: String
+class TestBaseEmptyDerived(
+    aaa: String
 ) : TestBase(aaa) {
 
-    override fun equals(other: Any?): Boolean = this === other || other is TestBaseDerived &&
-            super.equals(other) &&
-            bbb == other.bbb
+    override fun equals(other: Any?): Boolean = this === other || other is TestBaseEmptyDerived &&
+            super.equals(other)
 
-    override fun hashCode(): Int = super.hashCode() xor
-            bbb.hashCode()
+    @Suppress("unused")
+    override fun hashCode(): Int = super.hashCode()
 
-    override fun toString() = "TestBaseDerived(aaa=${'$'}aaa, bbb=${'$'}bbb)"
+    override fun toString() = "TestBaseEmptyDerived(aaa=${'$'}aaa)"
 
-    fun copy(
-        aaa: String = this.aaa,
-        bbb: String = this.bbb
-    ) = TestBaseDerived(aaa, bbb)
-
-    operator fun component2() = bbb
+    override fun copy(
+        aaa: String
+    ) = TestBaseEmptyDerived(aaa)
 
 }
 """
@@ -169,42 +164,30 @@ public class TestBase {
 """package com.example;
 
 /**
- * Test base derived class.
+ * Test base with empty derived class.
  */
-public class TestBaseDerived extends TestBase {
+public class TestBaseEmptyDerived extends TestBase {
 
-    private final String bbb;
-
-    public TestBaseDerived(
-            String aaa,
-            String bbb
+    public TestBaseEmptyDerived(
+            String aaa
     ) {
         super(aaa);
-        if (bbb == null)
-            throw new IllegalArgumentException("Must not be null - bbb");
-        this.bbb = bbb;
-    }
-
-    public String getBbb() {
-        return bbb;
     }
 
     @Override
     public boolean equals(Object other) {
         if (this == other)
             return true;
-        if (!(other instanceof TestBaseDerived))
+        if (!(other instanceof TestBaseEmptyDerived))
             return false;
         if (!super.equals(other))
             return false;
-        TestBaseDerived typedOther = (TestBaseDerived)other;
-        return bbb.equals(typedOther.bbb);
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        return hash ^ bbb.hashCode();
+        return super.hashCode();
     }
 
 }

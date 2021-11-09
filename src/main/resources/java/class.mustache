@@ -9,10 +9,10 @@
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}(
-{{#baseClass}}{{#constraints}}{{#properties}}            {{>type}} {{&javaName}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}            {{>type}} {{&javaName}}{{^last}},{{/last}}
-{{/nonBaseProperties}}    ) {
+{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#baseClass}}{{#constraints}}{{#properties}}{{^first}},{{/first}}
+            {{>type}} {{&javaName}}{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^first}},{{/first}}{{#first}}{{#hasBaseClassWithProperties}},{{/hasBaseClassWithProperties}}{{/first}}
+            {{>type}} {{&javaName}}{{/nonBaseProperties}}
+    ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
 {{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");

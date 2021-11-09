@@ -25,7 +25,11 @@
     },
     "sss": {
       "$ref": "#/$defs/extra"
+    },
+    "uuu": {
+      "type": "string",
+      "format": "uuid"
     }
   },
-  "required": [ "aaa", "qqq", "sss" ]
+  "required": [ "aaa", "qqq", "sss", "uuu" ]
 }

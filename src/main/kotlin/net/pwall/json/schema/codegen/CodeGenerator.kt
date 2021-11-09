@@ -573,7 +573,10 @@ class CodeGenerator(
                     property.localTypeName = customClass
                 else {
                     property.localTypeName = baseConstraints.localTypeName
-                    baseConstraints.systemClass?.let { target.systemClasses.addOnce(it) }
+                    baseConstraints.systemClass?.let {
+                        property.systemClass = it
+                        target.systemClasses.addOnce(it)
+                    }
                 }
             }
             else {

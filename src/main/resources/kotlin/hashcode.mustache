@@ -1,3 +1,5 @@
-{{&indent}}    override fun hashCode(): Int ={{#hasBaseClassWithProperties}} super.hashCode(){{#nonBaseProperties}} xor
+{{#hasBaseClassWithProperties}}{{^nonBaseProperties}}{{&indent}}    @Suppress("unused")
+{{/nonBaseProperties}}{{/hasBaseClassWithProperties}}{{!
+}}{{&indent}}    override fun hashCode(): Int ={{#hasBaseClassWithProperties}} super.hashCode(){{#nonBaseProperties}} xor
 {{&indent}}            {{&kotlinName}}.hashCode(){{/nonBaseProperties}}{{/hasBaseClassWithProperties}}{{^hasBaseClassWithProperties}}{{#properties}}{{^baseProperty}}
 {{&indent}}            {{&kotlinName}}.hashCode(){{^last}} xor{{/last}}{{/baseProperty}}{{/properties}}{{^properties}}0{{/properties}}{{/hasBaseClassWithProperties}}

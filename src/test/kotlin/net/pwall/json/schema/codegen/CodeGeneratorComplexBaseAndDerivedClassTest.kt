@@ -76,6 +76,8 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         const val expectedA =
 """package com.example
 
+import java.util.UUID
+
 import com.example.extra.Extra
 
 /**
@@ -84,7 +86,8 @@ import com.example.extra.Extra
 open class TestComplexBase(
     val aaa: Aaa,
     val qqq: String,
-    val sss: Extra
+    val sss: Extra,
+    val uuu: UUID
 ) {
 
     init {
@@ -94,24 +97,31 @@ open class TestComplexBase(
     override fun equals(other: Any?): Boolean = this === other || other is TestComplexBase &&
             aaa == other.aaa &&
             qqq == other.qqq &&
-            sss == other.sss
+            sss == other.sss &&
+            uuu == other.uuu
 
     override fun hashCode(): Int =
             aaa.hashCode() xor
             qqq.hashCode() xor
-            sss.hashCode()
+            sss.hashCode() xor
+            uuu.hashCode()
 
-    fun copy(
+    override fun toString() = "TestComplexBase(aaa=${'$'}aaa, qqq=${'$'}qqq, sss=${'$'}sss, uuu=${'$'}uuu)"
+
+    open fun copy(
         aaa: Aaa = this.aaa,
         qqq: String = this.qqq,
-        sss: Extra = this.sss
-    ) = TestComplexBase(aaa, qqq, sss)
+        sss: Extra = this.sss,
+        uuu: UUID = this.uuu
+    ) = TestComplexBase(aaa, qqq, sss, uuu)
 
     operator fun component1() = aaa
 
     operator fun component2() = qqq
 
     operator fun component3() = sss
+
+    operator fun component4() = uuu
 
     data class Aaa(
         val xxx: String
@@ -129,6 +139,8 @@ open class TestComplexBase(
         const val expectedB =
 """package com.example
 
+import java.util.UUID
+
 import com.example.extra.Extra
 
 /**
@@ -138,8 +150,9 @@ class TestComplexBaseDerived(
     aaa: Aaa,
     qqq: String,
     sss: Extra,
+    uuu: UUID,
     val bbb: String
-) : TestComplexBase(aaa, qqq, sss) {
+) : TestComplexBase(aaa, qqq, sss, uuu) {
 
     init {
         require(bbb.isNotEmpty()) { "bbb length < minimum 1 - ${'$'}{bbb.length}" }
@@ -152,26 +165,25 @@ class TestComplexBaseDerived(
     override fun hashCode(): Int = super.hashCode() xor
             bbb.hashCode()
 
+    override fun toString() = "TestComplexBaseDerived(aaa=${'$'}aaa, qqq=${'$'}qqq, sss=${'$'}sss, uuu=${'$'}uuu, bbb=${'$'}bbb)"
+
     fun copy(
         aaa: Aaa = this.aaa,
         qqq: String = this.qqq,
         sss: Extra = this.sss,
+        uuu: UUID = this.uuu,
         bbb: String = this.bbb
-    ) = TestComplexBaseDerived(aaa, qqq, sss, bbb)
+    ) = TestComplexBaseDerived(aaa, qqq, sss, uuu, bbb)
 
-    operator fun component1() = aaa
-
-    operator fun component2() = qqq
-
-    operator fun component3() = sss
-
-    operator fun component4() = bbb
+    operator fun component5() = bbb
 
 }
 """
 
         const val expectedAJava =
 """package com.example;
+
+import java.util.UUID;
 
 import com.example.extra.Extra;
 
@@ -183,11 +195,13 @@ public class TestComplexBase {
     private final Aaa aaa;
     private final String qqq;
     private final Extra sss;
+    private final UUID uuu;
 
     public TestComplexBase(
             Aaa aaa,
             String qqq,
-            Extra sss
+            Extra sss,
+            UUID uuu
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
@@ -200,6 +214,9 @@ public class TestComplexBase {
         if (sss == null)
             throw new IllegalArgumentException("Must not be null - sss");
         this.sss = sss;
+        if (uuu == null)
+            throw new IllegalArgumentException("Must not be null - uuu");
+        this.uuu = uuu;
     }
 
     public Aaa getAaa() {
@@ -214,6 +231,10 @@ public class TestComplexBase {
         return sss;
     }
 
+    public UUID getUuu() {
+        return uuu;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)
@@ -225,14 +246,17 @@ public class TestComplexBase {
             return false;
         if (!qqq.equals(typedOther.qqq))
             return false;
-        return sss.equals(typedOther.sss);
+        if (!sss.equals(typedOther.sss))
+            return false;
+        return uuu.equals(typedOther.uuu);
     }
 
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
         hash ^= qqq.hashCode();
-        return hash ^ sss.hashCode();
+        hash ^= sss.hashCode();
+        return hash ^ uuu.hashCode();
     }
 
     public static class Aaa {
@@ -276,6 +300,8 @@ public class TestComplexBase {
         const val expectedBJava =
 """package com.example;
 
+import java.util.UUID;
+
 import com.example.extra.Extra;
 
 /**
@@ -289,9 +315,10 @@ public class TestComplexBaseDerived extends TestComplexBase {
             Aaa aaa,
             String qqq,
             Extra sss,
+            UUID uuu,
             String bbb
     ) {
-        super(aaa, qqq, sss);
+        super(aaa, qqq, sss, uuu);
         if (bbb == null)
             throw new IllegalArgumentException("Must not be null - bbb");
         if (bbb.length() < 1)

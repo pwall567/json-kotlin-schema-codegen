@@ -5,20 +5,22 @@
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}(
-{{#baseClass}}{{#constraints}}{{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}({{#baseClass}}{{#constraints}}{{#properties}}{{^first}},{{/first}}
+{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
-}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}{{/constraints}}{{/baseClass}}{{!
+}}{{#nonBaseProperties}}{{^first}},{{/first}}{{#first}}{{#hasBaseClassWithProperties}},{{/hasBaseClassWithProperties}}{{/first}}
+{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
-}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/baseProperty}}{{/properties}}){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/nonBaseProperties}}
+){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
 {{#validationsPresent}}    init {
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}
 {{>equals}}
 {{>hashcode}}
+{{>tostring}}
 {{>copy}}
 {{>component}}
 {{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}

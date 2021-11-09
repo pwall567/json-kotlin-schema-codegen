@@ -1,13 +1,15 @@
 {{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}(
-{{#baseClass}}{{#constraints}}{{#properties}}        {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
-}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}},
-{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        val {{&kotlinName}}: {{>type}}{{^isRequired}} = {{!
-}}{{#defaultValue}}{{>default_value}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isRequired}}{{^last}},{{/last}}
-{{/nonBaseProperties}}    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
+{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}({{#baseClass}}{{#constraints}}{{#properties}}{{^first}},{{/first}}
+{{#schema}}{{#description}}        /** {{&safeDescription}} */
+{{/description}}{{/schema}}        {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}{{/constraints}}{{/baseClass}}{{!
+}}{{#nonBaseProperties}}{{^first}},{{/first}}{{#first}}{{#hasBaseClassWithProperties}},{{/hasBaseClassWithProperties}}{{/first}}
+{{#schema}}{{#description}}        /** {{&safeDescription}} */
+{{/description}}{{/schema}}        val {{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/nonBaseProperties}}
+    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
 
 {{#validationsPresent}}        init {
 {{#properties}}{{>validations}}{{/properties}}        }
@@ -15,6 +17,7 @@
 {{/validationsPresent}}{{#hasBaseClassWithProperties}}
 {{>equals}}
 {{>hashcode}}
+{{>tostring}}
 {{>copy}}
 {{>component}}
 

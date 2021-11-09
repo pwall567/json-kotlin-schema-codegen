@@ -2,6 +2,23 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.59] - 2021-11-09
+### Changed
+- templates: add toString when generated class not a data class
+- `README.md`: added notes on custom classes and the use of data class
+
+## [0.58] - 2021-11-09
+### Changed
+- `CodeGenerator`, templates: fix bugs in copy and component functions
+
+## [0.57] - 2021-11-08
+### Changed
+- `CodeGenerator`, templates: fix bugs in copy and component functions
+
+## [0.56] - 2021-11-08
+### Changed
+- `CodeGenerator`, templates: fix bugs in copy and component functions
+
 ## [0.55] - 2021-11-07
 ### Changed
 - `CodeGenerator`, templates: added copy and component function when generated class not a data class
