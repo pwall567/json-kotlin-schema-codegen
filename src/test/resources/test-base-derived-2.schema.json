@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-base-derived",
+  "description": "Test base derived class.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "http://pwall.net/test-base"
+    },
+    {
+      "properties": {
+        "bbb": {
+          "type": "string"
+        }
+      },
+      "required": [ "bbb" ]
+    }
+  ]
+}

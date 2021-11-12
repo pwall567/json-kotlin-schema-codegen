@@ -238,13 +238,13 @@ The latest version of the library is 0.59, and it may be obtained from the Maven
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.59'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.60'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.59")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.60")
 ```
 
 Peter Wall
 
-2021-11-09
+2021-11-10

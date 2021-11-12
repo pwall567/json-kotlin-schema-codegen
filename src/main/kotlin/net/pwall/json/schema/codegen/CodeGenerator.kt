@@ -532,9 +532,10 @@ class CodeGenerator(
             for (child in it.children) {
                 if (child is PropertiesSchema)
                     break
-                if (child is AllOfSchema && child.array.size == 1) {
-                    child.array[0].findRefChild()?.let { refChild ->
+                if (child is AllOfSchema) {
+                    child.array.firstOrNull()?.findRefChild()?.let { refChild ->
                         val refTarget = targets.find { t -> t.schema.uri == refChild.target.uri }
+                        // TODO - check the equality comparison above - is this correct???
                         if (refTarget != null) {
                             refTarget.derivedClasses.add(target)
                             val baseTarget = Target(

@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.60] - 2021-11-10
+### Changed
+- `CodeGenerator`: improved usage of base and derived class pattern
+
 ## [0.59] - 2021-11-09
 ### Changed
 - templates: add toString when generated class not a data class

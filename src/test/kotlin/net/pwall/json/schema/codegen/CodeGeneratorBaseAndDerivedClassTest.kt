@@ -66,6 +66,36 @@ class CodeGeneratorBaseAndDerivedClassTest {
         expect(createHeader("TestBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
     }
 
+    @Test fun `should generate base and derived classes alternative form`() {
+        val inputA = File("src/test/resources/test-base.schema.json")
+        val inputB = File("src/test/resources/test-base-derived-2.schema.json")
+        val codeGenerator = CodeGenerator()
+        val stringWriterA = StringWriter()
+        val outputDetailsA = OutputDetails(TargetFileName("TestBase", "kt", dirs), stringWriterA)
+        val stringWriterB = StringWriter()
+        val outputDetailsB = OutputDetails(TargetFileName("TestBaseDerived", "kt", dirs), stringWriterB)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        codeGenerator.generate(inputA, inputB)
+        expect(createHeader("TestBaseDerived.kt") + expectedB) { stringWriterB.toString() }
+        expect(createHeader("TestBase.kt") + expectedA) { stringWriterA.toString() }
+    }
+
+    @Test fun `should generate base and derived classes in Java alternative form`() {
+        val inputA = File("src/test/resources/test-base.schema.json")
+        val inputB = File("src/test/resources/test-base-derived-2.schema.json")
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
+        val stringWriterA = StringWriter()
+        val outputDetailsA = OutputDetails(TargetFileName("TestBase", "java", dirs), stringWriterA)
+        val stringWriterB = StringWriter()
+        val outputDetailsB = OutputDetails(TargetFileName("TestBaseDerived", "java", dirs), stringWriterB)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
+        codeGenerator.generate(inputA, inputB)
+        expect(createHeader("TestBase.java") + expectedAJava) { stringWriterA.toString() }
+        expect(createHeader("TestBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
+    }
+
     companion object {
 
         const val expectedA =
