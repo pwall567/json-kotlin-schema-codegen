@@ -341,7 +341,7 @@ class CodeGenerator(
         for (property in constraints.properties) {
             nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
                 it.copyFrom(property)
-                it.baseProperty = true
+                it.baseProperty = property
             })
         }
         nestedConstraints.required.addAll(constraints.required)
@@ -567,7 +567,8 @@ class CodeGenerator(
         constraints.properties.forEach { property ->
             val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
             if (baseConstraints != null) {
-                property.baseProperty = true
+                property.baseProperty = baseConstraints
+                baseConstraints.defaultValue?.let { property.defaultValue = it }
                 val customClass = findCustomClass(baseConstraints.schema, target) ?:
                         baseConstraints.schema.findRefChild()?.let { findCustomClass(it.target, target) }
                 if (customClass != null)

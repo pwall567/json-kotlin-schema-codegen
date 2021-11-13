@@ -9,9 +9,8 @@
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#baseClass}}{{#constraints}}{{#properties}}{{^first}},{{/first}}
-            {{>type}} {{&javaName}}{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^first}},{{/first}}{{#first}}{{#hasBaseClassWithProperties}},{{/hasBaseClassWithProperties}}{{/first}}
-            {{>type}} {{&javaName}}{{/nonBaseProperties}}
+{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#properties}}{{^first}},{{/first}}
+            {{>type}} {{&javaName}}{{/properties}}
     ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
 {{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)

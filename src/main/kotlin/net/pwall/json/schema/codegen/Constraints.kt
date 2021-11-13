@@ -87,11 +87,11 @@ open class Constraints(val schema: JSONSchema) {
 
     @Suppress("unused")
     val baseProperties: List<NamedConstraints>
-        get() = properties.filter { it.baseProperty }
+        get() = properties.filter { it.baseProperty != null }
 
     @Suppress("unused")
     val nonBaseProperties: List<NamedConstraints>
-        get() = properties.filter { !it.baseProperty }
+        get() = properties.filter { it.baseProperty == null }
 
     val required = mutableListOf<String>()
 

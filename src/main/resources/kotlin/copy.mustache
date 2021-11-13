@@ -1,10 +1,10 @@
 {{&indent}}    {{#derivedClasses}}{{#first}}open {{/first}}{{/derivedClasses}}{{#hasBaseClassWithProperties}}{{^hasNonBaseProperties}}override {{/hasNonBaseProperties}}{{/hasBaseClassWithProperties}}fun copy(
 {{#properties}}{{&indent}}        {{&kotlinName}}: {{>type}}{{!
 }}{{^hasBaseClassWithProperties}}{{!
-}} = this.{{&kotlinName}}{{!
+}} = this.{{&kotlinName}}{{^nullable}}{{#baseProperty}}{{#nullable}}!!{{/nullable}}{{/baseProperty}}{{/nullable}}{{!
 }}{{/hasBaseClassWithProperties}}{{!
 }}{{#hasBaseClassWithProperties}}{{#hasNonBaseProperties}}{{!
-}} = this.{{&kotlinName}}{{!
+}} = this.{{&kotlinName}}{{^nullable}}{{#baseProperty}}{{#nullable}}!!{{/nullable}}{{/baseProperty}}{{/nullable}}{{!
 }}{{/hasNonBaseProperties}}{{/hasBaseClassWithProperties}}{{!
 }}{{^last}},{{/last}}
 {{/properties}}{{&indent}}    ) = {{&className}}({{#properties}}{{&kotlinName}}{{^last}}, {{/last}}{{/properties}})

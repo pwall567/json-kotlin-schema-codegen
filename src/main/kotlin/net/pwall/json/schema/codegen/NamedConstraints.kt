@@ -30,7 +30,7 @@ import net.pwall.util.Strings
 
 class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
 
-    var baseProperty = false
+    var baseProperty: Constraints? = null
 
     @Suppress("unused")
     val propertyName: String
