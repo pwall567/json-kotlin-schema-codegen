@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [0.61] - 2021-11-12
+## [0.61] - 2021-11-14
 ### Changed
 - templates: fixed bug in constructors (base/derived classes)
 - `CodeGenerator`, `Constraints`, `NamedConstraints`, templates: fixed bug in base/derived classes

@@ -431,19 +431,21 @@ class CodeGenerator(
      * @param   base            the base of the composite object
      * @param   pointer         pointer to the structure containing the schema definitions (e.g. /definitions)
      * @param   subDirectories  list of subdirectory names to use for the output files
+     * @param   uri             the default URI of the document
      * @param   filter          optional filter to select which classes to include (by name)
      */
     fun generateAll(
         base: JSONValue,
         pointer: JSONPointer,
         subDirectories: List<String> = emptyList(),
+        uri: URI = URI("https:/pwall.net/internal"),
         filter: (String) -> Boolean = { true }
     ) {
+        val documentURI = Parser.getIdOrNull(base)?.let { URI(it) } ?: uri
         val definitions = (pointer.find(base) as? JSONMapping<*>) ?:
                 throw JSONSchemaException("Can't find definitions - $pointer")
         generateClasses(definitions.keys.filter(filter).map {
-            val uri = Parser.getIdOrNull(base) ?: "https:/pwall.net/internal"
-            actualSchemaParser.parseSchema(base, pointer.child(it), URI(uri)) to it
+            actualSchemaParser.parseSchema(base, pointer.child(it), documentURI) to it
         }, subDirectories)
     }
 
@@ -534,8 +536,7 @@ class CodeGenerator(
                     break
                 if (child is AllOfSchema) {
                     child.array.firstOrNull()?.findRefChild()?.let { refChild ->
-                        val refTarget = targets.find { t -> t.schema.uri == refChild.target.uri }
-                        // TODO - check the equality comparison above - is this correct???
+                        val refTarget = targets.find { t -> t.schema.locationMatches(refChild.target) }
                         if (refTarget != null) {
                             refTarget.derivedClasses.add(target)
                             val baseTarget = Target(
@@ -1383,6 +1384,10 @@ class CodeGenerator(
                     else -> if (a.toLong() > b.toLong()) a else b
                 }
             }
+        }
+
+        fun JSONSchema.locationMatches(other: JSONSchema): Boolean {
+            return uri == other.uri && location == other.location
         }
 
     }
