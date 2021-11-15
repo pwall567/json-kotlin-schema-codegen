@@ -283,7 +283,7 @@ class CodeGenerator(
         for (target in targets) {
             processSchema(target.schema, target.constraints)
             if (target.constraints.isObject)
-                target.validationsPresent = analyseObject(target, target.constraints, targets)
+                target.validationsPresent = analyseObject(target, target, target.constraints, targets)
         }
         for (target in targets)
             findOneOfDerivedClasses(target.constraints, target, targets)
@@ -528,7 +528,8 @@ class CodeGenerator(
                 it.append(ch)
     }.toString()
 
-    private fun analyseObject(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
+    private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints,
+            targets: List<Target>): Boolean {
         constraints.objectValidationsPresent?.let { return it }
         (constraints.schema as? JSONSchema.General)?.let {
             for (child in it.children) {
@@ -538,7 +539,7 @@ class CodeGenerator(
                     child.array.firstOrNull()?.findRefChild()?.let { refChild ->
                         val refTarget = targets.find { t -> t.schema.locationMatches(refChild.target) }
                         if (refTarget != null) {
-                            refTarget.derivedClasses.add(target)
+                            refTarget.derivedClasses.add(classDescriptor)
                             val baseTarget = Target(
                                 schema = refTarget.schema,
                                 constraints = Constraints(refTarget.schema),
@@ -547,9 +548,10 @@ class CodeGenerator(
                                 generatorComment = generatorComment
                             )
                             markerInterface?.let { i -> baseTarget.addInterface(i) }
-                            target.setBase(baseTarget)
+                            classDescriptor.baseClass = baseTarget
+                            target.addImport(baseTarget)
                             processSchema(baseTarget.schema, baseTarget.constraints)
-                            analyseObject(baseTarget, baseTarget.constraints, targets)
+                            analyseObject(baseTarget, baseTarget, baseTarget.constraints, targets)
                             return analyseDerivedObject(target, constraints, baseTarget, targets)
                         }
                     }
@@ -629,7 +631,7 @@ class CodeGenerator(
             NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
         }
         val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
-        nestedClass.validationsPresent = analyseProperties(target, constraints, targets)
+        nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, targets)
         constraints.localTypeName = nestedClass.className
     }
 

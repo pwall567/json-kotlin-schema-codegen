@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.62] - 2021-11-15
+### Changed
+- `CodeGenerator`, templates: fixed bug in base/derived nested classes
+
 ## [0.61] - 2021-11-14
 ### Changed
 - templates: fixed bug in constructors (base/derived classes)

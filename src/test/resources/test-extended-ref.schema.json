@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-extended-ref",
+  "description": "Test extended reference.",
+  "$defs": {
+    "Main": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extended": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Nested"
+            },
+            {
+              "properties": {
+                "extra": {
+                  "type": "boolean"
+                }
+              },
+              "required": [ "extra" ]
+            }
+          ]
+        }
+      },
+      "required": [ "name", "extended" ]
+    },
+    "Nested": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        }
+      },
+      "required": [ "count" ]
+    }
+  },
+  "$ref": "#/$defs/Main"
+}
