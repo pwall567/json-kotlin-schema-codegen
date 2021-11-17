@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "urn:x-test:codegen:gen123",
+  "properties": {
+    "aaa": {
+      "description": "No details, so should generate type Any"
+    }
+  },
+  "required": [ "aaa" ]
+}

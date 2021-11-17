@@ -471,7 +471,7 @@ class CodeGenerator(
             source: String) {
         val className = schema.uri?.let {
             // TODO change to allow name ending with "/schema"?
-            val uriName = it.toString().substringBefore('#').substringAfterLast('/')
+            val uriName = it.toString().substringBefore('#').substringAfterLast(':').substringAfterLast('/')
             val uriNameWithoutExtension = when {
                 uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
                 uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)

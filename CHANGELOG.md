@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.63] - 2021-11-18
+### Changed
+- `CodeGenerator`: changed class name selection to accommodate URNs
+
 ## [0.62] - 2021-11-15
 ### Changed
 - `CodeGenerator`, templates: fixed bug in base/derived nested classes

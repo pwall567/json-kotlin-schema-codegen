@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorAnyTest.kt
+ * @(#) CodeGeneratorURNTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2021 Peter Wall
@@ -33,26 +33,26 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
-class CodeGeneratorAnyTest {
+class CodeGeneratorURNTest {
 
-    @Test fun `should generate property type Any when no details supplied`() {
-        val input = File("src/test/resources/test-generate-any.schema.json")
+    @Test fun `should generate class using name from URN`() {
+        val input = File("src/test/resources/test-use-urn.schema.json")
         val codeGenerator = CodeGenerator()
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestGenerateAny", "kt", dirs), stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Gen123", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.kt") + expected) { stringWriter.toString() }
+        expect(createHeader("Gen123.kt") + expected) { stringWriter.toString() }
     }
 
-    @Test fun `should generate property type Object when no details supplied in Java`() {
-        val input = File("src/test/resources/test-generate-any.schema.json")
+    @Test fun `should generate class using name from URN in Java`() {
+        val input = File("src/test/resources/test-use-urn.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestGenerateAny", "java", dirs), stringWriter)
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Gen123", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.java") + expectedJava) { stringWriter.toString() }
+        expect(createHeader("Gen123.java") + expectedJava) { stringWriter.toString() }
     }
 
     companion object {
@@ -60,7 +60,7 @@ class CodeGeneratorAnyTest {
         const val expected =
 """package com.example
 
-data class TestGenerateAny(
+data class Gen123(
     /** No details, so should generate type Any */
     val aaa: Any
 )
@@ -69,11 +69,11 @@ data class TestGenerateAny(
         const val expectedJava =
 """package com.example;
 
-public class TestGenerateAny {
+public class Gen123 {
 
     private final Object aaa;
 
-    public TestGenerateAny(
+    public Gen123(
             Object aaa
     ) {
         if (aaa == null)
@@ -92,9 +92,9 @@ public class TestGenerateAny {
     public boolean equals(Object other) {
         if (this == other)
             return true;
-        if (!(other instanceof TestGenerateAny))
+        if (!(other instanceof Gen123))
             return false;
-        TestGenerateAny typedOther = (TestGenerateAny)other;
+        Gen123 typedOther = (Gen123)other;
         return aaa.equals(typedOther.aaa);
     }
 
