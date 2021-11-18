@@ -29,6 +29,15 @@
         }
       },
       "required": [ "yyy" ]
+    },
+    "TypeD": {
+      "type": "object",
+      "properties": {
+        "qqq": {
+          "$ref": "#/$defs/TypeA"
+        }
+      },
+      "required": [ "qqq" ]
     }
   },
   "$ref": "#/$defs/TypeA"

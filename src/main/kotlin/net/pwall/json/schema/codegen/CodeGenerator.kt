@@ -614,25 +614,31 @@ class CodeGenerator(
         constraints.localTypeName = otherTarget.className
     }
 
-    private fun findTargetClass(constraints: Constraints, target: Target, targets: List<Target>,
-                defaultName: () -> String) {
+    private fun findRefClass(constraints: Constraints, target: Target, targets: List<Target>): Boolean {
         targets.find { it.schema === constraints.schema }?.let {
             useTarget(constraints, target, it)
-            return
+            return true
         }
         val refChild = constraints.schema.findRefChild()
         refChild?.let { targets.find { t -> t.schema === it.target } }?.let {
             useTarget(constraints, target, it)
-            return
+            return true
         }
-        val nestedClassName = when (nestedClassNameOption) {
-            NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
-                    refChild?.fragment?.substringAfterLast('/') ?: defaultName()
-            NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
+        return false
+    }
+
+    private fun findTargetClass(constraints: Constraints, target: Target, targets: List<Target>,
+                                defaultName: () -> String) {
+        if (!findRefClass(constraints, target, targets)) {
+            val nestedClassName = when (nestedClassNameOption) {
+                NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
+                    constraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
+                NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
+            }
+            val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
+            nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, targets)
+            constraints.localTypeName = nestedClass.className
         }
-        val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
-        nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, targets)
-        constraints.localTypeName = nestedClass.className
     }
 
     private fun findCustomClass(schema: JSONSchema, target: Target): String? {
@@ -677,7 +683,11 @@ class CodeGenerator(
                 analyseDecimal(target, property)
             }
             property.isString -> analyseString(property, target, targets) { name }
-            else -> false
+            property.isBoolean -> false
+            else -> {
+                findRefClass(property, target, targets)
+                false
+            }
         }
     }
 

@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.64] - 2021-11-18
+### Changed
+- `CodeGenerator`: fixed regression bug in `oneOf`
+
 ## [0.63] - 2021-11-18
 ### Changed
 - `CodeGenerator`: changed class name selection to accommodate URNs

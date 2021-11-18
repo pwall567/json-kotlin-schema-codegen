@@ -47,12 +47,15 @@ class CodeGeneratorOneOf1Test {
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "kt", dirs), stringWriterB)
         val stringWriterC = StringWriter()
         val outputDetailsC = OutputDetails(TargetFileName("TypeC", "kt", dirs), stringWriterC)
+        val stringWriterD = StringWriter()
+        val outputDetailsD = OutputDetails(TargetFileName("TypeD", "kt", dirs), stringWriterD)
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC)
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.kt") + expectedTypeA) { stringWriterA.toString() }
         expect(createHeader("TypeB.kt") + expectedTypeB) { stringWriterB.toString() }
         expect(createHeader("TypeC.kt") + expectedTypeC) { stringWriterC.toString() }
+        expect(createHeader("TypeD.kt") + expectedTypeD) { stringWriterD.toString() }
     }
 
     @Test fun `should generate classes for multiple oneOf schemata in Java`() {
@@ -64,12 +67,15 @@ class CodeGeneratorOneOf1Test {
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "java", dirs), stringWriterB)
         val stringWriterC = StringWriter()
         val outputDetailsC = OutputDetails(TargetFileName("TypeC", "java", dirs), stringWriterC)
+        val stringWriterD = StringWriter()
+        val outputDetailsD = OutputDetails(TargetFileName("TypeD", "java", dirs), stringWriterD)
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC)
+        codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.java") + expectedTypeAJava) { stringWriterA.toString() }
         expect(createHeader("TypeB.java") + expectedTypeBJava) { stringWriterB.toString() }
         expect(createHeader("TypeC.java") + expectedTypeCJava) { stringWriterC.toString() }
+        expect(createHeader("TypeD.java") + expectedTypeDJava) { stringWriterD.toString() }
     }
 
     companion object {
@@ -94,6 +100,14 @@ data class TypeB(
 data class TypeC(
     val yyy: String
 ) : TypeA
+"""
+
+        const val expectedTypeD =
+"""package com.example
+
+data class TypeD(
+    val qqq: TypeA
+)
 """
 
         const val expectedTypeAJava =
@@ -173,6 +187,43 @@ public class TypeC implements TypeA {
     @Override
     public int hashCode() {
         return yyy.hashCode();
+    }
+
+}
+"""
+
+        const val expectedTypeDJava =
+"""package com.example;
+
+public class TypeD {
+
+    private final TypeA qqq;
+
+    public TypeD(
+            TypeA qqq
+    ) {
+        if (qqq == null)
+            throw new IllegalArgumentException("Must not be null - qqq");
+        this.qqq = qqq;
+    }
+
+    public TypeA getQqq() {
+        return qqq;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TypeD))
+            return false;
+        TypeD typedOther = (TypeD)other;
+        return qqq.equals(typedOther.qqq);
+    }
+
+    @Override
+    public int hashCode() {
+        return qqq.hashCode();
     }
 
 }
