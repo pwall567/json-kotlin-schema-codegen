@@ -84,6 +84,11 @@
       <version>0.9</version>
     </dependency>
     <dependency>
+      <groupId>net.pwall.yaml</groupId>
+      <artifactId>yaml-simple</artifactId>
+      <version>1.9</version>
+    </dependency>
+    <dependency>
       <groupId>net.pwall.log</groupId>
       <artifactId>log-front</artifactId>
       <version>2.4</version>

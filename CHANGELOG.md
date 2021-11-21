@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Unreleased]
 ### Added
 - tests using json-schema.org examples
+### Changed
+- `CodeGenerator`: initial implementation of `configure`
 
 ## [0.64] - 2021-11-18
 ### Changed

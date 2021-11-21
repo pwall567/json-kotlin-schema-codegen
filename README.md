@@ -11,8 +11,9 @@ Code generation for JSON Schema (Draft 07).
 
 [JSON Schema](https://json-schema.org/) provides a means of describing JSON values &ndash; the properties of an object,
 constraints on values etc. &ndash; in considerable detail.
-Many APIs now use JSON Schema to specify the content of JSON parameters and response objects, and one way of ensuring
-conformity to the specified schema is to generate code directly from the schema itself.
+Many APIs now use JSON Schema to specify the content of JSON parameters and response objects, either directly or as part
+of an [OpenAPI](https://www.openapis.org/) specification, and one way of ensuring conformity to the specified schema is
+to generate code directly from the schema itself.
 
 This is not always possible &ndash; some characteristics described by a schema may not be representable in the
 implementation language.
@@ -212,15 +213,14 @@ As described above, it is helpful to supply all the schema objects to be generat
 
 While the `generate()` functions take a file or files and convert them to an internal form before generating code, the
 `generateClass()` and `generateClasses()` functions take pre-parsed schema objects.
-This can be valuable in cases like a Swagger/OpenAPI file which contains a set of schema definitions embedded in another
-file.
+This can be valuable in cases like an OpenAPI file which contains a set of schema definitions embedded in another file.
 
 #### `generateAll()`
 
-The `generateAll()` function allows the use of a composite file such as a Swagger or OpenAPI file containing several
-schema definitions.
-For example, a Swagger file will typically have a `definitions` section which consists of definitions of the objects
-input to or output from the API.
+The `generateAll()` function allows the use of a composite file such as an OpenAPI file containing several schema
+definitions.
+For example, an OpenAPI file will typically have a `components` section which contains definitions of the objects input
+to or output from the API.
 Using the `generateAll()` function, the set of definitions can be selected (and optionally filtered) and the classes
 generated for each of them.
 

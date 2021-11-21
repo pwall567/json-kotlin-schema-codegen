@@ -32,6 +32,7 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 
+import net.pwall.json.JSON
 import net.pwall.json.JSONBoolean
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONInteger
@@ -69,6 +70,7 @@ import net.pwall.log.LoggerFactory
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
+import net.pwall.yaml.YAMLSimple
 
 /**
  * JSON Schema Code Generator.  The class my be parameterised either by constructor parameters or by setting the
@@ -198,6 +200,56 @@ class CodeGenerator(
         templateParser = MustacheParser().also {
             it.resolvePartial = { name ->
                 File(directory, "$name.$suffix").reader()
+            }
+        }
+    }
+
+    fun configure(file: File) {
+        val fileName = file.name
+        configure(when {
+            fileName.endsWith(".yaml", ignoreCase = true) || fileName.endsWith(".yml", ignoreCase = true) ->
+                YAMLSimple.process(file).rootNode
+            else -> JSON.parse(file)
+        })
+    }
+
+    fun configure(json: JSONValue) {
+        if (json !is JSONMapping<*>)
+            throw JSONSchemaException("config must be object")
+        json["packageName"]?.let {
+            if (it !is JSONString)
+                throw JSONSchemaException("config packageName must be string")
+            if (it.value.isEmpty())
+                throw JSONSchemaException("config packageName must not be empty")
+            basePackageName = it.value
+        }
+        json["customClasses"]?.let {
+            if (it !is JSONSequence<*>)
+                throw JSONSchemaException("config customClasses must be array")
+            for (customClassDef in it) {
+                if (customClassDef !is JSONMapping<*>)
+                    throw JSONSchemaException("config customClasses entry must be object")
+                val className = (customClassDef["className"] as? JSONString)?.value ?:
+                    throw JSONSchemaException("config customClasses className invalid")
+                when {
+                    customClassDef.containsKey("format") -> addCustomClassByFormat(
+                        (customClassDef["format"] as? JSONString)?.value ?:
+                            throw JSONSchemaException("config customClasses format invalid"),
+                        className
+                    )
+                    customClassDef.containsKey("uri") -> addCustomClassByURI(
+                        URI((customClassDef["uri"] as? JSONString)?.value ?:
+                            throw JSONSchemaException("config customClasses uri invalid")),
+                        className
+                    )
+                    customClassDef.containsKey("keyword") -> addCustomClassByExtension(
+                        (customClassDef["keyword"] as? JSONString)?.value ?:
+                            throw JSONSchemaException("config customClasses keyword invalid"),
+                        (customClassDef["format"] as? JSONString)?.value,
+                        className
+                    )
+                    else -> throw JSONSchemaException("config customClasses entry invalid")
+                }
             }
         }
     }
