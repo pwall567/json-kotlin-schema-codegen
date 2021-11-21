@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Added
+- tests using json-schema.org examples
+
 ## [0.64] - 2021-11-18
 ### Changed
 - `CodeGenerator`: fixed regression bug in `oneOf`

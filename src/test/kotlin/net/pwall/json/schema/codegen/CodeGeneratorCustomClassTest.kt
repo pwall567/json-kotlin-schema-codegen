@@ -199,6 +199,16 @@ class CodeGeneratorCustomClassTest {
         expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
     }
 
+    @Test fun `should use specified custom class for format when specified in config file`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.configure(File("src/test/resources/config/custom-class-config.json"))
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
     @Test fun `should use specified custom class for format in Java`() {
         val input = File("src/test/resources/test-custom-class-format.schema.json")
         val parser = Parser()
