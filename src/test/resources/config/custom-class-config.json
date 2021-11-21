@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/pwall567/json-kotlin-schema-codegen/main/src/main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "customClasses": [
+    { "format": "money", "className": "com.example.util.Money" }
+  ]
+}
