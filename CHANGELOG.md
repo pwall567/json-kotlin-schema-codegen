@@ -2,9 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.65] - 2021-12-09
 ### Added
 - tests using json-schema.org examples
+- `Configurator`: initial implementation of `configure`
+- `codegen-config.schema.json`: JSON Schema for config file
+- `CONFIG.md`: notes on configuration
 ### Changed
 - `CodeGenerator`: initial implementation of `configure`
 

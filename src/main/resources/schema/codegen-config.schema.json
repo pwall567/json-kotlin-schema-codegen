@@ -3,103 +3,113 @@
   "$id": "https://raw.githubusercontent.com/pwall567/json-kotlin-schema-codegen/main/src/main/resources/schema/codegen-config.schema.json",
   "title": "CodegenConfig",
   "description": "Code Generation Configuration File",
-  "type": "object",
   "$defs": {
-    "CustomClassByFormat": {
-      "type": "object",
-      "properties": {
-        "format": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        },
-        "className": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        }
-      },
-      "required": [ "format", "className" ]
+    "ClassName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
     },
-    "CustomClassByURI": {
-      "type": "object",
-      "properties": {
-        "uri": {
-          "type": "string",
-          "format": "uri"
-        },
-        "className": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        }
-      },
-      "required": [ "uri", "className" ]
-    },
-    "CustomClassByKeyword": {
-      "type": "object",
-      "properties": {
-        "keyword": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        },
-        "value": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        },
-        "className": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
-        }
-      },
-      "required": [ "keyword", "value", "className" ]
+    "QualifiedClassName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
     }
   },
+  "type": "object",
   "properties": {
+    "title": {
+      "$comment": "For documentation purposes only",
+      "type": "string"
+    },
+    "version": {
+      "$comment": "For documentation purposes only",
+      "type": "string"
+    },
+    "description": {
+      "$comment": "For documentation purposes only",
+      "type": "string"
+    },
     "packageName": {
-      "type": "string",
+      "type": [ "string", "null" ],
       "minLength": 1,
       "maxLength": 256,
       "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$"
     },
     "generatorComment": {
-      "type": "string",
+      "type": [ "string", "null" ],
       "minLength": 1
     },
-    "classNames": {
-      "type": "array",
-      "items": {
+    "targetLanguage": {
+      "type": "string",
+      "enum": [ "kotlin", "java", "typescript" ]
+    },
+    "nestedClassNameOption": {
+      "type": "string",
+      "enum": [ "property", "refSchema" ]
+    },
+    "derivePackageFromStructure": {
+      "type": "boolean"
+    },
+    "extensionValidations": {
+      "type": "object",
+      "additionalProperties": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uri"
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          }
+        "additionalProperties": {
+          "$ref": "https://json-schema.org/draft/2019-09/meta/applicator"
+        }
+      }
+    },
+    "nonStandardFormat": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "https://json-schema.org/draft/2019-09/meta/applicator"
+      }
+    },
+    "classNames": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z]+:": {
+          "$ref": "#/$defs/QualifiedClassName"
         }
       }
     },
     "customClasses": {
-      "type": "array",
-      "items": {
-        "oneOf": [
-          {
-            "$ref": "#/$defs/CustomClassByFormat"
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z][A-Za-z0-9]*(-[A-Za-z0-9]+)*$": {
+              "$ref": "#/$defs/ClassName"
+            }
           },
-          {
-            "$ref": "#/$defs/CustomClassByURI"
+          "additionalProperties": false
+        },
+        "uri": {
+          "type": "object",
+          "patternProperties": {
+            "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?": {
+              "$comment": "The URI pattern above is taken from https://www.rfc-editor.org/rfc/rfc3986#appendix-B",
+              "$ref": "#/$defs/ClassName"
+            }
           },
-          {
-            "$ref": "#/$defs/CustomClassByKeyword"
-          }
-        ]
+          "additionalProperties": false
+        },
+        "extension": {
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z][A-Za-z0-9]*(-[A-Za-z0-9]+)*$": {
+              "type": "object",
+              "patternProperties": {
+                "^[A-Za-z][A-Za-z0-9]*(-[A-Za-z0-9]+)*$": {
+                  "$ref": "#/$defs/ClassName"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
       }
     }
   }

@@ -23,6 +23,11 @@ provide conversions for the broadest possible range of JSON Schema definitions.
 The library uses a template mechanism (employing [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
 templates are provided to generate classes in Kotlin and Java, or interfaces in TypeScript.
 
+## NEW
+
+Recently added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
+See the documentation at [CONFIG.md](CONFIG.md).
+
 ## Quick Start
 
 Simply create a `CodeGenerator`, supply it with details like destination directory and package name, and invoke the
@@ -203,6 +208,11 @@ in subdirectories are to be output to sub-packages following the same structure
 
 ### Functions
 
+#### `configure()`
+
+The `configure()` function takes a `File` or `Path` specifying a configuration file.
+See [CONFIG.md](CONFIG.md) for details of the configuration options.
+
 #### `generate()`
 
 There are two `generate()` functions, one taking a `List` of `File`s, the other taking a `vararg` list of `File`
@@ -226,25 +236,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.64, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.65, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.64</version>
+      <version>0.65</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.64'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.65'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.64")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.65")
 ```
 
 Peter Wall
 
-2021-11-18
+2021-12-09

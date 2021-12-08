@@ -31,6 +31,7 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
+import java.nio.file.FileSystems
 
 import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -77,6 +78,16 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/utility#/\$defs/personId"),
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("#/properties/name"), ClassName("PersonName", "com.example.person"))
+        codeGenerator.generate(input)
+        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom class when specified in config file`() {
+        val input = File("src/test/resources/test1")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.configure(File("src/test/resources/config/custom-class-uri-config.json"))
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt", dirs + "person"), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
     }
@@ -128,6 +139,16 @@ class CodeGeneratorCustomClassTest {
         expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
     }
 
+    @Test fun `should use specified custom class for extension when specified in config file`() {
+        val input = File("src/test/resources/test-custom-class.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.configure(File("src/test/resources/config/custom-class-extension-config.json"))
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+    }
+
     @Test fun `should use specified custom class for extension in Java`() {
         val input = File("src/test/resources/test-custom-class.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
@@ -139,13 +160,62 @@ class CodeGeneratorCustomClassTest {
         expect(createHeader("TestCustom.java") + expectedJavaForExtension) { stringWriter.toString() }
     }
 
+    @Test fun `should use specified custom validation for format`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                    PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser = parser
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForFormat) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom validation for format in Java`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val parser = Parser()
+        parser.nonstandardFormatHandler = { keyword ->
+            if (keyword == "money")
+                FormatValidator.DelegatingFormatChecker(keyword,
+                    PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
+            else
+                null
+        }
+        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
+        codeGenerator.schemaParser = parser
+        val stringWriter = StringWriter()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.java") + expectedJavaForFormat) { stringWriter.toString() }
+    }
+
+    @Test fun `should use specified custom validation for format when specified in config file by path`() {
+        val input = File("src/test/resources/test-custom-class-format.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.configure(
+                FileSystems.getDefault().getPath("src/test/resources/config/nonstandard-format-config.json"))
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expectedForFormat) { stringWriter.toString() }
+    }
+
     @Test fun `should use specified custom class for format`() {
         val input = File("src/test/resources/test-custom-class-format.schema.json")
         val parser = Parser()
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -165,7 +235,7 @@ class CodeGeneratorCustomClassTest {
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -185,7 +255,7 @@ class CodeGeneratorCustomClassTest {
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -202,7 +272,7 @@ class CodeGeneratorCustomClassTest {
     @Test fun `should use specified custom class for format when specified in config file`() {
         val input = File("src/test/resources/test-custom-class-format.schema.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.configure(File("src/test/resources/config/custom-class-config.json"))
+        codeGenerator.configure(File("src/test/resources/config/custom-class-format-config.json"))
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
@@ -215,7 +285,7 @@ class CodeGeneratorCustomClassTest {
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -345,6 +415,88 @@ public class TestCustom {
     }
 
     public Money getBbb() {
+        return bbb;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof TestCustom))
+            return false;
+        TestCustom typedOther = (TestCustom)other;
+        if (!aaa.equals(typedOther.aaa))
+            return false;
+        return bbb == null ? typedOther.bbb == null : bbb.equals(typedOther.bbb);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = aaa.hashCode();
+        return hash ^ (bbb != null ? bbb.hashCode() : 0);
+    }
+
+}
+"""
+
+        const val expectedForFormat =
+"""package com.example
+
+/**
+ * Test custom class.
+ */
+data class TestCustom(
+    val aaa: String,
+    val bbb: String? = null
+) {
+
+    init {
+        require(cg_regex0.containsMatchIn(aaa)) { "aaa does not match pattern ${'$'}cg_regex0 - ${'$'}aaa" }
+        if (bbb != null)
+            require(cg_regex0.containsMatchIn(bbb)) { "bbb does not match pattern ${'$'}cg_regex0 - ${'$'}bbb" }
+    }
+
+    companion object {
+        private val cg_regex0 = Regex("^[0-9]{1,16}\\.[0-9]{2}\${'$'}")
+    }
+
+}
+"""
+
+        const val expectedJavaForFormat =
+"""package com.example;
+
+import java.util.regex.Pattern;
+
+/**
+ * Test custom class.
+ */
+public class TestCustom {
+
+    private static final Pattern cg_regex0 = Pattern.compile("^[0-9]{1,16}\\.[0-9]{2}${'$'}");
+
+    private final String aaa;
+    private final String bbb;
+
+    public TestCustom(
+            String aaa,
+            String bbb
+    ) {
+        if (aaa == null)
+            throw new IllegalArgumentException("Must not be null - aaa");
+        if (!cg_regex0.matcher(aaa).find())
+            throw new IllegalArgumentException("aaa does not match pattern " + cg_regex0 + " - " + aaa);
+        this.aaa = aaa;
+        if (bbb != null && !cg_regex0.matcher(bbb).find())
+            throw new IllegalArgumentException("bbb does not match pattern " + cg_regex0 + " - " + bbb);
+        this.bbb = bbb;
+    }
+
+    public String getAaa() {
+        return aaa;
+    }
+
+    public String getBbb() {
         return bbb;
     }
 

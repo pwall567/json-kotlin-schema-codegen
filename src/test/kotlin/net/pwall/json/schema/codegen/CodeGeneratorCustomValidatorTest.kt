@@ -63,6 +63,16 @@ class CodeGeneratorCustomValidatorTest {
         expect(createHeader("TestCustom.kt") + expected) { stringWriter.toString() }
     }
 
+    @Test fun `should generate correct code for custom validation when specified in config file`() {
+        val input = File("src/test/resources/test-custom-validator.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.configure(File("src/test/resources/config/extension-validator-config.json"))
+        val stringWriter = StringWriter()
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestCustom.kt") + expected) { stringWriter.toString() }
+    }
+
     @Test fun `should generate correct code for custom validation in Java`() {
         val input = File("src/test/resources/test-custom-validator.schema.json")
         val parser = Parser()

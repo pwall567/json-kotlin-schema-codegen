@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "customClasses": {
+    "extension": {
+      "x-test": {
+        "money": "com.example.util.Money"
+      }
+    }
+  }
+}

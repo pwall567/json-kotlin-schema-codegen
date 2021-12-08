@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "nonStandardFormat": {
+    "money": {
+      "pattern": "^[0-9]{1,16}\\.[0-9]{2}$"
+    }
+  }
+}

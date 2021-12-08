@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "customClasses": {
+    "format": {
+      "money": "com.example.util.Money"
+    }
+  }
+}

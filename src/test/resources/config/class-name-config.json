@@ -1,0 +1,7 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "classNames": {
+    "urn:test:example": "Supplied"
+  }
+}

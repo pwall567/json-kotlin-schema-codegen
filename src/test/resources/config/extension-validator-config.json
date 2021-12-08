@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "extensionValidations": {
+    "x-test": {
+      "not-empty": {
+        "minLength": 1
+      }
+    }
+  }
+}

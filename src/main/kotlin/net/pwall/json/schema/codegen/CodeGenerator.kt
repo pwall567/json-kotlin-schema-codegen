@@ -43,6 +43,7 @@ import net.pwall.json.JSONSequence
 import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
 import net.pwall.json.pointer.JSONPointer
+import net.pwall.json.pointer.JSONReference
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.Constraints.Companion.asLong
@@ -110,6 +111,12 @@ class CodeGenerator(
     private val customClassesByFormat = mutableListOf<CustomClassByFormat>()
     private val customClassesByExtension = mutableListOf<CustomClassByExtension>()
 
+    private val classNameMapping = mutableListOf<Pair<URI, String>>()
+
+    fun addClassNameMapping(uri: URI, name: String) {
+        classNameMapping.add(uri to name)
+    }
+
     var schemaParser: Parser? = null
 
     private val defaultSchemaParser: Parser by lazy {
@@ -130,7 +137,7 @@ class CodeGenerator(
     private fun partialResolver(name: String): Reader {
         for (dir in targetLanguage.directories)
             CodeGenerator::class.java.getResourceAsStream("/$dir/$name.mustache")?.let { return it.reader() }
-        throw JSONSchemaException("Can't locate template partial $name")
+        fatal("Can't locate template partial $name")
     }
 
     private val actualTemplateParser: MustacheParser
@@ -193,9 +200,9 @@ class CodeGenerator(
 
     fun setTemplateDirectory(directory: File, suffix: String = "mustache") {
         when {
-            directory.isFile -> throw JSONSchemaException("Template directory must be a directory")
+            directory.isFile -> fatal("Template directory must be a directory")
             directory.isDirectory -> {}
-            else -> throw JSONSchemaException("Error accessing template directory")
+            else -> fatal("Error accessing template directory")
         }
         templateParser = MustacheParser().also {
             it.resolvePartial = { name ->
@@ -204,54 +211,43 @@ class CodeGenerator(
         }
     }
 
-    fun configure(file: File) {
+    /**
+     * Configure the `CodeGenerator` using a config file, specified by a [File].
+     *
+     * @param   file    a [File] pointing to the JSON or YAML config file
+     * @param   uri     an optional URI (for error reporting)
+     */
+    fun configure(file: File, uri: URI? = null) {
         val fileName = file.name
         configure(when {
-            fileName.endsWith(".yaml", ignoreCase = true) || fileName.endsWith(".yml", ignoreCase = true) ->
-                YAMLSimple.process(file).rootNode
+            fileName.looksLikeYAML() -> YAMLSimple.process(file).rootNode
             else -> JSON.parse(file)
-        })
+        }, uri ?: file.toURI())
     }
 
-    fun configure(json: JSONValue) {
-        if (json !is JSONMapping<*>)
-            throw JSONSchemaException("config must be object")
-        json["packageName"]?.let {
-            if (it !is JSONString)
-                throw JSONSchemaException("config packageName must be string")
-            if (it.value.isEmpty())
-                throw JSONSchemaException("config packageName must not be empty")
-            basePackageName = it.value
-        }
-        json["customClasses"]?.let {
-            if (it !is JSONSequence<*>)
-                throw JSONSchemaException("config customClasses must be array")
-            for (customClassDef in it) {
-                if (customClassDef !is JSONMapping<*>)
-                    throw JSONSchemaException("config customClasses entry must be object")
-                val className = (customClassDef["className"] as? JSONString)?.value ?:
-                    throw JSONSchemaException("config customClasses className invalid")
-                when {
-                    customClassDef.containsKey("format") -> addCustomClassByFormat(
-                        (customClassDef["format"] as? JSONString)?.value ?:
-                            throw JSONSchemaException("config customClasses format invalid"),
-                        className
-                    )
-                    customClassDef.containsKey("uri") -> addCustomClassByURI(
-                        URI((customClassDef["uri"] as? JSONString)?.value ?:
-                            throw JSONSchemaException("config customClasses uri invalid")),
-                        className
-                    )
-                    customClassDef.containsKey("keyword") -> addCustomClassByExtension(
-                        (customClassDef["keyword"] as? JSONString)?.value ?:
-                            throw JSONSchemaException("config customClasses keyword invalid"),
-                        (customClassDef["format"] as? JSONString)?.value,
-                        className
-                    )
-                    else -> throw JSONSchemaException("config customClasses entry invalid")
-                }
-            }
-        }
+    /**
+     * Configure the `CodeGenerator` using a config file, specified by a [Path].
+     *
+     * @param   path    the [Path] to the JSON or YAML config file
+     * @param   uri     an optional URI (for error reporting)
+     */
+    fun configure(path: Path, uri: URI? = null) {
+        val reader = Files.newBufferedReader(path)
+        val fileName = path.toFile().name
+        configure(when {
+            fileName.looksLikeYAML() -> YAMLSimple.process(reader).rootNode
+            else -> JSON.parse(reader)
+        }, uri ?: path.toUri())
+    }
+
+    /**
+     * Configure the `CodeGenerator` using a config file (in the form af a parsed JSON object).
+     *
+     * @param   json    the JSON object
+     * @param   uri     an optional URI (for error reporting)
+     */
+    fun configure(json: JSONValue, uri: URI? = null) {
+        Configurator.configure(this, JSONReference(json), uri)
     }
 
     /**
@@ -494,8 +490,7 @@ class CodeGenerator(
         filter: (String) -> Boolean = { true }
     ) {
         val documentURI = Parser.getIdOrNull(base)?.let { URI(it) } ?: uri
-        val definitions = (pointer.find(base) as? JSONMapping<*>) ?:
-                throw JSONSchemaException("Can't find definitions - $pointer")
+        val definitions = (pointer.find(base) as? JSONMapping<*>) ?: fatal("Can't find definitions - $pointer")
         generateClasses(definitions.keys.filter(filter).map {
             actualSchemaParser.parseSchema(base, pointer.child(it), documentURI) to it
         }, subDirectories)
@@ -521,23 +516,23 @@ class CodeGenerator(
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, schema: JSONSchema,
             source: String) {
-        val className = schema.uri?.let {
-            // TODO change to allow name ending with "/schema"?
-            val uriName = it.toString().substringBefore('#').substringAfterLast(':').substringAfterLast('/')
-            val uriNameWithoutExtension = when {
-                uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
-                uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)
-                uriName.endsWith(".yml", ignoreCase = true) -> uriName.dropLast(4)
-                else -> uriName
+        val className = schema.uri?.let { uri ->
+            classNameMapping.find { it.first == uri }?.second ?: run {
+                // TODO change to allow name ending with "/schema"?
+                val uriName = uri.toString().substringBefore('#').substringAfterLast(':').substringAfterLast('/')
+                val uriNameNoExtension = when {
+                    uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
+                    uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)
+                    uriName.endsWith(".yml", ignoreCase = true) -> uriName.dropLast(4)
+                    else -> uriName
+                }
+                when {
+                    uriNameNoExtension.endsWith(".schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
+                    uriNameNoExtension.endsWith("-schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
+                    uriNameNoExtension.endsWith("_schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
+                    else -> uriNameNoExtension
+                }.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.sanitiseName()
             }
-            val uriNameWithoutSuffix = when {
-                uriNameWithoutExtension.endsWith(".schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
-                uriNameWithoutExtension.endsWith("-schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
-                uriNameWithoutExtension.endsWith("_schema", ignoreCase = true) -> uriNameWithoutExtension.dropLast(7)
-                else -> uriNameWithoutExtension
-            }
-            uriNameWithoutSuffix.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.
-                    sanitiseName()
         } ?: "GeneratedClass${targets.size}"
         targets.add(Target(
             schema = schema,
@@ -1103,8 +1098,8 @@ class CodeGenerator(
                 is JSONBoolean -> Constraints.DefaultValue(value.value, JSONSchema.Type.BOOLEAN)
                 is JSONSequence<*> -> Constraints.DefaultValue(value.map { processDefaultValue(it) },
                         JSONSchema.Type.ARRAY)
-                is JSONMapping<*> -> throw JSONSchemaException("Can't handle object as default value")
-                else -> throw JSONSchemaException("Unexpected default value")
+                is JSONMapping<*> -> fatal("Can't handle object as default value")
+                else -> fatal("Unexpected default value")
             }
 
     private fun processSubSchema(subSchema: JSONSchema.SubSchema, constraints: Constraints) {
@@ -1145,24 +1140,25 @@ class CodeGenerator(
             is ArrayValidator -> processArrayValidator(validator, constraints)
             is UniqueItemsValidator -> processUniqueItemsValidator(constraints)
             is DelegatingValidator -> processValidator(validator.validator, constraints)
+            is Configurator.CustomValidator -> processSchema(validator.schema, constraints)
         }
     }
 
     private fun processConstValidator(constValidator: ConstValidator, constraints: Constraints) {
         if (constraints.constValue != null)
-            throw JSONSchemaException("Duplicate const")
+            fatal("Duplicate const")
         constraints.constValue = constValidator.value
     }
 
     private fun processEnumValidator(enumValidator: EnumValidator, constraints: Constraints) {
         if (constraints.enumValues != null)
-            throw JSONSchemaException("Duplicate enum")
+            fatal("Duplicate enum")
         constraints.enumValues = enumValidator.array
     }
 
     private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
         if (constraints.format != null)
-            throw JSONSchemaException("Duplicate format - ${formatValidator.location}")
+            fatal("Duplicate format - ${formatValidator.location}")
         val newFormat = formatValidator.checker
         if (newFormat is FormatValidator.DelegatingFormatChecker)
             for (validator in newFormat.validators)
@@ -1200,7 +1196,7 @@ class CodeGenerator(
 
     private fun processPatternValidator(patternValidator: PatternValidator, constraints: Constraints) {
         if (constraints.regex != null)
-            throw JSONSchemaException("Duplicate pattern")
+            fatal("Duplicate pattern")
         constraints.regex = patternValidator.regex
     }
 
@@ -1371,6 +1367,8 @@ class CodeGenerator(
 
         const val internalSchema = "internal schema"
 
+        fun String.looksLikeYAML() = endsWith(".yaml", ignoreCase = true) || endsWith(".yml", ignoreCase = true)
+
         fun <T: Any> MutableList<T>.addOnce(entry: T) {
             if (entry !in this)
                 add(entry)
@@ -1409,11 +1407,11 @@ class CodeGenerator(
             when {
                 !directory.exists() -> {
                     if (!directory.mkdirs())
-                        throw JSONSchemaException("Error creating output directory - $directory")
+                        fatal("Error creating output directory - $directory")
                 }
                 directory.isDirectory -> {}
-                directory.isFile -> throw JSONSchemaException("File given for output directory - $directory")
-                else -> throw JSONSchemaException("Error accessing output directory - $directory")
+                directory.isFile -> fatal("File given for output directory - $directory")
+                else -> fatal("Error accessing output directory - $directory")
             }
             return directory
         }
@@ -1452,6 +1450,10 @@ class CodeGenerator(
 
         fun JSONSchema.locationMatches(other: JSONSchema): Boolean {
             return uri == other.uri && location == other.location
+        }
+
+        fun fatal(message: String): Nothing {
+            throw JSONSchemaException(message)
         }
 
     }

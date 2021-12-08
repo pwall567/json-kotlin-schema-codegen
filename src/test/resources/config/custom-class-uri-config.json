@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "customClasses": {
+    "uri": {
+      "http://pwall.net/test/schema/utility#/$defs/personId": "com.example.person.PersonId",
+      "#/properties/name": "com.example.person.PersonName"
+    }
+  }
+}
