@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.66] - 2021-12-11
+### Changed
+- `pom.xml`: bumped dependency version
+
 ## [0.65] - 2021-12-09
 ### Added
 - tests using json-schema.org examples

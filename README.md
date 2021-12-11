@@ -132,6 +132,9 @@ the `component[n]` functions that would otherwise be created automatically for a
 
 ## Custom Classes
 
+(**NOTE** &ndash; the configuration file may be a simpler way to specify custom classes, particularly when combined with
+other configuration options.  See the [Configuration Guide](CONFIG.md).)
+
 The code generator can use custom types for properties and array items.
 This can be valuable when, for example, an organisation has its own custom classes for what are sometimes called
 "domain primitives" &ndash; value objects representing a fundamental concept for the functional area.
@@ -236,25 +239,25 @@ generated for each of them.
 
 ## Dependency Specification
 
-The latest version of the library is 0.65, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.66, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.65</version>
+      <version>0.66</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.65'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.66'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.65")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.66")
 ```
 
 Peter Wall
 
-2021-12-09
+2021-12-11
