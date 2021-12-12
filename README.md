@@ -7,6 +7,13 @@
 
 Code generation for JSON Schema (Draft 07).
 
+## NEW
+
+Recently added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
+See the documentation at [CONFIG.md](CONFIG.md).
+
+Also build tool support - see [below](#build-tool-support).
+
 ## Background
 
 [JSON Schema](https://json-schema.org/) provides a means of describing JSON values &ndash; the properties of an object,
@@ -22,11 +29,6 @@ provide conversions for the broadest possible range of JSON Schema definitions.
 
 The library uses a template mechanism (employing [Mustache](https://github.com/pwall567/kotlin-mustache) templates), and
 templates are provided to generate classes in Kotlin and Java, or interfaces in TypeScript.
-
-## NEW
-
-Recently added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
-See the documentation at [CONFIG.md](CONFIG.md).
 
 ## Quick Start
 
@@ -237,6 +239,15 @@ to or output from the API.
 Using the `generateAll()` function, the set of definitions can be selected (and optionally filtered) and the classes
 generated for each of them.
 
+## Build Tool Support
+
+To simplify the use of the code generator in conjunction with the common build tools the following plugins will perform
+code generation as a pre-pass to the build of a project, allowing classes to be generated and compiled in a single
+operation:
+
+- [`json-kotlin-gradle`](https://github.com/pwall567/json-kotlin-gradle)
+- [`json-kotlin-maven`](https://github.com/pwall567/json-kotlin-maven)
+
 ## Dependency Specification
 
 The latest version of the library is 0.66, and it may be obtained from the Maven Central repository.
@@ -260,4 +271,4 @@ The latest version of the library is 0.66, and it may be obtained from the Maven
 
 Peter Wall
 
-2021-12-11
+2021-12-12
