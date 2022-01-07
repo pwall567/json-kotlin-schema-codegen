@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorTestUtil.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2021 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ object CodeGeneratorTestUtil {
 
     val dirs = listOf("com", "example")
 
-    fun createHeader(name: String) =
+    fun createHeader(name: String, comment: String? = null) =
 """/*
  * $name
  *
@@ -41,7 +41,9 @@ object CodeGeneratorTestUtil {
  * See https://github.com/pwall567/json-kotlin-schema-codegen
  *
  * It is not advisable to modify generated code as any modifications will be lost
- * when the generation process is re-run.
+ * when the generation process is re-run.${comment?.let { """
+ *
+ * $it""" } ?: ""}
  */
 """
 
@@ -64,6 +66,13 @@ object CodeGeneratorTestUtil {
         fail("Output resolver fail - $targetFileName")
     }
 
-    data class OutputDetails(val expectedTargetFileName: TargetFileName, val stringWriter: StringWriter)
+    data class OutputDetails(
+        val expectedTargetFileName: TargetFileName,
+        val stringWriter: StringWriter = StringWriter(),
+    ) {
+
+        fun output() = stringWriter.toString()
+
+    }
 
 }

@@ -2,7 +2,7 @@
  * @(#) CodeGenerator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2020, 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -106,6 +106,8 @@ class CodeGenerator(
     }
 
     var nestedClassNameOption = NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
+
+    var commentTemplate: Template? = null
 
     private val customClassesByURI = mutableListOf<CustomClassByURI>()
     private val customClassesByFormat = mutableListOf<CustomClassByFormat>()
@@ -309,10 +311,8 @@ class CodeGenerator(
 
     private fun generateAllTargets(targets: List<Target>) {
         processTargetCrossReferences(targets)
-        for (target in targets) {
-            log.info { "Generating for ${target.source}" }
+        for (target in targets)
             generateTarget(target)
-        }
         generateIndex(targets)
     }
 
@@ -325,7 +325,16 @@ class CodeGenerator(
         }
     }
 
-    data class TargetIndex(val targets: List<Target>, val targetFile: TargetFileName, val generatorComment: String?)
+    data class TargetIndex(
+        val targets: List<Target>,
+        val targetFile: TargetFileName,
+        val generatorComment: String?,
+    ) {
+
+        @Suppress("unused")
+        val commentLines = generatorComment?.split('\n')
+
+    }
 
     private fun processTargetCrossReferences(targets: List<Target>) {
         for (target in targets) {
@@ -338,6 +347,7 @@ class CodeGenerator(
     }
 
     private fun generateTarget(target: Target) {
+        log.info { "Generating for ${target.source}" }
         nameGenerator = NameGenerator()
         when {
             target.constraints.isObject -> { // does it look like an object? generate a class
@@ -405,7 +415,7 @@ class CodeGenerator(
             if (additionalConstraints.required.contains(property.name))
                 nestedConstraints.required.add(property.name)
         }
-        val nestedClass = target.addNestedClass(nestedConstraints, Strings.toIdentifier(i))
+        val nestedClass = target.addNestedClass(nestedConstraints, null, Strings.toIdentifier(i))
         nestedClass.baseClass = target
         nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, targets)
         target.derivedClasses.add(nestedClass)
@@ -420,26 +430,29 @@ class CodeGenerator(
     /**
      * Generate a single class.
      *
-     * @param   schema      the [JSONSchema]
-     * @param   className   the class name
+     * @param   schema          the [JSONSchema]
+     * @param   className       the class name
      * @param   subDirectories  list of subdirectory names to use for the output file
+     * @param   json            original JSON (for template expansion)
      */
     fun generateClass(
         schema: JSONSchema,
         className: String,
-        subDirectories: List<String> = emptyList()
+        subDirectories: List<String> = emptyList(),
+        json: JSONValue? = null,
     ) {
         val target = Target(
             schema = schema,
             constraints = Constraints(schema),
             targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
-            source = internalSchema,
-            generatorComment = generatorComment
+            source = schema.uri?.toString() ?: internalSchema,
+            generatorComment = generatorComment,
+            commentTemplate = commentTemplate,
+            json = json,
         )
         markerInterface?.let { target.addInterface(it) }
         val targets = listOf(target)
         processTargetCrossReferences(targets)
-        log.info { "Generating for internal schema" }
         generateTarget(target)
         generateIndex(targets)
     }
@@ -447,26 +460,31 @@ class CodeGenerator(
     /**
      * Generate classes as specified by a list of pairs - Schema and class name.
      *
-     * @param   schemaList  list of [Pair] of [JSONSchema] and [String] (class name)
-     * @param   subDirectories  list of subdirectory names to use for the output files
+     * @param   schemaList          list of [Pair] of [JSONSchema] and [String] (class name)
+     * @param   subDirectories      list of subdirectory names to use for the output files
+     * @param   json                original JSON (for template expansion)
+     * @param   logCommentFunction  optional function to create logging comment
      */
     fun generateClasses(
         schemaList: List<Pair<JSONSchema, String>>,
-        subDirectories: List<String> = emptyList()
+        subDirectories: List<String> = emptyList(),
+        json: JSONValue? = null,
+        logCommentFunction: ((String) -> String)? = null,
     ) {
         val targets = schemaList.map {
             Target(
                 schema = it.first,
                 constraints = Constraints(it.first),
                 targetFile = TargetFileName(it.second, targetLanguage.ext, getOutputDirs(subDirectories)),
-                source = internalSchema,
-                generatorComment = generatorComment
+                source = logCommentFunction?.invoke(it.second) ?: it.first.uri?.toString() ?: internalSchema,
+                generatorComment = generatorComment,
+                commentTemplate = commentTemplate,
+                json = json,
             ).also { t ->
                 markerInterface?.let { i -> t.addInterface(i) }
             }
         }
         processTargetCrossReferences(targets)
-        log.info { "Generating for internal schema" }
         for (target in targets)
             generateTarget(target)
         generateIndex(targets)
@@ -493,7 +511,7 @@ class CodeGenerator(
         val definitions = (pointer.find(base) as? JSONMapping<*>) ?: fatal("Can't find definitions - $pointer")
         generateClasses(definitions.keys.filter(filter).map {
             actualSchemaParser.parseSchema(base, pointer.child(it), documentURI) to it
-        }, subDirectories)
+        }, subDirectories, base) { "$documentURI#$pointer/$it" }
     }
 
     private fun getOutputDirs(subDirectories: List<String>): List<String> {
@@ -505,17 +523,19 @@ class CodeGenerator(
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {
+        val json = actualSchemaParser.jsonReader.readJSON(inputFile)
         val schema = actualSchemaParser.parse(inputFile)
-        addTarget(targets, subDirectories, schema, inputFile.toString())
+        addTarget(targets, subDirectories, schema, inputFile.toString(), json)
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputPath: Path) {
+        val json = actualSchemaParser.jsonReader.readJSON(inputPath)
         val schema = actualSchemaParser.parse(inputPath)
-        addTarget(targets, subDirectories, schema, inputPath.toString())
+        addTarget(targets, subDirectories, schema, inputPath.toString(), json)
     }
 
     private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, schema: JSONSchema,
-            source: String) {
+            source: String, json: JSONValue) {
         val className = schema.uri?.let { uri ->
             classNameMapping.find { it.first == uri }?.second ?: run {
                 // TODO change to allow name ending with "/schema"?
@@ -539,7 +559,9 @@ class CodeGenerator(
             constraints = Constraints(schema),
             targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
             source = source,
-            generatorComment = generatorComment
+            generatorComment = generatorComment,
+            commentTemplate = commentTemplate,
+            json = json,
         ).also { t -> markerInterface?.let { t.addInterface(it) } })
     }
 
@@ -592,7 +614,9 @@ class CodeGenerator(
                                 constraints = Constraints(refTarget.schema),
                                 targetFile = refTarget.targetFile,
                                 source = refTarget.source,
-                                generatorComment = generatorComment
+                                generatorComment = generatorComment,
+                                commentTemplate = refTarget.commentTemplate,
+                                json = refTarget.json,
                             )
                             markerInterface?.let { i -> baseTarget.addInterface(i) }
                             classDescriptor.baseClass = baseTarget
@@ -632,7 +656,7 @@ class CodeGenerator(
                 }
             }
             else {
-                if (analyseProperty(target, targets, property, property.name))
+                if (analyseProperty(target, targets, property, property, property.name))
                     validationsPresent = true
             }
         }
@@ -652,7 +676,7 @@ class CodeGenerator(
     private fun analyseProperties(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
         analysePropertiesRequired(constraints)
         return constraints.properties.fold(false) { result, property ->
-            analyseProperty(target, targets, property, property.name) || result
+            analyseProperty(target, targets, property, property, property.name) || result
         }
     }
 
@@ -674,15 +698,21 @@ class CodeGenerator(
         return false
     }
 
-    private fun findTargetClass(constraints: Constraints, target: Target, targets: List<Target>,
-                                defaultName: () -> String) {
+    private fun findTargetClass(
+        constraints: Constraints,
+        refConstraints: Constraints,
+        target: Target,
+        targets: List<Target>,
+        defaultName: () -> String,
+    ) {
         if (!findRefClass(constraints, target, targets)) {
             val nestedClassName = when (nestedClassNameOption) {
                 NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
-                    constraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
+                    refConstraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
             }
-            val nestedClass = target.addNestedClass(constraints, Strings.capitalise(nestedClassName))
+            val nestedClass = target.addNestedClass(constraints, constraints.schema,
+                    Strings.capitalise(nestedClassName))
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, targets)
             constraints.localTypeName = nestedClass.className
         }
@@ -700,7 +730,13 @@ class CodeGenerator(
         return null
     }
 
-    private fun analyseProperty(target: Target, targets: List<Target>, property: Constraints, name: String): Boolean {
+    private fun analyseProperty(
+        target: Target,
+        targets: List<Target>,
+        property: Constraints,
+        arrayProperty: Constraints,
+        name: String,
+    ): Boolean {
         // true == validations present
         findCustomClass(property.schema, target)?.let {
             property.localTypeName = it
@@ -718,7 +754,8 @@ class CodeGenerator(
         }
         return when {
             property.isObject -> {
-                findTargetClass(property, target, targets) { name }
+                val referringProperty = arrayProperty.takeIf { it.schema.findRefChild() != null } ?: property
+                findTargetClass(property, referringProperty, target, targets) { name }
                 false
             }
             property.isArray -> analyseArray(target, targets, property, name)
@@ -742,7 +779,7 @@ class CodeGenerator(
         target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
         var validationsPresent = false
         property.arrayItems?.let {
-            if (analyseProperty(target, targets, it, name.depluralise())) {
+            if (analyseProperty(target, targets, it, property, name.depluralise())) {
                 property.addValidation(Validation.Type.ARRAY_ITEMS)
                 validationsPresent = true
             }
@@ -774,7 +811,7 @@ class CodeGenerator(
         property.enumValues?.let { array ->
             if (allIdentifier(array)) {
                 property.isEnumClass = true
-                findTargetClass(property, target, targets, defaultName)
+                findTargetClass(property, property, target, targets, defaultName)
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {

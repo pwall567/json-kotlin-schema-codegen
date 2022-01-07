@@ -2,7 +2,7 @@
  * @(#) Target.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2020, 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,16 @@
 
 package net.pwall.json.schema.codegen
 
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
 import net.pwall.json.schema.subschema.RefSchema
+import net.pwall.mustache.Context
+import net.pwall.mustache.Template
 
 /**
  * A code generation target.  The class contains several properties that exist just for the purposes of template
@@ -46,8 +52,20 @@ class Target(
     /** Source identifier (e.g. schema filename) */
     val source: String,
     /** Generator comment */
-    @Suppress("unused") val generatorComment: String? = null
+    val generatorComment: String?,
+    /** Comment template */
+    val commentTemplate: Template? = null,
+    /** Original JSON (for template expansion) */
+    val json: JSONValue? = null,
 ) : ClassDescriptor(constraints, NamedConstraints.checkJavaName(targetFile.className)), ClassId {
+
+    @Suppress("unused")
+    val commentLines: List<String>?
+        get() = if (commentTemplate != null) {
+            val childContext = Context(this).child(CommentContext(OffsetDateTime.now())).child(json)
+            StringBuilder().apply { commentTemplate.appendTo(this, childContext) }.toString().split('\n')
+        } else
+            generatorComment?.split('\n')
 
     override val packageName: String?
         get() = targetFile.packageName
@@ -86,17 +104,17 @@ class Target(
         addImport(classId)
     }
 
-    fun setBase(baseClass: Target) {
-        this.baseClass = baseClass
-        addImport(baseClass)
-    }
-
-    fun addNestedClass(constraints: Constraints, innerClassName: String): ClassDescriptor {
+    fun addNestedClass(
+        constraints: Constraints,
+        comparisonSchema: JSONSchema?,
+        innerClassName: String,
+    ): ClassDescriptor {
         val safeInnerClassName = NamedConstraints.checkJavaName(innerClassName)
         var actualInnerClassName = safeInnerClassName
-        nestedClasses.find { it.className == safeInnerClassName }?.let { nestedClass ->
-            if (sameReference(nestedClass.constraints, constraints))
-                return nestedClass
+        nestedClasses.find {
+            it.constraints.schema === comparisonSchema || sameReference(it.constraints, constraints)
+        }?.let { return it }
+        nestedClasses.find { it.className == safeInnerClassName }?.let {
             for (i in 1..1000) {
                 if (i == 1000)
                     throw JSONSchemaException("Too many identically named inner classes - $safeInnerClassName")
@@ -132,5 +150,17 @@ class Target(
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
     data class Static(val type: StaticType, val staticName: String, val value: Any)
+
+    data class CommentContext(val dateTime: OffsetDateTime) {
+
+        @Suppress("unused")
+        val date: LocalDate
+            get() = dateTime.toLocalDate()
+
+        @Suppress("unused")
+        val time: OffsetTime
+            get() = dateTime.toOffsetTime()
+
+    }
 
 }

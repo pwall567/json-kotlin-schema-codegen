@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-nested-classes",
+  "title": "Dummy",
+  "description": "Test nested classes.",
+  "type": "object",
+  "properties": {
+    "alpha": {
+      "$ref": "#/$defs/Nested"
+    },
+    "beta": {
+      "$ref": "#/$defs/Nested"
+    }
+  },
+  "required": [ "alpha", "beta" ],
+  "$defs": {
+    "Nested": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "string"
+        }
+      },
+      "required": [ "first" ]
+    }
+  }
+}

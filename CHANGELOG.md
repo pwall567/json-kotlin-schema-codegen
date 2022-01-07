@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.67] - 2022-01-07
+### Changed
+- `CodeGenerator`, `Configurator`, `Target`, templates: added comment template functionality
+- `CodeGenerator`, `Target`: fixed bug in nested class naming
+
 ## [0.66] - 2021-12-11
 ### Changed
 - `pom.xml`: bumped dependency version

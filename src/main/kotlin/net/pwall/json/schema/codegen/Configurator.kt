@@ -2,7 +2,7 @@
  * @(#) Configurator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import net.pwall.json.schema.codegen.CodeGenerator.Companion.fatal
 import net.pwall.json.schema.output.BasicErrorEntry
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.FormatValidator
+import net.pwall.mustache.Template
 
 object Configurator {
 
@@ -58,6 +59,9 @@ object Configurator {
         }
         ref.ifPresent<JSONString?>("generatorComment") {
             generator.generatorComment = it?.let { nonEmptyString(it) }
+        }
+        ref.ifPresent<JSONString?>("commentTemplate") {
+            generator.commentTemplate = it?.let { Template.parse(nonEmptyString(it)) }
         }
         ref.ifPresent<JSONString>("targetLanguage") {
             generator.targetLanguage = when (it.value) {
