@@ -242,7 +242,7 @@ Using this approach, the schema definition from the earlier example becomes:
 
 Again, there are two alternative mechanisms for configuring the code generator to work with non-standard format
 keywords.
-And again, the second option is described under [`customClasses`](#customclasses); the first uses regular JSON Schema,
+And again, the second option is described under [`customClasses`](#customclasses); the first uses regular JSON Schema
 syntax, this time on an individual format:
 ```json
 {
@@ -277,8 +277,8 @@ For example, a Kotlin `String` will be generated for a property of type `string`
 In most cases, the choices made by the generator will be exactly what the user wants, but in some cases there will be a
 need to specify the use of nominated types for certain properties or array items.
 
-To revisit the example of `money` and `currency` data types, many organisations will have their own classes to hold
-values of these types, and they will require the generated code to make use of these classes.
+To revisit the example of `money` and `currency` data types &ndash; many organisations will have their own classes to
+hold values of these types, and they will require the generated code to make use of these classes.
 
 ### `extension`
 
