@@ -643,6 +643,8 @@ class CodeGenerator(
             if (baseConstraints != null) {
                 property.baseProperty = baseConstraints
                 baseConstraints.defaultValue?.let { property.defaultValue = it }
+                if (baseConstraints.isArray)
+                    property.arrayItems = baseConstraints.arrayItems
                 val customClass = findCustomClass(baseConstraints.schema, target) ?:
                         baseConstraints.schema.findRefChild()?.let { findCustomClass(it.target, target) }
                 if (customClass != null)

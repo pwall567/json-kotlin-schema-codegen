@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-derived-class-with-array",
+  "description": "Test derived class with array.",
+  "$defs": {
+    "ItemType": {
+      "type": "object",
+      "properties": {
+        "abc": {
+          "type": "string"
+        }
+      }
+    },
+    "Base": {
+      "type": "object",
+      "properties": {
+        "array": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ItemType"
+          }
+        }
+      }
+    },
+    "Derived": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/Base"
+        },
+        {
+          "properties": {
+            "extra": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

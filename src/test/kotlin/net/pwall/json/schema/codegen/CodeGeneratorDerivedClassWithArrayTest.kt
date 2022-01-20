@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorBaseDerivedRequiredTest.kt
+ * @(#) CodeGeneratorDerivedClassWithArrayTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2022 Peter Wall
@@ -35,72 +35,83 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
-class CodeGeneratorBaseDerivedRequiredTest {
+class CodeGeneratorDerivedClassWithArrayTest {
 
-    @Test fun `should generate base and derived classes where derived adds required`() {
-        val input = File("src/test/resources/test-base-derived-required.schema.json")
+    @Test fun `should generate base and derived classes correctly`() {
+        val input = File("src/test/resources/test-derived-class-with-array.schema.json")
         val codeGenerator = CodeGenerator()
-        val outputDetailsBase = OutputDetails(TargetFileName("Base", "kt", dirs))
-        val outputDetailsDerived = OutputDetails(TargetFileName("Derived", "kt", dirs))
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
+        val outputDetails1 = OutputDetails(TargetFileName("ItemType", "kt", dirs))
+        val outputDetails2 = OutputDetails(TargetFileName("Base", "kt", dirs))
+        val outputDetails3 = OutputDetails(TargetFileName("Derived", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2, outputDetails3)
         codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
-        expect(createHeader("Base.kt") + expectedBase) { outputDetailsBase.output() }
-        expect(createHeader("Derived.kt") + expectedDerived) { outputDetailsDerived.output() }
+        expect(createHeader("ItemType.kt") + expected1) { outputDetails1.output() }
+        expect(createHeader("Base.kt") + expected2) { outputDetails2.output() }
+        expect(createHeader("Derived.kt") + expected3) { outputDetails3.output() }
     }
 
     companion object {
 
-        const val expectedBase =
+        const val expected1 =
+"""package com.example
+
+data class ItemType(
+    val abc: String? = null
+)
+"""
+
+        const val expected2 =
 """package com.example
 
 open class Base(
-    val aaa: String? = null
+    val array: List<ItemType>? = null
 ) {
 
     override fun equals(other: Any?): Boolean = this === other || other is Base &&
-            aaa == other.aaa
+            array == other.array
 
     override fun hashCode(): Int =
-            aaa.hashCode()
+            array.hashCode()
 
-    override fun toString() = "Base(aaa=${'$'}aaa)"
+    override fun toString() = "Base(array=${'$'}array)"
 
     open fun copy(
-        aaa: String? = this.aaa
-    ) = Base(aaa)
+        array: List<ItemType>? = this.array
+    ) = Base(array)
 
-    operator fun component1() = aaa
+    operator fun component1() = array
 
 }
 """
 
-        const val expectedDerived =
+        const val expected3 =
 """package com.example
 
 class Derived(
-    aaa: String,
-    val bbb: String
-) : Base(aaa) {
+    array: List<ItemType>? = null,
+    val extra: Boolean? = null
+) : Base(array) {
 
     override fun equals(other: Any?): Boolean = this === other || other is Derived &&
             super.equals(other) &&
-            bbb == other.bbb
+            extra == other.extra
 
     override fun hashCode(): Int = super.hashCode() xor
-            bbb.hashCode()
+            extra.hashCode()
 
-    override fun toString() = "Derived(aaa=${'$'}aaa, bbb=${'$'}bbb)"
+    override fun toString() = "Derived(array=${'$'}array, extra=${'$'}extra)"
 
     fun copy(
-        aaa: String = this.aaa!!,
-        bbb: String = this.bbb
-    ) = Derived(aaa, bbb)
+        array: List<ItemType>? = this.array,
+        extra: Boolean? = this.extra
+    ) = Derived(array, extra)
 
-    operator fun component2() = bbb
+    operator fun component2() = extra
 
 }
 """
+
     }
 
 }

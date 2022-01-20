@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.68] - 2022-01-20
+### Changed
+- `CodeGenerator`: fixed bug - derived class losing type details for array in base class
+
 ## [0.67] - 2022-01-07
 ### Changed
 - `CodeGenerator`, `Configurator`, `Target`, templates: added comment template functionality
