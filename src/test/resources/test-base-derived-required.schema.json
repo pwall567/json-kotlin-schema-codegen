@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-base-derived-required",
+  "description": "Test base and derived classes where derived adds required to property.",
+  "$defs": {
+    "Base": {
+      "type": "object",
+      "properties": {
+        "aaa": {
+          "type": "string"
+        }
+      }
+    },
+    "Derived": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Base"
+        },
+        {
+          "properties": {
+            "bbb": {
+              "type": "string"
+            }
+          },
+          "required": [ "aaa", "bbb" ]
+        }
+      ]
+    }
+  }
+}
