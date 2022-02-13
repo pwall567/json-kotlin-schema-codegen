@@ -290,6 +290,14 @@ class CodeGenerator(
         )
     }
 
+    private fun getOutputDirs(subDirectories: List<String>): List<String> {
+        val outputDir = basePackageName?.split('.') ?: emptyList()
+        return if (derivePackageFromStructure)
+            outputDir + subDirectories
+        else
+            outputDir
+    }
+
     val numTargets: Int
         get() = targets.size
 
@@ -310,6 +318,16 @@ class CodeGenerator(
      */
     fun generate(inputFiles: List<File>) {
         clearTargets()
+        addTargets(inputFiles)
+        generateAllTargets()
+    }
+
+    /**
+     * Add targets for a set of files (specified as a [List]).  Directories will be traversed recursively.
+     *
+     * @param   inputFiles  the list of files
+     */
+    fun addTargets(inputFiles: List<File>) {
         val parser = actualSchemaParser
         for (inputFile in inputFiles)
             parser.preLoad(inputFile)
@@ -319,7 +337,6 @@ class CodeGenerator(
                 inputFile.isDirectory -> addTargets(emptyList(), inputFile)
             }
         }
-        generateAllTargets()
     }
 
     /**
@@ -340,6 +357,16 @@ class CodeGenerator(
      */
     fun generateFromPaths(inputPaths: List<Path>) {
         clearTargets()
+        addTargetsByPath(inputPaths)
+        generateAllTargets()
+    }
+
+    /**
+     * Add targets for a set of files (specified as a [List] of [Path]).  Directories will be traversed recursively.
+     *
+     * @param   inputPaths  the list of files
+     */
+    fun addTargetsByPath(inputPaths: List<Path>) {
         val parser = actualSchemaParser
         for (inputPath in inputPaths)
             parser.preLoad(inputPath)
@@ -349,7 +376,6 @@ class CodeGenerator(
                 Files.isDirectory(inputPath) -> addTargets(emptyList(), inputPath)
             }
         }
-        generateAllTargets()
     }
 
     fun generateAllTargets() {
@@ -519,10 +545,7 @@ class CodeGenerator(
                 json = json,
             )
         }
-        processTargetCrossReferences()
-        for (target in targets)
-            generateTarget(target)
-        generateIndex()
+        generateAllTargets()
     }
 
     /**
@@ -542,19 +565,40 @@ class CodeGenerator(
         uri: URI = URI("https:/pwall.net/internal"),
         filter: (String) -> Boolean = { true }
     ) {
-        val documentURI = Parser.getIdOrNull(base)?.let { URI(it) } ?: uri
-        val definitions = (pointer.find(base) as? JSONMapping<*>) ?: fatal("Can't find definitions - $pointer")
-        generateClasses(definitions.keys.filter(filter).map {
-            actualSchemaParser.parseSchema(base, pointer.child(it), documentURI) to it
-        }, subDirectories, base) { "$documentURI#$pointer/$it" }
+        clearTargets()
+        addCompositeTargets(base, pointer, subDirectories, uri, filter)
+        generateAllTargets()
     }
 
-    private fun getOutputDirs(subDirectories: List<String>): List<String> {
-        val outputDir = basePackageName?.split('.') ?: emptyList()
-        return if (derivePackageFromStructure)
-            outputDir + subDirectories
-        else
-            outputDir
+    /**
+     * Add targets for all definitions in a composite file (e.g. schema definitions embedded in an OpenAPI or Swagger
+     * document).
+     *
+     * @param   base            the base of the composite object
+     * @param   pointer         pointer to the structure containing the schema definitions (e.g. /definitions)
+     * @param   subDirectories  list of subdirectory names to use for the output files
+     * @param   uri             the default URI of the document
+     * @param   filter          optional filter to select which classes to include (by name)
+     */
+    fun addCompositeTargets(
+        base: JSONValue,
+        pointer: JSONPointer,
+        subDirectories: List<String> = emptyList(),
+        uri: URI = URI("https:/pwall.net/internal"),
+        filter: (String) -> Boolean = { true }
+    ) {
+        val documentURI = Parser.getIdOrNull(base)?.let { URI(it) } ?: uri
+        val definitions = (pointer.find(base) as? JSONMapping<*>) ?: fatal("Can't find definitions - $pointer")
+        for (name in definitions.keys) {
+            if (filter(name))
+                addTarget(
+                    schema = actualSchemaParser.parseSchema(base, pointer.child(name), documentURI),
+                    className = name,
+                    subDirectories = subDirectories,
+                    source = "$documentURI#$pointer/$name",
+                    json = base,
+                )
+        }
     }
 
     private fun addTarget(subDirectories: List<String>, inputFile: File) {

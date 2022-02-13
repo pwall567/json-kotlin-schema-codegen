@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.69] - 2022-02-13
 ### Changed
 - `CodeGenerator`: fixed bug - preload not working correctly
 - `CodeGenerator`: changed handling of target list
