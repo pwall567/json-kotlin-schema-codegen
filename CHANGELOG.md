@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [Unreleased]
 ### Changed
 - `CodeGenerator`: fixed bug - preload not working correctly
+- `CodeGenerator`: changed handling of target list
 - `pom.xml`: bumped dependency versions
 
 ## [0.68] - 2022-01-20

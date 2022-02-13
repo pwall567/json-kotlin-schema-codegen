@@ -252,6 +252,47 @@ class CodeGenerator(
         Configurator.configure(this, JSONReference(json), uri)
     }
 
+    private val targets = mutableListOf<Target>()
+
+    /**
+     * Clear the target list.
+     */
+    fun clearTargets() {
+        targets.clear()
+    }
+
+    /**
+     * Add a target using the supplied details.
+     *
+     * @param   schema          the JSON schema
+     * @param   className       the class name to use for the generated class
+     * @param   subDirectories  the subdirectory names to use for package name determination
+     * @param   source          an optional source comment string
+     * @param   json            original JSON (for template expansion)
+     */
+    fun addTarget(
+        schema: JSONSchema,
+        className: String,
+        subDirectories: List<String> = emptyList(),
+        source: String = "added target",
+        json: JSONValue? = null,
+    ) {
+        targets.add(
+            Target(
+                schema = schema,
+                constraints = Constraints(schema),
+                targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
+                source = source,
+                generatorComment = generatorComment,
+                commentTemplate = commentTemplate,
+                json = json
+            ).apply { markerInterface?.let { addInterface(it) } }
+        )
+    }
+
+    val numTargets: Int
+        get() = targets.size
+
     /**
      * Generate classes for a set of schema files (specified as a `vararg` array).  Directories will be traversed
      * recursively.
@@ -268,17 +309,17 @@ class CodeGenerator(
      * @param   inputFiles  the list of files
      */
     fun generate(inputFiles: List<File>) {
-        val targets = mutableListOf<Target>()
+        clearTargets()
         val parser = actualSchemaParser
         for (inputFile in inputFiles)
             parser.preLoad(inputFile)
         for (inputFile in inputFiles) {
             when {
-                inputFile.isFile -> addTarget(targets, emptyList(), inputFile)
-                inputFile.isDirectory -> addTargets(targets, emptyList(), inputFile)
+                inputFile.isFile -> addTarget(emptyList(), inputFile)
+                inputFile.isDirectory -> addTargets(emptyList(), inputFile)
             }
         }
-        generateAllTargets(targets)
+        generateAllTargets()
     }
 
     /**
@@ -298,27 +339,27 @@ class CodeGenerator(
      * @param   inputPaths  the list of files
      */
     fun generateFromPaths(inputPaths: List<Path>) {
-        val targets = mutableListOf<Target>()
+        clearTargets()
         val parser = actualSchemaParser
         for (inputPath in inputPaths)
             parser.preLoad(inputPath)
         for (inputPath in inputPaths) {
             when {
-                Files.isRegularFile(inputPath) -> addTarget(targets, emptyList(), inputPath)
-                Files.isDirectory(inputPath) -> addTargets(targets, emptyList(), inputPath)
+                Files.isRegularFile(inputPath) -> addTarget(emptyList(), inputPath)
+                Files.isDirectory(inputPath) -> addTargets(emptyList(), inputPath)
             }
         }
-        generateAllTargets(targets)
+        generateAllTargets()
     }
 
-    private fun generateAllTargets(targets: List<Target>) {
-        processTargetCrossReferences(targets)
+    fun generateAllTargets() {
+        processTargetCrossReferences()
         for (target in targets)
             generateTarget(target)
-        generateIndex(targets)
+        generateIndex()
     }
 
-    private fun generateIndex(targets: List<Target>) {
+    private fun generateIndex() {
         indexFileName?.let { name ->
             log.info { "-- index $name" }
             actualOutputResolver(name).use {
@@ -338,14 +379,14 @@ class CodeGenerator(
 
     }
 
-    private fun processTargetCrossReferences(targets: List<Target>) {
+    private fun processTargetCrossReferences() {
         for (target in targets) {
             processSchema(target.schema, target.constraints)
             if (target.constraints.isObject)
-                target.validationsPresent = analyseObject(target, target, target.constraints, targets)
+                target.validationsPresent = analyseObject(target, target, target.constraints)
         }
         for (target in targets)
-            findOneOfDerivedClasses(target.constraints, target, targets)
+            findOneOfDerivedClasses(target.constraints, target)
     }
 
     private fun generateTarget(target: Target) {
@@ -377,25 +418,25 @@ class CodeGenerator(
         }
     }
 
-    private fun findOneOfDerivedClasses(constraints: Constraints, target: Target, targets: List<Target>) {
+    private fun findOneOfDerivedClasses(constraints: Constraints, target: Target) {
         for (i in constraints.oneOfSchemata.indices) {
             val oneOfItem = constraints.oneOfSchemata[i]
-            val oneOfTarget = oneOfItem.schema.findTarget(targets)
+            val oneOfTarget = oneOfItem.schema.findTarget()
             if (oneOfTarget != null) {
                 if (!constraints.isObject) {
                     oneOfTarget.addInterface(target)
                     target.derivedClasses.add(oneOfTarget)
                 }
                 else
-                    createCombinedClass(i, constraints, oneOfTarget.constraints, target, targets)
+                    createCombinedClass(i, constraints, oneOfTarget.constraints, target)
             }
             else
-                createCombinedClass(i, constraints, oneOfItem, target, targets)
+                createCombinedClass(i, constraints, oneOfItem, target)
         }
     }
 
     private fun createCombinedClass(i: Int, constraints: Constraints, additionalConstraints: Constraints,
-            target: Target, targets: List<Target>) {
+            target: Target) {
         // create a nested class with current as a base class and oneOfTarget properties, and remove (merge?) overlapping properties
         val nestedConstraints = Constraints(constraints.schema)
         for (property in constraints.properties) {
@@ -419,11 +460,11 @@ class CodeGenerator(
         }
         val nestedClass = target.addNestedClass(nestedConstraints, null, Strings.toIdentifier(i))
         nestedClass.baseClass = target
-        nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, targets)
+        nestedClass.validationsPresent = analyseProperties(target, nestedConstraints)
         target.derivedClasses.add(nestedClass)
     }
 
-    private fun JSONSchema.findTarget(targets: List<Target>): Target? {
+    private fun JSONSchema.findTarget(): Target? {
         return (this as? JSONSchema.General)?.children?.singleOrNull()?.let { ref ->
             if (ref is RefSchema) targets.find { it.schema === ref.target } else null
         }
@@ -443,20 +484,15 @@ class CodeGenerator(
         subDirectories: List<String> = emptyList(),
         json: JSONValue? = null,
     ) {
-        val target = Target(
+        clearTargets()
+        addTarget(
             schema = schema,
-            constraints = Constraints(schema),
-            targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
+            className = className,
+            subDirectories = subDirectories,
             source = schema.uri?.toString() ?: internalSchema,
-            generatorComment = generatorComment,
-            commentTemplate = commentTemplate,
             json = json,
         )
-        markerInterface?.let { target.addInterface(it) }
-        val targets = listOf(target)
-        processTargetCrossReferences(targets)
-        generateTarget(target)
-        generateIndex(targets)
+        generateAllTargets()
     }
 
     /**
@@ -473,23 +509,20 @@ class CodeGenerator(
         json: JSONValue? = null,
         logCommentFunction: ((String) -> String)? = null,
     ) {
-        val targets = schemaList.map {
-            Target(
-                schema = it.first,
-                constraints = Constraints(it.first),
-                targetFile = TargetFileName(it.second, targetLanguage.ext, getOutputDirs(subDirectories)),
-                source = logCommentFunction?.invoke(it.second) ?: it.first.uri?.toString() ?: internalSchema,
-                generatorComment = generatorComment,
-                commentTemplate = commentTemplate,
+        clearTargets()
+        for (entry in schemaList) {
+            addTarget(
+                schema = entry.first,
+                className = entry.second,
+                subDirectories = subDirectories,
+                source = logCommentFunction?.invoke(entry.second) ?: entry.first.uri?.toString() ?: internalSchema,
                 json = json,
-            ).also { t ->
-                markerInterface?.let { i -> t.addInterface(i) }
-            }
+            )
         }
-        processTargetCrossReferences(targets)
+        processTargetCrossReferences()
         for (target in targets)
             generateTarget(target)
-        generateIndex(targets)
+        generateIndex()
     }
 
     /**
@@ -524,20 +557,19 @@ class CodeGenerator(
             outputDir
     }
 
-    private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputFile: File) {
+    private fun addTarget(subDirectories: List<String>, inputFile: File) {
         val json = actualSchemaParser.jsonReader.readJSON(inputFile)
         val schema = actualSchemaParser.parse(inputFile)
-        addTarget(targets, subDirectories, schema, inputFile.toString(), json)
+        addTarget(subDirectories, schema, inputFile.toString(), json)
     }
 
-    private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, inputPath: Path) {
+    private fun addTarget(subDirectories: List<String>, inputPath: Path) {
         val json = actualSchemaParser.jsonReader.readJSON(inputPath)
         val schema = actualSchemaParser.parse(inputPath)
-        addTarget(targets, subDirectories, schema, inputPath.toString(), json)
+        addTarget(subDirectories, schema, inputPath.toString(), json)
     }
 
-    private fun addTarget(targets: MutableList<Target>, subDirectories: List<String>, schema: JSONSchema,
-            source: String, json: JSONValue) {
+    private fun addTarget(subDirectories: List<String>, schema: JSONSchema, source: String, json: JSONValue) {
         val className = schema.uri?.let { uri ->
             classNameMapping.find { it.first == uri }?.second ?: run {
                 // TODO change to allow name ending with "/schema"?
@@ -555,39 +587,37 @@ class CodeGenerator(
                     else -> uriNameNoExtension
                 }.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.sanitiseName()
             }
-        } ?: "GeneratedClass${targets.size}"
-        targets.add(Target(
+        } ?: "GeneratedClass$numTargets"
+        addTarget(
             schema = schema,
-            constraints = Constraints(schema),
-            targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
+            className = className,
+            subDirectories = subDirectories,
             source = source,
-            generatorComment = generatorComment,
-            commentTemplate = commentTemplate,
             json = json,
-        ).also { t -> markerInterface?.let { t.addInterface(it) } })
+        )
     }
 
-    private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: File) {
+    private fun addTargets(subDirectories: List<String>, inputDir: File) {
         inputDir.listFiles()?.forEach {
             when {
                 it.isDirectory -> {
                     if (!it.name.startsWith('.'))
-                        addTargets(targets, subDirectories + it.name.mapDirectoryName(), it)
+                        addTargets(subDirectories + it.name.mapDirectoryName(), it)
                 }
-                it.isFile -> addTarget(targets, subDirectories, it)
+                it.isFile -> addTarget(subDirectories, it)
             }
         }
     }
 
-    private fun addTargets(targets: MutableList<Target>, subDirectories: List<String>, inputDir: Path) {
+    private fun addTargets(subDirectories: List<String>, inputDir: Path) {
         Files.newDirectoryStream(inputDir).use { dir ->
             dir.forEach {
                 when {
                     Files.isDirectory(it) -> {
                         if (!it.fileName.toString().startsWith('.'))
-                            addTargets(targets, subDirectories + it.fileName.toString().mapDirectoryName(), it)
+                            addTargets(subDirectories + it.fileName.toString().mapDirectoryName(), it)
                     }
-                    Files.isRegularFile(it) -> addTarget(targets, subDirectories, it)
+                    Files.isRegularFile(it) -> addTarget(subDirectories, it)
                 }
             }
         }
@@ -599,8 +629,7 @@ class CodeGenerator(
                 it.append(ch)
     }.toString()
 
-    private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints,
-            targets: List<Target>): Boolean {
+    private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints): Boolean {
         constraints.objectValidationsPresent?.let { return it }
         (constraints.schema as? JSONSchema.General)?.let {
             for (child in it.children) {
@@ -624,8 +653,8 @@ class CodeGenerator(
                             classDescriptor.baseClass = baseTarget
                             target.addImport(baseTarget)
                             processSchema(baseTarget.schema, baseTarget.constraints)
-                            analyseObject(baseTarget, baseTarget, baseTarget.constraints, targets)
-                            return analyseDerivedObject(target, constraints, baseTarget, targets)
+                            analyseObject(baseTarget, baseTarget, baseTarget.constraints)
+                            return analyseDerivedObject(target, constraints, baseTarget)
                         }
                     }
                     break
@@ -633,11 +662,10 @@ class CodeGenerator(
             }
         }
         // now carry on and analyse properties
-        return analyseProperties(target, constraints, targets).also { constraints.objectValidationsPresent = it }
+        return analyseProperties(target, constraints).also { constraints.objectValidationsPresent = it }
     }
 
-    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target,
-            targets: List<Target>): Boolean {
+    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target): Boolean {
         analysePropertiesRequired(constraints)
         var validationsPresent = false
         constraints.properties.forEach { property ->
@@ -660,7 +688,7 @@ class CodeGenerator(
                 }
             }
             else {
-                if (analyseProperty(target, targets, property, property, property.name))
+                if (analyseProperty(target, property, property, property.name))
                     validationsPresent = true
             }
         }
@@ -677,10 +705,10 @@ class CodeGenerator(
         }
     }
 
-    private fun analyseProperties(target: Target, constraints: Constraints, targets: List<Target>): Boolean {
+    private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
         analysePropertiesRequired(constraints)
         return constraints.properties.fold(false) { result, property ->
-            analyseProperty(target, targets, property, property, property.name) || result
+            analyseProperty(target, property, property, property.name) || result
         }
     }
 
@@ -689,7 +717,7 @@ class CodeGenerator(
         constraints.localTypeName = otherTarget.className
     }
 
-    private fun findRefClass(constraints: Constraints, target: Target, targets: List<Target>): Boolean {
+    private fun findRefClass(constraints: Constraints, target: Target): Boolean {
         targets.find { it.schema === constraints.schema }?.let {
             useTarget(constraints, target, it)
             return true
@@ -706,10 +734,9 @@ class CodeGenerator(
         constraints: Constraints,
         refConstraints: Constraints,
         target: Target,
-        targets: List<Target>,
         defaultName: () -> String,
     ) {
-        if (!findRefClass(constraints, target, targets)) {
+        if (!findRefClass(constraints, target)) {
             val nestedClassName = when (nestedClassNameOption) {
                 NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
                     refConstraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
@@ -717,7 +744,7 @@ class CodeGenerator(
             }
             val nestedClass = target.addNestedClass(constraints, constraints.schema,
                     Strings.capitalise(nestedClassName))
-            nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, targets)
+            nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
             constraints.localTypeName = nestedClass.className
         }
     }
@@ -736,7 +763,6 @@ class CodeGenerator(
 
     private fun analyseProperty(
         target: Target,
-        targets: List<Target>,
         property: Constraints,
         arrayProperty: Constraints,
         name: String,
@@ -759,10 +785,10 @@ class CodeGenerator(
         return when {
             property.isObject -> {
                 val referringProperty = arrayProperty.takeIf { it.schema.findRefChild() != null } ?: property
-                findTargetClass(property, referringProperty, target, targets) { name }
+                findTargetClass(property, referringProperty, target) { name }
                 false
             }
-            property.isArray -> analyseArray(target, targets, property, name)
+            property.isArray -> analyseArray(target, property, name)
             property.isInt -> analyseInt(property, target)
             property.isLong -> analyseLong(property, target)
             property.isDecimal -> {
@@ -770,20 +796,20 @@ class CodeGenerator(
                 property.systemClass = SystemClass.DECIMAL
                 analyseDecimal(target, property)
             }
-            property.isString -> analyseString(property, target, targets) { name }
+            property.isString -> analyseString(property, target) { name }
             property.isBoolean -> false
             else -> {
-                findRefClass(property, target, targets)
+                findRefClass(property, target)
                 false
             }
         }
     }
 
-    private fun analyseArray(target: Target, targets: List<Target>, property: Constraints, name: String): Boolean {
+    private fun analyseArray(target: Target, property: Constraints, name: String): Boolean {
         target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
         var validationsPresent = false
         property.arrayItems?.let {
-            if (analyseProperty(target, targets, it, property, name.depluralise())) {
+            if (analyseProperty(target, it, property, name.depluralise())) {
                 property.addValidation(Validation.Type.ARRAY_ITEMS)
                 validationsPresent = true
             }
@@ -807,7 +833,7 @@ class CodeGenerator(
         return validationsPresent
     }
 
-    private fun analyseString(property: Constraints, target: Target, targets: List<Target>, defaultName: () -> String):
+    private fun analyseString(property: Constraints, target: Target, defaultName: () -> String):
             Boolean {
         var validationsPresent = analyseFormat(target, property)
         if (property.systemClass != null)
@@ -815,7 +841,7 @@ class CodeGenerator(
         property.enumValues?.let { array ->
             if (allIdentifier(array)) {
                 property.isEnumClass = true
-                findTargetClass(property, property, target, targets, defaultName)
+                findTargetClass(property, property, target, defaultName)
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
