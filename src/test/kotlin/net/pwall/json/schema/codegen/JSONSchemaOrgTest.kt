@@ -2,7 +2,7 @@
  * @(#) JSONSchemaOrgTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ class JSONSchemaOrgTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
-        codeGenerator.generate(inputB, inputA) // second file first so $ref will be found in cache
+        codeGenerator.generate(inputA, inputB)
         expect(outputA.reader().readText()) { stringWriterA.toString() }
         expect(outputB.reader().readText()) { stringWriterB.toString() }
     }

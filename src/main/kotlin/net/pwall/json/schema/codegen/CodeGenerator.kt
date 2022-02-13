@@ -270,8 +270,9 @@ class CodeGenerator(
     fun generate(inputFiles: List<File>) {
         val targets = mutableListOf<Target>()
         val parser = actualSchemaParser
-        for (inputFile in inputFiles) {
+        for (inputFile in inputFiles)
             parser.preLoad(inputFile)
+        for (inputFile in inputFiles) {
             when {
                 inputFile.isFile -> addTarget(targets, emptyList(), inputFile)
                 inputFile.isDirectory -> addTargets(targets, emptyList(), inputFile)
@@ -299,8 +300,9 @@ class CodeGenerator(
     fun generateFromPaths(inputPaths: List<Path>) {
         val targets = mutableListOf<Target>()
         val parser = actualSchemaParser
-        for (inputPath in inputPaths) {
+        for (inputPath in inputPaths)
             parser.preLoad(inputPath)
+        for (inputPath in inputPaths) {
             when {
                 Files.isRegularFile(inputPath) -> addTarget(targets, emptyList(), inputPath)
                 Files.isDirectory(inputPath) -> addTargets(targets, emptyList(), inputPath)

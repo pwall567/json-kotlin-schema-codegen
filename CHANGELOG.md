@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`: fixed bug - preload not working correctly
+- `pom.xml`: bumped dependency versions
+
 ## [0.68] - 2022-01-20
 ### Changed
 - `CodeGenerator`: fixed bug - derived class losing type details for array in base class
