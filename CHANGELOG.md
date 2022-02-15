@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.70] - 2022-02-15
+### Changed
+- `CodeGenerator`: improved handling of settable parameters
+
 ## [0.69] - 2022-02-13
 ### Changed
 - `CodeGenerator`: fixed bug - preload not working correctly

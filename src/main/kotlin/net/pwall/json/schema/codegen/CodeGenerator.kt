@@ -119,16 +119,21 @@ class CodeGenerator(
         classNameMapping.add(uri to name)
     }
 
-    var schemaParser: Parser? = null
+    private var schemaParserField: Parser? = null
+
+    var schemaParser: Parser
+        get() = schemaParserField ?: defaultSchemaParser.also { schemaParserField = it }
+        set(sp) { schemaParserField = sp }
 
     private val defaultSchemaParser: Parser by lazy {
         Parser()
     }
 
-    private val actualSchemaParser: Parser
-        get() = schemaParser ?: defaultSchemaParser
+    private var templateParserField: MustacheParser? = null
 
-    var templateParser: MustacheParser? = null
+    var templateParser: MustacheParser
+        get() = templateParserField ?: defaultTemplateParser.also { templateParserField = it }
+        set(tp) { templateParserField = tp }
 
     private val defaultTemplateParser: MustacheParser by lazy {
         MustacheParser { name ->
@@ -142,63 +147,65 @@ class CodeGenerator(
         fatal("Can't locate template partial $name")
     }
 
-    private val actualTemplateParser: MustacheParser
-        get() = templateParser ?: defaultTemplateParser
+    private var templateField: Template? = null
 
-    var template: Template? = null
+    var template: Template
+        get() = templateField ?: defaultTemplate.also { templateField = it }
+        set(t) { templateField = t }
 
     private val defaultTemplate: Template by lazy {
-        val resolver = actualTemplateParser.resolvePartial
-        actualTemplateParser.parse(actualTemplateParser.resolver(templateName))
+        val resolver = templateParser.resolvePartial
+        templateParser.parse(templateParser.resolver(templateName))
     }
-
-    private val actualTemplate: Template
-        get() = template ?: defaultTemplate
 
     var interfaceTemplateName = "interface"
 
-    var interfaceTemplate: Template? = null
+    private var interfaceTemplateField: Template? = null
+
+    var interfaceTemplate: Template
+        get() = interfaceTemplateField ?: defaultInterfaceTemplate.also { interfaceTemplateField = it }
+        set(it) { interfaceTemplateField = it }
 
     private val defaultInterfaceTemplate: Template by lazy {
-        val resolver = actualTemplateParser.resolvePartial
-        actualTemplateParser.parse(actualTemplateParser.resolver(interfaceTemplateName))
+        val resolver = templateParser.resolvePartial
+        templateParser.parse(templateParser.resolver(interfaceTemplateName))
     }
 
-    private val actualInterfaceTemplate: Template
-        get() = interfaceTemplate ?: defaultInterfaceTemplate
+    var enumTemplateField: Template? = null
 
-    var enumTemplate: Template? = null
+    var enumTemplate: Template
+        get() = enumTemplateField ?: defaultEnumTemplate.also { enumTemplateField = it }
+        set(et) { enumTemplateField = et }
 
     private val defaultEnumTemplate: Template by lazy {
-        val resolver = actualTemplateParser.resolvePartial
-        actualTemplateParser.parse(actualTemplateParser.resolver(enumTemplateName))
+        val resolver = templateParser.resolvePartial
+        templateParser.parse(templateParser.resolver(enumTemplateName))
     }
-
-    private val actualEnumTemplate: Template
-        get() = enumTemplate ?: defaultEnumTemplate
 
     var indexFileName: TargetFileName? = null
 
     var indexTemplateName: String = "index"
 
-    var indexTemplate: Template? = null
+    var indexTemplateField: Template? = null
+
+    var indexTemplate: Template
+        get() = interfaceTemplateField ?: defaultIndexTemplate.also { indexTemplateField = it }
+        set(it) { indexTemplateField = it }
 
     private val defaultIndexTemplate: Template by lazy {
-        val resolver = actualTemplateParser.resolvePartial
-        actualTemplateParser.parse(actualTemplateParser.resolver(indexTemplateName))
+        val resolver = templateParser.resolvePartial
+        templateParser.parse(templateParser.resolver(indexTemplateName))
     }
 
-    private val actualIndexTemplate: Template
-        get() = indexTemplate ?: defaultIndexTemplate
+    var outputResolverField: OutputResolver? = null
 
-    var outputResolver: OutputResolver? = null
+    var outputResolver: OutputResolver
+        get() = outputResolverField ?: defaultOutputResolver.also { outputResolverField = it }
+        set(or) { outputResolverField = or }
 
     private val defaultOutputResolver: OutputResolver = { targetFileName ->
         targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
     }
-
-    private val actualOutputResolver: OutputResolver
-        get() = outputResolver ?: defaultOutputResolver
 
     fun setTemplateDirectory(directory: File, suffix: String = "mustache") {
         when {
@@ -328,7 +335,7 @@ class CodeGenerator(
      * @param   inputFiles  the list of files
      */
     fun addTargets(inputFiles: List<File>) {
-        val parser = actualSchemaParser
+        val parser = schemaParser
         for (inputFile in inputFiles)
             parser.preLoad(inputFile)
         for (inputFile in inputFiles) {
@@ -367,7 +374,7 @@ class CodeGenerator(
      * @param   inputPaths  the list of files
      */
     fun addTargetsByPath(inputPaths: List<Path>) {
-        val parser = actualSchemaParser
+        val parser = schemaParser
         for (inputPath in inputPaths)
             parser.preLoad(inputPath)
         for (inputPath in inputPaths) {
@@ -388,8 +395,8 @@ class CodeGenerator(
     private fun generateIndex() {
         indexFileName?.let { name ->
             log.info { "-- index $name" }
-            actualOutputResolver(name).use {
-                actualIndexTemplate.processTo(AppendableFilter(it), TargetIndex(targets, name, generatorComment))
+            outputResolver(name).use {
+                indexTemplate.processTo(AppendableFilter(it), TargetIndex(targets, name, generatorComment))
             }
         }
     }
@@ -423,21 +430,21 @@ class CodeGenerator(
                 log.info { "-- target class ${target.qualifiedClassName}" }
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
-                actualOutputResolver(target.targetFile).use {
-                    actualTemplate.processTo(AppendableFilter(it), target)
+                outputResolver(target.targetFile).use {
+                    template.processTo(AppendableFilter(it), target)
                 }
             }
             target.constraints.oneOfSchemata.any { it.isObject } -> {
                 // it wasn't an object, but it had a oneOf with object children
                 log.info { "-- target interface ${target.qualifiedClassName}" }
-                actualOutputResolver(target.targetFile).use {
-                    actualInterfaceTemplate.processTo(AppendableFilter(it), target)
+                outputResolver(target.targetFile).use {
+                    interfaceTemplate.processTo(AppendableFilter(it), target)
                 }
             }
             target.constraints.isString && target.constraints.enumValues.let { it != null && allIdentifier(it) } -> {
                 log.info { "-- target enum ${target.qualifiedClassName}" }
-                actualOutputResolver(target.targetFile).use {
-                    actualEnumTemplate.processTo(it, target)
+                outputResolver(target.targetFile).use {
+                    enumTemplate.processTo(it, target)
                 }
             }
             else -> log.info { "-- nothing to generate for ${target.className}" }
@@ -592,7 +599,7 @@ class CodeGenerator(
         for (name in definitions.keys) {
             if (filter(name))
                 addTarget(
-                    schema = actualSchemaParser.parseSchema(base, pointer.child(name), documentURI),
+                    schema = schemaParser.parseSchema(base, pointer.child(name), documentURI),
                     className = name,
                     subDirectories = subDirectories,
                     source = "$documentURI#$pointer/$name",
@@ -602,14 +609,14 @@ class CodeGenerator(
     }
 
     private fun addTarget(subDirectories: List<String>, inputFile: File) {
-        val json = actualSchemaParser.jsonReader.readJSON(inputFile)
-        val schema = actualSchemaParser.parse(inputFile)
+        val json = schemaParser.jsonReader.readJSON(inputFile)
+        val schema = schemaParser.parse(inputFile)
         addTarget(subDirectories, schema, inputFile.toString(), json)
     }
 
     private fun addTarget(subDirectories: List<String>, inputPath: Path) {
-        val json = actualSchemaParser.jsonReader.readJSON(inputPath)
-        val schema = actualSchemaParser.parse(inputPath)
+        val json = schemaParser.jsonReader.readJSON(inputPath)
+        val schema = schemaParser.parse(inputPath)
         addTarget(subDirectories, schema, inputPath.toString(), json)
     }
 
