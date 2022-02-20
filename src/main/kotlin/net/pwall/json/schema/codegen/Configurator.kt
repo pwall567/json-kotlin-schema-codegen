@@ -38,7 +38,6 @@ import net.pwall.json.pointer.JSONReference
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.fatal
 import net.pwall.json.schema.output.BasicErrorEntry
-import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.FormatValidator
 import net.pwall.mustache.Template
 
@@ -48,7 +47,7 @@ object Configurator {
         // TODO validate against schema?
         val extensionValidators = mutableMapOf<String, MutableMap<String, CustomValidator>>()
         val nonStandardFormats = mutableMapOf<String, CustomValidator>()
-        val parser = generator.schemaParser ?: Parser().also { generator.schemaParser = it }
+        val parser = generator.schemaParser
         if (ref.value !is JSONMapping<*>)
             fatal("Config must be object")
         ref.ifPresent<JSONString>("title") {}
@@ -56,6 +55,9 @@ object Configurator {
         ref.ifPresent<JSONString>("description") {}
         ref.ifPresent<JSONString?>("packageName") {
             generator.basePackageName = it?.let { nonEmptyString(it) }
+        }
+        ref.ifPresent<JSONString?>("markerInterface") {
+            generator.markerInterface = it?.let { ClassName.of(nonEmptyString(it)) }
         }
         ref.ifPresent<JSONString?>("generatorComment") {
             generator.generatorComment = it?.let { nonEmptyString(it) }

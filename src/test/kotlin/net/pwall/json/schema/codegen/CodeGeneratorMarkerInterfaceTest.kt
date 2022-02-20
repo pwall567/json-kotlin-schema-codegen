@@ -64,7 +64,7 @@ class CodeGeneratorMarkerInterfaceTest {
         val codeGenerator = CodeGenerator()
         val stringWriter = StringWriter()
         codeGenerator.basePackageName = "com.example"
-        codeGenerator.markerInterface = ClassName("Marker", "com.example.other")
+        codeGenerator.markerInterface = ClassName.of("com.example.other.Marker")
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.kt") + expectedExternal) { stringWriter.toString() }
@@ -79,6 +79,16 @@ class CodeGeneratorMarkerInterfaceTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
         codeGenerator.generate(input)
         expect(createHeader("TestEmpty.java") + expectedExternalJava) { stringWriter.toString() }
+    }
+
+    @Test fun `should output marker interface when specified in config file`() {
+        val input = File("src/test/resources/test-empty-object.schema.json")
+        val codeGenerator = CodeGenerator()
+        val stringWriter = StringWriter()
+        codeGenerator.configure(File("src/test/resources/config/marker-interface-config.json"))
+        codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
+        codeGenerator.generate(input)
+        expect(createHeader("TestEmpty.kt") + expected) { stringWriter.toString() }
     }
 
     companion object {

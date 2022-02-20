@@ -2,7 +2,7 @@
  * @(#) ClassName.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,4 +25,15 @@
 
 package net.pwall.json.schema.codegen
 
-data class ClassName(override val className: String, override val packageName: String? = null) : ClassId
+data class ClassName(override val className: String, override val packageName: String? = null) : ClassId {
+
+    companion object {
+
+        fun of(name: String): ClassName {
+            val i = name.lastIndexOf('.')
+            return if (i < 0) ClassName(name) else ClassName(name.substring(i + 1), name.substring(0, i))
+        }
+
+    }
+
+}

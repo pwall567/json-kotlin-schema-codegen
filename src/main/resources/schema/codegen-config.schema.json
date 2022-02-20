@@ -35,6 +35,12 @@
       "maxLength": 256,
       "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)*$"
     },
+    "markerInterface": {
+      "type": [ "string", "null" ],
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^([a-z][a-z0-9]*\\.)*[A-Za-z][A-Za-z0-9]*$"
+    },
     "generatorComment": {
       "type": [ "string", "null" ],
       "minLength": 1

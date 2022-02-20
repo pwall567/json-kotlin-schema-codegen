@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [0.71] - 2022-02-20
 ### Changed
 - `CodeGenerator`: added ability to specify inputs by URI
+- `ClassName`: added `of` function
+- `Configurator`: added `markerInterface` option
 
 ## [0.70] - 2022-02-15
 ### Changed

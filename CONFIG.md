@@ -33,6 +33,7 @@ The configuration file includes the following:
 - [`description`](#description)
 - [`targetLanguage`](#targetlanguage)
 - [`packageName`](#packagename)
+- [`markerInterface`](#markerinterface)
 - [`generatorComment`](#generatorcomment)
 - [`nestedClassNameOption`](#nestedclassnameoption)
 - [`derivePackageFromStructure`](#derivepackagefromstructure)
@@ -80,6 +81,18 @@ The package name may be specified as a configuration option:
 }
 ```
 The value must be a non-empty string, or `null` to specify that no package name is to be used (this is the default).
+
+
+## `markerInterface`
+
+The code generator allows a &ldquo;marker&rdquo; interface to be added to each generated class.
+This may be specified as a configuration option:
+```json
+{
+  "markerInterface": "com.example.Model"
+}
+```
+The value must be a non-empty string, or `null` to specify that no marker interface is to be used (this is the default).
 
 
 ## `generatorComment`
