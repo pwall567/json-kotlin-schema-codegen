@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.71] - 2022-02-20
+### Changed
+- `CodeGenerator`: added ability to specify inputs by URI
+
 ## [0.70] - 2022-02-15
 ### Changed
 - `CodeGenerator`: improved handling of settable parameters

@@ -74,7 +74,7 @@ import net.pwall.util.Strings
 import net.pwall.yaml.YAMLSimple
 
 /**
- * JSON Schema Code Generator.  The class my be parameterised either by constructor parameters or by setting the
+ * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
  * appropriate variables after construction.
  *
  * @author  Peter Wall
@@ -305,6 +305,27 @@ class CodeGenerator(
             outputDir
     }
 
+    /**
+     * Generate classes for a set of schema files specified by URI.
+     */
+    fun generate(vararg inputs: URI) {
+        clearTargets()
+        for (uri in inputs)
+            addTarget(uri)
+        generateAllTargets()
+    }
+
+    /**
+     * Add a target by URI.
+     *
+     * @param   uri     the URI
+     */
+    fun addTarget(uri: URI) {
+        val json = schemaParser.jsonReader.readJSON(uri)
+        val schema = schemaParser.parse(uri)
+        addTarget(emptyList(), schema, uri.toString(), json)
+    }
+
     val numTargets: Int
         get() = targets.size
 
@@ -385,6 +406,9 @@ class CodeGenerator(
         }
     }
 
+    /**
+     * Generate all targets added to the target list.
+     */
     fun generateAllTargets() {
         processTargetCrossReferences()
         for (target in targets)
@@ -576,6 +600,25 @@ class CodeGenerator(
         addCompositeTargets(base, pointer, subDirectories, uri, filter)
         generateAllTargets()
     }
+
+    /**
+     * Add targets for all definitions in a composite file (e.g. schema definitions embedded in an OpenAPI or Swagger
+     * document) for a file located by URI.
+     *
+     * @param   uri             the URI of the document
+     * @param   pointer         pointer to the structure containing the schema definitions (e.g. /definitions)
+     * @param   filter          optional filter to select which classes to include (by name)
+     */
+    fun addCompositeTargets(
+        uri: URI,
+        pointer: JSONPointer,
+        filter: (String) -> Boolean = { true }
+    ) = addCompositeTargets(
+        base = schemaParser.jsonReader.readJSON(uri),
+        pointer = pointer,
+        uri = uri,
+        filter = filter
+    )
 
     /**
      * Add targets for all definitions in a composite file (e.g. schema definitions embedded in an OpenAPI or Swagger
