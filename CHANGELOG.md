@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.72] - 2022-03-02
+### Changed
+- `CodeGenerator`, `Constraints`, templates: improved handling of derived classes
+
 ## [0.71] - 2022-02-20
 ### Changed
 - `CodeGenerator`: added ability to specify inputs by URI

@@ -4,7 +4,9 @@
 {{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
 }}{{#properties}}{{^first}},{{/first}}
 {{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        {{^baseProperty}}val {{/baseProperty}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+{{/description}}{{/schema}}        {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
+}}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
+}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
     ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
 
@@ -12,6 +14,8 @@
 {{#properties}}{{>validations}}{{/properties}}        }
 
 {{/validationsPresent}}{{#hasBaseClassWithProperties}}
+{{#properties}}{{#extendedInDerived}}        open val {{&kotlinName}}: {{>type}} = {{&kotlinName}}
+{{/extendedInDerived}}{{/properties}}
 {{>equals}}
 {{>hashcode}}
 {{>tostring}}

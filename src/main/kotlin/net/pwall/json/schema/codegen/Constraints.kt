@@ -93,6 +93,8 @@ open class Constraints(val schema: JSONSchema) {
     val nonBaseProperties: List<NamedConstraints>
         get() = properties.filter { it.baseProperty == null }
 
+    var extendedInDerived: Boolean = false
+
     val required = mutableListOf<String>()
 
     var arrayItems: Constraints? = null
@@ -235,6 +237,31 @@ open class Constraints(val schema: JSONSchema) {
 
     private fun maximumImpliesInt(): Boolean = maximumLong?.let { it <= Int.MAX_VALUE } ?: false
 
+    /**
+     * Does this `Constraints` resolve to the same generated type as another?
+     */
+    fun sameType(other: Constraints): Boolean {
+        if (nullable != other.nullable)
+            return false
+        if (isSystemClass)
+            return other.isSystemClass && systemClass == other.systemClass
+        if (isLocalType)
+            return other.isLocalType && localTypeName == other.localTypeName
+        if (isString)
+            return other.isString
+        if (isInt)
+            return other.isInt
+        if (isLong)
+            return other.isLong
+        if (isDecimal)
+            return other.isDecimal
+        if (isBoolean)
+            return other.isBoolean
+        if (isArray)
+            return other.isArray && uniqueItems == other.uniqueItems && sameTypes(this.arrayItems, other.arrayItems)
+        return true
+    }
+
     fun copyFrom(other: Constraints) {
         uri = other.uri
         objectValidationsPresent = other.objectValidationsPresent
@@ -274,6 +301,9 @@ open class Constraints(val schema: JSONSchema) {
             is Long -> this
             else -> this.toLong()
         }
+
+        fun sameTypes(a: Constraints?, b: Constraints?): Boolean =
+                a == null && b == null || a != null && b != null && a.sameType(b)
 
     }
 

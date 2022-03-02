@@ -4,7 +4,6 @@
 }} = this.{{&kotlinName}}{{^nullable}}{{#baseProperty}}{{#nullable}}!!{{/nullable}}{{/baseProperty}}{{/nullable}}{{!
 }}{{/hasBaseClassWithProperties}}{{!
 }}{{#hasBaseClassWithProperties}}{{#hasNonBaseProperties}}{{!
-}} = this.{{&kotlinName}}{{^nullable}}{{#baseProperty}}{{#nullable}}!!{{/nullable}}{{/baseProperty}}{{/nullable}}{{!
-}}{{/hasNonBaseProperties}}{{/hasBaseClassWithProperties}}{{!
+}} = this.{{&kotlinName}}{{/hasNonBaseProperties}}{{/hasBaseClassWithProperties}}{{!
 }}{{^last}},{{/last}}
 {{/properties}}{{&indent}}    ) = {{&className}}({{#properties}}{{&kotlinName}}{{^last}}, {{/last}}{{/properties}})

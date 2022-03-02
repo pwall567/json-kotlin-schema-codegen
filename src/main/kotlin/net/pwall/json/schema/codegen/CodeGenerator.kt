@@ -437,11 +437,11 @@ class CodeGenerator(
     }
 
     private fun processTargetCrossReferences() {
-        for (target in targets) {
+        for (target in targets)
             processSchema(target.schema, target.constraints)
+        for (target in targets)
             if (target.constraints.isObject)
                 target.validationsPresent = analyseObject(target, target, target.constraints)
-        }
         for (target in targets)
             findOneOfDerivedClasses(target.constraints, target)
     }
@@ -734,21 +734,10 @@ class CodeGenerator(
                         val refTarget = targets.find { t -> t.schema.locationMatches(refChild.target) }
                         if (refTarget != null) {
                             refTarget.derivedClasses.add(classDescriptor)
-                            val baseTarget = Target(
-                                schema = refTarget.schema,
-                                constraints = Constraints(refTarget.schema),
-                                targetFile = refTarget.targetFile,
-                                source = refTarget.source,
-                                generatorComment = generatorComment,
-                                commentTemplate = refTarget.commentTemplate,
-                                json = refTarget.json,
-                            )
-                            markerInterface?.let { i -> baseTarget.addInterface(i) }
-                            classDescriptor.baseClass = baseTarget
-                            target.addImport(baseTarget)
-                            processSchema(baseTarget.schema, baseTarget.constraints)
-                            analyseObject(baseTarget, baseTarget, baseTarget.constraints)
-                            return analyseDerivedObject(target, constraints, baseTarget)
+                            classDescriptor.baseClass = refTarget
+                            target.addImport(refTarget)
+                            analyseObject(refTarget, refTarget, refTarget.constraints)
+                            return analyseDerivedObject(target, constraints, refTarget)
                         }
                     }
                     break
@@ -780,6 +769,8 @@ class CodeGenerator(
                         target.systemClasses.addOnce(it)
                     }
                 }
+                if (!property.sameType(baseConstraints))
+                    baseConstraints.extendedInDerived = true
             }
             else {
                 if (analyseProperty(target, property, property, property.name))

@@ -55,8 +55,10 @@ class CodeGeneratorBaseDerivedRequiredTest {
 """package com.example
 
 open class Base(
-    val aaa: String? = null
+    aaa: String? = null
 ) {
+
+    open val aaa: String? = aaa
 
     override fun equals(other: Any?): Boolean = this === other || other is Base &&
             aaa == other.aaa
@@ -79,7 +81,7 @@ open class Base(
 """package com.example
 
 class Derived(
-    aaa: String,
+    override val aaa: String,
     val bbb: String
 ) : Base(aaa) {
 
@@ -93,7 +95,7 @@ class Derived(
     override fun toString() = "Derived(aaa=${'$'}aaa, bbb=${'$'}bbb)"
 
     fun copy(
-        aaa: String = this.aaa!!,
+        aaa: String = this.aaa,
         bbb: String = this.bbb
     ) = Derived(aaa, bbb)
 
