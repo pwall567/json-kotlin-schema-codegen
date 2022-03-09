@@ -1,3 +1,5 @@
+![Stop the war in Ukraine](https://pwall.net/ukraine1.png)
+
 # json-kotlin-schema-codegen
 
 [![Build Status](https://travis-ci.com/pwall567/json-kotlin-schema-codegen.svg?branch=main)](https://travis-ci.com/github/pwall567/json-kotlin-schema-codegen)
