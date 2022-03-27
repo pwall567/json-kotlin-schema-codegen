@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.73] - 2022-03-27
+### Changed
+- `CodeGenerator`, `TargetFileName`: changed creation of directories for generated code
+- `pom.xml`: bumped test dependency
+
 ## [0.72] - 2022-03-02
 ### Changed
 - `CodeGenerator`, `Constraints`, templates: improved handling of derived classes

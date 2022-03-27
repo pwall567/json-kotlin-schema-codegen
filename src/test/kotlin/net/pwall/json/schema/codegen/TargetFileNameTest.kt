@@ -37,6 +37,7 @@ class TargetFileNameTest {
         expect(emptyList()) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("Testing") { targetFileName.qualifiedClassName }
+        expect("Testing") { targetFileName.extendedName }
         expect("Testing") { targetFileName.toString() }
     }
 
@@ -47,6 +48,7 @@ class TargetFileNameTest {
         expect(emptyList()) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("Testing") { targetFileName.qualifiedClassName }
+        expect("Testing.kt") { targetFileName.extendedName }
         expect("Testing.kt") { targetFileName.toString() }
     }
 
@@ -57,6 +59,7 @@ class TargetFileNameTest {
         expect(listOf("test")) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("test.Testing") { targetFileName.qualifiedClassName }
+        expect("Testing") { targetFileName.extendedName }
         expect("test/Testing") { targetFileName.toString() }
     }
 
@@ -67,6 +70,7 @@ class TargetFileNameTest {
         expect(listOf("test")) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("test.Testing") { targetFileName.qualifiedClassName }
+        expect("Testing.kt") { targetFileName.extendedName }
         expect("test/Testing.kt") { targetFileName.toString() }
     }
 
@@ -77,6 +81,7 @@ class TargetFileNameTest {
         expect(listOf("net", "pwall", "test")) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("net.pwall.test.Testing") { targetFileName.qualifiedClassName }
+        expect("Testing") { targetFileName.extendedName }
         expect("net/pwall/test/Testing") { targetFileName.toString() }
     }
 
@@ -87,6 +92,7 @@ class TargetFileNameTest {
         expect(listOf("net", "pwall", "test")) { targetFileName.dirs }
         expect("Testing") { targetFileName.className }
         expect("net.pwall.test.Testing") { targetFileName.qualifiedClassName }
+        expect("Testing.kt") { targetFileName.extendedName }
         expect("net/pwall/test/Testing.kt") { targetFileName.toString() }
     }
 

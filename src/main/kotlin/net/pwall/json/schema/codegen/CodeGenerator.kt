@@ -26,6 +26,7 @@
 package net.pwall.json.schema.codegen
 
 import java.io.File
+import java.io.IOException
 import java.io.Reader
 import java.math.BigDecimal
 import java.net.URI
@@ -1558,8 +1559,12 @@ class CodeGenerator(
         private fun checkDirectory(directory: File): File {
             when {
                 !directory.exists() -> {
-                    if (!directory.mkdirs())
-                        fatal("Error creating output directory - $directory")
+                    try {
+                        Files.createDirectories(directory.toPath())
+                    }
+                    catch (e: IOException) {
+                        fatal("Error creating output directory - $directory", e)
+                    }
                 }
                 directory.isDirectory -> {}
                 directory.isFile -> fatal("File given for output directory - $directory")
@@ -1606,6 +1611,10 @@ class CodeGenerator(
 
         fun fatal(message: String): Nothing {
             throw JSONSchemaException(message)
+        }
+
+        fun fatal(message: String, t: Throwable): Nothing {
+            throw JSONSchemaException(message, t)
         }
 
     }

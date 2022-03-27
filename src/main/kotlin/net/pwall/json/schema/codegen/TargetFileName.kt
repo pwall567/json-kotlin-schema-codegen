@@ -48,13 +48,10 @@ data class TargetFileName(val name: String, val ext: String? = null, val dirs: L
             append(className)
         }.toString()
 
-    fun resolve(parent: File? = null): File {
-        var baseDir = parent
-        for (dir in dirs)
-            baseDir = File(baseDir, dir)
-        val fullName = if (ext != null) "$name.$ext" else name
-        return File(baseDir, fullName)
-    }
+    val extendedName: String
+        get() = if (ext != null) "$name.$ext" else name
+
+    fun resolve(parent: File? = null) = File(dirs.fold(parent) { a, b -> File(a, b) }, extendedName)
 
     override fun toString(): String = StringBuilder().apply {
         dirs.forEach { append(it).append('/') }
