@@ -92,6 +92,26 @@ class CodeGeneratorTargetTest {
         }
     }
 
+    @Test fun `should add targets for multiple files in directory with subpackage name`() {
+        val input = File("src/test/resources/test-ref-class")
+        val codeGenerator = CodeGenerator()
+        val outputDetailsOuter = OutputDetails(TargetFileName("TestRefClassOuter", "kt", dirs))
+        val outputDetailsInner = OutputDetails(TargetFileName("TestRefClassInner", "kt", dirs))
+        codeGenerator.basePackageName = "com"
+        codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTargets(listOf(input), "example")
+        expect(2) { codeGenerator.numTargets }
+        codeGenerator.generateAllTargets()
+        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
+            outputDetailsOuter.output()
+        }
+        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
+            outputDetailsInner.output()
+        }
+    }
+
     @Test fun `should add targets for multiple files in directory specified by path`() {
         val input = FileSystems.getDefault().getPath("src/test/resources/test-ref-class")
         val codeGenerator = CodeGenerator()
@@ -102,6 +122,26 @@ class CodeGeneratorTargetTest {
         codeGenerator.clearTargets()
         expect(0) { codeGenerator.numTargets }
         codeGenerator.addTargetsByPath(listOf(input))
+        expect(2) { codeGenerator.numTargets }
+        codeGenerator.generateAllTargets()
+        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
+            outputDetailsOuter.output()
+        }
+        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
+            outputDetailsInner.output()
+        }
+    }
+
+    @Test fun `should add targets for multiple files in directory specified by path with subpackage name`() {
+        val input = FileSystems.getDefault().getPath("src/test/resources/test-ref-class")
+        val codeGenerator = CodeGenerator()
+        val outputDetailsOuter = OutputDetails(TargetFileName("TestRefClassOuter", "kt", dirs))
+        val outputDetailsInner = OutputDetails(TargetFileName("TestRefClassInner", "kt", dirs))
+        codeGenerator.basePackageName = "com"
+        codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTargetsByPath(listOf(input), "example")
         expect(2) { codeGenerator.numTargets }
         codeGenerator.generateAllTargets()
         expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {

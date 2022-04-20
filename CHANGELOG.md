@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.74] - 2022-04-20
+### Changed
+- `CodeGenerator`: added functions to build target list
+- `CodeGenerator`: bug fix - unnecessary output of nested classes for oneOf
+- `pom.xml`: bumped dependency versions
+
 ## [0.73] - 2022-03-27
 ### Changed
 - `CodeGenerator`, `TargetFileName`: changed creation of directories for generated code

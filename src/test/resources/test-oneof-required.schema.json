@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test/schema/test-oneof-required",
+  "properties": {
+    "aaa": {
+      "type": "string"
+    },
+    "bbb": {
+      "type": "integer"
+    },
+    "ccc": {
+      "type": "boolean"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [ "aaa" ]
+    },
+    {
+      "required": [ "bbb" ]
+    },
+    {
+      "required": [ "bbb" ]
+    }
+  ]
+}

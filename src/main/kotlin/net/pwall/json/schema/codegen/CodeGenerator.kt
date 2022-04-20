@@ -354,18 +354,29 @@ class CodeGenerator(
     /**
      * Add targets for a set of files (specified as a [List]).  Directories will be traversed recursively.
      *
-     * @param   inputFiles  the list of files
+     * @param   inputFiles      the list of files
+     * @param   packageNames    an optional list of subpackage names to add to base package
      */
-    fun addTargets(inputFiles: List<File>) {
+    fun addTargets(inputFiles: List<File>, packageNames: List<String> = emptyList()) {
         val parser = schemaParser
         for (inputFile in inputFiles)
             parser.preLoad(inputFile)
         for (inputFile in inputFiles) {
             when {
-                inputFile.isFile -> addTarget(emptyList(), inputFile)
-                inputFile.isDirectory -> addTargets(emptyList(), inputFile)
+                inputFile.isFile -> addTarget(packageNames, inputFile)
+                inputFile.isDirectory -> addTargets(packageNames, inputFile)
             }
         }
+    }
+
+    /**
+     * Add targets for a set of files (specified as a [List]).  Directories will be traversed recursively.
+     *
+     * @param   inputFiles      the list of files
+     * @param   packageName     a subpackage name to add to base package
+     */
+    fun addTargets(inputFiles: List<File>, packageName: String) {
+        addTargets(inputFiles, listOf(packageName))
     }
 
     /**
@@ -393,18 +404,29 @@ class CodeGenerator(
     /**
      * Add targets for a set of files (specified as a [List] of [Path]).  Directories will be traversed recursively.
      *
-     * @param   inputPaths  the list of files
+     * @param   inputPaths      the list of files
+     * @param   packageNames    an optional list of subpackage names to add to base package
      */
-    fun addTargetsByPath(inputPaths: List<Path>) {
+    fun addTargetsByPath(inputPaths: List<Path>, packageNames: List<String> = emptyList()) {
         val parser = schemaParser
         for (inputPath in inputPaths)
             parser.preLoad(inputPath)
         for (inputPath in inputPaths) {
             when {
-                Files.isRegularFile(inputPath) -> addTarget(emptyList(), inputPath)
-                Files.isDirectory(inputPath) -> addTargets(emptyList(), inputPath)
+                Files.isRegularFile(inputPath) -> addTarget(packageNames, inputPath)
+                Files.isDirectory(inputPath) -> addTargets(packageNames, inputPath)
             }
         }
+    }
+
+    /**
+     * Add targets for a set of files (specified as a [List] of [Path]).  Directories will be traversed recursively.
+     *
+     * @param   inputPaths      the list of files
+     * @param   packageName     a subpackage name to add to base package
+     */
+    fun addTargetsByPath(inputPaths: List<Path>, packageName: String) {
+        addTargetsByPath(inputPaths, listOf(packageName))
     }
 
     /**
@@ -488,8 +510,10 @@ class CodeGenerator(
                 else
                     createCombinedClass(i, constraints, oneOfTarget.constraints, target)
             }
-            else
-                createCombinedClass(i, constraints, oneOfItem, target)
+            else {
+                if (oneOfItem.isObject)
+                    createCombinedClass(i, constraints, oneOfItem, target)
+            }
         }
     }
 
