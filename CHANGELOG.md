@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.75] - 2022-04-21
+### Changed
+- `CodeGenerator`: another attempt to fix the directory creation problem
+
 ## [0.74] - 2022-04-20
 ### Changed
 - `CodeGenerator`: added functions to build target list
