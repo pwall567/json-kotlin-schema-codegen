@@ -318,12 +318,23 @@ class CodeGenerator(
     /**
      * Add a target by URI.
      *
-     * @param   uri     the URI
+     * @param   uri             the URI
+     * @param   packageNames    an optional list of subpackage names to add to base package
      */
-    fun addTarget(uri: URI) {
+    fun addTarget(uri: URI, packageNames: List<String> = emptyList()) {
         val json = schemaParser.jsonReader.readJSON(uri)
         val schema = schemaParser.parse(uri)
-        addTarget(emptyList(), schema, uri.toString(), json)
+        addTarget(packageNames, schema, uri.toString(), json)
+    }
+
+    /**
+     * Add a target by URI.
+     *
+     * @param   uri             the URI
+     * @param   packageName     a subpackage name to add to base package
+     */
+    fun addTarget(uri: URI, packageName: String) {
+        addTarget(uri, listOf(packageName))
     }
 
     val numTargets: Int
@@ -362,8 +373,8 @@ class CodeGenerator(
             parser.preLoad(inputFile)
         for (inputFile in inputFiles) {
             when {
-                inputFile.isFile -> addTarget(packageNames, inputFile)
-                inputFile.isDirectory -> addTargets(packageNames, inputFile)
+                inputFile.isFile -> addTarget(inputFile, packageNames)
+                inputFile.isDirectory -> addTargets(inputFile, packageNames)
             }
         }
     }
@@ -412,8 +423,8 @@ class CodeGenerator(
             parser.preLoad(inputPath)
         for (inputPath in inputPaths) {
             when {
-                Files.isRegularFile(inputPath) -> addTarget(packageNames, inputPath)
-                Files.isDirectory(inputPath) -> addTargets(packageNames, inputPath)
+                Files.isRegularFile(inputPath) -> addTarget(inputPath, packageNames)
+                Files.isDirectory(inputPath) -> addTargets(inputPath, packageNames)
             }
         }
     }
@@ -426,6 +437,98 @@ class CodeGenerator(
      */
     fun addTargetsByPath(inputPaths: List<Path>, packageName: String) {
         addTargetsByPath(inputPaths, listOf(packageName))
+    }
+
+    private fun addTargets(inputDir: File, packageNames: List<String>) {
+        inputDir.listFiles()?.forEach {
+            when {
+                it.isDirectory -> {
+                    if (!it.name.startsWith('.'))
+                        addTargets(it, packageNames + it.name.mapDirectoryName())
+                }
+                it.isFile -> addTarget(it, packageNames)
+            }
+        }
+    }
+
+    private fun addTargets(inputDir: Path, packageNames: List<String>) {
+        Files.newDirectoryStream(inputDir).use { dir ->
+            dir.forEach {
+                when {
+                    Files.isDirectory(it) -> {
+                        if (!it.fileName.toString().startsWith('.'))
+                            addTargets(it, packageNames + it.fileName.toString().mapDirectoryName())
+                    }
+                    Files.isRegularFile(it) -> addTarget(it, packageNames)
+                }
+            }
+        }
+    }
+
+    private fun String.mapDirectoryName(): String = StringBuilder().also {
+        for (ch in this)
+            if (ch in 'a'..'z' || ch in 'A'..'Z' || ch in '0'..'9')
+                it.append(ch)
+    }.toString()
+
+    /**
+     * Add target for an individual file or directory.
+     *
+     * @param   inputFile       the file
+     * @param   packageNames    an optional list of subpackage names to add to base package
+     */
+    fun addTarget(inputFile: File, packageNames: List<String> = emptyList()) {
+        when {
+            inputFile.isFile -> {
+                val json = schemaParser.jsonReader.readJSON(inputFile)
+                val schema = schemaParser.parse(inputFile)
+                addTarget(packageNames, schema, inputFile.toString(), json)
+            }
+            inputFile.isDirectory -> {
+                schemaParser.preLoad(inputFile)
+                addTargets(inputFile, packageNames)
+            }
+        }
+    }
+
+    /**
+     * Add target for an individual file.
+     *
+     * @param   inputFile       the file
+     * @param   packageName     a subpackage name to add to base package
+     */
+    fun addTarget(inputFile: File, packageName: String) {
+        addTarget(inputFile, listOf(packageName))
+    }
+
+    /**
+     * Add target for an individual file or directory specified by [Path].
+     *
+     * @param   inputPath       the [Path]
+     * @param   packageNames    an optional list of subpackage names to add to base package
+     */
+    fun addTarget(inputPath: Path, packageNames: List<String> = emptyList()) {
+        when {
+            Files.isRegularFile(inputPath) -> {
+                val json = schemaParser.jsonReader.readJSON(inputPath)
+                val schema = schemaParser.parse(inputPath)
+                addTarget(packageNames, schema, inputPath.toString(), json)
+            }
+            Files.isDirectory(inputPath) -> {
+                schemaParser.preLoad(inputPath)
+                addTargets(inputPath, packageNames)
+            }
+        }
+    }
+
+    /**
+     * Add target for an individual file specified by [Path].
+     *
+     * @param   inputPath       the [Path]
+     * @param   packageName     a subpackage name to add to base package
+     */
+    fun addTarget(inputPath: Path, packageName: String) {
+        addTarget(inputPath, listOf(packageName))
     }
 
     /**
@@ -518,7 +621,8 @@ class CodeGenerator(
 
     private fun createCombinedClass(i: Int, constraints: Constraints, additionalConstraints: Constraints,
             target: Target) {
-        // create a nested class with current as a base class and oneOfTarget properties, and remove (merge?) overlapping properties
+        // create a nested class with current as a base class and oneOfTarget properties,
+        // and remove (merge?) overlapping properties
         val nestedConstraints = Constraints(constraints.schema)
         for (property in constraints.properties) {
             nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
@@ -675,18 +779,6 @@ class CodeGenerator(
         }
     }
 
-    private fun addTarget(subDirectories: List<String>, inputFile: File) {
-        val json = schemaParser.jsonReader.readJSON(inputFile)
-        val schema = schemaParser.parse(inputFile)
-        addTarget(subDirectories, schema, inputFile.toString(), json)
-    }
-
-    private fun addTarget(subDirectories: List<String>, inputPath: Path) {
-        val json = schemaParser.jsonReader.readJSON(inputPath)
-        val schema = schemaParser.parse(inputPath)
-        addTarget(subDirectories, schema, inputPath.toString(), json)
-    }
-
     private fun addTarget(subDirectories: List<String>, schema: JSONSchema, source: String, json: JSONValue) {
         val className = schema.uri?.let { uri ->
             classNameMapping.find { it.first == uri }?.second ?: run {
@@ -714,38 +806,6 @@ class CodeGenerator(
             json = json,
         )
     }
-
-    private fun addTargets(subDirectories: List<String>, inputDir: File) {
-        inputDir.listFiles()?.forEach {
-            when {
-                it.isDirectory -> {
-                    if (!it.name.startsWith('.'))
-                        addTargets(subDirectories + it.name.mapDirectoryName(), it)
-                }
-                it.isFile -> addTarget(subDirectories, it)
-            }
-        }
-    }
-
-    private fun addTargets(subDirectories: List<String>, inputDir: Path) {
-        Files.newDirectoryStream(inputDir).use { dir ->
-            dir.forEach {
-                when {
-                    Files.isDirectory(it) -> {
-                        if (!it.fileName.toString().startsWith('.'))
-                            addTargets(subDirectories + it.fileName.toString().mapDirectoryName(), it)
-                    }
-                    Files.isRegularFile(it) -> addTarget(subDirectories, it)
-                }
-            }
-        }
-    }
-
-    private fun String.mapDirectoryName(): String = StringBuilder().also {
-        for (ch in this)
-            if (ch in 'a'..'z' || ch in 'A'..'Z' || ch in '0'..'9')
-                it.append(ch)
-    }.toString()
 
     private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints): Boolean {
         constraints.objectValidationsPresent?.let { return it }

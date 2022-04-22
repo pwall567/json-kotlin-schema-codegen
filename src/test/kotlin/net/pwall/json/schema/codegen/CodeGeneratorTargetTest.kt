@@ -56,6 +56,62 @@ class CodeGeneratorTargetTest {
         expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
     }
 
+    @Test fun `should add to target list by File`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTarget(input)
+        expect(1) { codeGenerator.numTargets }
+        val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails)
+        codeGenerator.generateAllTargets()
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+    }
+
+    @Test fun `should add to target list by File with subpackage name`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.basePackageName = "com"
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTarget(input, "example")
+        expect(1) { codeGenerator.numTargets }
+        val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails)
+        codeGenerator.generateAllTargets()
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+    }
+
+    @Test fun `should add to target list by Path`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTarget(input.toPath())
+        expect(1) { codeGenerator.numTargets }
+        val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails)
+        codeGenerator.generateAllTargets()
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+    }
+
+    @Test fun `should add to target list by Path with subpackage name`() {
+        val input = File("src/test/resources/example.schema.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.basePackageName = "com"
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTarget(input.toPath(), "example")
+        expect(1) { codeGenerator.numTargets }
+        val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails)
+        codeGenerator.generateAllTargets()
+        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+    }
+
     @Test fun `should add targets for multiple schemata`() {
         val input = File("src/test/resources/test-multiple-schema.json")
         val codeGenerator = CodeGenerator()

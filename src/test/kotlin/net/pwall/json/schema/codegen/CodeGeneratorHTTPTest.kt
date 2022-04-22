@@ -53,6 +53,21 @@ class CodeGeneratorHTTPTest {
         expect(CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1) { outputDetails.output() }
     }
 
+    @Test fun `should process schema from HTTP URI with subpackage name`() {
+        val input = URI("http://kjson.io/json/http/testhttp1.json")
+        val codeGenerator = CodeGenerator()
+        codeGenerator.schemaParser.setExtendedResolver(defaultExtendedResolver)
+        codeGenerator.basePackageName = "com"
+        codeGenerator.clearTargets()
+        expect(0) { codeGenerator.numTargets }
+        codeGenerator.addTarget(input, "example")
+        expect(1) { codeGenerator.numTargets }
+        val outputDetails = OutputDetails(TargetFileName("Testhttp1", "kt", dirs))
+        codeGenerator.outputResolver = outputCapture(outputDetails)
+        codeGenerator.generateAllTargets()
+        expect(CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1) { outputDetails.output() }
+    }
+
     @Test fun `should process composite from HTTP URI`() {
         val input = URI("http://kjson.io/json/http/testhttp2.json")
         val codeGenerator = CodeGenerator()

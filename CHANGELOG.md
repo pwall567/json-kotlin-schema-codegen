@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.76] - 2022-04-22
+### Changed
+- `CodeGenerator`: added more flexible ways to specify targets
+- `pom.xml`: bumped dependency version
+
 ## [0.75] - 2022-04-21
 ### Changed
 - `CodeGenerator`: another attempt to fix the directory creation problem
