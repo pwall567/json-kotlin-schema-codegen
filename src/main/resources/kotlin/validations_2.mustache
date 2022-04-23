@@ -23,7 +23,7 @@
 {{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        require({{&kotlinName}} in {{#value}}{{&first}}L..{{&second}}L{{/value}}) { "{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&kotlinName}}" }
 {{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        require({{&kotlinName}}.rem({{&value}}) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&kotlinName}}" }
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        require({{&kotlinName}}.rem({{&value}}L) == 0) { "{{&displayName}} not a multiple of {{&value}} - ${{&kotlinName}}" }
-{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{&kotlinName}}.rem({{&value.staticName}}) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&kotlinName}}" }
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        require({{&kotlinName}}.rem({{&value.staticName}}).compareTo(BigDecimal.ZERO) == 0) { "{{&displayName}} not a multiple of {{&value.value}} - ${{&kotlinName}}" }
 {{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        require({{&kotlinName}}.size <= {{&value}}) { "{{&displayName}} length > maximum {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
 {{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        require({{&kotlinName}}.{{#value}}{{#isOne}}isNotEmpty(){{/isOne}}{{^isOne}}size >= {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length < minimum {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
 {{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        require({{&kotlinName}}.size == {{&value}}) { "{{&displayName}} length not constant value {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
