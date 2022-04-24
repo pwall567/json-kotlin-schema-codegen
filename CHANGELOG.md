@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.77] - 2022-04-22
+### Changed
+- templates: bug fix in `multipleOf`
+
 ## [0.76] - 2022-04-22
 ### Changed
 - `CodeGenerator`: added more flexible ways to specify targets

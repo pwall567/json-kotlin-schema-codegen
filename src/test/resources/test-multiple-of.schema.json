@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-multiple-of",
+  "description": "Test multipleOf",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "number",
+      "multipleOf": 0.01
+    },
+    "bbb": {
+      "type": "integer",
+      "multipleOf": 100
+    },
+    "ccc": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 40000,
+      "multipleOf": 10
+    }
+  },
+  "required": [ "aaa", "bbb", "ccc" ]
+}
