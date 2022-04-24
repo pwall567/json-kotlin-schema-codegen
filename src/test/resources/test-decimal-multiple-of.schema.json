@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-decimal-multiple-of",
+  "description": "Test decimal multipleOf.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "number",
+      "multipleOf": 0.01
+    },
+    "bbb": {
+      "type": "number",
+      "multipleOf": 0.02
+    },
+    "ccc": {
+      "type": "number",
+      "multipleOf": 0.03
+    }
+  },
+  "required": [ "aaa", "bbb", "ccc" ]
+}

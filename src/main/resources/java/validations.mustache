@@ -48,7 +48,7 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&javaName}});
 {{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&javaName}} % {{&value}}L != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&javaName}});
-{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.remainder({{&value.staticName}}) != 0)
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.remainder({{&value.staticName}}).compareTo(BigDecimal.ZERO) != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value.value}} - " + {{&javaName}});
 {{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() > {{&value}})
 {{&indent}}            {{>tniae}}("{{&displayName}} length > maximum {{&value}} - " + {{&javaName}}.size());
