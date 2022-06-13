@@ -839,7 +839,30 @@ class CodeGenerator(
             val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
             if (baseConstraints != null) {
                 property.baseProperty = baseConstraints
-                baseConstraints.defaultValue?.let { property.defaultValue = it }
+                when {
+                    baseConstraints.isEnumClass -> {
+                        if (property.processAdditionalConstraintsEnum(baseConstraints,
+                                baseConstraints.localTypeName, baseConstraints.enumValues))
+                            validationsPresent = true
+                    }
+                    baseConstraints.isString -> {
+                        if (property.processAdditionalConstraintsString(baseConstraints, target))
+                            validationsPresent = true
+                    }
+                    baseConstraints.isInt -> {
+                        if (property.processAdditionalConstraintsInt(baseConstraints, target))
+                            validationsPresent = true
+                    }
+                    baseConstraints.isLong -> {
+                        if (property.processAdditionalConstraintsLong(baseConstraints))
+                            validationsPresent = true
+                    }
+                    baseConstraints.isArray -> {
+                        if (property.processAdditionalConstraintsArray(baseConstraints, target))
+                            validationsPresent = true
+                    }
+                    // TODO other types with additional constraints?? (decimal, object)
+                }
                 if (baseConstraints.isArray)
                     property.arrayItems = baseConstraints.arrayItems
                 val customClass = findCustomClass(baseConstraints.schema, target) ?:
@@ -862,6 +885,155 @@ class CodeGenerator(
             }
         }
         return validationsPresent
+    }
+
+    private fun NamedConstraints.processAdditionalConstraintsArray(baseConstraints: Constraints, target: Target): Boolean {
+        var validationsPresent = false
+        arrayItems?.let {
+            baseConstraints.arrayItems.let { baseItems ->
+                if (baseItems == null || it != baseItems) {
+                    if (analyseProperty(target, it, this, name.depluralise())) {
+                        addValidation(Validation.Type.ARRAY_ITEMS)
+                        validationsPresent = true
+                    }
+                }
+            }
+        }
+        if (checkMinMaxItems(minItems?.takeIf { baseConstraints.minItems.let { b -> b == null || b < it } },
+                maxItems?.takeIf { baseConstraints.maxItems.let { b -> b == null || b > it } }))
+            validationsPresent = true
+        defaultValue?.let {
+            if (it.type != JSONSchema.Type.ARRAY)
+                defaultValue = null
+        }
+        return validationsPresent
+    }
+
+    private fun Constraints.processAdditionalConstraintsString(baseConstraints: Constraints, target: Target): Boolean {
+        var validationsPresent = false
+        if (constValue != null && constValue != baseConstraints.constValue) {
+            (constValue as? JSONString)?.let {
+                val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.value))
+                addValidation(Validation.Type.CONST_STRING, stringStatic)
+                validationsPresent = true
+            }
+        }
+        enumValues?.let { values ->
+            baseConstraints.enumValues.let { baseValues ->
+                if ((baseValues == null || !values.containsAll(baseValues)) && values.all { it is JSONString }) {
+                    target.systemClasses.addOnce(SystemClass.ARRAYS)
+                    target.systemClasses.addOnce(SystemClass.LIST)
+                    val arrayStatic = target.addStatic(Target.StaticType.STRING_ARRAY, "cg_array",
+                        values.map { StringValue(it.toString()) })
+                    addValidation(Validation.Type.ENUM_STRING, arrayStatic)
+                    validationsPresent = true
+                }
+            }
+        }
+        if (checkMinMaxLength(minLength?.takeIf { baseConstraints.minLength.let { b -> b == null || b < it } },
+                maxLength?.takeIf { baseConstraints.maxLength.let { b -> b == null || b > it } }))
+            validationsPresent = true
+
+        validationsPresent = checkRegex(target) || validationsPresent
+        return validationsPresent
+    }
+
+    private fun Constraints.processAdditionalConstraintsInt(baseConstraints: Constraints, target: Target): Boolean {
+        var validationsPresent = false
+        constValue?.let {
+            if (it != baseConstraints.constValue) {
+                if (checkConstInt(it)) {
+                    validationsPresent = true
+                }
+            }
+        }
+        enumValues?.let { values ->
+            baseConstraints.enumValues.let { baseValues ->
+                if ((baseValues == null || !values.containsAll(baseValues)) && values.all { it is JSONNumberValue }) {
+                    target.systemClasses.addOnce(SystemClass.ARRAYS)
+                    target.systemClasses.addOnce(SystemClass.LIST)
+                    val arrayStatic = target.addStatic(Target.StaticType.INT_ARRAY, "cg_array", values.map {
+                        when (it) {
+                            is JSONInteger -> NumberValue(it.value)
+                            is JSONLong -> NumberValue(it.value)
+                            is JSONDecimal -> NumberValue(it.value)
+                            else -> NumberValue(0)
+                        }
+                    })
+                    addValidation(Validation.Type.ENUM_INT, arrayStatic)
+                    validationsPresent = true
+                }
+            }
+        }
+        if (checkMinMaxInt(minimumLong?.takeIf { baseConstraints.minimumLong.let { b -> b == null || b < it } },
+                maximumLong?.takeIf { baseConstraints.maximumLong.let { b -> b == null || b > it } }))
+            validationsPresent = true
+        if (multipleOf.isNotEmpty() &&
+            (baseConstraints.multipleOf.isEmpty() || baseConstraints.multipleOf.containsAll(multipleOf))) {
+            for (multiple in multipleOf) {
+                if (!baseConstraints.multipleOf.contains(multiple)) {
+                    addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())
+                    validationsPresent = true
+                }
+            }
+        }
+        return validationsPresent
+    }
+
+    private fun Constraints.processAdditionalConstraintsLong(baseConstraints: Constraints): Boolean {
+        var validationsPresent = false
+        constValue?.let {
+            if (it != baseConstraints.constValue) {
+                if (checkConstLong(it)) {
+                    validationsPresent = true
+                }
+            }
+        }
+        // TODO do we need enum check for long?
+        if (checkMinMaxLong(minimumLong?.takeIf { baseConstraints.minimumLong.let { b -> b == null || b < it } },
+                maximumLong?.takeIf { baseConstraints.maximumLong.let { b -> b == null || b > it } }))
+            validationsPresent = true
+        if (multipleOf.isNotEmpty() &&
+                (baseConstraints.multipleOf.isEmpty() || baseConstraints.multipleOf.containsAll(multipleOf))) {
+            for (multiple in multipleOf) {
+                if (!baseConstraints.multipleOf.contains(multiple)) {
+                    addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())
+                    validationsPresent = true
+                }
+            }
+        }
+        return validationsPresent
+    }
+
+    private fun Constraints.processAdditionalConstraintsEnum(
+        baseConstraints: Constraints,
+        localTypeName: String?,
+        enumValues: JSONSequence<*>?,
+    ): Boolean {
+        isEnumClass = true
+        if (localTypeName != null && enumValues != null) {
+            this.localTypeName = localTypeName
+            this.enumValues = enumValues
+            (defaultValue ?: baseConstraints.defaultValue)?.let { value ->
+                val valueString = value.defaultValue.toString()
+                defaultValue = if (value.type == JSONSchema.Type.STRING &&
+                        enumValues.any { a -> a.toString() == valueString }) {
+                    Constraints.DefaultValue(
+                        defaultValue = EnumValue(localTypeName, valueString),
+                        type = JSONSchema.Type.STRING,
+                    )
+                } else null
+            }
+            if (constValue != baseConstraints.constValue) {
+                (constValue as? JSONString)?.let {
+                    if (enumValues.any { a -> a.toString() == it.value }) {
+                        addValidation(Validation.Type.CONST_ENUM, EnumValue(localTypeName, it.value))
+                        return true
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun analysePropertiesRequired(constraints: Constraints) {
@@ -983,23 +1155,28 @@ class CodeGenerator(
                 validationsPresent = true
             }
         }
-        property.minItems?.let { minI ->
-            property.maxItems?.let { maxI ->
-                if (minI == maxI)
-                    property.addValidation(Validation.Type.CONST_ITEMS, NumberValue(minI))
-                else
-                    property.addValidation(Validation.Type.RANGE_ITEMS, minI to maxI)
-            } ?: property.addValidation(Validation.Type.MIN_ITEMS, NumberValue(minI))
+        if (property.checkMinMaxItems(property.minItems, property.maxItems))
             validationsPresent = true
-        } ?: property.maxItems?.let { maxI ->
-            property.addValidation(Validation.Type.MAX_ITEMS, NumberValue(maxI))
-            validationsPresent = true
-        }
         property.defaultValue?.let {
             if (it.type != JSONSchema.Type.ARRAY)
                 property.defaultValue = null
         }
         return validationsPresent
+    }
+
+    private fun Constraints.checkMinMaxItems(minimumItems: Int?, maximumItems: Int?): Boolean {
+        return minimumItems?.takeIf { it > Int.MIN_VALUE }?.let { minV ->
+            maximumItems?.takeIf { it < Int.MAX_VALUE }?.let { maxV ->
+                if (minV == maxV)
+                    addValidation(Validation.Type.CONST_ITEMS, NumberValue(minV))
+                else
+                    addValidation(Validation.Type.RANGE_ITEMS, minV to maxV)
+            } ?: addValidation(Validation.Type.MIN_ITEMS, NumberValue(minV))
+            true
+        } ?: maximumItems?.takeIf { it < Int.MAX_VALUE }?.let {
+            addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
+            true
+        } ?: false
     }
 
     private fun analyseString(property: Constraints, target: Target, defaultName: () -> String):
@@ -1014,7 +1191,7 @@ class CodeGenerator(
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
-                        val enumDefault = EnumDefault(property.localTypeName!!, it.defaultValue.toString())
+                        val enumDefault = EnumValue(property.localTypeName!!, it.defaultValue.toString())
                         property.defaultValue = Constraints.DefaultValue(enumDefault, JSONSchema.Type.STRING)
                     }
                     else
@@ -1038,49 +1215,33 @@ class CodeGenerator(
                 validationsPresent = true
             }
         }
-        property.minLength?.let { min ->
-            property.maxLength?.let { max ->
-                if (min == max)
-                    property.addValidation(Validation.Type.CONST_LENGTH, NumberValue(min))
-                else
-                    property.addValidation(Validation.Type.RANGE_LENGTH, min to max)
-            } ?: property.addValidation(Validation.Type.MIN_LENGTH, NumberValue(min))
+        if (property.checkMinMaxLength(property.minLength, property.maxLength))
             validationsPresent = true
-        } ?: property.maxLength?.let { max ->
-            property.addValidation(Validation.Type.MAX_LENGTH, NumberValue(max))
-            validationsPresent = true
-        }
-        validationsPresent = analyseRegex(target, property) || validationsPresent
+        validationsPresent = property.checkRegex(target) || validationsPresent
         return validationsPresent
+    }
+
+    private fun Constraints.checkMinMaxLength(minimumLength: Int?, maximumLength: Int?): Boolean {
+        return minimumLength?.takeIf { it > Int.MIN_VALUE }?.let { minV ->
+            maximumLength?.takeIf { it < Int.MAX_VALUE }?.let { maxV ->
+                if (minV == maxV)
+                    addValidation(Validation.Type.CONST_LENGTH, NumberValue(minV))
+                else
+                    addValidation(Validation.Type.RANGE_LENGTH, minV to maxV)
+            } ?: addValidation(Validation.Type.MIN_LENGTH, NumberValue(minV))
+            true
+        } ?: maximumLength?.takeIf { it < Int.MAX_VALUE }?.let {
+            addValidation(Validation.Type.MAX_LENGTH, NumberValue(it))
+            true
+        } ?: false
     }
 
     private fun analyseInt(property: Constraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
-            when (it) {
-                is JSONInteger -> {
-                    property.addValidation(Validation.Type.CONST_INT, it.value)
-                    property.enumValues = null
-                    result = true
-                }
-                is JSONLong -> {
-                    it.value.let { v ->
-                        if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
-                            property.addValidation(Validation.Type.CONST_INT, v)
-                            property.enumValues = null
-                            result = true
-                        }
-                    }
-                }
-                is JSONDecimal -> {
-                    it.value.asLong().let { v ->
-                        if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
-                            property.addValidation(Validation.Type.CONST_INT, v)
-                            property.enumValues = null
-                            result = true
-                        }
-                    }
-                }
+            if (property.checkConstInt(it)) {
+                property.enumValues = null
+                result = true
             }
         }
         property.enumValues?.let { array ->
@@ -1099,15 +1260,8 @@ class CodeGenerator(
                 result = true
             }
         }
-        property.minimumLong?.takeIf { minV -> minV in (Int.MIN_VALUE + 1)..Int.MAX_VALUE }?.let { minV ->
-            property.maximumLong?.takeIf { maxV -> maxV in Int.MIN_VALUE until Int.MAX_VALUE }?.let { maxV ->
-                property.addValidation(Validation.Type.RANGE_INT, minV to maxV)
-            } ?: property.addValidation(Validation.Type.MINIMUM_INT, minV)
+        if (property.checkMinMaxInt(property.minimumLong, property.maximumLong))
             result = true
-        } ?: property.maximumLong?.takeIf { it in Int.MIN_VALUE until Int.MAX_VALUE }?.let {
-            property.addValidation(Validation.Type.MAXIMUM_INT, it)
-            result = true
-        }
         for (multiple in property.multipleOf) {
             property.addValidation(Validation.Type.MULTIPLE_INT, multiple.asLong())
             result = true
@@ -1120,32 +1274,52 @@ class CodeGenerator(
         return result
     }
 
-    private fun analyseLong(property: Constraints, target: Target): Boolean {
-        var result = false
-        property.constValue?.let {
-            when (it) {
-                is JSONInteger -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.value)
-                    result = true
+    private fun Constraints.checkMinMaxInt(minimumLong: Long?, maximumLong: Long?): Boolean {
+        return minimumLong?.takeIf { it in (Int.MIN_VALUE + 1)..Int.MAX_VALUE }?.let { minV ->
+            maximumLong?.takeIf { it in Int.MIN_VALUE until Int.MAX_VALUE }?.let { maxV ->
+                addValidation(Validation.Type.RANGE_INT, minV to maxV)
+            } ?: addValidation(Validation.Type.MINIMUM_INT, minV)
+            true
+        } ?: maximumLong?.takeIf { it in Int.MIN_VALUE until Int.MAX_VALUE }?.let {
+            addValidation(Validation.Type.MAXIMUM_INT, it)
+            true
+        } ?: false
+    }
+
+    private fun Constraints.checkConstInt(constValue: JSONValue): Boolean {
+        when (constValue) {
+            is JSONInteger -> {
+                addValidation(Validation.Type.CONST_INT, constValue.value)
+                return true
+            }
+            is JSONLong -> {
+                constValue.value.let { v ->
+                    if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
+                        addValidation(Validation.Type.CONST_INT, v)
+                        return true
+                    }
                 }
-                is JSONLong -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.value)
-                    result = true
-                }
-                is JSONDecimal -> {
-                    property.addValidation(Validation.Type.CONST_LONG, it.value.asLong())
+            }
+            is JSONDecimal -> {
+                constValue.value.asLong().let { v ->
+                    if (v in Int.MIN_VALUE..Int.MAX_VALUE) {
+                        addValidation(Validation.Type.CONST_INT, v)
+                        return true
+                    }
                 }
             }
         }
-        property.minimumLong?.takeIf { it > Long.MIN_VALUE }?.let { minV ->
-            property.maximumLong?.takeIf { it < Long.MAX_VALUE }?.let { maxV ->
-                property.addValidation(Validation.Type.RANGE_LONG, minV to maxV)
-            } ?: property.addValidation(Validation.Type.MINIMUM_LONG, minV)
-            result = true
-        } ?: property.maximumLong?.takeIf { it < Long.MAX_VALUE }?.let {
-            property.addValidation(Validation.Type.MAXIMUM_LONG, it)
-            result = true
+        return false
+    }
+
+    private fun analyseLong(property: Constraints, target: Target): Boolean {
+        var result = false
+        property.constValue?.let {
+            if (property.checkConstLong(it))
+                result = true
         }
+        if (property.checkMinMaxLong(property.minimumLong, property.maximumLong))
+            result = true
         for (multiple in property.multipleOf) {
             property.addValidation(Validation.Type.MULTIPLE_LONG, multiple.asLong())
             result = true
@@ -1156,6 +1330,36 @@ class CodeGenerator(
                 property.defaultValue = null
         }
         return result
+    }
+
+    private fun Constraints.checkMinMaxLong(minimumLong: Long?, maximumLong: Long?): Boolean {
+        return minimumLong?.takeIf { it > Long.MIN_VALUE }?.let { minV ->
+            maximumLong?.takeIf { it < Long.MAX_VALUE }?.let { maxV ->
+                addValidation(Validation.Type.RANGE_LONG, minV to maxV)
+            } ?: addValidation(Validation.Type.MINIMUM_LONG, minV)
+            true
+        } ?: maximumLong?.takeIf { it < Long.MAX_VALUE }?.let {
+            addValidation(Validation.Type.MAXIMUM_LONG, it)
+            true
+        } ?: false
+    }
+
+    private fun Constraints.checkConstLong(constValue: JSONValue): Boolean {
+        when (constValue) {
+            is JSONInteger -> {
+                addValidation(Validation.Type.CONST_LONG, constValue.value)
+                return true
+            }
+            is JSONLong -> {
+                addValidation(Validation.Type.CONST_LONG, constValue.value)
+                return true
+            }
+            is JSONDecimal -> {
+                addValidation(Validation.Type.CONST_LONG, constValue.value.asLong())
+                return true
+            }
+        }
+        return false
     }
 
     private fun analyseDecimal(target: Target, property: Constraints): Boolean {
@@ -1297,12 +1501,11 @@ class CodeGenerator(
         return false
     }
 
-    private fun analyseRegex(target: Target, property: Constraints): Boolean {
-        if (property.regex != null) {
+    private fun Constraints.checkRegex(target: Target): Boolean {
+        regex?.let {
             target.systemClasses.addOnce(SystemClass.REGEX)
-            val regexStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex",
-                    StringValue(property.regex.toString()))
-            property.addValidation(Validation.Type.PATTERN, regexStatic)
+            val regexStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex", StringValue(it.toString()))
+            addValidation(Validation.Type.PATTERN, regexStatic)
             return true
         }
         return false
@@ -1511,14 +1714,18 @@ class CodeGenerator(
     /**
      * This class is intended to look like a [StringValue], for when the default value of a string is an enum value.
      */
-    class EnumDefault(private val className: String, private val defaultValue: String) {
+    class EnumValue(val className: String, val value: String) : ValidationValue {
 
         override fun toString(): String {
-            return "$className.$defaultValue"
+            return "$className.$value"
         }
 
         @Suppress("unused")
         val kotlinString: String
+            get() = toString()
+
+        @Suppress("unused")
+        val javaString: String
             get() = toString()
 
     }

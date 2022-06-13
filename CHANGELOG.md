@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.78] - 2022-06-13
+### Added
+- `ValidationValue`: marker interface for values used in validations
+### Changed
+- `CodeGenerator`, `Validation`, templates: fixed bug in validation in derived types
+- `NumberValue`, `StringValue`, `Target`: make use of `ValidationValue`
+- `pom.xml`: bumped dependency version
+
 ## [0.77] - 2022-04-22
 ### Changed
 - templates: bug fix in `multipleOf`

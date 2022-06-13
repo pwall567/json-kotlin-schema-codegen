@@ -76,7 +76,9 @@
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value.value}} - " + {{&javaName}});
 {{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) != 0)
 {{&indent}}            {{>tniae}}("{{&displayName}} not constant value 0 - " + {{&javaName}});
-{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&javaName}}))
+{{/CONST_DECIMAL_ZERO}}{{#CONST_ENUM}}{{&indent}}        if ({{>nullchk}}{{&javaName}} != {{&value.javaString}})
+{{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value.value}} - " + {{&javaName}});
+{{/CONST_ENUM}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&javaName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&javaName}});
 {{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        if (!{{&value.staticName}}.contains({{&javaName}}))
 {{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&javaName}});

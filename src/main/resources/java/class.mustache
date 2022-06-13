@@ -13,10 +13,10 @@
             {{>type}} {{&javaName}}{{/properties}}
     ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
-{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
+{{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");
-{{/nullable}}{{/isPrimitive}}{{>validations}}        this.{{&javaName}} = {{&javaName}};
-{{/nonBaseProperties}}    }
+{{/nullable}}{{/isPrimitive}}{{/baseProperty}}{{>validations}}{{^baseProperty}}        this.{{&javaName}} = {{&javaName}};
+{{/baseProperty}}{{/properties}}    }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}{{#nestedClasses}}

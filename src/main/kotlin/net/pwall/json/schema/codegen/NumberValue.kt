@@ -28,7 +28,7 @@ package net.pwall.json.schema.codegen
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class NumberValue(val rawNumber: Number) {
+class NumberValue(val rawNumber: Number) : ValidationValue {
 
     init {
         require(rawNumber is Int || rawNumber is Long || rawNumber is BigDecimal)

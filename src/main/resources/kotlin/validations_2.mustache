@@ -37,7 +37,8 @@
 {{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        require({{&kotlinName}} == {{&value}}L) { "{{&displayName}} not constant value {{&value}} - ${{&kotlinName}}" }
 {{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        require({{&kotlinName}}.compareTo({{&value.staticName}}) == 0) { "{{&displayName}} not constant value {{&value.value}} - ${{&kotlinName}}" }
 {{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        require({{&kotlinName}}.compareTo(BigDecimal.ZERO) == 0) { "{{&displayName}} not constant value 0 - ${{&kotlinName}}" }
-{{/CONST_DECIMAL_ZERO}}{{#ENUM_STRING}}{{&indent}}        require({{&kotlinName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&kotlinName}}" }
+{{/CONST_DECIMAL_ZERO}}{{#CONST_ENUM}}{{&indent}}        require({{&kotlinName}} == {{&value.kotlinString}}) { "{{&displayName}} not constant value {{&value.value}} - ${{&kotlinName}}" }
+{{/CONST_ENUM}}{{#ENUM_STRING}}{{&indent}}        require({{&kotlinName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&kotlinName}}" }
 {{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        require({{&kotlinName}} in {{&value.staticName}}) { "{{&displayName}} not in enumerated values - ${{&kotlinName}}" }
 {{/ENUM_INT}}{{#ARRAY_ITEMS}}{{&indent}}        for ({{&arrayItems.kotlinName}} in {{&kotlinName}}){{#arrayItems}}{{#indent.increment}}{{#validations}}{{!
 }}{{#first}}{{^last}} {{&openBrace}}{{/last}}

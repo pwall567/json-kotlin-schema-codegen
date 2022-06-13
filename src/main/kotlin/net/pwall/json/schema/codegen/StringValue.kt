@@ -25,7 +25,7 @@
 
 package net.pwall.json.schema.codegen
 
-class StringValue(val rawString: String) {
+class StringValue(val rawString: String) : ValidationValue {
 
     val kotlinString: String by lazy {
         val sb1 = StringBuilder(rawString.length + 5)

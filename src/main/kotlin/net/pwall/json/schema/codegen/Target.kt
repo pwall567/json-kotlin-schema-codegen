@@ -149,7 +149,7 @@ class Target(
 
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
-    data class Static(val type: StaticType, val staticName: String, val value: Any)
+    data class Static(val type: StaticType, val staticName: String, val value: Any) : ValidationValue
 
     data class CommentContext(val dateTime: OffsetDateTime) {
 

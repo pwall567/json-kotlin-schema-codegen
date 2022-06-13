@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.77</version>
+  <version>0.78</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>net.pwall.maven</groupId>
     <artifactId>maven-kotlin</artifactId>
-    <version>3.1</version>
+    <version>4.0</version>
   </parent>
 
   <properties>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.34</version>
+      <version>0.35</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-functions</artifactId>
-      <version>1.4.1</version>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.util</groupId>
@@ -91,19 +91,19 @@
     <dependency>
       <groupId>net.pwall.yaml</groupId>
       <artifactId>yaml-simple</artifactId>
-      <version>1.11</version>
+      <version>1.12</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.log</groupId>
       <artifactId>log-front</artifactId>
-      <version>3.0</version>
+      <version>4.0</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
     </dependency>
     <dependency>
-      <!-- This is required because kotlin-test-junit 1.5.20 includes junit 4.12 -->
+      <!-- This is required because kotlin-test-junit 1.6.10 includes junit 4.12 -->
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
