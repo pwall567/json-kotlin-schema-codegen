@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.79] - 2022-06-16
+### Changed
+- `CodeGenerator`: fixed additional bug in validation in derived types
+
 ## [0.78] - 2022-06-13
 ### Added
 - `ValidationValue`: marker interface for values used in validations

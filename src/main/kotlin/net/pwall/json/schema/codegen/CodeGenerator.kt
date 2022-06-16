@@ -845,6 +845,7 @@ class CodeGenerator(
                                 baseConstraints.localTypeName, baseConstraints.enumValues))
                             validationsPresent = true
                     }
+                    baseConstraints.isLocalType -> {}
                     baseConstraints.isString -> {
                         if (property.processAdditionalConstraintsString(baseConstraints, target))
                             validationsPresent = true
