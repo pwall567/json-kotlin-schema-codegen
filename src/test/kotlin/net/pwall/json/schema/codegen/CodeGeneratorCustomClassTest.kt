@@ -370,6 +370,30 @@ public class Person {
         return hash ^ name.hashCode();
     }
 
+    public static class Builder {
+
+        private PersonId id;
+        private PersonName name;
+
+        public Builder withId(PersonId id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(PersonName name) {
+            this.name = name;
+            return this;
+        }
+
+        public Person build() {
+            return new Person(
+                    id,
+                    name
+            );
+        }
+
+    }
+
 }
 """
 
@@ -434,6 +458,30 @@ public class TestCustom {
     public int hashCode() {
         int hash = aaa.hashCode();
         return hash ^ (bbb != null ? bbb.hashCode() : 0);
+    }
+
+    public static class Builder {
+
+        private Money aaa;
+        private Money bbb;
+
+        public Builder withAaa(Money aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(Money bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public TestCustom build() {
+            return new TestCustom(
+                    aaa,
+                    bbb
+            );
+        }
+
     }
 
 }
@@ -516,6 +564,30 @@ public class TestCustom {
     public int hashCode() {
         int hash = aaa.hashCode();
         return hash ^ (bbb != null ? bbb.hashCode() : 0);
+    }
+
+    public static class Builder {
+
+        private String aaa;
+        private String bbb;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(String bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public TestCustom build() {
+            return new TestCustom(
+                    aaa,
+                    bbb
+            );
+        }
+
     }
 
 }

@@ -171,6 +171,44 @@ public class TestConst {
         return hash ^ ddd.hashCode();
     }
 
+    public static class Builder {
+
+        private int aaa;
+        private long bbb;
+        private String ccc;
+        private BigDecimal ddd;
+
+        public Builder withAaa(int aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(long bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(String ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public Builder withDdd(BigDecimal ddd) {
+            this.ddd = ddd;
+            return this;
+        }
+
+        public TestConst build() {
+            return new TestConst(
+                    aaa,
+                    bbb,
+                    ccc,
+                    ddd
+            );
+        }
+
+    }
+
 }
 """
 

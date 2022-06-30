@@ -167,6 +167,37 @@ public class TestEnumValidation {
         return hash ^ ccc.hashCode();
     }
 
+    public static class Builder {
+
+        private String aaa;
+        private int bbb;
+        private Ccc ccc;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(int bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(Ccc ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public TestEnumValidation build() {
+            return new TestEnumValidation(
+                    aaa,
+                    bbb,
+                    ccc
+            );
+        }
+
+    }
+
     public enum Ccc {
         xxx,
         yyy,

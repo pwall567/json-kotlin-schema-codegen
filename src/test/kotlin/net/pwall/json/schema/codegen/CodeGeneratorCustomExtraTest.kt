@@ -207,6 +207,51 @@ public class Test {
         return hash ^ (stock != null ? stock.hashCode() : 0);
     }
 
+    public static class Builder {
+
+        private BigDecimal id;
+        private String name;
+        private BigDecimal price;
+        private List<String> tags;
+        private StockEntry stock;
+
+        public Builder withId(BigDecimal id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withPrice(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder withTags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public Builder withStock(StockEntry stock) {
+            this.stock = stock;
+            return this;
+        }
+
+        public Test build() {
+            return new Test(
+                    id,
+                    name,
+                    price,
+                    tags,
+                    stock
+            );
+        }
+
+    }
+
 }
 """
 
@@ -252,6 +297,30 @@ public class StockEntry {
     public int hashCode() {
         int hash = (warehouse != null ? warehouse.hashCode() : 0);
         return hash ^ (retail != null ? retail.hashCode() : 0);
+    }
+
+    public static class Builder {
+
+        private BigDecimal warehouse;
+        private BigDecimal retail;
+
+        public Builder withWarehouse(BigDecimal warehouse) {
+            this.warehouse = warehouse;
+            return this;
+        }
+
+        public Builder withRetail(BigDecimal retail) {
+            this.retail = retail;
+            return this;
+        }
+
+        public StockEntry build() {
+            return new StockEntry(
+                    warehouse,
+                    retail
+            );
+        }
+
     }
 
 }

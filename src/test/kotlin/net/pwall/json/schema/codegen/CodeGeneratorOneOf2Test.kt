@@ -243,6 +243,23 @@ public class TypeA {
         return (int)aaa;
     }
 
+    public static class Builder {
+
+        private long aaa;
+
+        public Builder withAaa(long aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public TypeA build() {
+            return new TypeA(
+                    aaa
+            );
+        }
+
+    }
+
     public static class A extends TypeA {
 
         private final String xxx;
@@ -430,6 +447,23 @@ public class TypeB {
         return xxx.hashCode();
     }
 
+    public static class Builder {
+
+        private String xxx;
+
+        public Builder withXxx(String xxx) {
+            this.xxx = xxx;
+            return this;
+        }
+
+        public TypeB build() {
+            return new TypeB(
+                    xxx
+            );
+        }
+
+    }
+
 }
 """
 
@@ -465,6 +499,23 @@ public class TypeC {
     @Override
     public int hashCode() {
         return yyy.hashCode();
+    }
+
+    public static class Builder {
+
+        private String yyy;
+
+        public Builder withYyy(String yyy) {
+            this.yyy = yyy;
+            return this;
+        }
+
+        public TypeC build() {
+            return new TypeC(
+                    yyy
+            );
+        }
+
     }
 
 }

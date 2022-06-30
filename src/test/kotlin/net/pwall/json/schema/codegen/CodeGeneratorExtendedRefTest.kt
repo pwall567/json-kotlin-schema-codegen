@@ -179,6 +179,30 @@ public class Main {
         return hash ^ extended.hashCode();
     }
 
+    public static class Builder {
+
+        private String name;
+        private Extended extended;
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withExtended(Extended extended) {
+            this.extended = extended;
+            return this;
+        }
+
+        public Main build() {
+            return new Main(
+                    name,
+                    extended
+            );
+        }
+
+    }
+
     public static class Extended extends Nested {
 
         private final boolean extra;
@@ -248,6 +272,23 @@ public class Nested {
     @Override
     public int hashCode() {
         return (int)count;
+    }
+
+    public static class Builder {
+
+        private long count;
+
+        public Builder withCount(long count) {
+            this.count = count;
+            return this;
+        }
+
+        public Nested build() {
+            return new Nested(
+                    count
+            );
+        }
+
     }
 
 }

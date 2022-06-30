@@ -116,6 +116,30 @@ public class TestIntegerFormat {
         return hash ^ (int)big;
     }
 
+    public static class Builder {
+
+        private int little;
+        private long big;
+
+        public Builder withLittle(int little) {
+            this.little = little;
+            return this;
+        }
+
+        public Builder withBig(long big) {
+            this.big = big;
+            return this;
+        }
+
+        public TestIntegerFormat build() {
+            return new TestIntegerFormat(
+                    little,
+                    big
+            );
+        }
+
+    }
+
 }
 """
 

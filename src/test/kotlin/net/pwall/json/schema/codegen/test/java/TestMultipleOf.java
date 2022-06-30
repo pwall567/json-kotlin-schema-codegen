@@ -75,4 +75,35 @@ public class TestMultipleOf {
         return hash ^ ccc;
     }
 
+    public static class Builder {
+
+        private BigDecimal aaa;
+        private long bbb;
+        private int ccc;
+
+        public Builder withAaa(BigDecimal aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(long bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(int ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public TestMultipleOf build() {
+            return new TestMultipleOf(
+                    aaa,
+                    bbb,
+                    ccc
+            );
+        }
+
+    }
+
 }

@@ -2,6 +2,16 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.81] - 2022-06-30
+### Changed
+- `pom.xml`: bumped dependency version
+
+## [0.80] - 2022-06-30
+### Changed
+- `pom.xml`: switched to `log-front` 5.0, dropped `logback`
+- `pom.xml`: bumped dependency version
+- templates: added `Builder` classes to Java output
+
 ## [0.79] - 2022-06-16
 ### Changed
 - `CodeGenerator`: fixed additional bug in validation in derived types

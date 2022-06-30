@@ -19,6 +19,7 @@
 {{/baseProperty}}{{/properties}}    }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
-{{>hashcode}}{{#nestedClasses}}
+{{>hashcode}}
+{{>builder}}{{#nestedClasses}}
 {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}
 }{{/constraints}}

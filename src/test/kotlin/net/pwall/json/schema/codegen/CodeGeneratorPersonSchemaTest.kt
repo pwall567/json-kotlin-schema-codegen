@@ -149,6 +149,37 @@ public class TestPerson {
         return hash ^ age;
     }
 
+    public static class Builder {
+
+        private String name;
+        private String nickname;
+        private int age;
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withNickname(String nickname) {
+            this.nickname = nickname;
+            return this;
+        }
+
+        public Builder withAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public TestPerson build() {
+            return new TestPerson(
+                    name,
+                    nickname,
+                    age
+            );
+        }
+
+    }
+
 }
 """
 

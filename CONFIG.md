@@ -71,6 +71,9 @@ The default target language is Kotlin; to change this, the `targetLanguage` prop
 ```
 The values allowed are `kotlin`, `java` or `typescript`.
 
+**New in version 0.80:** Java output now includes `Builder` classes, to aid with creation of classes with long
+constructor parameter lists.
+
 
 ## `packageName`
 

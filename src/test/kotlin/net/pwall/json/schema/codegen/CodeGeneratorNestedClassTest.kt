@@ -134,6 +134,23 @@ public class TestNestedObject {
         return nested.hashCode();
     }
 
+    public static class Builder {
+
+        private Nested nested;
+
+        public Builder withNested(Nested nested) {
+            this.nested = nested;
+            return this;
+        }
+
+        public TestNestedObject build() {
+            return new TestNestedObject(
+                    nested
+            );
+        }
+
+    }
+
     /**
      * Test nested object - nested.
      */

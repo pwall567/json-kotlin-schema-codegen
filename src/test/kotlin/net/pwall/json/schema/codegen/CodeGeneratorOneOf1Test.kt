@@ -152,6 +152,23 @@ public class TypeB implements TypeA {
         return xxx.hashCode();
     }
 
+    public static class Builder {
+
+        private String xxx;
+
+        public Builder withXxx(String xxx) {
+            this.xxx = xxx;
+            return this;
+        }
+
+        public TypeB build() {
+            return new TypeB(
+                    xxx
+            );
+        }
+
+    }
+
 }
 """
 
@@ -189,6 +206,23 @@ public class TypeC implements TypeA {
         return yyy.hashCode();
     }
 
+    public static class Builder {
+
+        private String yyy;
+
+        public Builder withYyy(String yyy) {
+            this.yyy = yyy;
+            return this;
+        }
+
+        public TypeC build() {
+            return new TypeC(
+                    yyy
+            );
+        }
+
+    }
+
 }
 """
 
@@ -224,6 +258,23 @@ public class TypeD {
     @Override
     public int hashCode() {
         return qqq.hashCode();
+    }
+
+    public static class Builder {
+
+        private TypeA qqq;
+
+        public Builder withQqq(TypeA qqq) {
+            this.qqq = qqq;
+            return this;
+        }
+
+        public TypeD build() {
+            return new TypeD(
+                    qqq
+            );
+        }
+
     }
 
 }

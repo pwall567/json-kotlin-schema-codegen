@@ -330,6 +330,114 @@ public class TestString {
         return hash ^ status.hashCode();
     }
 
+    public static class Builder {
+
+        private String email1;
+        private String hostname1;
+        private String ipv4a;
+        private String ipv6a;
+        private String duration1;
+        private String pointer1;
+        private String maxlen;
+        private String minlen;
+        private String minlen2;
+        private String fixedLen;
+        private String rangeLen;
+        private String name;
+        private URI uri;
+        private Status status;
+
+        public Builder withEmail1(String email1) {
+            this.email1 = email1;
+            return this;
+        }
+
+        public Builder withHostname1(String hostname1) {
+            this.hostname1 = hostname1;
+            return this;
+        }
+
+        public Builder withIpv4a(String ipv4a) {
+            this.ipv4a = ipv4a;
+            return this;
+        }
+
+        public Builder withIpv6a(String ipv6a) {
+            this.ipv6a = ipv6a;
+            return this;
+        }
+
+        public Builder withDuration1(String duration1) {
+            this.duration1 = duration1;
+            return this;
+        }
+
+        public Builder withPointer1(String pointer1) {
+            this.pointer1 = pointer1;
+            return this;
+        }
+
+        public Builder withMaxlen(String maxlen) {
+            this.maxlen = maxlen;
+            return this;
+        }
+
+        public Builder withMinlen(String minlen) {
+            this.minlen = minlen;
+            return this;
+        }
+
+        public Builder withMinlen2(String minlen2) {
+            this.minlen2 = minlen2;
+            return this;
+        }
+
+        public Builder withFixedLen(String fixedLen) {
+            this.fixedLen = fixedLen;
+            return this;
+        }
+
+        public Builder withRangeLen(String rangeLen) {
+            this.rangeLen = rangeLen;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withUri(URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder withStatus(Status status) {
+            this.status = status;
+            return this;
+        }
+
+        public TestString build() {
+            return new TestString(
+                    email1,
+                    hostname1,
+                    ipv4a,
+                    ipv6a,
+                    duration1,
+                    pointer1,
+                    maxlen,
+                    minlen,
+                    minlen2,
+                    fixedLen,
+                    rangeLen,
+                    name,
+                    uri,
+                    status
+            );
+        }
+
+    }
+
     public enum Status {
         OPEN,
         CLOSED

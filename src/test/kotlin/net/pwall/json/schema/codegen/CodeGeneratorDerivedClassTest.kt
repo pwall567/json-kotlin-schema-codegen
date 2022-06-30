@@ -155,6 +155,23 @@ public class TestBaseClass {
         return id.hashCode();
     }
 
+    public static class Builder {
+
+        private UUID id;
+
+        public Builder withId(UUID id) {
+            this.id = id;
+            return this;
+        }
+
+        public TestBaseClass build() {
+            return new TestBaseClass(
+                    id
+            );
+        }
+
+    }
+
 }
 """
 
@@ -202,6 +219,30 @@ public class TestDerivedClass extends TestBaseClass {
     public int hashCode() {
         int hash = super.hashCode();
         return hash ^ name.hashCode();
+    }
+
+    public static class Builder {
+
+        private UUID id;
+        private String name;
+
+        public Builder withId(UUID id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public TestDerivedClass build() {
+            return new TestDerivedClass(
+                    id,
+                    name
+            );
+        }
+
     }
 
 }

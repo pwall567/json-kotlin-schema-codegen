@@ -157,6 +157,23 @@ public class TestBase {
         return aaa.hashCode();
     }
 
+    public static class Builder {
+
+        private String aaa;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public TestBase build() {
+            return new TestBase(
+                    aaa
+            );
+        }
+
+    }
+
 }
 """
 
@@ -188,6 +205,23 @@ public class TestBaseEmptyDerived extends TestBase {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    public static class Builder {
+
+        private String aaa;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public TestBaseEmptyDerived build() {
+            return new TestBaseEmptyDerived(
+                    aaa
+            );
+        }
+
     }
 
 }

@@ -66,8 +66,8 @@ import net.pwall.json.schema.validation.PatternValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
+import net.pwall.log.Log.getLogger
 import net.pwall.log.Logger
-import net.pwall.log.LoggerFactory
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
@@ -97,7 +97,7 @@ class CodeGenerator(
     /** An optional marker interface to add to each generated class */
     var markerInterface: ClassId? = null,
     /** A [Logger] object for the output of logging messages */
-    val log: Logger = LoggerFactory.getDefaultLogger(CodeGenerator::class.qualifiedName)
+    val log: Logger = getLogger(CodeGenerator::class.qualifiedName)
 ) {
 
     enum class NestedClassNameOption {

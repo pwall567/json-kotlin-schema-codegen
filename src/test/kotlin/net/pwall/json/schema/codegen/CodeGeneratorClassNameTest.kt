@@ -87,6 +87,23 @@ public class Supplied {
         return id.hashCode();
     }
 
+    public static class Builder {
+
+        private String id;
+
+        public Builder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Supplied build() {
+            return new Supplied(
+                    id
+            );
+        }
+
+    }
+
 }
 """
 

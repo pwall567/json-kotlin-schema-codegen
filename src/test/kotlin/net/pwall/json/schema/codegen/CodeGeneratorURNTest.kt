@@ -103,6 +103,23 @@ public class Gen123 {
         return aaa.hashCode();
     }
 
+    public static class Builder {
+
+        private Object aaa;
+
+        public Builder withAaa(Object aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Gen123 build() {
+            return new Gen123(
+                    aaa
+            );
+        }
+
+    }
+
 }
 """
 

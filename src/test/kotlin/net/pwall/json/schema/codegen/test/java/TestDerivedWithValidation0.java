@@ -50,4 +50,42 @@ public class TestDerivedWithValidation0 extends TestBaseWithValidation {
         return hash ^ payload.hashCode();
     }
 
+    public static class Builder {
+
+        private Type type;
+        private int quantity;
+        private String name;
+        private String payload;
+
+        public Builder withType(Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder withQuantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withPayload(String payload) {
+            this.payload = payload;
+            return this;
+        }
+
+        public TestDerivedWithValidation0 build() {
+            return new TestDerivedWithValidation0(
+                    type,
+                    quantity,
+                    name,
+                    payload
+            );
+        }
+
+    }
+
 }

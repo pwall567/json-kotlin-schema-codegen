@@ -155,6 +155,37 @@ public class TypeA {
         return hash ^ ccc.hashCode();
     }
 
+    public static class Builder {
+
+        private String aaa;
+        private long bbb;
+        private TypeB ccc;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(long bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(TypeB ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public TypeA build() {
+            return new TypeA(
+                    aaa,
+                    bbb,
+                    ccc
+            );
+        }
+
+    }
+
 }
 """
 
@@ -200,6 +231,30 @@ public class TypeB {
     public int hashCode() {
         int hash = xxx.hashCode();
         return hash ^ (yyy ? 1 : 0);
+    }
+
+    public static class Builder {
+
+        private String xxx;
+        private boolean yyy;
+
+        public Builder withXxx(String xxx) {
+            this.xxx = xxx;
+            return this;
+        }
+
+        public Builder withYyy(boolean yyy) {
+            this.yyy = yyy;
+            return this;
+        }
+
+        public TypeB build() {
+            return new TypeB(
+                    xxx,
+                    yyy
+            );
+        }
+
     }
 
 }

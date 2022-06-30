@@ -122,6 +122,44 @@ public class TestIntegerMinMax {
         return hash ^ (int)ddd;
     }
 
+    public static class Builder {
+
+        private int aaa;
+        private int bbb;
+        private long ccc;
+        private long ddd;
+
+        public Builder withAaa(int aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(int bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(long ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public Builder withDdd(long ddd) {
+            this.ddd = ddd;
+            return this;
+        }
+
+        public TestIntegerMinMax build() {
+            return new TestIntegerMinMax(
+                    aaa,
+                    bbb,
+                    ccc,
+                    ddd
+            );
+        }
+
+    }
+
 }
 """
 

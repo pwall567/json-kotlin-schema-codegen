@@ -159,6 +159,30 @@ public class QueryResponse {
         return hash ^ (message != null ? message.hashCode() : 0);
     }
 
+    public static class Builder {
+
+        private Person data;
+        private String message;
+
+        public Builder withData(Person data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder withMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public QueryResponse build() {
+            return new QueryResponse(
+                    data,
+                    message
+            );
+        }
+
+    }
+
 }
 """
 
@@ -211,6 +235,30 @@ public class Person {
     public int hashCode() {
         int hash = id;
         return hash ^ name.hashCode();
+    }
+
+    public static class Builder {
+
+        private int id;
+        private String name;
+
+        public Builder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Person build() {
+            return new Person(
+                    id,
+                    name
+            );
+        }
+
     }
 
 }

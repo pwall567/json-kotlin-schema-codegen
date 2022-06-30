@@ -154,6 +154,23 @@ public class TestCustom {
         return aaa.hashCode();
     }
 
+    public static class Builder {
+
+        private String aaa;
+
+        public Builder withAaa(String aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public TestCustom build() {
+            return new TestCustom(
+                    aaa
+            );
+        }
+
+    }
+
 }
 """
 

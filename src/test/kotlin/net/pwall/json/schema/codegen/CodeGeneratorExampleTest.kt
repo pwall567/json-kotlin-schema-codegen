@@ -185,6 +185,51 @@ public class Test {
         return hash ^ (stock != null ? stock.hashCode() : 0);
     }
 
+    public static class Builder {
+
+        private BigDecimal id;
+        private String name;
+        private BigDecimal price;
+        private List<String> tags;
+        private Stock stock;
+
+        public Builder withId(BigDecimal id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withPrice(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder withTags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public Builder withStock(Stock stock) {
+            this.stock = stock;
+            return this;
+        }
+
+        public Test build() {
+            return new Test(
+                    id,
+                    name,
+                    price,
+                    tags,
+                    stock
+            );
+        }
+
+    }
+
     public static class Stock {
 
         private final BigDecimal warehouse;

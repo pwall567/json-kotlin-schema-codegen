@@ -147,6 +147,30 @@ public class Person {
         return hash ^ name.hashCode();
     }
 
+    public static class Builder {
+
+        private UUID id;
+        private String name;
+
+        public Builder withId(UUID id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Person build() {
+            return new Person(
+                    id,
+                    name
+            );
+        }
+
+    }
+
 }
 """
 

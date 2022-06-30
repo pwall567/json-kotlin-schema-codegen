@@ -1,0 +1,18 @@
+    public static class Builder {
+
+{{#properties}}        private {{>type}} {{&javaName}};
+{{/properties}}
+
+{{#properties}}        public Builder with{{&capitalisedName}}({{>type}} {{&javaName}}) {
+            this.{{&javaName}} = {{&javaName}};
+            return this;
+        }
+
+{{/properties}}
+        public {{&className}} build() {
+            return new {{&className}}(
+{{#properties}}                    {{&javaName}}{{^last}},{{/last}}
+{{/properties}}            );
+        }
+
+    }

@@ -259,6 +259,44 @@ public class TestComplexBase {
         return hash ^ uuu.hashCode();
     }
 
+    public static class Builder {
+
+        private Aaa aaa;
+        private String qqq;
+        private Extra sss;
+        private UUID uuu;
+
+        public Builder withAaa(Aaa aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withQqq(String qqq) {
+            this.qqq = qqq;
+            return this;
+        }
+
+        public Builder withSss(Extra sss) {
+            this.sss = sss;
+            return this;
+        }
+
+        public Builder withUuu(UUID uuu) {
+            this.uuu = uuu;
+            return this;
+        }
+
+        public TestComplexBase build() {
+            return new TestComplexBase(
+                    aaa,
+                    qqq,
+                    sss,
+                    uuu
+            );
+        }
+
+    }
+
     public static class Aaa {
 
         private final String xxx;
@@ -346,6 +384,51 @@ public class TestComplexBaseDerived extends TestComplexBase {
     public int hashCode() {
         int hash = super.hashCode();
         return hash ^ bbb.hashCode();
+    }
+
+    public static class Builder {
+
+        private Aaa aaa;
+        private String qqq;
+        private Extra sss;
+        private UUID uuu;
+        private String bbb;
+
+        public Builder withAaa(Aaa aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withQqq(String qqq) {
+            this.qqq = qqq;
+            return this;
+        }
+
+        public Builder withSss(Extra sss) {
+            this.sss = sss;
+            return this;
+        }
+
+        public Builder withUuu(UUID uuu) {
+            this.uuu = uuu;
+            return this;
+        }
+
+        public Builder withBbb(String bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public TestComplexBaseDerived build() {
+            return new TestComplexBaseDerived(
+                    aaa,
+                    qqq,
+                    sss,
+                    uuu,
+                    bbb
+            );
+        }
+
     }
 
 }

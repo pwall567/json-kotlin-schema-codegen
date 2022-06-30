@@ -103,6 +103,23 @@ public class TestGenerateAny {
         return aaa.hashCode();
     }
 
+    public static class Builder {
+
+        private Object aaa;
+
+        public Builder withAaa(Object aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public TestGenerateAny build() {
+            return new TestGenerateAny(
+                    aaa
+            );
+        }
+
+    }
+
 }
 """
 

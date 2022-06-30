@@ -183,6 +183,37 @@ public class TestArrayItems {
         return hash ^ (ccc != null ? ccc.hashCode() : 0);
     }
 
+    public static class Builder {
+
+        private List<Integer> aaa;
+        private List<String> bbb;
+        private List<List<String>> ccc;
+
+        public Builder withAaa(List<Integer> aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(List<String> bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(List<List<String>> ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public TestArrayItems build() {
+            return new TestArrayItems(
+                    aaa,
+                    bbb,
+                    ccc
+            );
+        }
+
+    }
+
 }
 """
 

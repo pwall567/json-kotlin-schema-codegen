@@ -152,6 +152,30 @@ public class TestArray {
         return hash ^ bbb.hashCode();
     }
 
+    public static class Builder {
+
+        private List<Person> aaa;
+        private Set<String> bbb;
+
+        public Builder withAaa(List<Person> aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(Set<String> bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public TestArray build() {
+            return new TestArray(
+                    aaa,
+                    bbb
+            );
+        }
+
+    }
+
     public static class Person {
 
         private final UUID id;

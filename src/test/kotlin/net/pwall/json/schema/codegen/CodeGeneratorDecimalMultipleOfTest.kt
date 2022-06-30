@@ -134,6 +134,37 @@ public class TestDecimalMultipleOf {
         return hash ^ ccc.hashCode();
     }
 
+    public static class Builder {
+
+        private BigDecimal aaa;
+        private BigDecimal bbb;
+        private BigDecimal ccc;
+
+        public Builder withAaa(BigDecimal aaa) {
+            this.aaa = aaa;
+            return this;
+        }
+
+        public Builder withBbb(BigDecimal bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(BigDecimal ccc) {
+            this.ccc = ccc;
+            return this;
+        }
+
+        public TestDecimalMultipleOf build() {
+            return new TestDecimalMultipleOf(
+                    aaa,
+                    bbb,
+                    ccc
+            );
+        }
+
+    }
+
 }
 """
 

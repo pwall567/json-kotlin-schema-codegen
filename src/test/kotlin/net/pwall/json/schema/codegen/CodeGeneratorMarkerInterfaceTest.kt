@@ -124,6 +124,15 @@ public class TestEmpty implements Marker {
         return 0;
     }
 
+    public static class Builder {
+
+        public TestEmpty build() {
+            return new TestEmpty(
+            );
+        }
+
+    }
+
 }
 """
 
@@ -160,6 +169,15 @@ public class TestEmpty implements Marker {
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public static class Builder {
+
+        public TestEmpty build() {
+            return new TestEmpty(
+            );
+        }
+
     }
 
 }

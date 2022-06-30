@@ -90,6 +90,15 @@ public class TestEmpty {
         return 0;
     }
 
+    public static class Builder {
+
+        public TestEmpty build() {
+            return new TestEmpty(
+            );
+        }
+
+    }
+
 }
 """
 

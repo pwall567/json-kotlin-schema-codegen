@@ -66,6 +66,37 @@ public class TestBaseWithValidation {
         return hash ^ name.hashCode();
     }
 
+    public static class Builder {
+
+        private Type type;
+        private int quantity;
+        private String name;
+
+        public Builder withType(Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder withQuantity(int quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public TestBaseWithValidation build() {
+            return new TestBaseWithValidation(
+                    type,
+                    quantity,
+                    name
+            );
+        }
+
+    }
+
     public enum Type {
         FIRST,
         SECOND,
