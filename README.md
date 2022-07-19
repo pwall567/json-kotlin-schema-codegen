@@ -16,6 +16,8 @@ See the documentation at [CONFIG.md](CONFIG.md).
 
 Also build tool support - see [below](#build-tool-support).
 
+Also, the ability to add annotations to generated classes - see [`annotations`](CONFIG.md#annotations).
+
 ## Background
 
 [JSON Schema](https://json-schema.org/) provides a means of describing JSON values &ndash; the properties of an object,
@@ -253,25 +255,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.79, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.82, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.79</version>
+      <version>0.82</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.79'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.82'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.79")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.82")
 ```
 
 Peter Wall
 
-2022-06-16
+2022-07-20

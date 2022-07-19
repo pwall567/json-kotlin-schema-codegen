@@ -1,4 +1,6 @@
-{{#type}}{{#NULL}}null{{/NULL}}{{!
+{{#isLocalType}}{{#isEnumClass}}{{&defaultValue.kotlinString}}{{/isEnumClass}}{{!
+}}{{^isEnumClass}}{{&localTypeName}}({{#type}}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
+}}{{^STRING}}{{&defaultValue}}{{/STRING}}{{/type}}){{/isEnumClass}}{{/isLocalType}}{{^isLocalType}}{{#type}}{{#NULL}}null{{/NULL}}{{!
 }}{{#INTEGER}}{{&defaultValue}}{{/INTEGER}}{{!
 }}{{#STRING}}{{#isSystemClass}}{{#systemClass}}{{#DATE_TIME}}OffsetDateTime.parse({{&defaultValue.kotlinString}}){{/DATE_TIME}}{{!
 }}{{#DATE}}LocalDate.parse({{&defaultValue.kotlinString}}){{/DATE}}{{!
@@ -8,4 +10,5 @@
 }}{{/systemClass}}{{/isSystemClass}}{{!
 }}{{^isSystemClass}}{{&defaultValue.kotlinString}}{{/isSystemClass}}{{/STRING}}{{!
 }}{{#BOOLEAN}}{{&defaultValue}}{{/BOOLEAN}}{{!
-}}{{#ARRAY}}{{#uniqueItems}}setOf{{/uniqueItems}}{{^uniqueItems}}listOf{{/uniqueItems}}({{#defaultValue}}{{>default_value}}{{^last}}, {{/last}}{{/defaultValue}}){{/ARRAY}}{{/type}}
+}}{{#ARRAY}}{{#uniqueItems}}setOf{{/uniqueItems}}{{^uniqueItems}}listOf{{/uniqueItems}}({{!
+}}{{#defaultValue}}{{>default_value}}{{^last}}, {{/last}}{{/defaultValue}}){{/ARRAY}}{{/type}}{{/isLocalType}}

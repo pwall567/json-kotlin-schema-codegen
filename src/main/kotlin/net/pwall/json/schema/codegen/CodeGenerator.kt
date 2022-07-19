@@ -68,6 +68,7 @@ import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
 import net.pwall.log.Log.getLogger
 import net.pwall.log.Logger
+import net.pwall.mustache.Context
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.Strings
@@ -206,6 +207,24 @@ class CodeGenerator(
     private val defaultOutputResolver: OutputResolver = { targetFileName ->
         targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
     }
+
+    private val classAnnotations = mutableListOf<Pair<ClassId, Template?>>()
+
+    fun addClassAnnotation(className: String, template: Template? = null) {
+        if (!className.isValidClassName())
+            fatal("Not a valid annotation class name - \"$className\"")
+        classAnnotations.add(ClassName.of(className) to template)
+    }
+
+    private val fieldAnnotations = mutableListOf<Pair<ClassId, Template?>>()
+
+    fun addFieldAnnotation(className: String, template: Template? = null) {
+        if (!className.isValidClassName())
+            fatal("Not a valid annotation class name - \"$className\"")
+        fieldAnnotations.add(ClassName.of(className) to template)
+    }
+
+    private val generatorContext = Context(GeneratorContext)
 
     fun setTemplateDirectory(directory: File, suffix: String = "mustache") {
         when {
@@ -574,26 +593,30 @@ class CodeGenerator(
     private fun generateTarget(target: Target) {
         log.info { "Generating for ${target.source}" }
         nameGenerator = NameGenerator()
+        val constraints = target.constraints
         when {
-            target.constraints.isObject -> { // does it look like an object? generate a class
+            constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
+                constraints.applyAnnotations(classAnnotations, target, target)
+                for (property in constraints.properties)
+                    property.applyAnnotations(fieldAnnotations, property, target)
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
                 outputResolver(target.targetFile).use {
-                    template.processTo(AppendableFilter(it), target)
+                    template.appendTo(AppendableFilter(it), generatorContext.child(target))
                 }
             }
-            target.constraints.oneOfSchemata.any { it.isObject } -> {
+            constraints.oneOfSchemata.any { it.isObject } -> {
                 // it wasn't an object, but it had a oneOf with object children
                 log.info { "-- target interface ${target.qualifiedClassName}" }
                 outputResolver(target.targetFile).use {
-                    interfaceTemplate.processTo(AppendableFilter(it), target)
+                    interfaceTemplate.appendTo(AppendableFilter(it), generatorContext.child(target))
                 }
             }
-            target.constraints.isString && target.constraints.enumValues.let { it != null && allIdentifier(it) } -> {
+            constraints.isString && constraints.enumValues.let { it != null && allIdentifier(it) } -> {
                 log.info { "-- target enum ${target.qualifiedClassName}" }
                 outputResolver(target.targetFile).use {
-                    enumTemplate.processTo(it, target)
+                    enumTemplate.appendTo(AppendableFilter(it), generatorContext.child(target))
                 }
             }
             else -> log.info { "-- nothing to generate for ${target.className}" }
@@ -1585,19 +1608,19 @@ class CodeGenerator(
     }
 
     private fun processConstValidator(constValidator: ConstValidator, constraints: Constraints) {
-        if (constraints.constValue != null)
-            fatal("Duplicate const")
+        if (constraints.constValue != null && constraints.constValue != constValidator.value)
+            fatal("Duplicate const - ${constValidator.location}")
         constraints.constValue = constValidator.value
     }
 
     private fun processEnumValidator(enumValidator: EnumValidator, constraints: Constraints) {
-        if (constraints.enumValues != null)
-            fatal("Duplicate enum")
+        if (constraints.enumValues != null && constraints.enumValues != enumValidator.array)
+            fatal("Duplicate enum - ${enumValidator.location}")
         constraints.enumValues = enumValidator.array
     }
 
     private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
-        if (constraints.format != null)
+        if (constraints.format != null && constraints.format != formatValidator.checker)
             fatal("Duplicate format - ${formatValidator.location}")
         val newFormat = formatValidator.checker
         if (newFormat is FormatValidator.DelegatingFormatChecker)
@@ -1635,8 +1658,8 @@ class CodeGenerator(
     }
 
     private fun processPatternValidator(patternValidator: PatternValidator, constraints: Constraints) {
-        if (constraints.regex != null)
-            fatal("Duplicate pattern")
+        if (constraints.regex != null && constraints.regex != patternValidator.regex)
+            fatal("Duplicate pattern - ${patternValidator.location}")
         constraints.regex = patternValidator.regex
     }
 
@@ -1823,13 +1846,15 @@ class CodeGenerator(
         }
 
         private fun String.isValidIdentifier(): Boolean {
-            if (!this[0].isJavaIdentifierStart())
+            if (isEmpty() || !this[0].isJavaIdentifierStart())
                 return false
             for (i in 1 until length)
                 if (!this[i].isJavaIdentifierPart())
                     return false
             return true
         }
+
+        fun String.isValidClassName(): Boolean = split('.').all { it.isValidIdentifier() }
 
         fun String.sanitiseName(): String {
             for (i in 0 until length) {

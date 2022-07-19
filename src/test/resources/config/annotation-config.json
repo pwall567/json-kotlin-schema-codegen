@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "net.pwall.json.schema.codegen.test.kotlin",
+  "annotations": {
+    "classes": {
+      "net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation": null,
+      "javax.annotation.Generated": "\"{{&generator}}\", date=\"{{&dateTime}}\""
+    },
+    "fields": {
+      "net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation": "\"{{&kotlinName}}\""
+    }
+  }
+}

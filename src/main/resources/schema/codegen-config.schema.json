@@ -117,6 +117,30 @@
           "additionalProperties": false
         }
       }
+    },
+    "annotations": {
+      "type": "object",
+      "properties": {
+        "classes": {
+          "type": "object",
+          "patternProperties": {
+            "^([a-z][a-z0-9]*\\.)*[A-Za-z][A-Za-z0-9]*$": {
+              "type": [ "string", "null" ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "fields": {
+          "type": "object",
+          "patternProperties": {
+            "^([a-z][a-z0-9]*\\.)*[A-Za-z][A-Za-z0-9]*$": {
+              "type": [ "string", "null" ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

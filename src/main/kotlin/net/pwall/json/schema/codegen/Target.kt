@@ -25,9 +25,6 @@
 
 package net.pwall.json.schema.codegen
 
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.OffsetTime
 import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
@@ -62,7 +59,7 @@ class Target(
     @Suppress("unused")
     val commentLines: List<String>?
         get() = if (commentTemplate != null) {
-            val childContext = Context(this).child(CommentContext(OffsetDateTime.now())).child(json)
+            val childContext = Context(GeneratorContext).child(this).child(json)
             StringBuilder().apply { commentTemplate.appendTo(this, childContext) }.toString().split('\n')
         } else
             generatorComment?.split('\n')
@@ -150,17 +147,5 @@ class Target(
     enum class StaticType { DECIMAL, STRING, PATTERN, STRING_ARRAY, INT_ARRAY }
 
     data class Static(val type: StaticType, val staticName: String, val value: Any) : ValidationValue
-
-    data class CommentContext(val dateTime: OffsetDateTime) {
-
-        @Suppress("unused")
-        val date: LocalDate
-            get() = dateTime.toLocalDate()
-
-        @Suppress("unused")
-        val time: OffsetTime
-            get() = dateTime.toOffsetTime()
-
-    }
 
 }

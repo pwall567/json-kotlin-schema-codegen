@@ -38,19 +38,7 @@ import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.validation.FormatValidator
 
-open class Constraints(val schema: JSONSchema) {
-
-    @Suppress("unused")
-    val openBrace = '{'
-
-    @Suppress("unused")
-    val closeBrace = '}'
-
-    @Suppress("unused")
-    val openAngleBracket = '<'
-
-    @Suppress("unused")
-    val closeAngleBracket = '>'
+open class Constraints(val schema: JSONSchema) : Annotated() {
 
     @Suppress("unused")
     open val displayName: String
@@ -63,7 +51,6 @@ open class Constraints(val schema: JSONSchema) {
 
     var localTypeName: String? = null
 
-    @Suppress("unused")
     val isLocalType: Boolean
         get() = localTypeName != null
 

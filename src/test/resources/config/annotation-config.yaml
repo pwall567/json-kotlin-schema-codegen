@@ -1,0 +1,7 @@
+$schema: ../../../main/resources/schema/codegen-config.schema.json
+annotations:
+  classes:
+    net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation:
+    javax.annotation.Generated: '"{{&generator}}"'
+  fields:
+    net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation: '"{{&name}}"'

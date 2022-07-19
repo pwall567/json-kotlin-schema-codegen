@@ -141,6 +141,30 @@ object Configurator {
                 } ?: it.invalid(it.value)
             }
         }
+        ref.ifPresent<JSONMapping<*>>("annotations") {
+            ifPresent<JSONMapping<*>>("classes") {
+                forEachKey { entry ->
+                    when (val value = entry.value) {
+                        null -> generator.addClassAnnotation(entry.current)
+                        is JSONString -> generator.addClassAnnotation(entry.current, Template.parse(value.value))
+                        else -> fatal("Config entry ${entry.pointer} invalid entry")
+                    }
+                }
+            }
+            ifPresent<JSONMapping<*>>("fields") {
+                forEachKey { entry ->
+                    when (val value = entry.value) {
+                        null -> generator.addFieldAnnotation(entry.current)
+                        is JSONString -> generator.addFieldAnnotation(entry.current, Template.parse(value.value))
+                        else -> fatal("Config entry ${entry.pointer} invalid entry")
+                    }
+                }
+            }
+            forEachKey {
+                if (it.current != "classes" && it.current != "fields")
+                    fatal("Config entry ${it.pointer} unrecognised annotation type")
+            }
+        }
         if (extensionValidators.isNotEmpty()) {
             parser.customValidationHandler = { key, _, _, value ->
                 extensionValidators[key]?.get((value as? JSONString)?.value)
@@ -162,17 +186,38 @@ object Configurator {
         }
     }
 
-    private inline fun <reified T: JSONValue?> JSONReference.ifPresent(
+    private inline fun <reified T : JSONValue?> JSONReference.ifPresent(
         name: String,
         block: JSONReference.(T) -> Unit
-    ) {
+    ): ConditionDSL {
         child(name).let {
-            if (it.isValid)
-                it.checkType<T, Unit>(it.value) { v -> it.block(v) }
+            if (it.isValid) {
+                it.checkType<T, Unit>(it.value) { v ->
+                    it.block(v)
+                    return ConditionDSL(this@ifPresent, true)
+                }
+            }
         }
+        return ConditionDSL(this@ifPresent, false)
     }
 
-    private inline fun <reified T: JSONValue?, V> JSONReference.checkType(
+    class ConditionDSL(val ref: JSONReference, private val condition: Boolean) {
+
+        fun andAlso(block: JSONReference.() -> Unit): ConditionDSL {
+            if (condition)
+                ref.block()
+            return this
+        }
+
+        fun orElse(block: JSONReference.() -> Unit): ConditionDSL {
+            if (!condition)
+                ref.block()
+            return ConditionDSL(ref, !condition)
+        }
+
+    }
+
+    private inline fun <reified T : JSONValue?, V> JSONReference.checkType(
         value: JSONValue?,
         block: JSONReference.(T) -> V
     ): V = when (value) {

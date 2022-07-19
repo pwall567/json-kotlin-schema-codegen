@@ -30,6 +30,7 @@ import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+import java.net.URI
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -43,6 +44,8 @@ class CodeGeneratorDefaultTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestDefault", "kt", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"
+        codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-default#/properties/jjj"),
+                "com.example.util.TestString")
         codeGenerator.generate(listOf(input))
         expect(createHeader("TestDefault.kt") + expectedDefault) { stringWriter.toString() }
     }
@@ -58,6 +61,8 @@ import java.time.OffsetTime
 import java.net.URI
 import java.util.UUID
 
+import com.example.util.TestString
+
 /**
  * Test default values.
  */
@@ -70,7 +75,8 @@ data class TestDefault(
     val fff: LocalDate = LocalDate.parse("2021-09-22"),
     val ggg: OffsetTime = OffsetTime.parse("10:27:26"),
     val hhh: URI = URI("http://json-schema.org/draft/2019-09/schema"),
-    val iii: UUID = UUID.fromString("9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a")
+    val iii: UUID = UUID.fromString("9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a"),
+    val jjj: TestString = TestString("xyz")
 )
 """
 

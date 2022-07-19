@@ -41,6 +41,7 @@ The configuration file includes the following:
 - [`nonStandardFormat`](#nonstandardformat)
 - [`customClasses`](#customclasses)
 - [`classNames`](#classnames)
+- [`annotations`](#annotations)
 
 
 ## `title`
@@ -357,6 +358,9 @@ definition.
 This use of URI to specify custom class selection has the distinct advantage that it may be used in conjunction with
 schema files that are not open to modification, for example schema files that are read directly from public websites.
 
+**NOTE:** If a default value is given for a property that maps to a custom class, the code generator will output a
+constructor for the custom class, with the default value as a single parameter.
+If no such constructor exists, default values should be avoided.
 
 ## `classNames`
 
@@ -374,3 +378,126 @@ This will cause the schema definition with the specified `$id` to be generated a
 Note that in this case, the class name is **not** a fully-qualified class name &ndash; the package name used will be the
 one specified with the [`packageName`](#packagename) configuration option (possibly extended by the directory structure
 &ndash; see the [`derivePackageFromStructure`](#derivepackagefromstructure) option).
+
+
+## `annotations`
+
+The code generator can be configured to add annotations to the generated classes and fields (properties).
+The annotation may be a simple marker annotation with no parameters, or may have parameters formed from a
+[Mustache](https://github.com/pwall567/kotlin-mustache) template.
+
+For example, to add a `@Generated` annotation to each class:
+```json
+{
+  "annotations": {
+    "classes": {
+      "javax.annotation.Generated": "\"{{&generator}}\", date=\"{{&dateTime}}\""
+    }
+  }
+}
+```
+
+This will result in an annotation similar to the following being added to each class:
+```kotlin
+import javax.annotation.Generated
+
+@Generated("net.pwall.json.schema.codegen.CodeGenerator", date="2022-07-18T10:36:18.626+10:00")
+```
+
+The example illustrates several important points:
+1. Class annotations are defined in a section headed `classes` (field annotations are in a section headed `fields`).
+2. The annotation name must be supplied as a fully-qualified class name.
+   The fully-qualified name will be used on an `import`, and just the class name will be used on the annotation itself.
+3. The parameters for the annotation must be supplied together as a single string, and any special characters like
+   quotes must be escaped with backslashes as is normal for JSON (when using YAML, single-quoted strings allow any
+   special characters other than single quote itself).
+   No syntax checking is performed on the parameters, and any errors may result in code that will not compile.
+   The template must **not** include the parentheses surrounding the parameters;
+   these will be added by the generator when required.
+4. The context object used during Mustache template processing contains several variables that may be useful.
+   Some of these are listed [below](#template-context-object).
+
+A second example shows a field annotation with no parameters:
+```json
+{
+  "annotations": {
+    "fields": {
+      "com.example.anno.Demo": null
+    }
+  }
+}
+```
+
+This will result in the simple annotation `@Demo` being added to each field with no parameters (and no parentheses),
+with an `import com.example.anno.Demo` added to the start of the file.
+
+This example shows:
+1. Field annotations are defined in a section headed `fields`.
+2. The absence of parameters is indicated by a `null` template string.
+
+### Template Context Object
+
+The Mustache template expansion can take values from a "context object".
+For class annotations, the context object contains the following:
+
+| Name          | Type         | Description                                |
+|---------------|--------------|--------------------------------------------|
+| `className`   | `String`     | the class name                             |
+| `packageName` | `String?`    | the package name (or `null`)               |
+| `source`      | `String`     | the schema source file name (if available) |
+| `schema`      | `JSONSchema` | the schema as a `JSONSchema`               |
+
+For field annotations, the context object contains:
+
+| Name          | Type      | Description                                                                |
+|---------------|-----------|----------------------------------------------------------------------------|
+| `name`        | `String`  | the field name                                                             |
+| `kotlinName`  | `String`  | the name, usable as a Kotlin variable name (see below)                     |
+| `javaName`    | `String`  | the name, usable as a Java variable name (see below)                       |
+| `isObject`    | `Boolean` | `true` if the field type is `object`                                       |
+| `isArray`     | `Boolean` | `true` if the field type is `array`                                        |
+| `isString`    | `Boolean` | `true` if the field type is `string`                                       |
+| `isBoolean`   | `Boolean` | `true` if the field type is `boolean`                                      |
+| `isDecimal`   | `Boolean` | `true` if the field type is `decimal`                                      |
+| `isIntOrLong` | `Boolean` | `true` if the field type is `integer`                                      |
+| `isInt`       | `Boolean` | `true` if the field type is `integer` and will fit in an `Int` (see below) |
+| `isLong`      | `Boolean` | `true` if the field type is `integer` and will not fit in an `Int`         |
+| `isRequired`  | `Boolean` | `true` if the field appears in a `required` constraint                     |
+
+The `kotlinName` will be the same as the `name`, except when it contains characters unacceptable in a Kotlin variable
+name (such as spaces) or when it is a reserved word (like `val`).
+In these cases, the `kotlinName` is the original name enclosed in backticks.
+
+Java does not have the backtick mechanism, so `javaName` is the original name with unacceptable characters replaced by
+underscore, and names clashing with reserved words being suffixed with underscore.
+
+A field that is declared to be an `integer` will be generated as a `Long`, unless there are `minimum` and `maximum`
+constraints limiting it to 32 bits (signed).
+
+The `Boolean` values may be used in a Mustache conditional "section", as follows:
+```json
+{
+  "annotations": {
+    "fields": {
+      "com.example.anno.Demo": "\"Field {{name}} is {{^isString}}not {{/isString}}a String\""
+    }
+  }
+}
+```
+
+### Parent Context Object
+
+Mustache name resolution uses a chain of context objects; if a name is not found in the current context object,
+resolution switches to the parent context object, then to the parent's parent, and so on.
+For both class annotations and field annotations, the parent context object provides information on the current code
+generation run:
+
+| Name        | Type             | Description                                               |
+|-------------|------------------|-----------------------------------------------------------|
+| `dateTime`  | `OffsetDateTime` | the date/time of the current generation run               |
+| `date`      | `LocalDate`      | the date portion of the above date/time                   |
+| `time`      | `LocalTime`      | the time portion of the above date/time                   |
+| `generator` | `String`         | the code generator name, suitable for use in `@Generated` |
+| `uuid`      | `UUID`           | a random UUID, for tagging a specific build               |
+
+The use of this information is shown in the first example in the [`annotations`](#annotations) section.

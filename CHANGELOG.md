@@ -2,6 +2,16 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.82] - 2022-07-20
+### Added
+- `Annotated`, `GeneratorContext`, `annotations.mustache`: annotation handling
+### Changed
+- `CodeGenerator`, `Configurator`, `Constraints`, `Target`: added annotation handling
+- templates, config schema: annotation handling
+- `CodeGenerator`: improved error messages
+- templates: added default values for custom classes
+- `CodeGenerator`: allow duplicates of some validations if they are identical
+
 ## [0.81] - 2022-06-30
 ### Changed
 - `pom.xml`: bumped dependency version

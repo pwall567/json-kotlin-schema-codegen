@@ -48,6 +48,10 @@
       "type": "string",
       "format": "uuid",
       "default": "9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a"
+    },
+    "jjj": {
+      "type": "string",
+      "default": "xyz"
     }
   }
 }

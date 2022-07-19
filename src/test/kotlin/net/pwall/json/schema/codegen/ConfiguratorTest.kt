@@ -2,7 +2,7 @@
  * @(#) ConfiguratorTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -204,6 +204,45 @@ class ConfiguratorTest {
         JSON.parse("""{"customClasses":{"uri":{"urn:test:test":123}}}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
                 expect("Config entry /customClasses/uri/urn:test:test invalid - 123") { it.message }
+            }
+        }
+    }
+
+    @Test fun `should reject invalid annotations configuration`() {
+        val generator = CodeGenerator()
+        JSON.parse("""{"annotations":null}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations incorrect type - null") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":"abc"}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations incorrect type - \"abc\"") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":{"classes":null}}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations/classes incorrect type - null") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":{"classes":"abc"}}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations/classes incorrect type - \"abc\"") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":{"classes":{"123":null}}}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Not a valid annotation class name - \"123\"") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":{"classes":{"abc":true}}}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations/classes/abc invalid entry") { it.message }
+            }
+        }
+        JSON.parse("""{"annotations":{"other":{"abc":true}}}""").let { json ->
+            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
+                expect("Config entry /annotations/other unrecognised annotation type") { it.message }
             }
         }
     }

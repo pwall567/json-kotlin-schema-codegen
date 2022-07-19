@@ -5,10 +5,10 @@
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
+{{/description}}{{/schema}}{{>annotations}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
 }}{{#properties}}{{^first}},{{/first}}
 {{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}    {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
+{{/description}}{{/schema}}{{#indent.increment}}{{>annotations}}{{/indent.increment}}    {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
 }}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
 }}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}

@@ -5,7 +5,7 @@
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}public class {{&className}}{{>extends_implements}} {
+{{/description}}{{/schema}}{{>annotations}}public class {{&className}}{{>extends_implements}} {
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
