@@ -83,7 +83,7 @@ class StringValue(val rawString: String) : ValidationValue {
     }
 
     val javaString: String by lazy {
-        StringBuilder(rawString.length + 5).apply {
+        buildString(rawString.length + 5) {
             append('"')
             for (ch in rawString) {
                 when (ch) {
@@ -102,7 +102,7 @@ class StringValue(val rawString: String) : ValidationValue {
                 }
             }
             append('"')
-        }.toString()
+        }
     }
 
     override fun equals(other: Any?): Boolean = this === other || other is StringValue && rawString == other.rawString

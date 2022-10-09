@@ -42,21 +42,21 @@ data class TargetFileName(val name: String, val ext: String? = null, val dirs: L
         get() = if (dirs.isEmpty()) null else dirs.joinToString(separator = ".")
 
     override val qualifiedClassName: String
-        get() = StringBuilder().apply {
+        get() = buildString {
             for (dir in dirs)
                 append(dir).append('.')
             append(className)
-        }.toString()
+        }
 
     val extendedName: String
         get() = if (ext != null) "$name.$ext" else name
 
     fun resolve(parent: File? = null) = File(dirs.fold(parent) { a, b -> File(a, b) }, extendedName)
 
-    override fun toString(): String = StringBuilder().apply {
+    override fun toString(): String = buildString {
         dirs.forEach { append(it).append('/') }
         append(name)
         ext?.let { append('.').append(it) }
-    }.toString()
+    }
 
 }

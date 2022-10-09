@@ -1,5 +1,5 @@
 /*
- * @(#) Annotated.kt
+ * @(#) DefaultValue.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2022 Peter Wall
@@ -23,33 +23,24 @@
  * SOFTWARE.
  */
 
-package net.pwall.json.schema.codegen
+package net.pwall.util
 
-import net.pwall.mustache.Context
-import net.pwall.mustache.Template
+import kotlin.reflect.KProperty
 
 /**
- * Base class for output constructs that can have Java/Kotlin annotations.
+ * Delegate class for properties that have a default value if not otherwise initialised.
  *
  * @author  Peter Wall
  */
-open class Annotated {
+class DefaultValue<T : Any>(
+    private var value: T? = null,
+    private val initialiser: () -> T,
+) {
 
-    val annotations = mutableListOf<Annotation>()
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value ?: initialiser().also { value = it }
 
-    fun applyAnnotations(configuredAnnotations: List<Pair<ClassId, Template?>>, contextObject: Any, target: Target) {
-        annotations.clear()
-        for (annotation in configuredAnnotations) {
-            val annotationString = annotation.second?.generateString(contextObject)
-            annotations.add(Annotation(annotation.first.className, annotationString))
-            target.addImport(annotation.first)
-        }
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        this.value = value
     }
-
-    private fun Template.generateString(value: Any): String = buildString {
-        appendTo(this, Context(GeneratorContext).child(value))
-    }
-
-    data class Annotation(val name: String, val content: String?)
 
 }

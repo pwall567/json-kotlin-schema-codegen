@@ -60,7 +60,7 @@ class Target(
     val commentLines: List<String>?
         get() = if (commentTemplate != null) {
             val childContext = Context(GeneratorContext).child(this).child(json)
-            StringBuilder().apply { commentTemplate.appendTo(this, childContext) }.toString().split('\n')
+            buildString { commentTemplate.appendTo(this, childContext) }.split('\n')
         } else
             generatorComment?.split('\n')
 

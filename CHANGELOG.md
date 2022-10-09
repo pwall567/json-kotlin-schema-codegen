@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`: improved handling of default values (`DefaultValue` class)
+- `CodeGenerator`, `Constraints`, templates: improved Java handling of nullability in derived class
+
 ## [0.82] - 2022-07-20
 ### Added
 - `Annotated`, `GeneratorContext`, `annotations.mustache`: annotation handling

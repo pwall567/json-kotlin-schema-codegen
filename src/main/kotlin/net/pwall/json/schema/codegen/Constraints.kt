@@ -64,7 +64,7 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
 
     var isRequired = false
 
-    var defaultValue: DefaultValue? = null
+    var defaultValue: DefaultPropertyValue? = null
 
     val properties = mutableListOf<NamedConstraints>()
 
@@ -81,6 +81,7 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
         get() = properties.filter { it.baseProperty == null }
 
     var extendedInDerived: Boolean = false
+    var extendedFromBase: Boolean = false
 
     val required = mutableListOf<String>()
 
@@ -279,7 +280,7 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
         constValue = other.constValue
     }
 
-    data class DefaultValue(val defaultValue: Any?, val type: JSONSchema.Type)
+    data class DefaultPropertyValue(val defaultValue: Any?, val type: JSONSchema.Type)
 
     companion object {
 

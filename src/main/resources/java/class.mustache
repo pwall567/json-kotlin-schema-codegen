@@ -12,12 +12,19 @@
 {{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#properties}}{{^first}},{{/first}}
             {{>type}} {{&javaName}}{{/properties}}
     ) {
-{{#baseClass}}{{#constraints}}        super({{#properties}}{{&javaName}}{{^last}}, {{/last}}{{/properties}});
+{{#baseClass}}{{#constraints}}        super({{#properties}}{{#extendedInDerived}}validate{{&capitalisedName}}({{&javaName}}){{/extendedInDerived}}{{!
+}}{{^extendedInDerived}}{{&javaName}}{{/extendedInDerived}}{{^last}}, {{/last}}{{/properties}});
 {{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{/baseProperty}}{{>validations}}{{^baseProperty}}        this.{{&javaName}} = {{&javaName}};
 {{/baseProperty}}{{/properties}}    }
-
+{{#properties}}{{#extendedFromBase}}
+    private static {{>type}} validate{{&capitalisedName}}({{>type}} {{&javaName}}) {
+{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
+            {{>tniae}}("Must not be null - {{&javaName}}");
+{{/nullable}}{{/isPrimitive}}{{>validations}}        return {{&javaName}};
+    }
+{{/extendedFromBase}}{{/properties}}
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}
 {{>builder}}{{#nestedClasses}}

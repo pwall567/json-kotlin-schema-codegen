@@ -71,6 +71,7 @@ import net.pwall.log.Logger
 import net.pwall.mustache.Context
 import net.pwall.mustache.Template
 import net.pwall.mustache.parser.Parser as MustacheParser
+import net.pwall.util.DefaultValue
 import net.pwall.util.Strings
 import net.pwall.yaml.YAMLSimple
 
@@ -120,24 +121,12 @@ class CodeGenerator(
         classNameMapping.add(uri to name)
     }
 
-    private var schemaParserField: Parser? = null
-
-    var schemaParser: Parser
-        get() = schemaParserField ?: defaultSchemaParser.also { schemaParserField = it }
-        set(sp) { schemaParserField = sp }
-
-    private val defaultSchemaParser: Parser by lazy {
+    var schemaParser by DefaultValue {
         Parser()
     }
 
-    private var templateParserField: MustacheParser? = null
-
-    var templateParser: MustacheParser
-        get() = templateParserField ?: defaultTemplateParser.also { templateParserField = it }
-        set(tp) { templateParserField = tp }
-
-    private val defaultTemplateParser: MustacheParser by lazy {
-        MustacheParser { name ->
+    var templateParser by DefaultValue {
+        MustacheParser {name ->
             partialResolver(name)
         }
     }
@@ -148,64 +137,40 @@ class CodeGenerator(
         fatal("Can't locate template partial $name")
     }
 
-    private var templateField: Template? = null
-
-    var template: Template
-        get() = templateField ?: defaultTemplate.also { templateField = it }
-        set(t) { templateField = t }
-
-    private val defaultTemplate: Template by lazy {
-        val resolver = templateParser.resolvePartial
-        templateParser.parse(templateParser.resolver(templateName))
+    var template by DefaultValue {
+        val parser = templateParser
+        val resolver = parser.resolvePartial
+        parser.parse(parser.resolver(templateName))
     }
 
     var interfaceTemplateName = "interface"
 
-    private var interfaceTemplateField: Template? = null
-
-    var interfaceTemplate: Template
-        get() = interfaceTemplateField ?: defaultInterfaceTemplate.also { interfaceTemplateField = it }
-        set(it) { interfaceTemplateField = it }
-
-    private val defaultInterfaceTemplate: Template by lazy {
-        val resolver = templateParser.resolvePartial
-        templateParser.parse(templateParser.resolver(interfaceTemplateName))
+    var interfaceTemplate by DefaultValue {
+        val parser = templateParser
+        val resolver = parser.resolvePartial
+        parser.parse(parser.resolver(interfaceTemplateName))
     }
 
-    var enumTemplateField: Template? = null
-
-    var enumTemplate: Template
-        get() = enumTemplateField ?: defaultEnumTemplate.also { enumTemplateField = it }
-        set(et) { enumTemplateField = et }
-
-    private val defaultEnumTemplate: Template by lazy {
-        val resolver = templateParser.resolvePartial
-        templateParser.parse(templateParser.resolver(enumTemplateName))
+    var enumTemplate by DefaultValue {
+        val parser = templateParser
+        val resolver = parser.resolvePartial
+        parser.parse(parser.resolver(enumTemplateName))
     }
 
     var indexFileName: TargetFileName? = null
 
     var indexTemplateName: String = "index"
 
-    var indexTemplateField: Template? = null
-
-    var indexTemplate: Template
-        get() = interfaceTemplateField ?: defaultIndexTemplate.also { indexTemplateField = it }
-        set(it) { indexTemplateField = it }
-
-    private val defaultIndexTemplate: Template by lazy {
-        val resolver = templateParser.resolvePartial
-        templateParser.parse(templateParser.resolver(indexTemplateName))
+    var indexTemplate by DefaultValue {
+        val parser = templateParser
+        val resolver = parser.resolvePartial
+        parser.parse(parser.resolver(indexTemplateName))
     }
 
-    var outputResolverField: OutputResolver? = null
-
-    var outputResolver: OutputResolver
-        get() = outputResolverField ?: defaultOutputResolver.also { outputResolverField = it }
-        set(or) { outputResolverField = or }
-
-    private val defaultOutputResolver: OutputResolver = { targetFileName ->
-        targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
+    var outputResolver by DefaultValue<OutputResolver> {
+        { targetFileName ->
+            targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
+        }
     }
 
     private val classAnnotations = mutableListOf<Pair<ClassId, Template?>>()
@@ -484,11 +449,11 @@ class CodeGenerator(
         }
     }
 
-    private fun String.mapDirectoryName(): String = StringBuilder().also {
-        for (ch in this)
+    private fun String.mapDirectoryName(): String = buildString {
+        for (ch in this@mapDirectoryName)
             if (ch in 'a'..'z' || ch in 'A'..'Z' || ch in '0'..'9')
-                it.append(ch)
-    }.toString()
+                append(ch)
+    }
 
     /**
      * Add target for an individual file or directory.
@@ -900,8 +865,10 @@ class CodeGenerator(
                         target.systemClasses.addOnce(it)
                     }
                 }
-                if (!property.sameType(baseConstraints))
+                if (!property.sameType(baseConstraints)) {
                     baseConstraints.extendedInDerived = true
+                    property.extendedFromBase = true
+                }
             }
             else {
                 if (analyseProperty(target, property, property, property.name))
@@ -1042,7 +1009,7 @@ class CodeGenerator(
                 val valueString = value.defaultValue.toString()
                 defaultValue = if (value.type == JSONSchema.Type.STRING &&
                         enumValues.any { a -> a.toString() == valueString }) {
-                    Constraints.DefaultValue(
+                    Constraints.DefaultPropertyValue(
                         defaultValue = EnumValue(localTypeName, valueString),
                         type = JSONSchema.Type.STRING,
                     )
@@ -1216,7 +1183,7 @@ class CodeGenerator(
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
                         val enumDefault = EnumValue(property.localTypeName!!, it.defaultValue.toString())
-                        property.defaultValue = Constraints.DefaultValue(enumDefault, JSONSchema.Type.STRING)
+                        property.defaultValue = Constraints.DefaultPropertyValue(enumDefault, JSONSchema.Type.STRING)
                     }
                     else
                         property.defaultValue = null
@@ -1553,13 +1520,13 @@ class CodeGenerator(
         }
     }
 
-    private fun processDefaultValue(value: JSONValue?): Constraints.DefaultValue =
+    private fun processDefaultValue(value: JSONValue?): Constraints.DefaultPropertyValue =
             when (value) {
-                null -> Constraints.DefaultValue(null, JSONSchema.Type.NULL)
-                is JSONInteger -> Constraints.DefaultValue(value.value, JSONSchema.Type.INTEGER)
-                is JSONString -> Constraints.DefaultValue(StringValue(value.value), JSONSchema.Type.STRING)
-                is JSONBoolean -> Constraints.DefaultValue(value.value, JSONSchema.Type.BOOLEAN)
-                is JSONSequence<*> -> Constraints.DefaultValue(value.map { processDefaultValue(it) },
+                null -> Constraints.DefaultPropertyValue(null, JSONSchema.Type.NULL)
+                is JSONInteger -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.INTEGER)
+                is JSONString -> Constraints.DefaultPropertyValue(StringValue(value.value), JSONSchema.Type.STRING)
+                is JSONBoolean -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.BOOLEAN)
+                is JSONSequence<*> -> Constraints.DefaultPropertyValue(value.map { processDefaultValue(it) },
                         JSONSchema.Type.ARRAY)
                 is JSONMapping<*> -> fatal("Can't handle object as default value")
                 else -> fatal("Unexpected default value")
@@ -1857,16 +1824,17 @@ class CodeGenerator(
         fun String.isValidClassName(): Boolean = split('.').all { it.isValidIdentifier() }
 
         fun String.sanitiseName(): String {
-            for (i in 0 until length) {
+            for (i in indices) {
                 val ch = this[i]
                 if (!(ch in 'A'..'Z' || ch in 'a'..'z' || ch in '0'..'9')) {
-                    val sb = StringBuilder(substring(0, i))
-                    for (j in i + 1 until length) {
-                        val ch2 = this[j]
-                        if (ch2 in 'A'..'Z' || ch2 in 'a'..'z' || ch2 in '0'..'9')
-                            sb.append(ch)
+                    return buildString {
+                        append(this@sanitiseName, 0, i)
+                        for (j in i + 1 until length) {
+                            val ch2 = this[j]
+                            if (ch2 in 'A'..'Z' || ch2 in 'a'..'z' || ch2 in '0'..'9')
+                                append(ch)
+                        }
                     }
-                    return sb.toString()
                 }
             }
             return this
