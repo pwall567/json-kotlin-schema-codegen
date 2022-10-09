@@ -1118,7 +1118,7 @@ class CodeGenerator(
         customClassesByExtension.find { it.match(schema) }?.let {
             return it.applyToTarget(target)
         }
-        schema.uri?.resolve("#${schema.location}")?.let { uri ->
+        schema.uri?.resolve(schema.location.toURIFragment())?.let { uri ->
             customClassesByURI.find { uri.resolve(it.uri) == uri }?.let {
                 return it.applyToTarget(target)
             }
