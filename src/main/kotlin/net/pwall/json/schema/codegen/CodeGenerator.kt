@@ -1148,6 +1148,11 @@ class CodeGenerator(
         }
         if (property.checkMinMaxItems(property.minItems, property.maxItems))
             validationsPresent = true
+        property.negatedConstraints?.let {
+            // TODO - does it make sense to process negated array item definitions?
+            if (it.checkMinMaxItems(it.minItems, it.maxItems))
+                validationsPresent = true
+        }
         property.defaultValue?.let {
             if (it.type != JSONSchema.Type.ARRAY)
                 property.defaultValue = null
@@ -1170,8 +1175,7 @@ class CodeGenerator(
         } ?: false
     }
 
-    private fun analyseString(property: Constraints, target: Target, defaultName: () -> String):
-            Boolean {
+    private fun analyseString(property: Constraints, target: Target, defaultName: () -> String): Boolean {
         var validationsPresent = analyseFormat(target, property)
         if (property.systemClass != null)
             return false
@@ -1208,6 +1212,27 @@ class CodeGenerator(
         }
         if (property.checkMinMaxLength(property.minLength, property.maxLength))
             validationsPresent = true
+        property.negatedConstraints?.let { nc ->
+            nc.enumValues?.let { array ->
+                if (array.all { it is JSONString }) {
+                    target.systemClasses.addOnce(SystemClass.ARRAYS)
+                    target.systemClasses.addOnce(SystemClass.LIST)
+                    val arrayStatic = target.addStatic(Target.StaticType.STRING_ARRAY, "cg_array",
+                            array.map { StringValue(it.toString()) })
+                    nc.addValidation(Validation.Type.ENUM_STRING, arrayStatic)
+                    validationsPresent = true
+                }
+            }
+            nc.constValue?.let {
+                if (it is JSONString) {
+                    val stringStatic = target.addStatic(Target.StaticType.STRING, "cg_str", StringValue(it.value))
+                    nc.addValidation(Validation.Type.CONST_STRING, stringStatic)
+                    validationsPresent = true
+                }
+            }
+            if (nc.checkMinMaxLength(nc.minLength, nc.maxLength))
+                validationsPresent = true
+        }
         validationsPresent = property.checkRegex(target) || validationsPresent
         return validationsPresent
     }
@@ -1228,6 +1253,12 @@ class CodeGenerator(
     }
 
     private fun analyseInt(property: Constraints, target: Target): Boolean {
+        var result = applyIntValidations(property, target)
+        property.negatedConstraints?.let { result = applyIntValidations(it, target) || result }
+        return result
+    }
+
+    private fun applyIntValidations(property: Constraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
             if (property.checkConstInt(it)) {
@@ -1304,6 +1335,12 @@ class CodeGenerator(
     }
 
     private fun analyseLong(property: Constraints, target: Target): Boolean {
+        var result = applyLongValidations(property, target)
+        property.negatedConstraints?.let { result = applyLongValidations(it, target) || result }
+        return result
+    }
+
+    private fun applyLongValidations(property: Constraints, target: Target): Boolean {
         var result = false
         property.constValue?.let {
             if (property.checkConstLong(it))
@@ -1354,6 +1391,12 @@ class CodeGenerator(
     }
 
     private fun analyseDecimal(target: Target, property: Constraints): Boolean {
+        var result = applyDecimalValidations(target, property)
+        property.negatedConstraints?.let { result = applyDecimalValidations(target, it) || result }
+        return result
+    }
+
+    private fun applyDecimalValidations(target: Target, property: Constraints): Boolean {
         var result = false
         property.constValue?.let {
             if (it is JSONNumberValue) {
@@ -1430,76 +1473,136 @@ class CodeGenerator(
     }
 
     private fun analyseFormat(target: Target, property: Constraints): Boolean {
-        property.format?.let {
+        var result = applyFormat(target, property)
+        property.negatedConstraints?.let {
+            result = applyFormat(target, it) || result
+        }
+        return result
+    }
+
+    private fun applyFormat(target: Target, property: Constraints): Boolean {
+        var result = false
+        property.format.forEach {
             when (it.name) {
                 FormatValidator.EmailFormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.EMAIL)
-                    return true
+                    result = true
                 }
                 FormatValidator.HostnameFormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.HOSTNAME)
-                    return true
+                    result = true
                 }
                 FormatValidator.IPV4FormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.IPV4)
-                    return true
+                    result = true
                 }
                 FormatValidator.IPV6FormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.IPV6)
-                    return true
+                    result = true
                 }
                 FormatValidator.DurationFormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.DURATION)
-                    return true
+                    result = true
                 }
                 FormatValidator.JSONPointerFormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.JSON_POINTER)
-                    return true
+                    result = true
                 }
                 FormatValidator.RelativeJSONPointerFormatChecker.name -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.RELATIVE_JSON_POINTER)
-                    return true
+                    result = true
                 }
                 FormatValidator.DateTimeFormatChecker.name -> {
-                    target.systemClasses.addOnce(SystemClass.DATE_TIME)
-                    property.systemClass = SystemClass.DATE_TIME
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.DATE_TIME)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.DATE_TIME)
+                        property.systemClass = SystemClass.DATE_TIME
+                    }
                 }
                 FormatValidator.DateFormatChecker.name -> {
-                    target.systemClasses.addOnce(SystemClass.DATE)
-                    property.systemClass = SystemClass.DATE
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.DATE)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.DATE)
+                        property.systemClass = SystemClass.DATE
+                    }
                 }
                 FormatValidator.TimeFormatChecker.name -> {
-                    target.systemClasses.addOnce(SystemClass.TIME)
-                    property.systemClass = SystemClass.TIME
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.TIME)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.TIME)
+                        property.systemClass = SystemClass.TIME
+                    }
                 }
                 FormatValidator.UUIDFormatChecker.name -> {
-                    target.systemClasses.addOnce(SystemClass.UUID)
-                    property.systemClass = SystemClass.UUID
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.UUID)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.UUID)
+                        property.systemClass = SystemClass.UUID
+                    }
                 }
-                FormatValidator.URIFormatChecker.name, FormatValidator.URIReferenceFormatChecker.name -> {
-                    target.systemClasses.addOnce(SystemClass.URI)
-                    property.systemClass = SystemClass.URI
+                FormatValidator.URIFormatChecker.name -> {
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.URI)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.URI)
+                        property.systemClass = SystemClass.URI
+                    }
+                }
+                FormatValidator.URIReferenceFormatChecker.name -> {
+                    if (property.negated) {
+                        target.systemClasses.addOnce(SystemClass.VALIDATION)
+                        property.addValidation(Validation.Type.URI_REFERENCE)
+                        result = true
+                    }
+                    else {
+                        target.systemClasses.addOnce(SystemClass.URI)
+                        property.systemClass = SystemClass.URI
+                    }
                 }
             }
         }
-        return false
+        return result
     }
 
     private fun Constraints.checkRegex(target: Target): Boolean {
-        regex?.let {
+        val validationsSize = validations.size
+        applyRegex(target)
+        negatedConstraints?.applyRegex(target)
+        return validationsSize < validations.size
+    }
+
+    private fun Constraints.applyRegex(target: Target) {
+        regex.forEach {
             target.systemClasses.addOnce(SystemClass.REGEX)
             val regexStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex", StringValue(it.toString()))
             addValidation(Validation.Type.PATTERN, regexStatic)
-            return true
         }
-        return false
     }
 
     private fun String.depluralise(): String = when {
@@ -1516,8 +1619,18 @@ class CodeGenerator(
             is JSONSchema.SubSchema -> processSubSchema(schema, constraints)
             is JSONSchema.Validator -> processValidator(schema, constraints)
             is JSONSchema.General -> schema.children.forEach { processSchema(it, constraints) }
-            else -> {} // for now, just ignore boolean and "not" schema
+            is JSONSchema.Not -> processNotSchema(schema.nested, constraints)
+            else -> {} // for now, just ignore boolean schema
         }
+    }
+
+    private fun processNotSchema(schema: JSONSchema, constraints: Constraints) {
+        val constraintsNot = constraints.negatedConstraints ?: Constraints(constraints.schema, true).also {
+            it.negatedConstraints = constraints
+            constraints.negatedConstraints = it
+            it.validations = constraints.validations
+        }
+        processSchema(schema, constraintsNot)
     }
 
     private fun processDefaultValue(value: JSONValue?): Constraints.DefaultPropertyValue =
@@ -1587,14 +1700,12 @@ class CodeGenerator(
     }
 
     private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
-        if (constraints.format != null && constraints.format != formatValidator.checker)
-            fatal("Duplicate format - ${formatValidator.location}")
         val newFormat = formatValidator.checker
-        if (newFormat is FormatValidator.DelegatingFormatChecker)
+        constraints.format.add(newFormat)
+        if (newFormat is FormatValidator.DelegatingFormatChecker) {
             for (validator in newFormat.validators)
                 processValidator(validator, constraints)
-        if (constraints.format == null) // it may have been set by delegated validator
-            constraints.format = newFormat
+        }
     }
 
     private fun processNumberValidator(numberValidator: NumberValidator, constraints: Constraints) {
@@ -1625,9 +1736,7 @@ class CodeGenerator(
     }
 
     private fun processPatternValidator(patternValidator: PatternValidator, constraints: Constraints) {
-        if (constraints.regex != null && constraints.regex != patternValidator.regex)
-            fatal("Duplicate pattern - ${patternValidator.location}")
-        constraints.regex = patternValidator.regex
+        constraints.regex.addOnce(patternValidator.regex)
     }
 
     private fun processStringValidator(stringValidator: StringValidator, constraints: Constraints) {
@@ -1747,7 +1856,7 @@ class CodeGenerator(
                         qualifiedClassName.substringBeforeLast('.', "").takeIf { it.isNotEmpty() })
 
         fun match(constraints: Constraints): Boolean {
-            return constraints.format?.name == name
+            return constraints.format.any { it.name == name }
         }
 
     }

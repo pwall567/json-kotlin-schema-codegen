@@ -1,87 +1,99 @@
-{{#validations}}{{#type}}{{#EMAIL}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isEmail({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format email - " + {{&javaName}});
-{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isHostname({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format hostname - " + {{&javaName}});
-{{/HOSTNAME}}{{#IPV4}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isIPV4({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format ipv4 - " + {{&javaName}});
-{{/IPV4}}{{#IPV6}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isIPV6({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format ipv6 - " + {{&javaName}});
-{{/IPV6}}{{#DURATION}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isDuration({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format duration - " + {{&javaName}});
-{{/DURATION}}{{#JSON_POINTER}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isJSONPointer({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format json-pointer - " + {{&javaName}});
-{{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        if ({{>nullchk}}!JSONValidation.isRelativeJSONPointer({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match format relative-json-pointer - " + {{&javaName}});
-{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.matcher({{&javaName}}).find())
-{{&indent}}            {{>tniae}}("{{&displayName}} does not match pattern " + {{&value.staticName}} + " - " + {{&javaName}});
-{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        if ({{&javaName}} > {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value}} - " + {{&javaName}});
-{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        if ({{&javaName}} > {{&value}}L)
-{{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value}} - " + {{&javaName}});
-{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        if ({{&javaName}} < {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} < minimum {{&value}} - " + {{&javaName}});
-{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        if ({{&javaName}} < {{&value}}L)
-{{&indent}}            {{>tniae}}("{{&displayName}} < minimum {{&value}} - " + {{&javaName}});
-{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) > 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} > maximum {{&value.value}} - " + {{&javaName}});
-{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) > 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} > maximum 0 - " + {{&javaName}});
-{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) >= 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} >= exclusive maximum {{&value.value}} - " + {{&javaName}});
-{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) >= 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} >= exclusive maximum 0 - " + {{&javaName}});
-{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) < 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} < minimum {{&value.value}} - " + {{&javaName}});
-{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) < 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} < minimum 0 - " + {{&javaName}});
-{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) <= 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum {{&value.value}} - " + {{&javaName}});
-{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) <= 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} <= exclusive minimum 0 - " + {{&javaName}});
-{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_DECIMAL}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.compareTo({{&value.first.staticName}}) < 0 || {{&javaName}}.compareTo({{&value.second.staticName}}) > 0{{#nullable}}){{/nullable}})
-{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first.value}}..{{&second.value}}{{/value}} - " + {{&javaName}});
-{{/RANGE_DECIMAL}}{{#RANGE_INT}}{{&indent}}        if ({{&javaName}} < {{&value.first}} || {{&javaName}} > {{&value.second}})
-{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});
-{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        if ({{&javaName}} < {{&value.first}}L || {{&javaName}} > {{&value.second}}L)
-{{&indent}}            {{>tniae}}("{{&displayName}} not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});
-{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&javaName}} % {{&value}} != 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&javaName}});
-{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&javaName}} % {{&value}}L != 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value}} - " + {{&javaName}});
-{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.remainder({{&value.staticName}}).compareTo(BigDecimal.ZERO) != 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} not a multiple of {{&value.value}} - " + {{&javaName}});
-{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() > {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length > maximum {{&value}} - " + {{&javaName}}.size());
-{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() < {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length < minimum {{&value}} - " + {{&javaName}}.size());
-{{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() != {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length not constant value {{&value}} - " + {{&javaName}}.size());
-{{/CONST_ITEMS}}{{#RANGE_ITEMS}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.size() < {{&value.first}} || {{&javaName}}.size() > {{&value.second}}{{#nullable}}){{/nullable}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}}.size());
-{{/RANGE_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() > {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length > maximum {{&value}} - " + {{&javaName}}.length());
-{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() < {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length < minimum {{&value}} - " + {{&javaName}}.length());
-{{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() != {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length != constant {{&value}} - " + {{&javaName}}.length());
-{{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.length() < {{&value.first}} || {{&javaName}}.length() > {{&value.second}}{{#nullable}}){{/nullable}})
-{{&indent}}            {{>tniae}}("{{&displayName}} length not in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}}.length());
-{{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.equals({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value " + {{&value.staticName}} + " - " + {{&javaName}});
-{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        if ({{&javaName}} != {{&value}})
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value}} - " + {{&javaName}});
-{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        if ({{&javaName}} != {{&value}}L)
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value}} - " + {{&javaName}});
-{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) != 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value.value}} - " + {{&javaName}});
-{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) != 0)
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value 0 - " + {{&javaName}});
-{{/CONST_DECIMAL_ZERO}}{{#CONST_ENUM}}{{&indent}}        if ({{>nullchk}}{{&javaName}} != {{&value.javaString}})
-{{&indent}}            {{>tniae}}("{{&displayName}} not constant value {{&value.value}} - " + {{&javaName}});
-{{/CONST_ENUM}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}!{{&value.staticName}}.contains({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&javaName}});
-{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        if (!{{&value.staticName}}.contains({{&javaName}}))
-{{&indent}}            {{>tniae}}("{{&displayName}} not in enumerated values - " + {{&javaName}});
+{{#validations}}{{#type}}{{#DATE_TIME}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isDateTime({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format date-time - " + {{&javaName}});
+{{/DATE_TIME}}{{#DATE}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isDate({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format date - " + {{&javaName}});
+{{/DATE}}{{#TIME}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isTime({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format time - " + {{&javaName}});
+{{/TIME}}{{#UUID}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isUUID({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format uuid - " + {{&javaName}});
+{{/UUID}}{{#URI}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isURI({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format uri - " + {{&javaName}});
+{{/URI}}{{#URI_REFERENCE}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isURIReference({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format uri-reference - " + {{&javaName}});
+{{/URI_REFERENCE}}{{#EMAIL}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isEmail({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format email - " + {{&javaName}});
+{{/EMAIL}}{{#HOSTNAME}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isHostname({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format hostname - " + {{&javaName}});
+{{/HOSTNAME}}{{#IPV4}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isIPV4({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format ipv4 - " + {{&javaName}});
+{{/IPV4}}{{#IPV6}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isIPV6({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format ipv6 - " + {{&javaName}});
+{{/IPV6}}{{#DURATION}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isDuration({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format duration - " + {{&javaName}});
+{{/DURATION}}{{#JSON_POINTER}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isJSONPointer({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format json-pointer - " + {{&javaName}});
+{{/JSON_POINTER}}{{#RELATIVE_JSON_POINTER}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}JSONValidation.isRelativeJSONPointer({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} format relative-json-pointer - " + {{&javaName}});
+{{/RELATIVE_JSON_POINTER}}{{#PATTERN}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}{{&value.staticName}}.matcher({{&javaName}}).find())
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}does not match{{/negate}}{{#negate}}matches{{/negate}} pattern " + {{&value.staticName}} + " - " + {{&javaName}});
+{{/PATTERN}}{{#MAXIMUM_INT}}{{&indent}}        if ({{&javaName}} {{>cond_gt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}> maximum {{&value}} - " + {{&javaName}});
+{{/MAXIMUM_INT}}{{#MAXIMUM_LONG}}{{&indent}}        if ({{&javaName}} {{>cond_gt}} {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}> maximum {{&value}} - " + {{&javaName}});
+{{/MAXIMUM_LONG}}{{#MINIMUM_INT}}{{&indent}}        if ({{&javaName}} {{>cond_lt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}< minimum {{&value}} - " + {{&javaName}});
+{{/MINIMUM_INT}}{{#MINIMUM_LONG}}{{&indent}}        if ({{&javaName}} {{>cond_lt}} {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}< minimum {{&value}} - " + {{&javaName}});
+{{/MINIMUM_LONG}}{{#MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) {{>cond_gt}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}> maximum {{&value.value}} - " + {{&javaName}});
+{{/MAXIMUM_DECIMAL}}{{#MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) {{>cond_gt}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}> maximum 0 - " + {{&javaName}});
+{{/MAXIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MAXIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) {{>cond_ge}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}>= exclusive maximum {{&value.value}} - " + {{&javaName}});
+{{/EXCLUSIVE_MAXIMUM_DECIMAL}}{{#EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) {{>cond_ge}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}>= exclusive maximum 0 - " + {{&javaName}});
+{{/EXCLUSIVE_MAXIMUM_DECIMAL_ZERO}}{{#MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) {{>cond_lt}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}< minimum {{&value.value}} - " + {{&javaName}});
+{{/MINIMUM_DECIMAL}}{{#MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) {{>cond_lt}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}< minimum 0 - " + {{&javaName}});
+{{/MINIMUM_DECIMAL_ZERO}}{{#EXCLUSIVE_MINIMUM_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) {{>cond_le}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}<= exclusive minimum {{&value.value}} - " + {{&javaName}});
+{{/EXCLUSIVE_MINIMUM_DECIMAL}}{{#EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) {{>cond_le}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{#negate}}not {{/negate}}<= exclusive minimum 0 - " + {{&javaName}});
+{{/EXCLUSIVE_MINIMUM_DECIMAL_ZERO}}{{#RANGE_DECIMAL}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.compareTo({{&value.first.staticName}}) {{>cond_lt}} 0 {{>log_or}} {{&javaName}}.compareTo({{&value.second.staticName}}) {{>cond_gt}} 0{{#nullable}}){{/nullable}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}in range {{#value}}{{&first.value}}..{{&second.value}}{{/value}} - " + {{&javaName}});
+{{/RANGE_DECIMAL}}{{#RANGE_INT}}{{&indent}}        if ({{&javaName}} {{>cond_lt}} {{&value.first}} {{>log_or}} {{&javaName}} {{>cond_gt}} {{&value.second}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});
+{{/RANGE_INT}}{{#RANGE_LONG}}{{&indent}}        if ({{&javaName}} {{>cond_lt}} {{&value.first}}L {{>log_or}} {{&javaName}} {{>cond_gt}} {{&value.second}}L)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}});
+{{/RANGE_LONG}}{{#MULTIPLE_INT}}{{&indent}}        if ({{&javaName}} % {{&value}} {{>cond_ne}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}a multiple of {{&value}} - " + {{&javaName}});
+{{/MULTIPLE_INT}}{{#MULTIPLE_LONG}}{{&indent}}        if ({{&javaName}} % {{&value}}L {{>cond_ne}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}a multiple of {{&value}} - " + {{&javaName}});
+{{/MULTIPLE_LONG}}{{#MULTIPLE_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.remainder({{&value.staticName}}).compareTo(BigDecimal.ZERO) {{>cond_ne}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}a multiple of {{&value.value}} - " + {{&javaName}});
+{{/MULTIPLE_DECIMAL}}{{#MAX_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() {{>cond_gt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{#negate}}not {{/negate}}> maximum {{&value}} - " + {{&javaName}}.size());
+{{/MAX_ITEMS}}{{#MIN_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() {{>cond_lt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{#negate}}not {{/negate}}< minimum {{&value}} - " + {{&javaName}}.size());
+{{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.size() {{>cond_ne}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value}} - " + {{&javaName}}.size());
+{{/CONST_ITEMS}}{{#RANGE_ITEMS}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.size() {{>cond_lt}} {{&value.first}} {{>log_or}} {{&javaName}}.size() {{>cond_gt}} {{&value.second}}{{#nullable}}){{/nullable}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}}.size());
+{{/RANGE_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() {{>cond_gt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{#negate}}not {{/negate}}> maximum {{&value}} - " + {{&javaName}}.length());
+{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() {{>cond_lt}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{#negate}}not {{/negate}}< minimum {{&value}} - " + {{&javaName}}.length());
+{{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.length() {{>cond_ne}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{>cond_ne}} constant {{&value}} - " + {{&javaName}}.length());
+{{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        if ({{#nullable}}{{&javaName}} != null && ({{/nullable}}{{&javaName}}.length() {{>cond_lt}} {{&value.first}} {{>log_or}} {{&javaName}}.length() {{>cond_gt}} {{&value.second}}{{#nullable}}){{/nullable}})
+{{&indent}}            {{>tniae}}("{{&displayName}} length {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - " + {{&javaName}}.length());
+{{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}{{&value.staticName}}.equals({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value " + {{&value.staticName}} + " - " + {{&javaName}});
+{{/CONST_STRING}}{{#CONST_INT}}{{&indent}}        if ({{&javaName}} {{>cond_ne}} {{&value}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value}} - " + {{&javaName}});
+{{/CONST_INT}}{{#CONST_LONG}}{{&indent}}        if ({{&javaName}} {{>cond_ne}} {{&value}}L)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value}} - " + {{&javaName}});
+{{/CONST_LONG}}{{#CONST_DECIMAL}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo({{&value.staticName}}) {{>cond_ne}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value.value}} - " + {{&javaName}});
+{{/CONST_DECIMAL}}{{#CONST_DECIMAL_ZERO}}{{&indent}}        if ({{>nullchk}}{{&javaName}}.compareTo(BigDecimal.ZERO) {{>cond_ne}} 0)
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value 0 - " + {{&javaName}});
+{{/CONST_DECIMAL_ZERO}}{{#CONST_ENUM}}{{&indent}}        if ({{>nullchk}}{{&javaName}} {{>cond_ne}} {{&value.javaString}})
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value.value}} - " + {{&javaName}});
+{{/CONST_ENUM}}{{#ENUM_STRING}}{{&indent}}        if ({{>nullchk}}{{^negate}}!{{/negate}}{{&value.staticName}}.contains({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}in enumerated values - " + {{&javaName}});
+{{/ENUM_STRING}}{{#ENUM_INT}}{{&indent}}        if ({{^negate}}!{{/negate}}{{&value.staticName}}.contains({{&javaName}}))
+{{&indent}}            {{>tniae}}("{{&displayName}} {{^negate}}not {{/negate}}in enumerated values - " + {{&javaName}});
 {{/ENUM_INT}}{{#ARRAY_ITEMS}}{{#nullable}}{{&indent}}        if ({{&javaName}} != null) {
 {{#indent.increment}}{{>validations_array}}{{/indent.increment}}{{&indent}}        }
 {{/nullable}}{{^nullable}}{{>validations_array}}{{/nullable}}{{/ARRAY_ITEMS}}{{/type}}{{/validations}}

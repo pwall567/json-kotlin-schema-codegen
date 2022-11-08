@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.84] - 2022-11-08
+### Changed
+- `CodeGenerator`, `Constraints`, `Validation`, templates: added limited handling of `not` schema
+- `pom.xml`: bumped dependency versions
+
 ## [0.83] - 2022-10-16
 ### Changed
 - `CodeGenerator`: bug fix - issue #14

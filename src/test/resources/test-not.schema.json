@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test/schema/test-not",
+  "description": "Test \"not\" validations.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "string",
+      "allOf": [
+        {
+          "not": {
+            "format": "date-time"
+          }
+        },
+        {
+          "not": {
+            "format": "date"
+          }
+        }
+      ]
+    },
+    "bbb": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 20,
+      "not": {
+        "minimum": 5,
+        "maximum": 8
+      }
+    },
+    "ccc": {
+      "type": "string",
+      "not": {
+        "enum": [ "abc", "def", "ghi" ]
+      }
+    }
+  },
+  "required": [ "aaa", "bbb", "ccc" ]
+}

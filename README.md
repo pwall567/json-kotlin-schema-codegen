@@ -11,7 +11,11 @@ Code generation for JSON Schema (Draft 07).
 
 ## NEW
 
-Recently added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
+New in version 0.84 &ndash; the generator will now recognise the `not` schema for most validations, and will output
+reversed validation checks.
+For example, `"not": { "const": "error" }` in a property sub-schema will test that a string is **not** equal to "error".
+
+Added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
 See the documentation at [CONFIG.md](CONFIG.md).
 
 Also build tool support - see [below](#build-tool-support).
@@ -255,25 +259,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.83, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.84, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.83</version>
+      <version>0.84</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.83'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.84'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.83")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.84")
 ```
 
 Peter Wall
 
-2022-10-16
+2022-11-08

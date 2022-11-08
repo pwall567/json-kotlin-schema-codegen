@@ -25,7 +25,11 @@
 
 package net.pwall.json.schema.codegen
 
-class Validation(val type: Type, val value: Any? = null) {
+class Validation(
+    val type: Type,
+    val value: Any? = null,
+    val negate: Boolean = false,
+) {
 
     enum class Type {
         PATTERN,
@@ -36,6 +40,7 @@ class Validation(val type: Type, val value: Any? = null) {
         MINIMUM_DECIMAL_ZERO, EXCLUSIVE_MINIMUM_DECIMAL_ZERO,
         RANGE_INT, RANGE_LONG, RANGE_DECIMAL,
         EMAIL, HOSTNAME, IPV4, IPV6, DURATION, JSON_POINTER, RELATIVE_JSON_POINTER,
+        DATE_TIME, DATE, TIME, UUID, URI, URI_REFERENCE,
         MAX_ITEMS, MIN_ITEMS, CONST_ITEMS, RANGE_ITEMS,
         MAX_LENGTH, MIN_LENGTH, CONST_LENGTH, RANGE_LENGTH,
         CONST_INT, CONST_LONG, CONST_DECIMAL, CONST_DECIMAL_ZERO, CONST_STRING,

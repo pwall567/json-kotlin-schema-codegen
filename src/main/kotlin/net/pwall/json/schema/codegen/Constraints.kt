@@ -38,7 +38,7 @@ import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.validation.FormatValidator
 
-open class Constraints(val schema: JSONSchema) : Annotated() {
+open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : Annotated() {
 
     @Suppress("unused")
     open val displayName: String
@@ -46,6 +46,8 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
 
     @Suppress("unused")
     var uri: URI? = schema.uri
+
+    var negatedConstraints: Constraints? = null
 
     var objectValidationsPresent: Boolean? = null
 
@@ -100,8 +102,8 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
 
     var maxLength: Int? = null
     var minLength: Int? = null
-    var format: FormatValidator.FormatChecker? = null
-    var regex: Regex? = null
+    val format = mutableListOf<FormatValidator.FormatChecker>()
+    val regex = mutableListOf<Regex>()
 
     var enumValues: JSONSequence<*>? = null
     var constValue: JSONValue? = null
@@ -130,7 +132,7 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
     val isString: Boolean
         get() = isType(JSONSchema.Type.STRING) ||
                 types.isEmpty() && properties.isEmpty() && arrayItems == null &&
-                        (format != null || regex != null || maxLength != null || minLength != null ||
+                        (format.isNotEmpty() || regex.isNotEmpty() || maxLength != null || minLength != null ||
                                 constValue is JSONString || enumImpliesString())
 
     @Suppress("unused")
@@ -179,10 +181,10 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
             return exclusiveMaximum?.let { it.asLong() - 1 }
         }
 
-    val validations = mutableListOf<Validation>()
+    var validations = mutableListOf<Validation>()
 
     fun addValidation(type: Validation.Type, value: Any? = null) {
-        validations.add(Validation(type, value))
+        validations.add(Validation(type, value, negated))
     }
 
     private fun isType(type: JSONSchema.Type): Boolean = types.size == 1 && types[0] == type
@@ -217,7 +219,7 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
         return false
     }
 
-    private fun formatImpliesInt(): Boolean = format == FormatValidator.Int32FormatChecker
+    private fun formatImpliesInt(): Boolean = format.contains(FormatValidator.Int32FormatChecker)
 
     private fun rangeImpliesInt(): Boolean = minimumImpliesInt() && maximumImpliesInt()
 
@@ -252,6 +254,14 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
 
     fun copyFrom(other: Constraints) {
         uri = other.uri
+        other.negatedConstraints?.let {
+            if (it.negated) {
+                negatedConstraints = Constraints(other.schema, true).also { nc ->
+                    nc.copyFrom(it)
+                    nc.negatedConstraints = this
+                }
+            }
+        }
         objectValidationsPresent = other.objectValidationsPresent
         localTypeName = other.localTypeName
         isEnumClass = other.isEnumClass
@@ -274,8 +284,8 @@ open class Constraints(val schema: JSONSchema) : Annotated() {
         multipleOf.addAll(other.multipleOf)
         maxLength = other.maxLength
         minLength = other.minLength
-        format = other.format
-        regex = other.regex
+        format.addAll(other.format)
+        regex.addAll(other.regex)
         enumValues = other.enumValues
         constValue = other.constValue
     }

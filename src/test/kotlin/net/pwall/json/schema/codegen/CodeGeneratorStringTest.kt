@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorStringTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2020, 2021, 2022 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -81,6 +81,7 @@ data class TestString(
     val fixedLen: String? = null,
     val rangeLen: String? = null,
     val name: String,
+    val description: String,
     val uri: URI,
     val status: Status = Status.OPEN
 ) {
@@ -103,6 +104,8 @@ data class TestString(
         if (rangeLen != null)
             require(rangeLen.length in 1..6) { "rangeLen length not in range 1..6 - ${'$'}{rangeLen.length}" }
         require(cg_regex0.containsMatchIn(name)) { "name does not match pattern ${'$'}cg_regex0 - ${'$'}name" }
+        require(cg_regex1.containsMatchIn(description)) { "description does not match pattern ${'$'}cg_regex1 - ${'$'}description" }
+        require(!cg_regex2.containsMatchIn(description)) { "description matches pattern ${'$'}cg_regex2 - ${'$'}description" }
     }
 
     enum class Status {
@@ -112,6 +115,8 @@ data class TestString(
 
     companion object {
         private val cg_regex0 = Regex("^[A-Z][A-Za-z]*\${'$'}")
+        private val cg_regex1 = Regex("^[A-Za-z0-9 ]*\${'$'}")
+        private val cg_regex2 = Regex("^\\s*\${'$'}")
     }
 
 }
@@ -130,6 +135,8 @@ import net.pwall.json.validation.JSONValidation;
 public class TestString {
 
     private static final Pattern cg_regex0 = Pattern.compile("^[A-Z][A-Za-z]*${'$'}");
+    private static final Pattern cg_regex1 = Pattern.compile("^[A-Za-z0-9 ]*${'$'}");
+    private static final Pattern cg_regex2 = Pattern.compile("^\\s*${'$'}");
 
     private final String email1;
     private final String hostname1;
@@ -143,6 +150,7 @@ public class TestString {
     private final String fixedLen;
     private final String rangeLen;
     private final String name;
+    private final String description;
     private final URI uri;
     private final Status status;
 
@@ -159,6 +167,7 @@ public class TestString {
             String fixedLen,
             String rangeLen,
             String name,
+            String description,
             URI uri,
             Status status
     ) {
@@ -212,6 +221,13 @@ public class TestString {
         if (!cg_regex0.matcher(name).find())
             throw new IllegalArgumentException("name does not match pattern " + cg_regex0 + " - " + name);
         this.name = name;
+        if (description == null)
+            throw new IllegalArgumentException("Must not be null - description");
+        if (!cg_regex1.matcher(description).find())
+            throw new IllegalArgumentException("description does not match pattern " + cg_regex1 + " - " + description);
+        if (cg_regex2.matcher(description).find())
+            throw new IllegalArgumentException("description matches pattern " + cg_regex2 + " - " + description);
+        this.description = description;
         if (uri == null)
             throw new IllegalArgumentException("Must not be null - uri");
         this.uri = uri;
@@ -268,6 +284,10 @@ public class TestString {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public URI getUri() {
         return uri;
     }
@@ -307,6 +327,8 @@ public class TestString {
             return false;
         if (!name.equals(typedOther.name))
             return false;
+        if (!description.equals(typedOther.description))
+            return false;
         if (!uri.equals(typedOther.uri))
             return false;
         return status == typedOther.status;
@@ -326,6 +348,7 @@ public class TestString {
         hash ^= (fixedLen != null ? fixedLen.hashCode() : 0);
         hash ^= (rangeLen != null ? rangeLen.hashCode() : 0);
         hash ^= name.hashCode();
+        hash ^= description.hashCode();
         hash ^= uri.hashCode();
         return hash ^ status.hashCode();
     }
@@ -344,6 +367,7 @@ public class TestString {
         private String fixedLen;
         private String rangeLen;
         private String name;
+        private String description;
         private URI uri;
         private Status status;
 
@@ -407,6 +431,11 @@ public class TestString {
             return this;
         }
 
+        public Builder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
         public Builder withUri(URI uri) {
             this.uri = uri;
             return this;
@@ -431,6 +460,7 @@ public class TestString {
                     fixedLen,
                     rangeLen,
                     name,
+                    description,
                     uri,
                     status
             );

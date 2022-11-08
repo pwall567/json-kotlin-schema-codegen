@@ -54,6 +54,19 @@
       "type": "string",
       "pattern": "^[A-Z][A-Za-z]*$"
     },
+    "description": {
+      "type": "string",
+      "allOf": [
+        {
+          "pattern": "^[A-Za-z0-9 ]*$"
+        },
+        {
+          "not": {
+            "pattern": "^\\s*$"
+          }
+        }
+      ]
+    },
     "uri": {
       "type": "string",
       "format": "uri",
@@ -65,5 +78,5 @@
       "default": "OPEN"
     }
   },
-  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "uri", "status" ]
+  "required": [ "email1", "hostname1", "ipv4a", "ipv6a", "maxlen", "minlen", "name", "description", "uri", "status" ]
 }
