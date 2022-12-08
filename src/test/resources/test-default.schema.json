@@ -7,7 +7,7 @@
   "properties": {
     "aaa": {
       "type": "integer",
-      "default": 8
+      "default": 0
     },
     "bbb": {
       "type": [ "string", "null" ],

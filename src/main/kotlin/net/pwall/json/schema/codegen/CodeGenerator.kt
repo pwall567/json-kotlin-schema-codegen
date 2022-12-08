@@ -35,6 +35,8 @@ import java.nio.file.Path
 import net.pwall.json.JSON
 import net.pwall.json.JSONBoolean
 import net.pwall.json.JSONDecimal
+import net.pwall.json.JSONDouble
+import net.pwall.json.JSONFloat
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
 import net.pwall.json.JSONMapping
@@ -42,6 +44,7 @@ import net.pwall.json.JSONNumberValue
 import net.pwall.json.JSONSequence
 import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
+import net.pwall.json.JSONZero
 import net.pwall.json.pointer.JSONPointer
 import net.pwall.json.pointer.JSONReference
 import net.pwall.json.schema.JSONSchema
@@ -1637,6 +1640,11 @@ class CodeGenerator(
             when (value) {
                 null -> Constraints.DefaultPropertyValue(null, JSONSchema.Type.NULL)
                 is JSONInteger -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.INTEGER)
+                is JSONZero -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.INTEGER)
+                is JSONLong -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.INTEGER)
+                is JSONDecimal -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.NUMBER)
+                is JSONDouble -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.NUMBER)
+                is JSONFloat -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.NUMBER)
                 is JSONString -> Constraints.DefaultPropertyValue(StringValue(value.value), JSONSchema.Type.STRING)
                 is JSONBoolean -> Constraints.DefaultPropertyValue(value.value, JSONSchema.Type.BOOLEAN)
                 is JSONSequence<*> -> Constraints.DefaultPropertyValue(value.map { processDefaultValue(it) },

@@ -31,6 +31,7 @@ import kotlin.reflect.KProperty
  * Delegate class for properties that have a default value if not otherwise initialised.
  *
  * @author  Peter Wall
+ * @param   T       the value type
  */
 class DefaultValue<T : Any>(
     private var value: T? = null,

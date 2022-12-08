@@ -67,7 +67,7 @@ import com.example.util.TestString
  * Test default values.
  */
 data class TestDefault(
-    val aaa: Long = 8,
+    val aaa: Long = 0,
     val bbb: String? = null,
     val ccc: String = "CCC",
     val ddd: List<Long> = listOf(123, 456),
