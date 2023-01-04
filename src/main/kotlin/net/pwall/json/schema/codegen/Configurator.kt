@@ -2,7 +2,7 @@
  * @(#) Configurator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021, 2022 Peter Wall
+ * Copyright (c) 2021, 2022, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -163,6 +163,19 @@ object Configurator {
             forEachKey {
                 if (it.current != "classes" && it.current != "fields")
                     fatal("Config entry ${it.pointer} unrecognised annotation type")
+            }
+        }
+        ref.ifPresent<JSONValue>("companionObject") {
+            when (it) {
+                is JSONBoolean -> generator.companionObjectForAll = it.value
+                is JSONSequence<*> -> {
+                    generator.companionObjectForClasses.addAll(it.map { v ->
+                        if (v !is JSONString)
+                            fatal("Config entry companionObject invalid value")
+                        v.value
+                    })
+                }
+                else -> fatal("Config entry companionObject invalid value")
             }
         }
         if (extensionValidators.isNotEmpty()) {

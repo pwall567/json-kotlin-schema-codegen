@@ -8,4 +8,6 @@
 {{/value}}        )
 {{/STRING_ARRAY}}{{#INT_ARRAY}}        private val {{&staticName}} = setOf({{#value}}{{&.}}{{^last}}, {{/last}}{{/value}})
 {{/INT_ARRAY}}{{/type}}{{#last}}    }
-{{/last}}{{/statics}}
+{{/last}}{{/statics}}{{^statics}}{{#companionObjectNeeded}}
+    companion object
+{{/companionObjectNeeded}}{{/statics}}

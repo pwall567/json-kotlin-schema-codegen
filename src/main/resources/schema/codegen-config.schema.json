@@ -141,6 +141,12 @@
         }
       },
       "additionalProperties": false
+    },
+    "companionObject": {
+      "type": [ "boolean", "array" ],
+      "items": {
+        "type": "string"
+      }
     }
   }
 }

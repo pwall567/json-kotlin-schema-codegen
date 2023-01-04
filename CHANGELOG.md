@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.86] - 2023-01-04
+### Changed
+- `CodeGenerator`, `Configurator`, `Target`, templates: added ability to force output of companion object
+- `pom.xml`: bumped dependency version
+
 ## [0.85] - 2022-12-08
 ### Changed
 - `CodeGenerator`, `DefaultValue`: fixed bug in handling of `default`

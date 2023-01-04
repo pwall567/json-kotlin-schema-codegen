@@ -42,6 +42,7 @@ The configuration file includes the following:
 - [`customClasses`](#customclasses)
 - [`classNames`](#classnames)
 - [`annotations`](#annotations)
+- [`companionObject`](#companionobject)
 
 
 ## `title`
@@ -501,3 +502,35 @@ generation run:
 | `uuid`      | `UUID`           | a random UUID, for tagging a specific build               |
 
 The use of this information is shown in the first example in the [`annotations`](#annotations) section.
+
+## `companionObject`
+
+It can be useful to create "factory" functions to instantiate the generated classes, using extension functions on the
+companion object of the class.
+For example, to create an instance of a generated class `Person`:
+```kotlin
+    fun Person.Companion.create(name: String): Person {
+        // create a Person with the supplied name
+    }
+```
+
+This requires that the generated class have a companion object, and that is not always the case.
+To force the output of a companion object for one or more specified classes, or for all classes, the `companionObject`
+configuration setting may be used.
+This setting takes either a boolean, to enable or disable the output of companion objects for all classes, or an array
+of strings nominting the individual classes.
+
+To select this option for all classes:
+```json
+{
+   "companionObject": true
+}
+```
+
+Or for a selected set of classes:
+```json
+{
+   "companionObject": [ "Class1", "Class2" ]
+}
+```
+(just the class name, not the fully-qualified name including package, must be specified)

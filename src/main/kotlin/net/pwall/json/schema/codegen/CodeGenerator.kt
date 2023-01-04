@@ -2,7 +2,7 @@
  * @(#) CodeGenerator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2022 Peter Wall
+ * Copyright (c) 2020, 2021, 2022, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -207,6 +207,10 @@ class CodeGenerator(
         }
     }
 
+    var companionObjectForAll: Boolean? = null
+
+    val companionObjectForClasses: MutableSet<String> = mutableSetOf()
+
     /**
      * Configure the `CodeGenerator` using a config file, specified by a [File].
      *
@@ -280,7 +284,10 @@ class CodeGenerator(
                 generatorComment = generatorComment,
                 commentTemplate = commentTemplate,
                 json = json
-            ).apply { markerInterface?.let { addInterface(it) } }
+            ).apply {
+                markerInterface?.let { addInterface(it) }
+                companionObjectNeeded = companionObjectForAll ?: (className in companionObjectForClasses)
+            }
         )
     }
 

@@ -18,9 +18,12 @@ For example, `"not": { "const": "error" }` in a property sub-schema will test th
 Added to the code generator &ndash; the ability to configure generation options using a JSON or YAML file.
 See the documentation at [CONFIG.md](CONFIG.md).
 
-Also build tool support - see [below](#build-tool-support).
+Also build tool support &ndash; see [below](#build-tool-support).
 
-Also, the ability to add annotations to generated classes - see [`annotations`](CONFIG.md#annotations).
+Also, the ability to add annotations to generated classes &ndash; see [`annotations`](CONFIG.md#annotations).
+
+And from version 0.86 onward, the ability to force the output of a companion object for all or selected classes &ndash;
+see [`companionObject`](CONFIG.md#companionobject).
 
 ## Background
 
@@ -259,25 +262,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.85, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.86, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.85</version>
+      <version>0.86</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.85'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.86'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.85")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.86")
 ```
 
 Peter Wall
 
-2022-12-08
+2023-01-04

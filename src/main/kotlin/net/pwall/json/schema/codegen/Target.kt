@@ -2,7 +2,7 @@
  * @(#) Target.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2022 Peter Wall
+ * Copyright (c) 2020, 2021, 2022, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +67,8 @@ class Target(
     override val packageName: String?
         get() = targetFile.packageName
 
+    var companionObjectNeeded: Boolean = false
+
     @Suppress("unused")
     val indent = Indent()
 
@@ -94,7 +96,8 @@ class Target(
 
     @Suppress("unused")
     val validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass: Boolean
-        get() = validationsPresent || nestedClassesPresent || staticsPresent || hasBaseClassWithPropertiesOrIsBaseClass
+        get() = validationsPresent || nestedClassesPresent || staticsPresent || companionObjectNeeded ||
+                hasBaseClassWithPropertiesOrIsBaseClass
 
     fun addInterface(classId: ClassId) {
         interfaces.add(classId)
