@@ -518,7 +518,7 @@ This requires that the generated class have a companion object, and that is not 
 To force the output of a companion object for one or more specified classes, or for all classes, the `companionObject`
 configuration setting may be used.
 This setting takes either a boolean, to enable or disable the output of companion objects for all classes, or an array
-of strings nominting the individual classes.
+of strings nominating the individual classes.
 
 To select this option for all classes:
 ```json
