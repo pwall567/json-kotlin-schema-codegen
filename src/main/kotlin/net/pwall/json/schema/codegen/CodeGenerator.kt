@@ -1621,8 +1621,24 @@ class CodeGenerator(
         else -> this
     }
 
-    private fun JSONSchema.findRefChild(): RefSchema? =
-            (this as? JSONSchema.General)?.children?.filterIsInstance<RefSchema>()?.firstOrNull()
+    private fun JSONSchema.findRefChild(): RefSchema? {
+        if (this !is JSONSchema.General)
+            return null
+        if (children.size == 1 && children[0] is CombinationSchema) {
+            val combinationSchema = children[0] as CombinationSchema
+            if (combinationSchema.name == "anyOf" || combinationSchema.name == "oneOf") {
+                return when (val i = combinationSchema.findNullableSpecialCase()) {
+                    0, 1 -> (combinationSchema.array[i] as? JSONSchema.General)?.locateRefSchema()
+                    else -> null
+                }
+            }
+        }
+        return locateRefSchema()
+    }
+
+    private fun JSONSchema.General.locateRefSchema(): RefSchema? {
+        return children.filterIsInstance<RefSchema>().firstOrNull()
+    }
 
     private fun processSchema(schema: JSONSchema, constraints: Constraints) {
         when (schema) {
@@ -1677,11 +1693,27 @@ class CodeGenerator(
         when (combinationSchema.name) {
             "allOf" -> combinationSchema.array.forEach { processSchema(it, constraints) }
             "oneOf" -> {
-                constraints.oneOfSchemata = combinationSchema.array.map { schema ->
-                    Constraints(schema).also { processSchema(schema, it) }
+                when (val i = combinationSchema.findNullableSpecialCase()) {
+                    0, 1 -> {
+                        processSchema(combinationSchema.array[i], constraints)
+                        constraints.nullable = true
+                    }
+                    else -> {
+                        constraints.oneOfSchemata = combinationSchema.array.map { schema ->
+                            Constraints(schema).also { processSchema(schema, it) }
+                        }
+                    }
                 }
             }
-            "anyOf" -> {} // ignore for now - not sure what we can usefully do
+            "anyOf" -> { // special case involving anyOf and type null (otherwise ignore for now)
+                when (val i = combinationSchema.findNullableSpecialCase()) {
+                    0, 1 -> {
+                        processSchema(combinationSchema.array[i], constraints)
+                        constraints.nullable = true
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -2016,6 +2048,22 @@ class CodeGenerator(
 
         fun fatal(message: String): Nothing {
             throw JSONSchemaException(message)
+        }
+
+        fun CombinationSchema.findNullableSpecialCase(): Int {
+            if (array.size == 2) {
+                if (array[0].isSingleTypeNull())
+                    return 1
+                if (array[1].isSingleTypeNull())
+                    return 0
+            }
+            return -1
+        }
+
+        private fun JSONSchema.isSingleTypeNull(): Boolean {
+            return this is JSONSchema.General && children.size == 1 && children[0].let {
+                it is TypeValidator && it.types == listOf(JSONSchema.Type.NULL)
+            }
         }
 
     }

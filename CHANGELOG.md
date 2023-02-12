@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.87] - 2023-02-12
+### Changed
+- `CodeGenerator`: added `anyOf` or `oneOf` nullability special case
+
 ## [0.86] - 2023-01-04
 ### Changed
 - `CodeGenerator`, `Configurator`, `Target`, templates: added ability to force output of companion object

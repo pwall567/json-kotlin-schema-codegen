@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-anyof-null",
+  "description": "Test use of anyOf to make property nullable.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "anyOf": [
+        {
+          "$ref": "http://pwall.net/test/schema/test-person"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "bbb": {
+      "$ref": "http://pwall.net/test/schema/test-person"
+    },
+    "ccc": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "http://pwall.net/test/schema/test-person"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "ddd": {
+      "type": "array",
+      "items": {
+        "$ref": "http://pwall.net/test/schema/test-person"
+      }
+    }
+  },
+  "required": [
+    "aaa", "bbb", "ccc", "ddd"
+  ]
+}
