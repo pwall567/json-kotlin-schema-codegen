@@ -2,7 +2,7 @@
  * @(#) Constraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2020, 2021, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,10 +51,10 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
 
     var objectValidationsPresent: Boolean? = null
 
-    var localTypeName: String? = null
+    var localType: ClassId? = null
 
     val isLocalType: Boolean
-        get() = localTypeName != null
+        get() = localType != null
 
     var isEnumClass = false
 
@@ -236,7 +236,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
         if (isSystemClass)
             return other.isSystemClass && systemClass == other.systemClass
         if (isLocalType)
-            return other.isLocalType && localTypeName == other.localTypeName
+            return other.isLocalType && localType?.qualifiedClassName == other.localType?.qualifiedClassName
         if (isString)
             return other.isString
         if (isInt)
@@ -263,7 +263,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
             }
         }
         objectValidationsPresent = other.objectValidationsPresent
-        localTypeName = other.localTypeName
+        localType = other.localType
         isEnumClass = other.isEnumClass
         types.addAll(other.types)
         systemClass = other.systemClass

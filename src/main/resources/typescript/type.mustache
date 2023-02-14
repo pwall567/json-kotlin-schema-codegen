@@ -1,5 +1,5 @@
 {{! is it a local type
-}}{{#isLocalType}}{{&localTypeName}}{{/isLocalType}}{{^isLocalType}}{{! is it a string?
+}}{{#isLocalType}}{{&localType.className}}{{/isLocalType}}{{^isLocalType}}{{! is it a string?
 }}{{#isString}}string{{/isString}}{{^isString}}{{! is it an int?
 }}{{#isInt}}number{{/isInt}}{{^isInt}}{{! is it a long?
 }}{{#isLong}}number{{/isLong}}{{^isLong}}{{! is it a decimal?

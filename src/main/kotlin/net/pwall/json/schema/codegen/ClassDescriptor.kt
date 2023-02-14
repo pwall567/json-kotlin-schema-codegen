@@ -2,7 +2,7 @@
  * @(#) ClassDescriptor.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,9 @@
 
 package net.pwall.json.schema.codegen
 
-open class ClassDescriptor(val constraints: Constraints, val className: String) {
+open class ClassDescriptor(val constraints: Constraints, override val className: String) : ClassId {
+
+    override val packageName: String? = null
 
     var validationsPresent: Boolean = false
 

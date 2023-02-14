@@ -840,7 +840,7 @@ class CodeGenerator(
                 when {
                     baseConstraints.isEnumClass -> {
                         if (property.processAdditionalConstraintsEnum(baseConstraints,
-                                baseConstraints.localTypeName, baseConstraints.enumValues))
+                                baseConstraints.localType, baseConstraints.enumValues))
                             validationsPresent = true
                     }
                     baseConstraints.isLocalType -> {}
@@ -867,9 +867,12 @@ class CodeGenerator(
                 val customClass = findCustomClass(baseConstraints.schema, target) ?:
                         baseConstraints.schema.findRefChild()?.let { findCustomClass(it.target, target) }
                 if (customClass != null)
-                    property.localTypeName = customClass
+                    property.localType = customClass
                 else {
-                    property.localTypeName = baseConstraints.localTypeName
+                    property.localType = baseConstraints.localType?.also {
+                        if (it is CustomClass)
+                            target.addImport(it)
+                    }
                     baseConstraints.systemClass?.let {
                         property.systemClass = it
                         target.systemClasses.addOnce(it)
@@ -1008,19 +1011,19 @@ class CodeGenerator(
 
     private fun Constraints.processAdditionalConstraintsEnum(
         baseConstraints: Constraints,
-        localTypeName: String?,
+        localType: ClassId?,
         enumValues: JSONSequence<*>?,
     ): Boolean {
         isEnumClass = true
-        if (localTypeName != null && enumValues != null) {
-            this.localTypeName = localTypeName
+        if (localType != null && enumValues != null) {
+            this.localType = localType
             this.enumValues = enumValues
             (defaultValue ?: baseConstraints.defaultValue)?.let { value ->
                 val valueString = value.defaultValue.toString()
                 defaultValue = if (value.type == JSONSchema.Type.STRING &&
                         enumValues.any { a -> a.toString() == valueString }) {
                     Constraints.DefaultPropertyValue(
-                        defaultValue = EnumValue(localTypeName, valueString),
+                        defaultValue = EnumValue(localType.className, valueString),
                         type = JSONSchema.Type.STRING,
                     )
                 } else null
@@ -1028,7 +1031,7 @@ class CodeGenerator(
             if (constValue != baseConstraints.constValue) {
                 (constValue as? JSONString)?.let {
                     if (enumValues.any { a -> a.toString() == it.value }) {
-                        addValidation(Validation.Type.CONST_ENUM, EnumValue(localTypeName, it.value))
+                        addValidation(Validation.Type.CONST_ENUM, EnumValue(localType.className, it.value))
                         return true
                     }
                 }
@@ -1056,7 +1059,7 @@ class CodeGenerator(
 
     private fun useTarget(constraints: Constraints, target: Target, otherTarget: Target) {
         target.addImport(otherTarget)
-        constraints.localTypeName = otherTarget.className
+        constraints.localType = otherTarget
     }
 
     private fun findRefClass(constraints: Constraints, target: Target): Boolean {
@@ -1087,17 +1090,19 @@ class CodeGenerator(
             val nestedClass = target.addNestedClass(constraints, constraints.schema,
                     Strings.capitalise(nestedClassName))
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
-            constraints.localTypeName = nestedClass.className
+            constraints.localType = nestedClass
         }
     }
 
-    private fun findCustomClass(schema: JSONSchema, target: Target): String? {
+    private fun findCustomClass(schema: JSONSchema, target: Target): ClassId? {
         customClassesByExtension.find { it.match(schema) }?.let {
-            return it.applyToTarget(target)
+            it.applyToTarget(target)
+            return it
         }
         schema.uri?.resolve(schema.location.toURIFragment())?.let { uri ->
             customClassesByURI.find { uri.resolve(it.uri) == uri }?.let {
-                return it.applyToTarget(target)
+                it.applyToTarget(target)
+                return it
             }
         }
         return null
@@ -1111,16 +1116,17 @@ class CodeGenerator(
     ): Boolean {
         // true == validations present
         findCustomClass(property.schema, target)?.let {
-            property.localTypeName = it
+            property.localType = it
             return false
         }
         customClassesByFormat.find { it.match(property) }?.let {
-            property.localTypeName = it.applyToTarget(target)
+            it.applyToTarget(target)
+            property.localType = it
             return false
         }
         property.schema.findRefChild()?.let { refChild ->
             findCustomClass(refChild.target, target)?.let {
-                property.localTypeName = it
+                property.localType = it
                 return false
             }
         }
@@ -1196,7 +1202,7 @@ class CodeGenerator(
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
-                        val enumDefault = EnumValue(property.localTypeName!!, it.defaultValue.toString())
+                        val enumDefault = EnumValue(property.localType!!.className, it.defaultValue.toString())
                         property.defaultValue = Constraints.DefaultPropertyValue(enumDefault, JSONSchema.Type.STRING)
                     }
                     else
@@ -1879,10 +1885,11 @@ class CodeGenerator(
 
     abstract class CustomClass(override val className: String, override val packageName: String?) : ClassId {
 
-        fun applyToTarget(target: Target): String {
+        fun applyToTarget(target: Target) {
             target.addImport(this)
-            return className
         }
+
+        override fun toString(): String = qualifiedClassName
 
     }
 

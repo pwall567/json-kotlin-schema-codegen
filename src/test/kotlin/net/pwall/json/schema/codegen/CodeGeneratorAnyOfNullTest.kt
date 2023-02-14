@@ -37,7 +37,7 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 
 class CodeGeneratorAnyOfNullTest {
 
-    @Test fun `should generate nested class for array of object`() {
+    @Test fun `should generate nullable properties using anyOf construct`() {
         val input = File("src/test/resources/test-anyof-null.json")
         val personInput = File("src/test/resources/simple/simple.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAnyofNull", "kt", dirs))

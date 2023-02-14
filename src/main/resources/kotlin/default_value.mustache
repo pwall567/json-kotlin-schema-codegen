@@ -1,5 +1,5 @@
 {{#isLocalType}}{{#isEnumClass}}{{&defaultValue.kotlinString}}{{/isEnumClass}}{{!
-}}{{^isEnumClass}}{{&localTypeName}}({{#type}}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
+}}{{^isEnumClass}}{{&localType.className}}({{#type}}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
 }}{{^STRING}}{{&defaultValue}}{{/STRING}}{{/type}}){{/isEnumClass}}{{/isLocalType}}{{^isLocalType}}{{#type}}{{#NULL}}null{{/NULL}}{{!
 }}{{#INTEGER}}{{&defaultValue}}{{/INTEGER}}{{!
 }}{{#STRING}}{{#isSystemClass}}{{#systemClass}}{{#DATE_TIME}}OffsetDateTime.parse({{&defaultValue.kotlinString}}){{/DATE_TIME}}{{!

@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.88] - 2023-02-14
+### Changed
+- `CodeGenerator`, `Constraints`, `ClassDescriptor`, templates: bug fix (custom class import for derived class)
+
 ## [0.87] - 2023-02-12
 ### Changed
 - `CodeGenerator`: added `anyOf` or `oneOf` nullability special case
