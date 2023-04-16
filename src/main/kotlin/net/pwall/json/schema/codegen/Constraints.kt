@@ -121,6 +121,10 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
         get() = types.size == 1
 
     @Suppress("unused")
+    val isUnidentifiableType: Boolean
+        get() = types.size > 1
+
+    @Suppress("unused")
     val isObject: Boolean
         get() = isType(JSONSchema.Type.OBJECT) || types.isEmpty() && properties.isNotEmpty() // ?
 
