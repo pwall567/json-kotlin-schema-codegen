@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `StringValue`: Switch hex conversion to use `IntOutput`
+
 ## [0.88] - 2023-02-14
 ### Changed
 - `CodeGenerator`, `Constraints`, `ClassDescriptor`, templates: bug fix (custom class import for derived class)

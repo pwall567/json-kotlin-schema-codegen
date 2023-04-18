@@ -25,6 +25,8 @@
 
 package net.pwall.json.schema.codegen
 
+import net.pwall.util.IntOutput
+
 class StringValue(val rawString: String) : ValidationValue {
 
     val kotlinString: String by lazy {
@@ -71,9 +73,9 @@ class StringValue(val rawString: String) : ValidationValue {
                 }
                 else -> {
                     sb1.append("\\u")
-                    sb1.appendHex(ch.code)
+                    IntOutput.append4Hex(sb1, ch.code)
                     sb2.append("\\u")
-                    sb2.appendHex(ch.code)
+                    IntOutput.append4Hex(sb2, ch.code)
                 }
             }
         }
@@ -97,7 +99,7 @@ class StringValue(val rawString: String) : ValidationValue {
                     '\u000C' -> append("\\f")
                     else -> {
                         append("\\u")
-                        appendHex(ch.code)
+                        IntOutput.append4Hex(this, ch.code)
                     }
                 }
             }
@@ -110,18 +112,5 @@ class StringValue(val rawString: String) : ValidationValue {
     override fun hashCode(): Int = rawString.hashCode()
 
     override fun toString(): String = rawString
-
-    companion object {
-
-        private const val hexChars = "0123456789ABCDEF"
-
-        fun StringBuilder.appendHex(hex: Int) {
-            append(hexChars[(hex shr 12) and 0xF])
-            append(hexChars[(hex shr 8) and 0xF])
-            append(hexChars[(hex shr 4) and 0xF])
-            append(hexChars[hex and 0xF])
-        }
-
-    }
 
 }

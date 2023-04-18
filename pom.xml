@@ -102,6 +102,11 @@
       <version>3.2</version>
     </dependency>
     <dependency>
+      <groupId>net.pwall.util</groupId>
+      <artifactId>int-output</artifactId>
+      <version>1.3</version>
+    </dependency>
+    <dependency>
       <groupId>net.pwall.log</groupId>
       <artifactId>log-front</artifactId>
       <version>5.1.2</version>
