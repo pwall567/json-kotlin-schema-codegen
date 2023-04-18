@@ -9,7 +9,9 @@
 {{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}};
 {{/properties}}{{&closeBrace}}{{#nestedClasses}}
 
-{{#constraints}}interface {{&className}} {
+{{#constraints}}{{#isObject}}export interface {{&className}} {
 {{#properties}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}    {{&name}}{{#nullable}}?{{/nullable}}: {{>type}};
-{{/properties}}{{&closeBrace}}{{/constraints}}{{/nestedClasses}}{{/constraints}}
+{{/properties}}{{&closeBrace}}{{/isObject}}{{#isString}}export type {{&className}} =
+{{#enumValues}}    "{{&.}}"{{^last}} |
+{{/last}}{{/enumValues}}{{^enumValues}}any{{/enumValues}};{{/isString}}{{/constraints}}{{/nestedClasses}}{{/constraints}}

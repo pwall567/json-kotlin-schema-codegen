@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `StringValue`: switch hex conversion to use `IntOutput`
 - `pom.xml`: update Kotlin version to 1.7.21
+- templates: fixed bug in Typescript output (secondary interfaces and enums)
 
 ## [0.88] - 2023-02-14
 ### Changed

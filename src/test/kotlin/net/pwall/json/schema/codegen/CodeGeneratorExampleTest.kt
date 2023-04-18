@@ -286,7 +286,7 @@ export interface Test {
     stock?: Stock;
 }
 
-interface Stock {
+export interface Stock {
     warehouse?: number;
     retail?: number;
 }
