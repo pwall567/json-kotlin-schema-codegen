@@ -1,6 +1,7 @@
 {{>header}}
-{{#targets}}import { {{&className}} } from "./{{&className}}";
+{{#targets}}import { {{&className}}{{#nestedClasses}}, {{&className}}{{/nestedClasses}} } from "./{{&className}}";
 {{/targets}}
 
 {{#targets}}export { {{&className}} };
-{{/targets}}
+{{#nestedClasses}}export { {{&className}} };
+{{/nestedClasses}}{{/targets}}

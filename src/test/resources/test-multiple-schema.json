@@ -14,9 +14,13 @@
         },
         "ccc": {
           "$ref": "#/$defs/TypeB"
+        },
+        "ddd": {
+          "type": "string",
+          "enum": [ "AAAA", "BBBB", "CCCC" ]
         }
       },
-      "required": [ "aaa", "bbb", "ccc" ]
+      "required": [ "aaa", "bbb", "ccc", "ddd" ]
     },
     "TypeB": {
       "type": "object",

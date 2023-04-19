@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorMultipleTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
 import kotlin.test.expect
+
 import java.io.File
 
 import net.pwall.json.JSON
@@ -86,8 +87,17 @@ class CodeGeneratorMultipleTest {
 data class TypeA(
     val aaa: String,
     val bbb: Long,
-    val ccc: TypeB
-)
+    val ccc: TypeB,
+    val ddd: Ddd
+) {
+
+    enum class Ddd {
+        AAAA,
+        BBBB,
+        CCCC
+    }
+
+}
 """
 
         const val expectedTypeB =
@@ -107,11 +117,13 @@ public class TypeA {
     private final String aaa;
     private final long bbb;
     private final TypeB ccc;
+    private final Ddd ddd;
 
     public TypeA(
             String aaa,
             long bbb,
-            TypeB ccc
+            TypeB ccc,
+            Ddd ddd
     ) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
@@ -120,6 +132,9 @@ public class TypeA {
         if (ccc == null)
             throw new IllegalArgumentException("Must not be null - ccc");
         this.ccc = ccc;
+        if (ddd == null)
+            throw new IllegalArgumentException("Must not be null - ddd");
+        this.ddd = ddd;
     }
 
     public String getAaa() {
@@ -134,6 +149,10 @@ public class TypeA {
         return ccc;
     }
 
+    public Ddd getDdd() {
+        return ddd;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other)
@@ -145,14 +164,17 @@ public class TypeA {
             return false;
         if (bbb != typedOther.bbb)
             return false;
-        return ccc.equals(typedOther.ccc);
+        if (!ccc.equals(typedOther.ccc))
+            return false;
+        return ddd == typedOther.ddd;
     }
 
     @Override
     public int hashCode() {
         int hash = aaa.hashCode();
         hash ^= (int)bbb;
-        return hash ^ ccc.hashCode();
+        hash ^= ccc.hashCode();
+        return hash ^ ddd.hashCode();
     }
 
     public static class Builder {
@@ -160,6 +182,7 @@ public class TypeA {
         private String aaa;
         private long bbb;
         private TypeB ccc;
+        private Ddd ddd;
 
         public Builder withAaa(String aaa) {
             this.aaa = aaa;
@@ -176,14 +199,26 @@ public class TypeA {
             return this;
         }
 
+        public Builder withDdd(Ddd ddd) {
+            this.ddd = ddd;
+            return this;
+        }
+
         public TypeA build() {
             return new TypeA(
                     aaa,
                     bbb,
-                    ccc
+                    ccc,
+                    ddd
             );
         }
 
+    }
+
+    public enum Ddd {
+        AAAA,
+        BBBB,
+        CCCC
     }
 
 }
@@ -268,7 +303,13 @@ export interface TypeA {
     aaa: string;
     bbb: number;
     ccc: TypeB;
+    ddd: Ddd;
 }
+
+export type Ddd =
+    "AAAA" |
+    "BBBB" |
+    "CCCC";
 """
 
         const val expectedTypeBTypeScript =
@@ -281,10 +322,11 @@ export interface TypeB {
 
         const val expectedIndexTypeScript =
 """
-import { TypeA } from "./TypeA";
+import { TypeA, Ddd } from "./TypeA";
 import { TypeB } from "./TypeB";
 
 export { TypeA };
+export { Ddd };
 export { TypeB };
 """
     }
