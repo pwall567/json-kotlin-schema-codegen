@@ -539,7 +539,16 @@ class CodeGenerator(
         indexFileName?.let { name ->
             log.info { "-- index $name" }
             outputResolver(name).use {
-                indexTemplate.processTo(AppendableFilter(it), TargetIndex(targets, name, generatorComment))
+                indexTemplate.processTo(AppendableFilter(it), TargetIndex(
+                    targets = targets.filter { t ->
+                        t.constraints.isObject ||
+                                t.constraints.isEnumClass && t.constraints.enumValues.let { e ->
+                                    e != null && allIdentifier(e)
+                                }
+                    },
+                    targetFile = name,
+                    generatorComment = generatorComment),
+                )
             }
         }
     }

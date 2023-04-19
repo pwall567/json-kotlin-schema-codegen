@@ -322,11 +322,10 @@ export interface TypeB {
 
         const val expectedIndexTypeScript =
 """
-import { TypeA, Ddd } from "./TypeA";
+import { TypeA } from "./TypeA";
 import { TypeB } from "./TypeB";
 
 export { TypeA };
-export { Ddd };
 export { TypeB };
 """
     }

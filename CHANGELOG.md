@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.90] - 2023-04-19
+### Changed
+- `CodeGenerator`, templates: fixed bug in Typescript output (index)
+
 ## [0.89] - 2023-04-19
 ### Changed
 - `StringValue`: switch hex conversion to use `IntOutput`
