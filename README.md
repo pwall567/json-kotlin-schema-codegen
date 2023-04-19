@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.com/pwall567/json-kotlin-schema-codegen.svg?branch=main)](https://travis-ci.com/github/pwall567/json-kotlin-schema-codegen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.6.10&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.6.10)
+[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.7.21&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.7.21)
 [![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
 
 Code generation for JSON Schema (Draft 07).
@@ -320,25 +320,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.87, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.89, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.87</version>
+      <version>0.89</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.87'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.89'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.87")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.89")
 ```
 
 Peter Wall
 
-2023-02-12
+2023-04-19

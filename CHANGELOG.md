@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.89] - 2023-04-19
 ### Changed
 - `StringValue`: switch hex conversion to use `IntOutput`
 - `pom.xml`: update Kotlin version to 1.7.21
