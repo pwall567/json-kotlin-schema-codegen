@@ -36,6 +36,7 @@ import net.pwall.json.JSONSequence
 import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
 import net.pwall.json.schema.JSONSchema
+import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
 import net.pwall.json.schema.validation.FormatValidator
 
 open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : Annotated() {
@@ -184,7 +185,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     var validations = mutableListOf<Validation>()
 
     fun addValidation(type: Validation.Type, value: Any? = null) {
-        validations.add(Validation(type, value, negated))
+        validations.addOnce(Validation(type, value, negated))
     }
 
     private fun isType(type: JSONSchema.Type): Boolean = types.size == 1 && types[0] == type

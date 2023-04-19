@@ -2,7 +2,7 @@
  * @(#) Validation.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,19 @@
 
 package net.pwall.json.schema.codegen
 
+import net.pwall.util.Util.eq
+
 class Validation(
     val type: Type,
     val value: Any? = null,
     val negate: Boolean = false,
 ) {
+
+    override fun equals(other: Any?): Boolean = eq(other) {
+        type == it.type && value == it.value && negate == it.negate
+    }
+
+    override fun hashCode(): Int = type.hashCode() xor value.hashCode() xor negate.hashCode()
 
     enum class Type {
         PATTERN,

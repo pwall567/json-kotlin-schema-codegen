@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-duplicate-validation",
+  "description": "Test duplicate validations.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "allOf": [
+        {
+          "pattern": "^[A-Z]{3}$"
+        },
+        {
+          "pattern": "^[A-Z]{3}$"
+        }
+      ]
+    }
+  },
+  "required": [
+    "aaa"
+  ]
+}
