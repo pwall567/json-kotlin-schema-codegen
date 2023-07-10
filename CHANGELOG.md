@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.91] - 2023-07-10
+### Changed
+- `pom.xml`: updated dependency versions
+
 ## [0.90] - 2023-04-19
 ### Changed
 - `CodeGenerator`, templates: fixed bug in Typescript output (index)
