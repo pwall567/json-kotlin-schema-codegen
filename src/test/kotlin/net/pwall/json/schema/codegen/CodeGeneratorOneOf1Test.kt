@@ -138,13 +138,13 @@ public class TypeB implements TypeA {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeB))
+        if (!(cg_other instanceof TypeB))
             return false;
-        TypeB typedOther = (TypeB)other;
-        return xxx.equals(typedOther.xxx);
+        TypeB cg_typedOther = (TypeB)cg_other;
+        return xxx.equals(cg_typedOther.xxx);
     }
 
     @Override
@@ -192,13 +192,13 @@ public class TypeC implements TypeA {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeC))
+        if (!(cg_other instanceof TypeC))
             return false;
-        TypeC typedOther = (TypeC)other;
-        return yyy.equals(typedOther.yyy);
+        TypeC cg_typedOther = (TypeC)cg_other;
+        return yyy.equals(cg_typedOther.yyy);
     }
 
     @Override
@@ -246,13 +246,13 @@ public class TypeD {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeD))
+        if (!(cg_other instanceof TypeD))
             return false;
-        TypeD typedOther = (TypeD)other;
-        return qqq.equals(typedOther.qqq);
+        TypeD cg_typedOther = (TypeD)cg_other;
+        return qqq.equals(cg_typedOther.qqq);
     }
 
     @Override

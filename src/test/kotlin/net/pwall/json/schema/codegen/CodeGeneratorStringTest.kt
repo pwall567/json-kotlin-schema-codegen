@@ -297,41 +297,41 @@ public class TestString {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestString))
+        if (!(cg_other instanceof TestString))
             return false;
-        TestString typedOther = (TestString)other;
-        if (!email1.equals(typedOther.email1))
+        TestString cg_typedOther = (TestString)cg_other;
+        if (!email1.equals(cg_typedOther.email1))
             return false;
-        if (!hostname1.equals(typedOther.hostname1))
+        if (!hostname1.equals(cg_typedOther.hostname1))
             return false;
-        if (!ipv4a.equals(typedOther.ipv4a))
+        if (!ipv4a.equals(cg_typedOther.ipv4a))
             return false;
-        if (!ipv6a.equals(typedOther.ipv6a))
+        if (!ipv6a.equals(cg_typedOther.ipv6a))
             return false;
-        if (duration1 == null ? typedOther.duration1 != null : !duration1.equals(typedOther.duration1))
+        if (duration1 == null ? cg_typedOther.duration1 != null : !duration1.equals(cg_typedOther.duration1))
             return false;
-        if (pointer1 == null ? typedOther.pointer1 != null : !pointer1.equals(typedOther.pointer1))
+        if (pointer1 == null ? cg_typedOther.pointer1 != null : !pointer1.equals(cg_typedOther.pointer1))
             return false;
-        if (!maxlen.equals(typedOther.maxlen))
+        if (!maxlen.equals(cg_typedOther.maxlen))
             return false;
-        if (!minlen.equals(typedOther.minlen))
+        if (!minlen.equals(cg_typedOther.minlen))
             return false;
-        if (minlen2 == null ? typedOther.minlen2 != null : !minlen2.equals(typedOther.minlen2))
+        if (minlen2 == null ? cg_typedOther.minlen2 != null : !minlen2.equals(cg_typedOther.minlen2))
             return false;
-        if (fixedLen == null ? typedOther.fixedLen != null : !fixedLen.equals(typedOther.fixedLen))
+        if (fixedLen == null ? cg_typedOther.fixedLen != null : !fixedLen.equals(cg_typedOther.fixedLen))
             return false;
-        if (rangeLen == null ? typedOther.rangeLen != null : !rangeLen.equals(typedOther.rangeLen))
+        if (rangeLen == null ? cg_typedOther.rangeLen != null : !rangeLen.equals(cg_typedOther.rangeLen))
             return false;
-        if (!name.equals(typedOther.name))
+        if (!name.equals(cg_typedOther.name))
             return false;
-        if (!description.equals(typedOther.description))
+        if (!description.equals(cg_typedOther.description))
             return false;
-        if (!uri.equals(typedOther.uri))
+        if (!uri.equals(cg_typedOther.uri))
             return false;
-        return status == typedOther.status;
+        return status == cg_typedOther.status;
     }
 
     @Override

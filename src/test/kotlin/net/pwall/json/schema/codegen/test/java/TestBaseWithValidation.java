@@ -46,17 +46,17 @@ public class TestBaseWithValidation {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBaseWithValidation))
+        if (!(cg_other instanceof TestBaseWithValidation))
             return false;
-        TestBaseWithValidation typedOther = (TestBaseWithValidation)other;
-        if (type != typedOther.type)
+        TestBaseWithValidation cg_typedOther = (TestBaseWithValidation)cg_other;
+        if (type != cg_typedOther.type)
             return false;
-        if (quantity != typedOther.quantity)
+        if (quantity != cg_typedOther.quantity)
             return false;
-        return name.equals(typedOther.name);
+        return name.equals(cg_typedOther.name);
     }
 
     @Override

@@ -163,17 +163,17 @@ public class TestArrayItems {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestArrayItems))
+        if (!(cg_other instanceof TestArrayItems))
             return false;
-        TestArrayItems typedOther = (TestArrayItems)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestArrayItems cg_typedOther = (TestArrayItems)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (bbb == null ? typedOther.bbb != null : !bbb.equals(typedOther.bbb))
+        if (bbb == null ? cg_typedOther.bbb != null : !bbb.equals(cg_typedOther.bbb))
             return false;
-        return ccc == null ? typedOther.ccc == null : ccc.equals(typedOther.ccc);
+        return ccc == null ? cg_typedOther.ccc == null : ccc.equals(cg_typedOther.ccc);
     }
 
     @Override

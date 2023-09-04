@@ -89,13 +89,13 @@ public class TestGenerateAny {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestGenerateAny))
+        if (!(cg_other instanceof TestGenerateAny))
             return false;
-        TestGenerateAny typedOther = (TestGenerateAny)other;
-        return aaa.equals(typedOther.aaa);
+        TestGenerateAny cg_typedOther = (TestGenerateAny)cg_other;
+        return aaa.equals(cg_typedOther.aaa);
     }
 
     @Override

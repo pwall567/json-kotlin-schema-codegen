@@ -111,10 +111,10 @@ open class TestEmpty : Marker
 public class TestEmpty implements Marker {
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestEmpty))
+        if (!(cg_other instanceof TestEmpty))
             return false;
         return true;
     }
@@ -158,10 +158,10 @@ import com.example.other.Marker;
 public class TestEmpty implements Marker {
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestEmpty))
+        if (!(cg_other instanceof TestEmpty))
             return false;
         return true;
     }

@@ -120,13 +120,13 @@ public class TestNestedObject {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestNestedObject))
+        if (!(cg_other instanceof TestNestedObject))
             return false;
-        TestNestedObject typedOther = (TestNestedObject)other;
-        return nested.equals(typedOther.nested);
+        TestNestedObject cg_typedOther = (TestNestedObject)cg_other;
+        return nested.equals(cg_typedOther.nested);
     }
 
     @Override
@@ -174,13 +174,13 @@ public class TestNestedObject {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Nested))
+            if (!(cg_other instanceof Nested))
                 return false;
-            Nested typedOther = (Nested)other;
-            return deeper.equals(typedOther.deeper);
+            Nested cg_typedOther = (Nested)cg_other;
+            return deeper.equals(cg_typedOther.deeper);
         }
 
         @Override
@@ -212,13 +212,13 @@ public class TestNestedObject {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Deeper))
+            if (!(cg_other instanceof Deeper))
                 return false;
-            Deeper typedOther = (Deeper)other;
-            return deepest.equals(typedOther.deepest);
+            Deeper cg_typedOther = (Deeper)cg_other;
+            return deepest.equals(cg_typedOther.deepest);
         }
 
         @Override

@@ -29,7 +29,6 @@ import kotlin.test.Test
 import kotlin.test.expect
 
 import java.io.File
-import java.io.StringWriter
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -40,32 +39,28 @@ class CodeGeneratorDerivedClassTest {
 
     @Test fun `should generate base class and derived class`() {
         val input = File("src/test/resources/test-derived-class")
-        val codeGenerator = CodeGenerator(templateName = "open_class")
-        val stringWriterBase = StringWriter()
-        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "kt", dirs), stringWriterBase)
-        val stringWriterDerived = StringWriter()
-        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "kt", dirs + "derived"),
-                stringWriterDerived)
-        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.generate(input)
-        expect(createHeader("TestBaseClass.kt") + expectedBase) { stringWriterBase.toString() }
-        expect(createHeader("TestDerivedClass.kt") + expectedDerived) { stringWriterDerived.toString() }
+        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "kt", dirs))
+        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "kt", dirs + "derived"))
+        CodeGenerator(templateName = "open_class").apply {
+            outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
+            basePackageName = "com.example"
+            generate(input)
+        }
+        expect(createHeader("TestBaseClass.kt") + expectedBase) { outputDetailsBase.output() }
+        expect(createHeader("TestDerivedClass.kt") + expectedDerived) { outputDetailsDerived.output() }
     }
 
     @Test fun `should generate base class and derived class in Java`() {
         val input = File("src/test/resources/test-derived-class")
-        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
-        val stringWriterBase = StringWriter()
-        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "java", dirs), stringWriterBase)
-        val stringWriterDerived = StringWriter()
-        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "java", dirs + "derived"),
-                stringWriterDerived)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
-        codeGenerator.generate(input)
-        expect(createHeader("TestBaseClass.java") + expectedBaseJava) { stringWriterBase.toString() }
-        expect(createHeader("TestDerivedClass.java") + expectedDerivedJava) { stringWriterDerived.toString() }
+        val outputDetailsBase = OutputDetails(TargetFileName("TestBaseClass", "java", dirs))
+        val outputDetailsDerived = OutputDetails(TargetFileName("TestDerivedClass", "java", dirs + "derived"))
+        CodeGenerator(TargetLanguage.JAVA).apply {
+            basePackageName = "com.example"
+            outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
+            generate(input)
+        }
+        expect(createHeader("TestBaseClass.java") + expectedBaseJava) { outputDetailsBase.output() }
+        expect(createHeader("TestDerivedClass.java") + expectedDerivedJava) { outputDetailsDerived.output() }
     }
 
     companion object {
@@ -141,13 +136,13 @@ public class TestBaseClass {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBaseClass))
+        if (!(cg_other instanceof TestBaseClass))
             return false;
-        TestBaseClass typedOther = (TestBaseClass)other;
-        return id.equals(typedOther.id);
+        TestBaseClass cg_typedOther = (TestBaseClass)cg_other;
+        return id.equals(cg_typedOther.id);
     }
 
     @Override
@@ -204,15 +199,15 @@ public class TestDerivedClass extends TestBaseClass {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestDerivedClass))
+        if (!(cg_other instanceof TestDerivedClass))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        TestDerivedClass typedOther = (TestDerivedClass)other;
-        return name.equals(typedOther.name);
+        TestDerivedClass cg_typedOther = (TestDerivedClass)cg_other;
+        return name.equals(cg_typedOther.name);
     }
 
     @Override

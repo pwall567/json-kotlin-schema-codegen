@@ -151,17 +151,17 @@ public class TestNot {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestNot))
+        if (!(cg_other instanceof TestNot))
             return false;
-        TestNot typedOther = (TestNot)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestNot cg_typedOther = (TestNot)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (bbb != typedOther.bbb)
+        if (bbb != cg_typedOther.bbb)
             return false;
-        return ccc.equals(typedOther.ccc);
+        return ccc.equals(cg_typedOther.ccc);
     }
 
     @Override

@@ -99,19 +99,19 @@ public class TestIntegerMinMax {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestIntegerMinMax))
+        if (!(cg_other instanceof TestIntegerMinMax))
             return false;
-        TestIntegerMinMax typedOther = (TestIntegerMinMax)other;
-        if (aaa != typedOther.aaa)
+        TestIntegerMinMax cg_typedOther = (TestIntegerMinMax)cg_other;
+        if (aaa != cg_typedOther.aaa)
             return false;
-        if (bbb != typedOther.bbb)
+        if (bbb != cg_typedOther.bbb)
             return false;
-        if (ccc != typedOther.ccc)
+        if (ccc != cg_typedOther.ccc)
             return false;
-        return ddd == typedOther.ddd;
+        return ddd == cg_typedOther.ddd;
     }
 
     @Override

@@ -99,15 +99,15 @@ public class TestIntegerFormat {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestIntegerFormat))
+        if (!(cg_other instanceof TestIntegerFormat))
             return false;
-        TestIntegerFormat typedOther = (TestIntegerFormat)other;
-        if (little != typedOther.little)
+        TestIntegerFormat cg_typedOther = (TestIntegerFormat)cg_other;
+        if (little != cg_typedOther.little)
             return false;
-        return big == typedOther.big;
+        return big == cg_typedOther.big;
     }
 
     @Override

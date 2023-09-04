@@ -148,19 +148,19 @@ public class TestConst {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestConst))
+        if (!(cg_other instanceof TestConst))
             return false;
-        TestConst typedOther = (TestConst)other;
-        if (aaa != typedOther.aaa)
+        TestConst cg_typedOther = (TestConst)cg_other;
+        if (aaa != cg_typedOther.aaa)
             return false;
-        if (bbb != typedOther.bbb)
+        if (bbb != cg_typedOther.bbb)
             return false;
-        if (!ccc.equals(typedOther.ccc))
+        if (!ccc.equals(cg_typedOther.ccc))
             return false;
-        return ddd.equals(typedOther.ddd);
+        return ddd.equals(cg_typedOther.ddd);
     }
 
     @Override

@@ -236,19 +236,19 @@ public class TestComplexBase {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestComplexBase))
+        if (!(cg_other instanceof TestComplexBase))
             return false;
-        TestComplexBase typedOther = (TestComplexBase)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestComplexBase cg_typedOther = (TestComplexBase)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (!qqq.equals(typedOther.qqq))
+        if (!qqq.equals(cg_typedOther.qqq))
             return false;
-        if (!sss.equals(typedOther.sss))
+        if (!sss.equals(cg_typedOther.sss))
             return false;
-        return uuu.equals(typedOther.uuu);
+        return uuu.equals(cg_typedOther.uuu);
     }
 
     @Override
@@ -316,13 +316,13 @@ public class TestComplexBase {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Aaa))
+            if (!(cg_other instanceof Aaa))
                 return false;
-            Aaa typedOther = (Aaa)other;
-            return xxx.equals(typedOther.xxx);
+            Aaa cg_typedOther = (Aaa)cg_other;
+            return xxx.equals(cg_typedOther.xxx);
         }
 
         @Override
@@ -369,15 +369,15 @@ public class TestComplexBaseDerived extends TestComplexBase {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestComplexBaseDerived))
+        if (!(cg_other instanceof TestComplexBaseDerived))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        TestComplexBaseDerived typedOther = (TestComplexBaseDerived)other;
-        return bbb.equals(typedOther.bbb);
+        TestComplexBaseDerived cg_typedOther = (TestComplexBaseDerived)cg_other;
+        return bbb.equals(cg_typedOther.bbb);
     }
 
     @Override

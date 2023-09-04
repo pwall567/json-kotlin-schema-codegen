@@ -89,13 +89,13 @@ public class Gen123 {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Gen123))
+        if (!(cg_other instanceof Gen123))
             return false;
-        Gen123 typedOther = (Gen123)other;
-        return aaa.equals(typedOther.aaa);
+        Gen123 cg_typedOther = (Gen123)cg_other;
+        return aaa.equals(cg_typedOther.aaa);
     }
 
     @Override

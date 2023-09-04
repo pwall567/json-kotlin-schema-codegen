@@ -178,13 +178,13 @@ public class TestBase {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBase))
+        if (!(cg_other instanceof TestBase))
             return false;
-        TestBase typedOther = (TestBase)other;
-        return aaa.equals(typedOther.aaa);
+        TestBase cg_typedOther = (TestBase)cg_other;
+        return aaa.equals(cg_typedOther.aaa);
     }
 
     @Override
@@ -237,15 +237,15 @@ public class TestBaseDerived extends TestBase {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBaseDerived))
+        if (!(cg_other instanceof TestBaseDerived))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        TestBaseDerived typedOther = (TestBaseDerived)other;
-        return bbb.equals(typedOther.bbb);
+        TestBaseDerived cg_typedOther = (TestBaseDerived)cg_other;
+        return bbb.equals(cg_typedOther.bbb);
     }
 
     @Override

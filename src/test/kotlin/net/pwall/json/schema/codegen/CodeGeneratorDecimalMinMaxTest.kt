@@ -121,17 +121,17 @@ public class TestDecimalMinMax {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestDecimalMinMax))
+        if (!(cg_other instanceof TestDecimalMinMax))
             return false;
-        TestDecimalMinMax typedOther = (TestDecimalMinMax)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestDecimalMinMax cg_typedOther = (TestDecimalMinMax)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (!bbb.equals(typedOther.bbb))
+        if (!bbb.equals(cg_typedOther.bbb))
             return false;
-        return ccc.equals(typedOther.ccc);
+        return ccc.equals(cg_typedOther.ccc);
     }
 
     @Override

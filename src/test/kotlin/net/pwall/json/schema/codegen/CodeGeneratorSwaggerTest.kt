@@ -142,15 +142,15 @@ public class QueryResponse {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof QueryResponse))
+        if (!(cg_other instanceof QueryResponse))
             return false;
-        QueryResponse typedOther = (QueryResponse)other;
-        if (!data.equals(typedOther.data))
+        QueryResponse cg_typedOther = (QueryResponse)cg_other;
+        if (!data.equals(cg_typedOther.data))
             return false;
-        return message == null ? typedOther.message == null : message.equals(typedOther.message);
+        return message == null ? cg_typedOther.message == null : message.equals(cg_typedOther.message);
     }
 
     @Override
@@ -220,15 +220,15 @@ public class Person {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Person))
+        if (!(cg_other instanceof Person))
             return false;
-        Person typedOther = (Person)other;
-        if (id != typedOther.id)
+        Person cg_typedOther = (Person)cg_other;
+        if (id != cg_typedOther.id)
             return false;
-        return name.equals(typedOther.name);
+        return name.equals(cg_typedOther.name);
     }
 
     @Override

@@ -33,15 +33,15 @@ public class TestDerivedWithValidation0 extends TestBaseWithValidation {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestDerivedWithValidation0))
+        if (!(cg_other instanceof TestDerivedWithValidation0))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        TestDerivedWithValidation0 typedOther = (TestDerivedWithValidation0)other;
-        return payload.equals(typedOther.payload);
+        TestDerivedWithValidation0 cg_typedOther = (TestDerivedWithValidation0)cg_other;
+        return payload.equals(cg_typedOther.payload);
     }
 
     @Override

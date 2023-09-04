@@ -353,15 +353,15 @@ public class Person {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Person))
+        if (!(cg_other instanceof Person))
             return false;
-        Person typedOther = (Person)other;
-        if (!id.equals(typedOther.id))
+        Person cg_typedOther = (Person)cg_other;
+        if (!id.equals(cg_typedOther.id))
             return false;
-        return name.equals(typedOther.name);
+        return name.equals(cg_typedOther.name);
     }
 
     @Override
@@ -443,15 +443,15 @@ public class TestCustom {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestCustom))
+        if (!(cg_other instanceof TestCustom))
             return false;
-        TestCustom typedOther = (TestCustom)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestCustom cg_typedOther = (TestCustom)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        return bbb == null ? typedOther.bbb == null : bbb.equals(typedOther.bbb);
+        return bbb == null ? cg_typedOther.bbb == null : bbb.equals(cg_typedOther.bbb);
     }
 
     @Override
@@ -549,15 +549,15 @@ public class TestCustom {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestCustom))
+        if (!(cg_other instanceof TestCustom))
             return false;
-        TestCustom typedOther = (TestCustom)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestCustom cg_typedOther = (TestCustom)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        return bbb == null ? typedOther.bbb == null : bbb.equals(typedOther.bbb);
+        return bbb == null ? cg_typedOther.bbb == null : bbb.equals(cg_typedOther.bbb);
     }
 
     @Override

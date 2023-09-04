@@ -123,13 +123,13 @@ public class TestBaseCustomClass {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBaseCustomClass))
+        if (!(cg_other instanceof TestBaseCustomClass))
             return false;
-        TestBaseCustomClass typedOther = (TestBaseCustomClass)other;
-        return aaa.equals(typedOther.aaa);
+        TestBaseCustomClass cg_typedOther = (TestBaseCustomClass)cg_other;
+        return aaa.equals(cg_typedOther.aaa);
     }
 
     @Override
@@ -216,15 +216,15 @@ public class TestBaseDerivedCustomClass extends TestBaseCustomClass {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestBaseDerivedCustomClass))
+        if (!(cg_other instanceof TestBaseDerivedCustomClass))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        TestBaseDerivedCustomClass typedOther = (TestBaseDerivedCustomClass)other;
-        return bbb.equals(typedOther.bbb);
+        TestBaseDerivedCustomClass cg_typedOther = (TestBaseDerivedCustomClass)cg_other;
+        return bbb.equals(cg_typedOther.bbb);
     }
 
     @Override

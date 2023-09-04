@@ -73,13 +73,13 @@ public class Supplied {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Supplied))
+        if (!(cg_other instanceof Supplied))
             return false;
-        Supplied typedOther = (Supplied)other;
-        return id.equals(typedOther.id);
+        Supplied cg_typedOther = (Supplied)cg_other;
+        return id.equals(cg_typedOther.id);
     }
 
     @Override

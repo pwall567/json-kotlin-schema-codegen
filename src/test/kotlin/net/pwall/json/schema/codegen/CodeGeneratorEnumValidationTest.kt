@@ -147,17 +147,17 @@ public class TestEnumValidation {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestEnumValidation))
+        if (!(cg_other instanceof TestEnumValidation))
             return false;
-        TestEnumValidation typedOther = (TestEnumValidation)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestEnumValidation cg_typedOther = (TestEnumValidation)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (bbb != typedOther.bbb)
+        if (bbb != cg_typedOther.bbb)
             return false;
-        return ccc == typedOther.ccc;
+        return ccc == cg_typedOther.ccc;
     }
 
     @Override

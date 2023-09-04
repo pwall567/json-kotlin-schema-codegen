@@ -129,17 +129,17 @@ public class TestPerson {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestPerson))
+        if (!(cg_other instanceof TestPerson))
             return false;
-        TestPerson typedOther = (TestPerson)other;
-        if (!name.equals(typedOther.name))
+        TestPerson cg_typedOther = (TestPerson)cg_other;
+        if (!name.equals(cg_typedOther.name))
             return false;
-        if (nickname == null ? typedOther.nickname != null : !nickname.equals(typedOther.nickname))
+        if (nickname == null ? cg_typedOther.nickname != null : !nickname.equals(cg_typedOther.nickname))
             return false;
-        return age == typedOther.age;
+        return age == cg_typedOther.age;
     }
 
     @Override

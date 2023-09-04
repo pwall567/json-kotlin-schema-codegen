@@ -136,13 +136,13 @@ public class Base {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Base))
+        if (!(cg_other instanceof Base))
             return false;
-        Base typedOther = (Base)other;
-        return aaa == null ? typedOther.aaa == null : aaa.equals(typedOther.aaa);
+        Base cg_typedOther = (Base)cg_other;
+        return aaa == null ? cg_typedOther.aaa == null : aaa.equals(cg_typedOther.aaa);
     }
 
     @Override
@@ -198,15 +198,15 @@ public class Derived extends Base {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Derived))
+        if (!(cg_other instanceof Derived))
             return false;
-        if (!super.equals(other))
+        if (!super.equals(cg_other))
             return false;
-        Derived typedOther = (Derived)other;
-        return bbb.equals(typedOther.bbb);
+        Derived cg_typedOther = (Derived)cg_other;
+        return bbb.equals(cg_typedOther.bbb);
     }
 
     @Override

@@ -154,19 +154,19 @@ public class TypeA {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeA))
+        if (!(cg_other instanceof TypeA))
             return false;
-        TypeA typedOther = (TypeA)other;
-        if (!aaa.equals(typedOther.aaa))
+        TypeA cg_typedOther = (TypeA)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        if (bbb != typedOther.bbb)
+        if (bbb != cg_typedOther.bbb)
             return false;
-        if (!ccc.equals(typedOther.ccc))
+        if (!ccc.equals(cg_typedOther.ccc))
             return false;
-        return ddd == typedOther.ddd;
+        return ddd == cg_typedOther.ddd;
     }
 
     @Override
@@ -251,15 +251,15 @@ public class TypeB {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeB))
+        if (!(cg_other instanceof TypeB))
             return false;
-        TypeB typedOther = (TypeB)other;
-        if (!xxx.equals(typedOther.xxx))
+        TypeB cg_typedOther = (TypeB)cg_other;
+        if (!xxx.equals(cg_typedOther.xxx))
             return false;
-        return yyy == typedOther.yyy;
+        return yyy == cg_typedOther.yyy;
     }
 
     @Override

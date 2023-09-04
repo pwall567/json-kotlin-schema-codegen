@@ -229,13 +229,13 @@ public class TypeA {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeA))
+        if (!(cg_other instanceof TypeA))
             return false;
-        TypeA typedOther = (TypeA)other;
-        return aaa == typedOther.aaa;
+        TypeA cg_typedOther = (TypeA)cg_other;
+        return aaa == cg_typedOther.aaa;
     }
 
     @Override
@@ -279,15 +279,15 @@ public class TypeA {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof A))
+            if (!(cg_other instanceof A))
                 return false;
-            if (!super.equals(other))
+            if (!super.equals(cg_other))
                 return false;
-            A typedOther = (A)other;
-            return xxx.equals(typedOther.xxx);
+            A cg_typedOther = (A)cg_other;
+            return xxx.equals(cg_typedOther.xxx);
         }
 
         @Override
@@ -317,15 +317,15 @@ public class TypeA {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof B))
+            if (!(cg_other instanceof B))
                 return false;
-            if (!super.equals(other))
+            if (!super.equals(cg_other))
                 return false;
-            B typedOther = (B)other;
-            return yyy.equals(typedOther.yyy);
+            B cg_typedOther = (B)cg_other;
+            return yyy.equals(cg_typedOther.yyy);
         }
 
         @Override
@@ -353,15 +353,15 @@ public class TypeA {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof C))
+            if (!(cg_other instanceof C))
                 return false;
-            if (!super.equals(other))
+            if (!super.equals(cg_other))
                 return false;
-            C typedOther = (C)other;
-            return zzz == null ? typedOther.zzz == null : zzz.equals(typedOther.zzz);
+            C cg_typedOther = (C)cg_other;
+            return zzz == null ? cg_typedOther.zzz == null : zzz.equals(cg_typedOther.zzz);
         }
 
         @Override
@@ -391,15 +391,15 @@ public class TypeA {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof D))
+            if (!(cg_other instanceof D))
                 return false;
-            if (!super.equals(other))
+            if (!super.equals(cg_other))
                 return false;
-            D typedOther = (D)other;
-            return qqq == null ? typedOther.qqq == null : qqq.equals(typedOther.qqq);
+            D cg_typedOther = (D)cg_other;
+            return qqq == null ? cg_typedOther.qqq == null : qqq.equals(cg_typedOther.qqq);
         }
 
         @Override
@@ -433,13 +433,13 @@ public class TypeB {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeB))
+        if (!(cg_other instanceof TypeB))
             return false;
-        TypeB typedOther = (TypeB)other;
-        return xxx.equals(typedOther.xxx);
+        TypeB cg_typedOther = (TypeB)cg_other;
+        return xxx.equals(cg_typedOther.xxx);
     }
 
     @Override
@@ -487,13 +487,13 @@ public class TypeC {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TypeC))
+        if (!(cg_other instanceof TypeC))
             return false;
-        TypeC typedOther = (TypeC)other;
-        return yyy.equals(typedOther.yyy);
+        TypeC cg_typedOther = (TypeC)cg_other;
+        return yyy.equals(cg_typedOther.yyy);
     }
 
     @Override

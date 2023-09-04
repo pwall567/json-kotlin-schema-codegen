@@ -162,15 +162,15 @@ public class Main {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Main))
+        if (!(cg_other instanceof Main))
             return false;
-        Main typedOther = (Main)other;
-        if (!name.equals(typedOther.name))
+        Main cg_typedOther = (Main)cg_other;
+        if (!name.equals(cg_typedOther.name))
             return false;
-        return extended.equals(typedOther.extended);
+        return extended.equals(cg_typedOther.extended);
     }
 
     @Override
@@ -220,15 +220,15 @@ public class Main {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Extended))
+            if (!(cg_other instanceof Extended))
                 return false;
-            if (!super.equals(other))
+            if (!super.equals(cg_other))
                 return false;
-            Extended typedOther = (Extended)other;
-            return extra == typedOther.extra;
+            Extended cg_typedOther = (Extended)cg_other;
+            return extra == cg_typedOther.extra;
         }
 
         @Override
@@ -260,13 +260,13 @@ public class Nested {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Nested))
+        if (!(cg_other instanceof Nested))
             return false;
-        Nested typedOther = (Nested)other;
-        return count == typedOther.count;
+        Nested cg_typedOther = (Nested)cg_other;
+        return count == cg_typedOther.count;
     }
 
     @Override

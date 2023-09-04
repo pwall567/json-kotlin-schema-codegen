@@ -139,15 +139,15 @@ public class TestArray {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestArray))
+        if (!(cg_other instanceof TestArray))
             return false;
-        TestArray typedOther = (TestArray)other;
-        if (!aaa.equals(typedOther.aaa))
+        TestArray cg_typedOther = (TestArray)cg_other;
+        if (!aaa.equals(cg_typedOther.aaa))
             return false;
-        return bbb.equals(typedOther.bbb);
+        return bbb.equals(cg_typedOther.bbb);
     }
 
     @Override
@@ -208,15 +208,15 @@ public class TestArray {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Aaa))
+            if (!(cg_other instanceof Aaa))
                 return false;
-            Aaa typedOther = (Aaa)other;
-            if (!id.equals(typedOther.id))
+            Aaa cg_typedOther = (Aaa)cg_other;
+            if (!id.equals(cg_typedOther.id))
                 return false;
-            return name.equals(typedOther.name);
+            return name.equals(cg_typedOther.name);
         }
 
         @Override

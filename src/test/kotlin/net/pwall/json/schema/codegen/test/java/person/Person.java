@@ -54,15 +54,15 @@ public class Person {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Person))
+        if (!(cg_other instanceof Person))
             return false;
-        Person typedOther = (Person)other;
-        if (!id.equals(typedOther.id))
+        Person cg_typedOther = (Person)cg_other;
+        if (!id.equals(cg_typedOther.id))
             return false;
-        return name.equals(typedOther.name);
+        return name.equals(cg_typedOther.name);
     }
 
     @Override

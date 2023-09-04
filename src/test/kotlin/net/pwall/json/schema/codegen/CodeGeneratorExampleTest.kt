@@ -159,21 +159,21 @@ public class Test {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof Test))
+        if (!(cg_other instanceof Test))
             return false;
-        Test typedOther = (Test)other;
-        if (!id.equals(typedOther.id))
+        Test cg_typedOther = (Test)cg_other;
+        if (!id.equals(cg_typedOther.id))
             return false;
-        if (!name.equals(typedOther.name))
+        if (!name.equals(cg_typedOther.name))
             return false;
-        if (!price.equals(typedOther.price))
+        if (!price.equals(cg_typedOther.price))
             return false;
-        if (tags == null ? typedOther.tags != null : !tags.equals(typedOther.tags))
+        if (tags == null ? cg_typedOther.tags != null : !tags.equals(cg_typedOther.tags))
             return false;
-        return stock == null ? typedOther.stock == null : stock.equals(typedOther.stock);
+        return stock == null ? cg_typedOther.stock == null : stock.equals(cg_typedOther.stock);
     }
 
     @Override
@@ -252,15 +252,15 @@ public class Test {
         }
 
         @Override
-        public boolean equals(Object other) {
-            if (this == other)
+        public boolean equals(Object cg_other) {
+            if (this == cg_other)
                 return true;
-            if (!(other instanceof Stock))
+            if (!(cg_other instanceof Stock))
                 return false;
-            Stock typedOther = (Stock)other;
-            if (warehouse == null ? typedOther.warehouse != null : !warehouse.equals(typedOther.warehouse))
+            Stock cg_typedOther = (Stock)cg_other;
+            if (warehouse == null ? cg_typedOther.warehouse != null : !warehouse.equals(cg_typedOther.warehouse))
                 return false;
-            return retail == null ? typedOther.retail == null : retail.equals(typedOther.retail);
+            return retail == null ? cg_typedOther.retail == null : retail.equals(cg_typedOther.retail);
         }
 
         @Override

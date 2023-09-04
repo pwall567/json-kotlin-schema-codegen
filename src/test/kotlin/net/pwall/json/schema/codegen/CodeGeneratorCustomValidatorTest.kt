@@ -140,13 +140,13 @@ public class TestCustom {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object cg_other) {
+        if (this == cg_other)
             return true;
-        if (!(other instanceof TestCustom))
+        if (!(cg_other instanceof TestCustom))
             return false;
-        TestCustom typedOther = (TestCustom)other;
-        return aaa.equals(typedOther.aaa);
+        TestCustom cg_typedOther = (TestCustom)cg_other;
+        return aaa.equals(cg_typedOther.aaa);
     }
 
     @Override

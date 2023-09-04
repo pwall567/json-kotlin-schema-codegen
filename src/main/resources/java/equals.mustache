@@ -1,20 +1,20 @@
 {{&indent}}    @Override
-{{&indent}}    public boolean equals(Object other) {
-{{&indent}}        if (this == other)
+{{&indent}}    public boolean equals(Object cg_other) {
+{{&indent}}        if (this == cg_other)
 {{&indent}}            return true;
-{{&indent}}        if (!(other instanceof {{&className}}))
+{{&indent}}        if (!(cg_other instanceof {{&className}}))
 {{&indent}}            return false;
-{{#hasBaseClassWithProperties}}{{&indent}}        if (!super.equals(other))
+{{#hasBaseClassWithProperties}}{{&indent}}        if (!super.equals(cg_other))
 {{&indent}}            return false;
-{{/hasBaseClassWithProperties}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} typedOther = ({{&className}})other;
-{{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&javaName}} == typedOther.{{&javaName}};
-{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        return {{&javaName}} == typedOther.{{&javaName}};
-{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        return {{&javaName}} == null ? typedOther.{{&javaName}} == null : {{&javaName}}.equals(typedOther.{{&javaName}});
-{{/nullable}}{{^nullable}}{{&indent}}        return {{&javaName}}.equals(typedOther.{{&javaName}});
-{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{/last}}{{^last}}{{#isPrimitive}}{{&indent}}        if ({{&javaName}} != typedOther.{{&javaName}})
-{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        if ({{&javaName}} != typedOther.{{&javaName}})
-{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        if ({{&javaName}} == null ? typedOther.{{&javaName}} != null : !{{&javaName}}.equals(typedOther.{{&javaName}}))
-{{/nullable}}{{^nullable}}{{&indent}}        if (!{{&javaName}}.equals(typedOther.{{&javaName}}))
+{{/hasBaseClassWithProperties}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} cg_typedOther = ({{&className}})cg_other;
+{{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&javaName}} == cg_typedOther.{{&javaName}};
+{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        return {{&javaName}} == cg_typedOther.{{&javaName}};
+{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        return {{&javaName}} == null ? cg_typedOther.{{&javaName}} == null : {{&javaName}}.equals(cg_typedOther.{{&javaName}});
+{{/nullable}}{{^nullable}}{{&indent}}        return {{&javaName}}.equals(cg_typedOther.{{&javaName}});
+{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{/last}}{{^last}}{{#isPrimitive}}{{&indent}}        if ({{&javaName}} != cg_typedOther.{{&javaName}})
+{{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        if ({{&javaName}} != cg_typedOther.{{&javaName}})
+{{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        if ({{&javaName}} == null ? cg_typedOther.{{&javaName}} != null : !{{&javaName}}.equals(cg_typedOther.{{&javaName}}))
+{{/nullable}}{{^nullable}}{{&indent}}        if (!{{&javaName}}.equals(cg_typedOther.{{&javaName}}))
 {{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{&indent}}            return false;
 {{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
 {{/nonBaseProperties}}{{&indent}}    }
