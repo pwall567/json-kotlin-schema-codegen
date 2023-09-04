@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.92] - 2023-09-04
+### Changed
+- templates: modified Java code to avoid potential name clash
+- `CodeGenerator`: bug fix (import for class used in base class)
+
 ## [0.91] - 2023-07-10
 ### Changed
 - `pom.xml`: updated dependency versions

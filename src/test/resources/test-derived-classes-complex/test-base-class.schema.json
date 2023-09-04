@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft/2020-12/schema",
+  "$id": "http://pwall.net/test-base-class",
+  "title": "Base class",
+  "description": "Test base class.",
+  "type": "object",
+  "properties": {
+    "value": {
+      "$ref": "http://pwall.net/test-enum"
+    },
+    "nested": {
+      "$ref": "http://pwall.net/test-ref-class"
+    }
+  },
+  "required": [ "value", "nested" ]
+}

@@ -845,6 +845,10 @@ class CodeGenerator(
         constraints.properties.forEach { property ->
             val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
             if (baseConstraints != null) {
+                baseConstraints.localType?.let {
+                    if (it.packageName != null)
+                        target.addImport(it)
+                }
                 property.baseProperty = baseConstraints
                 when {
                     baseConstraints.isEnumClass -> {
