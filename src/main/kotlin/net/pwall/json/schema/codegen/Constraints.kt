@@ -69,6 +69,8 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
 
     var defaultValue: DefaultPropertyValue? = null
 
+    var fieldAnnotated: Annotated? = null
+
     val properties = mutableListOf<NamedConstraints>()
 
     @Suppress("unused")
@@ -109,7 +111,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     var enumValues: JSONSequence<*>? = null
     var constValue: JSONValue? = null
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val isSystemClass: Boolean
         get() = systemClass != null
 
@@ -125,34 +127,28 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     val isObject: Boolean
         get() = isType(JSONSchema.Type.OBJECT) || types.isEmpty() && properties.isNotEmpty() // ?
 
-    @Suppress("unused")
     val isArray: Boolean
         get() = isType(JSONSchema.Type.ARRAY) || types.isEmpty() && arrayItems != null // ???
 
-    @Suppress("unused")
     val isString: Boolean
         get() = isType(JSONSchema.Type.STRING) ||
                 types.isEmpty() && properties.isEmpty() && arrayItems == null &&
                         (format.isNotEmpty() || regex.isNotEmpty() || maxLength != null || minLength != null ||
                                 constValue is JSONString || enumImpliesString())
 
-    @Suppress("unused")
     val isBoolean: Boolean
         get() = isType(JSONSchema.Type.BOOLEAN)
 
-    @Suppress("unused")
     val isDecimal: Boolean
         get() = isType(JSONSchema.Type.NUMBER)
 
-    @Suppress("unused")
     val isInt: Boolean
         get() = isIntOrLong && (rangeImpliesInt() || constImpliesInt() || enumImpliesInt() || formatImpliesInt())
 
-    @Suppress("unused")
     val isLong: Boolean
         get() = isIntOrLong && !(rangeImpliesInt() || constImpliesInt() || enumImpliesInt() || formatImpliesInt())
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val isIntOrLong: Boolean
         get() = isType(JSONSchema.Type.INTEGER)
 
@@ -289,6 +285,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
         regex.addAll(other.regex)
         enumValues = other.enumValues
         constValue = other.constValue
+        validations = mutableListOf<Validation>().also { it.addAll(other.validations) }
     }
 
     data class DefaultPropertyValue(val defaultValue: Any?, val type: JSONSchema.Type)

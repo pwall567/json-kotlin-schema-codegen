@@ -1,10 +1,12 @@
 {{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{/schema}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
+{{/description}}{{/schema}}{{>annotations}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
 }}{{#properties}}{{^first}},{{/first}}
 {{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}        {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
+{{/description}}{{/schema}}{{!
+}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
+}}        {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
 }}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
 }}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
@@ -22,6 +24,7 @@
 {{>copy}}
 {{>component}}
 
-{{/hasBaseClassWithProperties}}    }{{/validationsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
+{{/hasBaseClassWithProperties}}    }{{/validationsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{!
+}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
 {{#enumValues}}        {{&.}}{{^last}},{{/last}}
 {{/enumValues}}    }{{/isString}}

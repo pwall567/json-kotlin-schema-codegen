@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.94] - 2023-09-17
+### Changed
+- `CodeGenerator`: fixed bug in `sanitiseName()`
+- `CodeGenerator`, `Constraints`, `Target`, `Annotated`: apply annotations to nested classes
+
 ## [0.93] - 2023-09-06
 ### Changed
 - `pom.xml`: updated dependency version

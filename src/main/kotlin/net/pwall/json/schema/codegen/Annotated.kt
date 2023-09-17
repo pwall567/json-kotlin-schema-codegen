@@ -2,7 +2,7 @@
  * @(#) Annotated.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2022 Peter Wall
+ * Copyright (c) 2022, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,17 +37,20 @@ open class Annotated {
 
     val annotations = mutableListOf<Annotation>()
 
-    fun applyAnnotations(configuredAnnotations: List<Pair<ClassId, Template?>>, contextObject: Any, target: Target) {
+    fun applyAnnotations(configuredAnnotations: List<Pair<ClassId, Template?>>, target: Target, contextObject: Any) {
         annotations.clear()
-        for (annotation in configuredAnnotations) {
-            val annotationString = annotation.second?.generateString(contextObject)
-            annotations.add(Annotation(annotation.first.className, annotationString))
-            target.addImport(annotation.first)
+        if (configuredAnnotations.isNotEmpty()) {
+            val extendedContext = Context(GeneratorContext).child(contextObject)
+            for (annotation in configuredAnnotations) {
+                val annotationString = annotation.second?.generateString(extendedContext)
+                annotations.add(Annotation(annotation.first.className, annotationString))
+                target.addImport(annotation.first)
+            }
         }
     }
 
-    private fun Template.generateString(value: Any): String = buildString {
-        appendTo(this, Context(GeneratorContext).child(value))
+    private fun Template.generateString(context: Context): String = buildString {
+        appendTo(this, context)
     }
 
     data class Annotation(val name: String, val content: String?)

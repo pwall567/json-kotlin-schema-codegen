@@ -74,19 +74,17 @@ class Target(
 
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val localImports = mutableListOf<ClassId>()
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val statics = mutableListOf<Static>()
-    @Suppress("unused")
-    val nestedClasses = mutableListOf<ClassDescriptor>()
-
-    @Suppress("unused")
+    @Suppress("unused", "MemberVisibilityCanBePrivate")
     val staticsPresent: Boolean
         get() = statics.isNotEmpty()
 
-    @Suppress("unused")
+    val nestedClasses = mutableListOf<ClassDescriptor>()
+    @Suppress("unused", "MemberVisibilityCanBePrivate")
     val nestedClassesPresent: Boolean
         get() = nestedClasses.isNotEmpty()
 

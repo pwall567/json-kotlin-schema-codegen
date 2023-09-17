@@ -90,6 +90,7 @@ class CodeGenerator(
     /** The primary template to use for the generation of a class */
     var templateName: String = "class",
     /** The primary template to use for the generation of an enum */
+    @Suppress("MemberVisibilityCanBePrivate")
     var enumTemplateName: String = "enum",
     /** The base package name for the generated classes */
     var basePackageName: String? = null,
@@ -128,6 +129,7 @@ class CodeGenerator(
         Parser()
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var templateParser by DefaultValue {
         MustacheParser {name ->
             partialResolver(name)
@@ -146,14 +148,17 @@ class CodeGenerator(
         parser.parse(parser.resolver(templateName))
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var interfaceTemplateName = "interface"
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var interfaceTemplate by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
         parser.parse(parser.resolver(interfaceTemplateName))
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var enumTemplate by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
@@ -162,8 +167,10 @@ class CodeGenerator(
 
     var indexFileName: TargetFileName? = null
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var indexTemplateName: String = "index"
 
+    @Suppress("MemberVisibilityCanBePrivate")
     var indexTemplate by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
@@ -583,7 +590,16 @@ class CodeGenerator(
                 log.info { "-- target class ${target.qualifiedClassName}" }
                 constraints.applyAnnotations(classAnnotations, target, target)
                 for (property in constraints.properties)
-                    property.applyAnnotations(fieldAnnotations, property, target)
+                    property.fieldAnnotated = Annotated().apply { applyAnnotations(fieldAnnotations, target, property) }
+                for (nestedClass in target.nestedClasses) {
+                    val nestedClassConstraints = nestedClass.constraints
+                    nestedClassConstraints.applyAnnotations(classAnnotations, target, nestedClass)
+                    for (property in nestedClassConstraints.properties) {
+                        property.fieldAnnotated = Annotated().apply {
+                            applyAnnotations(fieldAnnotations, target, property)
+                        }
+                    }
+                }
                 target.systemClasses.sortBy { it.order }
                 target.imports.sort()
                 outputResolver(target.targetFile).use {
