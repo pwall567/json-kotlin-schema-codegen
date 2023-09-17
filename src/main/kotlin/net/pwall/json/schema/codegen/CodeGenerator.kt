@@ -2002,13 +2002,13 @@ class CodeGenerator(
         fun String.sanitiseName(): String {
             for (i in indices) {
                 val ch = this[i]
-                if (!(ch in 'A'..'Z' || ch in 'a'..'z' || ch in '0'..'9')) {
+                if (!ch.isJavaIdentifierPart()) {
                     return buildString {
                         append(this@sanitiseName, 0, i)
-                        for (j in i + 1 until length) {
-                            val ch2 = this[j]
-                            if (ch2 in 'A'..'Z' || ch2 in 'a'..'z' || ch2 in '0'..'9')
-                                append(ch)
+                        for (j in i + 1 until this@sanitiseName.length) {
+                            val ch2 = this@sanitiseName[j]
+                            if (ch2.isJavaIdentifierPart())
+                                append(ch2)
                         }
                     }
                 }
