@@ -69,24 +69,34 @@ class CodeGeneratorBaseDerivedRequiredTest {
 """package com.example
 
 open class Base(
-    aaa: String? = null
+    aaa: String? = null,
+    val bbb: Int
 ) {
+
+    init {
+        require(bbb in 0..99) { "bbb not in range 0..99 - ${'$'}bbb" }
+    }
 
     open val aaa: String? = aaa
 
     override fun equals(other: Any?): Boolean = this === other || other is Base &&
-            aaa == other.aaa
+            aaa == other.aaa &&
+            bbb == other.bbb
 
     override fun hashCode(): Int =
-            aaa.hashCode()
+            aaa.hashCode() xor
+            bbb.hashCode()
 
-    override fun toString() = "Base(aaa=${'$'}aaa)"
+    override fun toString() = "Base(aaa=${'$'}aaa, bbb=${'$'}bbb)"
 
     open fun copy(
-        aaa: String? = this.aaa
-    ) = Base(aaa)
+        aaa: String? = this.aaa,
+        bbb: Int = this.bbb
+    ) = Base(aaa, bbb)
 
     operator fun component1() = aaa
+
+    operator fun component2() = bbb
 
 }
 """
@@ -96,24 +106,30 @@ open class Base(
 
 class Derived(
     override val aaa: String,
-    val bbb: String
-) : Base(aaa) {
+    bbb: Int,
+    val ccc: String
+) : Base(aaa, bbb) {
+
+    init {
+        require(aaa.length <= 30) { "aaa length > maximum 30 - ${'$'}{aaa.length}" }
+    }
 
     override fun equals(other: Any?): Boolean = this === other || other is Derived &&
             super.equals(other) &&
-            bbb == other.bbb
+            ccc == other.ccc
 
     override fun hashCode(): Int = super.hashCode() xor
-            bbb.hashCode()
+            ccc.hashCode()
 
-    override fun toString() = "Derived(aaa=${'$'}aaa, bbb=${'$'}bbb)"
+    override fun toString() = "Derived(aaa=${'$'}aaa, bbb=${'$'}bbb, ccc=${'$'}ccc)"
 
     fun copy(
         aaa: String = this.aaa,
-        bbb: String = this.bbb
-    ) = Derived(aaa, bbb)
+        bbb: Int = this.bbb,
+        ccc: String = this.ccc
+    ) = Derived(aaa, bbb, ccc)
 
-    operator fun component2() = bbb
+    operator fun component3() = ccc
 
 }
 """
@@ -124,15 +140,24 @@ class Derived(
 public class Base {
 
     private final String aaa;
+    private final int bbb;
 
     public Base(
-            String aaa
+            String aaa,
+            int bbb
     ) {
         this.aaa = aaa;
+        if (bbb < 0 || bbb > 99)
+            throw new IllegalArgumentException("bbb not in range 0..99 - " + bbb);
+        this.bbb = bbb;
     }
 
     public String getAaa() {
         return aaa;
+    }
+
+    public int getBbb() {
+        return bbb;
     }
 
     @Override
@@ -142,26 +167,36 @@ public class Base {
         if (!(cg_other instanceof Base))
             return false;
         Base cg_typedOther = (Base)cg_other;
-        return aaa == null ? cg_typedOther.aaa == null : aaa.equals(cg_typedOther.aaa);
+        if (aaa == null ? cg_typedOther.aaa != null : !aaa.equals(cg_typedOther.aaa))
+            return false;
+        return bbb == cg_typedOther.bbb;
     }
 
     @Override
     public int hashCode() {
-        return (aaa != null ? aaa.hashCode() : 0);
+        int hash = (aaa != null ? aaa.hashCode() : 0);
+        return hash ^ bbb;
     }
 
     public static class Builder {
 
         private String aaa;
+        private int bbb;
 
         public Builder withAaa(String aaa) {
             this.aaa = aaa;
             return this;
         }
 
+        public Builder withBbb(int bbb) {
+            this.bbb = bbb;
+            return this;
+        }
+
         public Base build() {
             return new Base(
-                    aaa
+                    aaa,
+                    bbb
             );
         }
 
@@ -175,26 +210,29 @@ public class Base {
 
 public class Derived extends Base {
 
-    private final String bbb;
+    private final String ccc;
 
     public Derived(
             String aaa,
-            String bbb
+            int bbb,
+            String ccc
     ) {
-        super(validateAaa(aaa));
-        if (bbb == null)
-            throw new IllegalArgumentException("Must not be null - bbb");
-        this.bbb = bbb;
+        super(cg_valid_aaa(aaa), bbb);
+        if (ccc == null)
+            throw new IllegalArgumentException("Must not be null - ccc");
+        this.ccc = ccc;
     }
 
-    private static String validateAaa(String aaa) {
+    private static String cg_valid_aaa(String aaa) {
         if (aaa == null)
             throw new IllegalArgumentException("Must not be null - aaa");
+        if (aaa.length() > 30)
+            throw new IllegalArgumentException("aaa length > maximum 30 - " + aaa.length());
         return aaa;
     }
 
-    public String getBbb() {
-        return bbb;
+    public String getCcc() {
+        return ccc;
     }
 
     @Override
@@ -206,34 +244,41 @@ public class Derived extends Base {
         if (!super.equals(cg_other))
             return false;
         Derived cg_typedOther = (Derived)cg_other;
-        return bbb.equals(cg_typedOther.bbb);
+        return ccc.equals(cg_typedOther.ccc);
     }
 
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        return hash ^ bbb.hashCode();
+        return hash ^ ccc.hashCode();
     }
 
     public static class Builder {
 
         private String aaa;
-        private String bbb;
+        private int bbb;
+        private String ccc;
 
         public Builder withAaa(String aaa) {
             this.aaa = aaa;
             return this;
         }
 
-        public Builder withBbb(String bbb) {
+        public Builder withBbb(int bbb) {
             this.bbb = bbb;
+            return this;
+        }
+
+        public Builder withCcc(String ccc) {
+            this.ccc = ccc;
             return this;
         }
 
         public Derived build() {
             return new Derived(
                     aaa,
-                    bbb
+                    bbb,
+                    ccc
             );
         }
 

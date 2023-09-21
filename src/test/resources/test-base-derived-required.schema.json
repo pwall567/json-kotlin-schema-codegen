@@ -8,8 +8,14 @@
       "properties": {
         "aaa": {
           "type": "string"
+        },
+        "bbb": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99
         }
-      }
+      },
+      "required": [ "bbb" ]
     },
     "Derived": {
       "allOf": [
@@ -18,11 +24,14 @@
         },
         {
           "properties": {
-            "bbb": {
+            "aaa": {
+              "maxLength": 30
+            },
+            "ccc": {
               "type": "string"
             }
           },
-          "required": [ "aaa", "bbb" ]
+          "required": [ "aaa", "ccc" ]
         }
       ]
     }

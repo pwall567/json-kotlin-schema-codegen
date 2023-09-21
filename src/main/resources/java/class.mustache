@@ -12,14 +12,14 @@
 {{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#properties}}{{^first}},{{/first}}
             {{>type}} {{&javaName}}{{/properties}}
     ) {
-{{#baseClass}}{{#constraints}}        super({{#properties}}{{#extendedInDerived}}validate{{&capitalisedName}}({{&javaName}}){{/extendedInDerived}}{{!
+{{#baseClass}}{{#constraints}}        super({{#properties}}{{#extendedInDerived}}cg_valid_{{&javaName}}({{&javaName}}){{/extendedInDerived}}{{!
 }}{{^extendedInDerived}}{{&javaName}}{{/extendedInDerived}}{{^last}}, {{/last}}{{/properties}});
 {{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");
-{{/nullable}}{{/isPrimitive}}{{/baseProperty}}{{>validations}}{{^baseProperty}}        this.{{&javaName}} = {{&javaName}};
+{{/nullable}}{{/isPrimitive}}{{/baseProperty}}{{^baseProperty.extendedInDerived}}{{>validations}}{{/baseProperty.extendedInDerived}}{{^baseProperty}}        this.{{&javaName}} = {{&javaName}};
 {{/baseProperty}}{{/properties}}    }
 {{#properties}}{{#extendedFromBase}}
-    private static {{>type}} validate{{&capitalisedName}}({{>type}} {{&javaName}}) {
+    private static {{>type}} cg_valid_{{&javaName}}({{>type}} {{&javaName}}) {
 {{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}        return {{&javaName}};

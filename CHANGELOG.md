@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: fixed minor bug in Java output
+
 ## [0.94] - 2023-09-17
 ### Changed
 - `CodeGenerator`: fixed bug in `sanitiseName()`
