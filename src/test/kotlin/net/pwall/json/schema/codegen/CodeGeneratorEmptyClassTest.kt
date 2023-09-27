@@ -29,8 +29,8 @@ import kotlin.test.Test
 import kotlin.test.expect
 
 import java.io.File
-import java.io.StringWriter
 
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -39,22 +39,35 @@ class CodeGeneratorEmptyClassTest {
 
     @Test fun `should output empty class`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator()
-        val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "kt", dirs), stringWriter)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.generate(input)
-        expect(createHeader("TestEmpty.kt") + expected) { stringWriter.toString() }
+        CodeGenerator().apply {
+            basePackageName = "com.example"
+            val outputDetails = OutputDetails(TargetFileName("TestEmpty", "kt", dirs))
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+            expect(createHeader("TestEmpty.kt") + expected) { outputDetails.output() }
+        }
+    }
+
+    @Test fun `should output empty class with companion object`() {
+        val input = File("src/test/resources/test-empty-object.schema.json")
+        CodeGenerator().apply {
+            configure(File("src/test/resources/config/companion-object-all-config.json"))
+            val outputDetails = OutputDetails(TargetFileName("TestEmpty", "kt", dirs))
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+            expect(createHeader("TestEmpty.kt") + expected2) { outputDetails.output() }
+        }
     }
 
     @Test fun `should output empty class in Java`() {
         val input = File("src/test/resources/test-empty-object.schema.json")
-        val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
-        val stringWriter = StringWriter()
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestEmpty", "java", dirs), stringWriter)
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.generate(input)
-        expect(createHeader("TestEmpty.java") + expectedJava) { stringWriter.toString() }
+        CodeGenerator(TargetLanguage.JAVA).apply {
+            basePackageName = "com.example"
+            val outputDetails = OutputDetails(TargetFileName("TestEmpty", "java", dirs))
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+            expect(createHeader("TestEmpty.java") + expectedJava) { outputDetails.output() }
+        }
     }
 
     companion object {
@@ -66,6 +79,19 @@ class CodeGeneratorEmptyClassTest {
  * Test empty object.
  */
 open class TestEmpty
+"""
+
+        const val expected2 =
+"""package com.example
+
+/**
+ * Test empty object.
+ */
+open class TestEmpty {
+
+    companion object
+
+}
 """
 
         const val expectedJava =
