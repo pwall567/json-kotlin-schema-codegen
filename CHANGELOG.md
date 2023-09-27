@@ -2,10 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.95] - 2023-09-27
 ### Changed
 - templates: fixed minor bug in Java output
 - templates: fixed minor bug in output of companion object
+- `pom.xml`: updated dependency version
 
 ## [0.94] - 2023-09-17
 ### Changed
