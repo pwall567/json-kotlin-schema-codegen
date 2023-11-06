@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-custom-maxlength",
+  "title": "Dummy",
+  "description": "Test custom class with maxLength.",
+  "type": "object",
+  "properties": {
+    "first": {
+      "type": "string",
+      "x-test": "custom",
+      "maxLength": 16
+    },
+    "second": {
+      "type": "string",
+      "x-test": "custom"
+    }
+  },
+  "required": [
+    "first", "second"
+  ]
+}

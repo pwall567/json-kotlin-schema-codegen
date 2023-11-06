@@ -1,0 +1,6 @@
+$schema: ../../../main/resources/schema/codegen-config.schema.json
+packageName: com.example
+customClasses:
+  extension:
+    x-test:
+      custom: net.pwall.json.schema.codegen.test.custom.CustomClass

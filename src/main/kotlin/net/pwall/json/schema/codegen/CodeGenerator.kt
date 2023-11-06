@@ -78,6 +78,7 @@ import net.pwall.util.DefaultValue
 import net.pwall.util.Strings
 import net.pwall.yaml.YAMLSimple
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
@@ -1147,17 +1148,17 @@ class CodeGenerator(
         // true == validations present
         findCustomClass(property.schema, target)?.let {
             property.localType = it
-            return false
+            return analyseCustomClass(property)
         }
         customClassesByFormat.find { it.match(property) }?.let {
             it.applyToTarget(target)
             property.localType = it
-            return false
+            return analyseCustomClass(property)
         }
         property.schema.findRefChild()?.let { refChild ->
             findCustomClass(refChild.target, target)?.let {
                 property.localType = it
-                return false
+                return analyseCustomClass(property)
             }
         }
         return when {
@@ -1181,6 +1182,30 @@ class CodeGenerator(
                 false
             }
         }
+    }
+
+    private fun analyseCustomClass(property: Constraints): Boolean {
+        property.localType?.let { classId ->
+            val customClass: KClass<*> = try {
+                Class.forName(classId.qualifiedClassName).kotlin
+            } catch (_: Exception) {
+                return false
+            }
+            var validationsPresent = false
+            // if custom class implements CharSequence, allow minLength / maxLength
+            if (customClass.isSubclassOf(CharSequence::class)) {
+                if (property.checkMinMaxLength(property.minLength, property.maxLength))
+                    validationsPresent = true
+                property.negatedConstraints?.let { nc ->
+                    if (nc.checkMinMaxLength(nc.minLength, nc.maxLength))
+                        validationsPresent = true
+                }
+            }
+            // TODO if custom class implements Comparable<itself>, allow minimum / maximum? (number only?)
+            // TODO if custom class is an Enum, allow default?
+            return validationsPresent
+        }
+        return false
     }
 
     private fun analyseArray(target: Target, property: Constraints, name: String): Boolean {

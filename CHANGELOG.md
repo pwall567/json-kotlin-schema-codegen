@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [0.96] - 2023-11-06
 ### Changed
 - `CodeGenerator`: fixed bug in default values for array of enum
+- `CodeGenerator`: allow `minLength` / `maxLength` on custom classes that implement `CharSequence`
 
 ## [0.95] - 2023-09-27
 ### Changed
