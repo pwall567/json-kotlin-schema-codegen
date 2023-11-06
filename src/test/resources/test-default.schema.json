@@ -52,6 +52,14 @@
     "jjj": {
       "type": "string",
       "default": "xyz"
+    },
+    "kkk": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [ "ABC", "XYZ" ]
+      },
+      "default": [ "ABC" ]
     }
   }
 }

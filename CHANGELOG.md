@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.96] - 2023-11-06
+### Changed
+- `CodeGenerator`: fixed bug in default values for array of enum
+
 ## [0.95] - 2023-09-27
 ### Changed
 - templates: fixed minor bug in Java output

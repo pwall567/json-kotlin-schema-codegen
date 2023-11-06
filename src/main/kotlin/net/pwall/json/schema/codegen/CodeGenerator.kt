@@ -77,6 +77,7 @@ import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.DefaultValue
 import net.pwall.util.Strings
 import net.pwall.yaml.YAMLSimple
+import kotlin.reflect.KClass
 
 /**
  * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
@@ -1185,10 +1186,23 @@ class CodeGenerator(
     private fun analyseArray(target: Target, property: Constraints, name: String): Boolean {
         target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
         var validationsPresent = false
-        property.arrayItems?.let {
-            if (analyseProperty(target, it, property, name.depluralise())) {
+        property.arrayItems?.let { item ->
+            if (analyseProperty(target, item, property, name.depluralise())) {
                 property.addValidation(Validation.Type.ARRAY_ITEMS)
                 validationsPresent = true
+            }
+            if (item.isEnumClass) {
+                (property.defaultValue?.defaultValue as? List<*>)?.let { array ->
+                    property.defaultValue = Constraints.DefaultPropertyValue(
+                        defaultValue = array.mapNotNull{
+                            (it as? Constraints.DefaultPropertyValue)?.let { defaultItem ->
+                                val enumDefault = EnumValue(item.localType!!.className, defaultItem.defaultValue.toString())
+                                Constraints.DefaultPropertyValue(enumDefault, JSONSchema.Type.STRING)
+                            }
+                        },
+                        type = JSONSchema.Type.ARRAY,
+                    )
+                }
             }
         }
         if (property.checkMinMaxItems(property.minItems, property.maxItems))

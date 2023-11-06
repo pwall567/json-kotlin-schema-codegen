@@ -320,25 +320,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.95, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.96, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.95</version>
+      <version>0.96</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.95'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.96'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.95")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.96")
 ```
 
 Peter Wall
 
-2023-09-27
+2023-11-06

@@ -76,8 +76,16 @@ data class TestDefault(
     val ggg: OffsetTime = OffsetTime.parse("10:27:26"),
     val hhh: URI = URI("http://json-schema.org/draft/2019-09/schema"),
     val iii: UUID = UUID.fromString("9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a"),
-    val jjj: TestString = TestString("xyz")
-)
+    val jjj: TestString = TestString("xyz"),
+    val kkk: List<Kkk> = listOf(Kkk.ABC)
+) {
+
+    enum class Kkk {
+        ABC,
+        XYZ
+    }
+
+}
 """
 
     }
