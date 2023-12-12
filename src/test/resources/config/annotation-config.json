@@ -3,8 +3,7 @@
   "packageName": "net.pwall.json.schema.codegen.test.kotlin",
   "annotations": {
     "classes": {
-      "net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation": null,
-      "javax.annotation.Generated": "\"{{&generator}}\", date=\"{{&dateTime}}\""
+      "net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation": null
     },
     "fields": {
       "net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation": "\"{{&kotlinName}}\""

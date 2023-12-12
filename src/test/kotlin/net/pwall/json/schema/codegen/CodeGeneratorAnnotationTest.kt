@@ -100,12 +100,10 @@ class CodeGeneratorAnnotationTest {
 
 import java.math.BigDecimal
 
-import javax.annotation.Generated
 import net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation
 import net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation
 
 @DummyClassAnnotation
-@Generated("net.pwall.json.schema.codegen.CodeGenerator")
 data class Test(
     /** Product identifier */
     @DummyFieldAnnotation("id")
@@ -126,7 +124,6 @@ data class Test(
     }
 
     @DummyClassAnnotation
-    @Generated("net.pwall.json.schema.codegen.CodeGenerator")
     data class Stock(
         @DummyFieldAnnotation("warehouse")
         val warehouse: BigDecimal? = null,
@@ -143,12 +140,10 @@ data class Test(
 import java.util.List;
 import java.math.BigDecimal;
 
-import javax.annotation.Generated;
 import net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation;
 import net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation;
 
 @DummyClassAnnotation
-@Generated("net.pwall.json.schema.codegen.CodeGenerator")
 public class Test {
 
     private final BigDecimal id;

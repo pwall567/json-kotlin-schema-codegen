@@ -37,7 +37,7 @@ import java.util.UUID
  */
 object GeneratorContext {
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val dateTime: OffsetDateTime = OffsetDateTime.now()
 
     @Suppress("unused")

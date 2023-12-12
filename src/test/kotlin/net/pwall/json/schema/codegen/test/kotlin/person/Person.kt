@@ -11,7 +11,6 @@ package net.pwall.json.schema.codegen.test.kotlin.person
 
 import java.util.UUID
 
-import javax.annotation.Generated
 import net.pwall.json.schema.codegen.test.annotation.DummyClassAnnotation
 import net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation
 
@@ -19,7 +18,6 @@ import net.pwall.json.schema.codegen.test.annotation.DummyFieldAnnotation
  * A class to represent a person
  */
 @DummyClassAnnotation
-@Generated("net.pwall.json.schema.codegen.CodeGenerator")
 data class Person(
     /** Id of the person */
     @DummyFieldAnnotation("id")

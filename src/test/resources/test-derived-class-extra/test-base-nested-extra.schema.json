@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-base-nested-extra",
+  "description": "Test base class with nested class (additional object).",
+  "type": "object",
+  "properties": {
+    "worker": {
+      "type": "string"
+    }
+  },
+  "required": [ "worker" ]
+}

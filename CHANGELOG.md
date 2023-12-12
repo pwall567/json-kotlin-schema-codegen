@@ -2,6 +2,19 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.99] - 2023-12-12
+### Changed
+- `pom.xml`: updated dependency versions
+
+## [0.98] - 2023-11-20
+### Changed
+- `CodeGenerator`: reverted change from version 0.97
+- `Target`: fixed bug in base / derived classes with array of object in base
+
+## [0.97] - 2023-11-20
+### Changed
+- `CodeGenerator`: fixed bug in base / derived classes with array of object in base
+
 ## [0.96] - 2023-11-06
 ### Changed
 - `CodeGenerator`: fixed bug in default values for array of enum

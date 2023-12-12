@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-base-nested",
+  "description": "Test base class with nested class.",
+  "type": "object",
+  "properties": {
+    "xxx": {
+      "type": "array",
+      "items": {
+        "$ref": "http://pwall.net/test-base-nested-extra"
+      }
+    },
+    "aaa": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "alpha": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [ "xxx", "aaa" ]
+}

@@ -103,15 +103,18 @@ class Target(
     }
 
     fun addNestedClass(
-        constraints: Constraints,
+        nestedClassConstraints: Constraints,
         comparisonSchema: JSONSchema?,
         innerClassName: String,
     ): ClassDescriptor {
+        nestedClasses.find {
+            it.constraints.schema === comparisonSchema || sameReference(it.constraints, nestedClassConstraints)
+        }?.let { return it }
+        (baseClass as? Target)?.nestedClasses?.find {
+            it.constraints.schema === comparisonSchema || sameReference(it.constraints, nestedClassConstraints)
+        }?.let { return it }
         val safeInnerClassName = NamedConstraints.checkJavaName(innerClassName)
         var actualInnerClassName = safeInnerClassName
-        nestedClasses.find {
-            it.constraints.schema === comparisonSchema || sameReference(it.constraints, constraints)
-        }?.let { return it }
         nestedClasses.find { it.className == safeInnerClassName }?.let {
             for (i in 1..1000) {
                 if (i == 1000)
@@ -122,7 +125,7 @@ class Target(
                 }
             }
         }
-        return ClassDescriptor(constraints, actualInnerClassName).also { nestedClasses.add(it) }
+        return ClassDescriptor(nestedClassConstraints, actualInnerClassName).also { nestedClasses.add(it) }
     }
 
     private fun sameReference(constraints1: Constraints, constraints2: Constraints): Boolean {
