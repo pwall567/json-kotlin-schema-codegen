@@ -64,7 +64,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.43</version>
+      <version>0.44</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
