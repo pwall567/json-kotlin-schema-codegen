@@ -5,31 +5,7 @@
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
  * {{&safeDescription}}
  */
-{{/description}}{{/schema}}{{>annotations}}{{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
-}}{{#properties}}{{^first}},{{/first}}
-{{#schema}}{{#description}}    /** {{&safeDescription}} */
-{{/description}}{{/schema}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
-}}    {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
-}}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
-}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
-}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
-){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
-
-{{#validationsPresent}}    init {
-{{#properties}}{{>validations}}{{/properties}}    }
-{{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}
-{{#properties}}{{#extendedInDerived}}    open val {{&kotlinName}}: {{>type}} = {{&kotlinName}}
-{{/extendedInDerived}}{{/properties}}
-{{>equals}}
-{{>hashcode}}
-{{>tostring}}
-{{>copy}}
-{{>component}}
-{{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}
-{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}open class {{&className}}{{>extends_implements}}{{!
-}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
-
-{{#nestedClasses}}{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{/constraints}}
+{{/description}}{{/schema}}{{>annotations}}{{!
+}}{{#additionalPropertiesOption}}{{#IGNORE}}{{>class_normal}}{{/IGNORE}}{{!
+}}{{#MAP}}{{#hasAdditionalProperties}}{{>class_map}}{{/hasAdditionalProperties}}{{^hasAdditionalProperties}}{{>class_normal}}{{/hasAdditionalProperties}}{{/MAP}}{{!
+}}{{#MAP}}{{/MAP}}{{/additionalPropertiesOption}}{{/constraints}}

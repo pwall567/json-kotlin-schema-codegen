@@ -1,0 +1,39 @@
+class {{&className}}(
+    private val cg_map: Map<String, {{>class_map_type}}>
+) : Map<String, {{>class_map_type}}> by cg_map {
+{{#additionalPropertiesNeedsInit}}
+    init {
+{{#properties}}{{#nullable}}        if (cg_map.containsKey("{{&name}}")){{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}
+{{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{#validations}}{{#first}}        }
+{{/first}}{{/validations}}{{/nullable}}{{^nullable}}        require(cg_map.containsKey("{{&name}}")) { "required property missing - {{&name}}" }
+{{>class_map_property}}{{/nullable}}{{/properties}}{{!
+}}{{^properties}}{{#additionalProperties}}{{#validations}}{{#first}}        cg_map.entries.forEach { (key, value) ->
+{{/first}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{#last}}        }
+{{/last}}{{/validations}}{{/additionalProperties}}{{/properties}}{{#validations}}{{>validations_2}}{{/validations}}    }{{/additionalPropertiesNeedsInit}}
+{{#properties}}
+{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}{{#nullable}}
+        get() = cg_map["{{&name}}"] as {{>type}}
+{{/nullable}}{{^nullable}} by cg_map{{! TODO - default }}
+{{/nullable}}{{/properties}}
+    override fun toString() = buildString {
+        append("{{&className}}(")
+        if (cg_map.isNotEmpty()) {
+            var count = 0
+            cg_map.entries.forEach { (key, value) ->
+                append(key)
+                append('=')
+                append(value)
+                if (++count < cg_map.size)
+                    append(", ")
+            }
+        }
+        append(')')
+    }
+
+    override fun equals(other: Any?): Boolean = this === other || other is {{&className}} && cg_map == other.cg_map
+
+    override fun hashCode(): Int = cg_map.hashCode()
+
+{{#nestedClasses}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}}

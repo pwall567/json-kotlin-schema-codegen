@@ -73,6 +73,14 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
 
     val properties = mutableListOf<NamedConstraints>()
 
+    val patternProperties = mutableListOf<Pair<Regex, Constraints>>()
+
+    var additionalProperties: Constraints? = null
+
+    @Suppress("unused")
+    val hasAdditionalProperties: Boolean
+        get() = patternProperties.isNotEmpty() || additionalProperties?.let { it.schema !is JSONSchema.False } ?: false
+
     @Suppress("unused")
     val numberOfProperties: Int
         get() = properties.size
@@ -152,9 +160,18 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     val isIntOrLong: Boolean
         get() = isType(JSONSchema.Type.INTEGER)
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val isPrimitive: Boolean
         get() = isIntOrLong || isBoolean
+
+    val isUntyped: Boolean
+        get() = !isSystemClass && !isLocalType && !isString && !isPrimitive && !isArray
+
+    @Suppress("unused")
+    val trace: String
+        get() {
+            return "" // this is here solely to allow "{{trace}}' elements in templates - breakpoint this line
+        }
 
     val minimumLong: Long?
         get() {
@@ -269,6 +286,10 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
         defaultValue = other.defaultValue
         for (property in other.properties)
             properties.add(NamedConstraints(property.schema, property.name).also { it.copyFrom(property) })
+        for (patternPropertyPair in other.patternProperties)
+            patternProperties.add(Pair(patternPropertyPair.first,
+                    Constraints(patternPropertyPair.second.schema).also { it.copyFrom(patternPropertyPair.second) }))
+        additionalProperties = other.additionalProperties
         arrayItems = other.arrayItems?.let { Constraints(it.schema).also { a -> a.copyFrom(it) } }
         minItems = other.minItems
         maxItems = other.maxItems

@@ -44,6 +44,8 @@ class Target(
     val schema: JSONSchema,
     /** [Constraints] describing target */
     constraints: Constraints,
+    /** the name generator */
+    val nameGenerator: CodeGenerator.NameGenerator,
     /** Target file */
     @Suppress("unused") val targetFile: TargetFileName,
     /** Source identifier (e.g. schema filename) */
@@ -72,6 +74,21 @@ class Target(
     @Suppress("unused")
     val indent = Indent()
 
+    @Suppress("unused")
+    val tempNameContext: NameContext
+        get() = NameContext(nameGenerator.generate())
+
+    @Suppress("unused")
+    val mapEntryContext: NameContext
+        get() = NameContext("value", "\$key")
+
+    data class NameContext(val name: String, val displayName: String = name) {
+        val kotlinName: String
+            get() = name
+        val javaName: String
+            get() = name
+    }
+
     val systemClasses = mutableListOf<SystemClass>()
     val imports = mutableListOf<String>()
     @Suppress("MemberVisibilityCanBePrivate")
@@ -96,6 +113,22 @@ class Target(
     val validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass: Boolean
         get() = validationsPresent || nestedClassesPresent || staticsPresent || companionObjectNeeded ||
                 hasBaseClassWithPropertiesOrIsBaseClass
+
+    @Suppress("unused")
+    val additionalPropertiesNeedsInit: Boolean
+        get() {
+            if (constraints.properties.isNotEmpty() || constraints.patternProperties.isNotEmpty())
+                return true
+            constraints.additionalProperties?.let {
+                if (it.validations.isNotEmpty())
+                    return true
+            }
+            return false
+        }
+
+    @Suppress("unused")
+    val additionalPropertiesSpecificType: Boolean
+        get() = constraints.additionalProperties?.let { it.schema !is JSONSchema.True } ?: false
 
     fun addInterface(classId: ClassId) {
         interfaces.add(classId)

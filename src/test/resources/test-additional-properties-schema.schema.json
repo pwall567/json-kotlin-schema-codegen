@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-additional-properties-schema1",
+  "description": "Test use of additionalProperties with schema.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "string",
+    "format": "date"
+  }
+}

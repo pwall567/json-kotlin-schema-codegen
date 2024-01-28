@@ -2,7 +2,7 @@
  * @(#) CodeGenerator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2022, 2023 Peter Wall
+ * Copyright (c) 2020, 2021, 2022, 2023, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,10 +51,12 @@ import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.Constraints.Companion.asLong
 import net.pwall.json.schema.parser.Parser
+import net.pwall.json.schema.subschema.AdditionalPropertiesSchema
 import net.pwall.json.schema.subschema.AllOfSchema
 import net.pwall.json.schema.subschema.CombinationSchema
 import net.pwall.json.schema.subschema.ExtensionSchema
 import net.pwall.json.schema.subschema.ItemsSchema
+import net.pwall.json.schema.subschema.PatternPropertiesSchema
 import net.pwall.json.schema.subschema.PropertiesSchema
 import net.pwall.json.schema.subschema.RefSchema
 import net.pwall.json.schema.subschema.RequiredSchema
@@ -107,6 +109,13 @@ class CodeGenerator(
     /** A [Logger] object for the output of logging messages */
     val log: Logger = getLogger(CodeGenerator::class.qualifiedName)
 ) {
+
+    enum class AdditionalPropertiesOption {
+        IGNORE,
+        MAP,
+    }
+
+    var additionalPropertiesOption = AdditionalPropertiesOption.IGNORE
 
     enum class NestedClassNameOption {
         USE_NAME_FROM_REF_SCHEMA,
@@ -201,7 +210,14 @@ class CodeGenerator(
         fieldAnnotations.add(ClassName.of(className) to template)
     }
 
-    private val generatorContext = Context(GeneratorContext)
+    private val generatorContext = Context(GeneratorContext).child(object {
+        @Suppress("unused")
+        val additionalPropertiesOption: AdditionalPropertiesOption
+            get() = this@CodeGenerator.additionalPropertiesOption
+        @Suppress("unused")
+        val nestedClassName: NestedClassNameOption
+            get() = nestedClassNameOption
+    })
 
     fun setTemplateDirectory(directory: File, suffix: String = "mustache") {
         when {
@@ -288,6 +304,7 @@ class CodeGenerator(
             Target(
                 schema = schema,
                 constraints = Constraints(schema),
+                nameGenerator = nameGenerator,
                 targetFile = TargetFileName(className, targetLanguage.ext, getOutputDirs(subDirectories)),
                 source = source,
                 generatorComment = generatorComment,
@@ -1083,9 +1100,58 @@ class CodeGenerator(
 
     private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
         analysePropertiesRequired(constraints)
-        return constraints.properties.fold(false) { result, property ->
+        val additionalPropertiesValidationRequired = additionalPropertiesOption != AdditionalPropertiesOption.IGNORE &&
+                constraints.additionalProperties?.let {
+                    if (it.schema is JSONSchema.True || it.schema is JSONSchema.False)
+                        false
+                    else {
+                        var hasValidations = analyseProperty(target, it, it, "additionalProperties")
+                        // if no properties or patternProperties, the map will use the a/p type, so no check needed
+                        // also, no point in checking if the a/p type is Any?
+                        if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
+                                !it.isUntyped) {
+                            constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
+                            hasValidations = true
+                        }
+                        hasValidations
+                    }
+                } ?: false
+        // TODO include patternProperties
+        return constraints.properties.fold(additionalPropertiesValidationRequired) { result, property ->
             analyseProperty(target, property, property, property.name) || result
         }
+    }
+
+    /**
+     * IF additionalPropertiesOption != IGNORE (that is, we're allowing additionalProperties and patternProperties)
+     * - if there is an additionalProperties schema but no named properties and no patternProperties: store the
+     *   additionalProperties schema for use in the map (no validations)
+     * - if there is an additionalProperties schema and there are named properties and/or patternProperties: set the
+     *   type for the map as "Any?", add a class-level validation to check that properties not in the lists of
+     *   properties or patternProperties are of the correct type.
+     *
+     * Decision table
+     * ```
+     * additionalPropertiesOption == IGNORE                    Y N N N N N N N N
+     * additionalProperties is (false/true/schema)             - F F F T S S S S
+     * named properties present                                - - Y N - Y Y N N
+     * pattern properties present                              - N Y Y - Y N Y N
+     *
+     * output normal class                                     X X - - - - - - -
+     * output map-based class                                  - - X X X X X X X
+     * use Map<String, Any?>                                   - - X X X X X X -
+     * derive map type from additionalProperties               - - - - - - - - X
+     * check type and add validations for named properties     - - - X - X X - -
+     * check type and add validations for pattern properties   - - X X - X - X -
+     * add validation, no excess properties allowed            - - X X - - - - -
+     * add validation, excess properties must be a/p type      - - - - - X X X -
+     * ```
+     */
+    private fun analyseAdditionalProperties(constraints: Constraints): Boolean {
+        if (additionalPropertiesOption == AdditionalPropertiesOption.IGNORE ||
+                constraints.additionalProperties?.schema is JSONSchema.False && constraints.patternProperties.isEmpty())
+            return false
+        TODO()
     }
 
     private fun useTarget(constraints: Constraints, target: Target, otherTarget: Target) {
@@ -1720,7 +1786,9 @@ class CodeGenerator(
             is JSONSchema.Validator -> processValidator(schema, constraints)
             is JSONSchema.General -> schema.children.forEach { processSchema(it, constraints) }
             is JSONSchema.Not -> processNotSchema(schema.nested, constraints)
-            else -> {} // for now, just ignore boolean schema
+            is JSONSchema.False -> constraints.nullable = true
+            is JSONSchema.True -> constraints.nullable = true
+            else -> {} // is there anything else?
         }
     }
 
@@ -1757,6 +1825,8 @@ class CodeGenerator(
                     constraints.arrayItems ?: ItemConstraints(subSchema.itemSchema, constraints.displayName,
                             nameGenerator.generate()).also { constraints.arrayItems = it })
             is PropertiesSchema -> processPropertySchema(subSchema, constraints)
+            is PatternPropertiesSchema -> processPatternPropertiesSchema(subSchema, constraints)
+            is AdditionalPropertiesSchema -> processAdditionalPropertiesSchema(subSchema, constraints)
             is RefSchema -> processSchema(subSchema.target, constraints)
             is RequiredSchema -> subSchema.properties.forEach {
                     if (it !in constraints.required) constraints.required.add(it) }
@@ -1875,6 +1945,22 @@ class CodeGenerator(
                     NamedConstraints(schema, name).also { constraints.properties.add(it) }
             processSchema(schema, propertyConstraints)
         }
+    }
+
+    private fun processPatternPropertiesSchema(patternPropertiesSchema: PatternPropertiesSchema,
+            constraints: Constraints) {
+        patternPropertiesSchema.properties.forEach { (regex, schema) ->
+            val patternPropertyPair = constraints.patternProperties.find { it.first == regex } ?:
+                    Pair(regex, Constraints(schema)).also { constraints.patternProperties.add(it) }
+            processSchema(schema, patternPropertyPair.second)
+        }
+    }
+
+    private fun processAdditionalPropertiesSchema(additionalPropertiesSchema: AdditionalPropertiesSchema,
+            constraints: Constraints) {
+        val additionalPropertiesConstraints = constraints.additionalProperties ?:
+                Constraints(additionalPropertiesSchema.schema).also { constraints.additionalProperties = it }
+        processSchema(additionalPropertiesSchema.schema, additionalPropertiesConstraints)
     }
 
     private fun processTypeValidator(typeValidator: TypeValidator, constraints: Constraints) {

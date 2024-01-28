@@ -25,13 +25,19 @@
 
 package net.pwall.json.schema.codegen
 
+import java.io.File
 import kotlin.test.fail
 
 import java.io.StringWriter
 
 object CodeGeneratorTestUtil {
 
+    const val packageName = "net.pwall.json.schema.codegen.test.kotlin"
+    val packageDirs = packageName.split('.')
     val dirs = listOf("com", "example")
+
+    fun resultFile(filename: String): String =
+        File("src/test/kotlin/net/pwall/json/schema/codegen/test/kotlin/$filename.kt").reader().readText()
 
     fun createHeader(name: String, comment: String? = null) =
 """/*

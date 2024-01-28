@@ -54,4 +54,9 @@
 }}{{^first}}{{#nullable}}{{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{/nullable}}{{^nullable}}{{>validations_2}}{{/nullable}}{{!
 }}{{#last}}{{#nullable}}{{&indent}}        }
 {{/nullable}}{{&indent}}    }
-{{/last}}{{/first}}{{/validations}}{{/indent.increment}}{{/arrayItems}}{{/ARRAY_ITEMS}}{{/type}}
+{{/last}}{{/first}}{{/validations}}{{/indent.increment}}{{/arrayItems}}{{/ARRAY_ITEMS}}{{#ADDITIONAL_PROPERTIES}}{{&indent}}        cg_map.entries.forEach { (key, value) ->
+{{#properties}}{{#first}}{{&indent}}            if ({{/first}}{{^first}} && {{/first}}key != "{{&kotlinName}}"{{#last}}){{#value}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/value}}
+    {{/last}}{{/properties}}{{&indent}}            require(value is {{#value}}{{>type}}{{/value}}) { "$key is not the correct type, expecting {{#value}}{{>type}}{{/value}}" }
+{{#value}}{{#validations}}{{#indent.increment}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{/indent.increment}}{{#last}}            }
+{{/last}}{{/validations}}{{/value}}{{&indent}}        }
+{{/ADDITIONAL_PROPERTIES}}{{/type}}

@@ -1,0 +1,4 @@
+{{&indent}}        require(cg_map["{{&name}}"] is {{>type_ex_nullable}}) { "{{&name}} is not the correct type, expecting {{>type}}" }
+{{#validations}}{{#first}}{{&indent}}        (cg_map["{{&name}}"] as {{>type_ex_nullable}}).let { {{&kotlinName}} ->
+{{/first}}{{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{#last}}{{&indent}}        }
+{{/last}}{{/validations}}

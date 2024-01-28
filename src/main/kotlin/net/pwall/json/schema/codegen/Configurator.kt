@@ -2,7 +2,7 @@
  * @(#) Configurator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021, 2022, 2023 Peter Wall
+ * Copyright (c) 2021, 2022, 2023, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,6 +77,13 @@ object Configurator {
             generator.nestedClassNameOption = when (it.value) {
                 "property" -> CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY
                 "refSchema" -> CodeGenerator.NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
+                else -> invalid(it)
+            }
+        }
+        ref.ifPresent<JSONString>("additionalPropertiesOption") {
+            generator.additionalPropertiesOption = when (it.value) {
+                "ignore" -> CodeGenerator.AdditionalPropertiesOption.IGNORE
+                "map" -> CodeGenerator.AdditionalPropertiesOption.MAP
                 else -> invalid(it)
             }
         }
