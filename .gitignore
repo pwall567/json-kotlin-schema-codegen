@@ -4,4 +4,4 @@ target/
 .settings/
 .idea/
 *.iml
-NOTES.md
+*NOTES.md

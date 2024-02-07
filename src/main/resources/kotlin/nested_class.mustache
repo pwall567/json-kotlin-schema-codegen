@@ -1,30 +1,16 @@
-{{#schema}}{{#description}}    /**
+{{&trace}}{{#schema}}{{#description}}    /**
      * {{&safeDescription}}
      */
-{{/description}}{{/schema}}{{>annotations}}{{#isObject}}    {{#numberOfProperties}}{{>data_open_class}} {{&className}}({{!
-}}{{#properties}}{{^first}},{{/first}}
-{{#schema}}{{#description}}        /** {{&safeDescription}} */
-{{/description}}{{/schema}}{{!
-}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
-}}        {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
-}}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
-}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
-}}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
-    ){{>extends_implements}}{{#validationsOrBaseClassWithPropertiesPresent}} {
-
-{{#validationsPresent}}        init {
-{{#properties}}{{>validations}}{{/properties}}        }
-
-{{/validationsPresent}}{{#hasBaseClassWithProperties}}
-{{#properties}}{{#extendedInDerived}}        open val {{&kotlinName}}: {{>type}} = {{&kotlinName}}
-{{/extendedInDerived}}{{/properties}}
-{{>equals}}
-{{>hashcode}}
-{{>tostring}}
-{{>copy}}
-{{>component}}
-
-{{/hasBaseClassWithProperties}}    }{{/validationsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
-{{#enumValues}}        {{&.}}{{^last}},{{/last}}
-{{/enumValues}}    }{{/isString}}
+{{/description}}{{/schema}}{{>annotations}}{{!
+}}{{#additionalPropertiesOption}}{{#IGNORE}}{{>nested_class_normal}}{{/IGNORE}}{{!
+}}{{#STRICT}}{{#additionalPropertiesFalse}}{{#hasProperties}}{{^hasPatternProperties}}{{>nested_class_normal}}{{/hasPatternProperties}}{{!
+}}{{#hasPatternProperties}}{{>nested_class_map}}
+{{&indent}}{{&closeBrace}}{{/hasPatternProperties}}{{/hasProperties}}{{!
+}}{{^hasProperties}}{{^hasPatternProperties}}{{>class_empty}}{{/hasPatternProperties}}{{!
+}}{{#hasPatternProperties}}{{>nested_class_map}}
+{{&indent}}{{&closeBrace}}{{/hasPatternProperties}}{{/hasProperties}}{{!
+}}{{/additionalPropertiesFalse}}{{#additionalPropertiesTrue}}{{>nested_class_map}}
+{{&indent}}{{&closeBrace}}{{/additionalPropertiesTrue}}{{!
+}}{{#additionalPropertiesSchema}}{{>nested_class_map}}
+{{&indent}}{{&closeBrace}}{{/additionalPropertiesSchema}}{{/STRICT}}{{!
+}}{{/additionalPropertiesOption}}

@@ -115,18 +115,6 @@ class Target(
                 hasBaseClassWithPropertiesOrIsBaseClass
 
     @Suppress("unused")
-    val additionalPropertiesNeedsInit: Boolean
-        get() {
-            if (constraints.properties.isNotEmpty() || constraints.patternProperties.isNotEmpty())
-                return true
-            constraints.additionalProperties?.let {
-                if (it.validations.isNotEmpty())
-                    return true
-            }
-            return false
-        }
-
-    @Suppress("unused")
     val additionalPropertiesSpecificType: Boolean
         get() = constraints.additionalProperties?.let { it.schema !is JSONSchema.True } ?: false
 

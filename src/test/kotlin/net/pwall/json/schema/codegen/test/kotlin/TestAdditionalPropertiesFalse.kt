@@ -12,4 +12,12 @@ package net.pwall.json.schema.codegen.test.kotlin
 /**
  * Test use of additionalProperties false.
  */
-open class TestAdditionalPropertiesFalse
+class TestAdditionalPropertiesFalse {
+
+    override fun toString(): String = "TestAdditionalPropertiesFalse()"
+
+    override fun equals(other: Any?): Boolean = this === other || other is TestAdditionalPropertiesFalse
+
+    override fun hashCode(): Int = 1
+
+}

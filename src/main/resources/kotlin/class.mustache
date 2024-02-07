@@ -7,5 +7,10 @@
  */
 {{/description}}{{/schema}}{{>annotations}}{{!
 }}{{#additionalPropertiesOption}}{{#IGNORE}}{{>class_normal}}{{/IGNORE}}{{!
-}}{{#MAP}}{{#hasAdditionalProperties}}{{>class_map}}{{/hasAdditionalProperties}}{{^hasAdditionalProperties}}{{>class_normal}}{{/hasAdditionalProperties}}{{/MAP}}{{!
-}}{{#MAP}}{{/MAP}}{{/additionalPropertiesOption}}{{/constraints}}
+}}{{#STRICT}}{{#additionalPropertiesFalse}}{{#hasProperties}}{{^hasPatternProperties}}{{>class_normal}}{{/hasPatternProperties}}{{!
+}}{{#hasPatternProperties}}{{>class_map}}{{/hasPatternProperties}}{{/hasProperties}}{{!
+}}{{^hasProperties}}{{^hasPatternProperties}}{{>class_empty}}{{/hasPatternProperties}}{{!
+}}{{#hasPatternProperties}}{{>class_map}}{{/hasPatternProperties}}{{/hasProperties}}{{!
+}}{{/additionalPropertiesFalse}}{{#additionalPropertiesTrue}}{{>class_map}}{{/additionalPropertiesTrue}}{{!
+}}{{#additionalPropertiesSchema}}{{>class_map}}{{/additionalPropertiesSchema}}{{/STRICT}}{{!
+}}{{/additionalPropertiesOption}}{{/constraints}}

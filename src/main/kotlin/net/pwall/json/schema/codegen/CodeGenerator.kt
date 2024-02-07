@@ -112,7 +112,7 @@ class CodeGenerator(
 
     enum class AdditionalPropertiesOption {
         IGNORE,
-        MAP,
+        STRICT,
     }
 
     var additionalPropertiesOption = AdditionalPropertiesOption.IGNORE
@@ -1098,38 +1098,7 @@ class CodeGenerator(
         }
     }
 
-    private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
-        analysePropertiesRequired(constraints)
-        val additionalPropertiesValidationRequired = additionalPropertiesOption != AdditionalPropertiesOption.IGNORE &&
-                constraints.additionalProperties?.let {
-                    if (it.schema is JSONSchema.True || it.schema is JSONSchema.False)
-                        false
-                    else {
-                        var hasValidations = analyseProperty(target, it, it, "additionalProperties")
-                        // if no properties or patternProperties, the map will use the a/p type, so no check needed
-                        // also, no point in checking if the a/p type is Any?
-                        if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
-                                !it.isUntyped) {
-                            constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
-                            hasValidations = true
-                        }
-                        hasValidations
-                    }
-                } ?: false
-        // TODO include patternProperties
-        return constraints.properties.fold(additionalPropertiesValidationRequired) { result, property ->
-            analyseProperty(target, property, property, property.name) || result
-        }
-    }
-
     /**
-     * IF additionalPropertiesOption != IGNORE (that is, we're allowing additionalProperties and patternProperties)
-     * - if there is an additionalProperties schema but no named properties and no patternProperties: store the
-     *   additionalProperties schema for use in the map (no validations)
-     * - if there is an additionalProperties schema and there are named properties and/or patternProperties: set the
-     *   type for the map as "Any?", add a class-level validation to check that properties not in the lists of
-     *   properties or patternProperties are of the correct type.
-     *
      * Decision table
      * ```
      * additionalPropertiesOption == IGNORE                    Y N N N N N N N N
@@ -1147,11 +1116,76 @@ class CodeGenerator(
      * add validation, excess properties must be a/p type      - - - - - X X X -
      * ```
      */
-    private fun analyseAdditionalProperties(constraints: Constraints): Boolean {
-        if (additionalPropertiesOption == AdditionalPropertiesOption.IGNORE ||
-                constraints.additionalProperties?.schema is JSONSchema.False && constraints.patternProperties.isEmpty())
-            return false
-        TODO()
+    private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
+        analysePropertiesRequired(constraints)
+        var additionalPropertiesValidationRequired = false
+        if (additionalPropertiesOption != AdditionalPropertiesOption.IGNORE) {
+            for (i in constraints.patternProperties.indices) {
+                val patternPropertyTriple = constraints.patternProperties[i]
+                val patternPropertyConstraints = patternPropertyTriple.second
+                if (!patternPropertyConstraints.isUntyped) {
+                    analyseProperty(target, patternPropertyConstraints, patternPropertyConstraints, "patternProperty")
+                    val patternPropertyRegex = patternPropertyTriple.first
+                    val patternPropertyStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex",
+                            StringValue(patternPropertyRegex.toString()))
+                    val newPatternPropertyTriple = Triple(patternPropertyRegex, patternPropertyConstraints,
+                            patternPropertyStatic)
+                    constraints.patternProperties.removeAt(i)
+                    constraints.patternProperties.add(i, newPatternPropertyTriple)
+                    constraints.addValidation(Validation.Type.PATTERN_PROPERTIES, newPatternPropertyTriple)
+                }
+            }
+            constraints.additionalProperties?.let {
+                when (it.schema) {
+                    is JSONSchema.True -> {}
+                    is JSONSchema.False -> if (constraints.patternProperties.isNotEmpty()) {
+                        // if no patternProperties it will be generated as a data class, so no need to check unexpected
+                        constraints.addValidation(Validation.Type.UNEXPECTED_PROPERTIES)
+                        additionalPropertiesValidationRequired = true
+                    }
+                    else -> {
+                        additionalPropertiesValidationRequired = analyseProperty(target, it, it, "additionalProperties")
+                        // if no properties or patternProperties, the map will use the a/p type, so no check needed
+                        // also, no point in checking if the a/p type is Any?
+                        if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
+                                !it.isUntyped) {
+                            constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
+                            additionalPropertiesValidationRequired = true
+                        }
+                    }
+                }
+//                if (it.schema !is JSONSchema.True) {
+//                    additionalPropertiesValidationRequired = analyseProperty(target, it, it, "additionalProperties")
+//                    // if no properties or patternProperties, the map will use the a/p type, so no check needed
+//                    // also, no point in checking if the a/p type is Any?
+//                    if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
+//                            !it.isUntyped) {
+//                        constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
+//                        additionalPropertiesValidationRequired = true
+//                    }
+//                }
+            }
+        }
+//        additionalPropertiesValidationRequired = additionalPropertiesOption != AdditionalPropertiesOption.IGNORE &&
+//                constraints.additionalProperties?.let {
+//                    if (it.schema is JSONSchema.True || it.schema is JSONSchema.False)
+//                        false
+//                    else {
+//                        var hasValidations = analyseProperty(target, it, it, "additionalProperties")
+//                        // if no properties or patternProperties, the map will use the a/p type, so no check needed
+//                        // also, no point in checking if the a/p type is Any?
+//                        if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
+//                                !it.isUntyped) {
+//                            constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
+//                            hasValidations = true
+//                        }
+//                        hasValidations
+//                    }
+//                } ?: false
+        // TODO include patternProperties
+        return constraints.properties.fold(additionalPropertiesValidationRequired) { result, property ->
+            analyseProperty(target, property, property, property.name) || result
+        }
     }
 
     private fun useTarget(constraints: Constraints, target: Target, otherTarget: Target) {
@@ -1951,7 +1985,7 @@ class CodeGenerator(
             constraints: Constraints) {
         patternPropertiesSchema.properties.forEach { (regex, schema) ->
             val patternPropertyPair = constraints.patternProperties.find { it.first == regex } ?:
-                    Pair(regex, Constraints(schema)).also { constraints.patternProperties.add(it) }
+                    Triple(regex, Constraints(schema), null).also { constraints.patternProperties.add(it) }
             processSchema(schema, patternPropertyPair.second)
         }
     }

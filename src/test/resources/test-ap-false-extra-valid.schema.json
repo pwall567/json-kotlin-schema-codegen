@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft/2019-09/schema",
-  "$id": "http://pwall.net/test-additional-properties-true-extra",
-  "description": "Test use of additionalProperties true with extra fields.",
+  "$id": "http://pwall.net/test-ap-false-extra-valid",
+  "description": "Test use of additionalProperties false with extra fields.",
   "type": "object",
   "properties": {
     "extra": {
@@ -10,5 +10,5 @@
     }
   },
   "required": [ "extra" ],
-  "additionalProperties": true
+  "additionalProperties": false
 }

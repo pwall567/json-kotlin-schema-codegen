@@ -5,8 +5,7 @@
   "type": "object",
   "properties": {
     "extra": {
-      "type": "string",
-      "minLength": 1
+      "type": "string"
     }
   },
   "required": [ "extra" ],

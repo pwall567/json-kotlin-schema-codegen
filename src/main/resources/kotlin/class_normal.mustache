@@ -8,7 +8,7 @@
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
 ){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
-{{#validationsPresent}}    init {
+{{#validationsPresent}}    init {{&trace}}{
 {{#properties}}{{>validations}}{{/properties}}    }
 {{/validationsPresent}}{{#hasBaseClassWithPropertiesOrIsBaseClass}}
 {{#properties}}{{#extendedInDerived}}    open val {{&kotlinName}}: {{>type}} = {{&kotlinName}}
@@ -19,10 +19,12 @@
 {{>copy}}
 {{>component}}
 {{/hasBaseClassWithPropertiesOrIsBaseClass}}{{#nestedClasses}}
-{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}
+{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{!
 }}{{^numberOfProperties}}open class {{&className}}{{>extends_implements}}{{!
 }}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
-{{#nestedClasses}}{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
+{{#nestedClasses}}{{#constraints}}{{#indent.increment}}{{>nested_class}}
+{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-extra-nested",
+  "description": "Test use of additionalProperties true with extra nested object.",
+  "type": "object",
+  "properties": {
+    "extra": {
+      "type": "object",
+      "properties": {
+        "field1": {
+          "type": "string"
+        },
+        "field2": {
+          "type": "boolean"
+        }
+      },
+      "required": [ "field1", "field2" ],
+      "additionalProperties": false
+    }
+  },
+  "required": [ "extra" ],
+  "additionalProperties": true
+}

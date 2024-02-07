@@ -39,10 +39,11 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.resultFile
 class CodeGeneratorAdditionalPropertiesTest {
 
     @Test fun `should generate code for additionalProperties false`() {
+        // type: object, no properties, no patternProperties, additionalProperties: false
         val input = File("src/test/resources/test-additional-properties-false.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesFalse", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -54,7 +55,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-true.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesTrue", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -66,7 +67,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-schema.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesSchema1", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -78,7 +79,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-schema-valid.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesSchemaValid", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -90,7 +91,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-false-extra.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesFalseExtra", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -98,23 +99,47 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestAdditionalPropertiesFalseExtra")) { outputDetails.output() }
     }
 
-    @Test fun `should generate code for additionalProperties true with extra`() {
-        val input = File("src/test/resources/test-additional-properties-true-extra.schema.json")
-        val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesTrueExtra", "kt", packageDirs))
+    @Test fun `should generate code for aP false with extra valid`() {
+        val input = File("src/test/resources/test-ap-false-extra-valid.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApFalseExtraValid", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesTrueExtra")) { outputDetails.output() }
+        expect(resultFile("TestApFalseExtraValid")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with extra`() {
+        val input = File("src/test/resources/test-ap-true-extra.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtra", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtra")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with extra with default value`() {
+        val input = File("src/test/resources/test-ap-true-extra-default.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraDefault", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraDefault")) { outputDetails.output() }
     }
 
     @Test fun `should generate code for additionalProperties with schema with extra`() {
         val input = File("src/test/resources/test-additional-properties-schema-extra.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesSchemaExtra", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -126,7 +151,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-schema-extra2.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesSchemaExtra2", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -138,7 +163,7 @@ class CodeGeneratorAdditionalPropertiesTest {
         val input = File("src/test/resources/test-additional-properties-schema-extra3.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestAdditionalPropertiesSchemaExtra3", "kt", packageDirs))
         CodeGenerator().apply {
-            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.MAP
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
             basePackageName = packageName
             outputResolver = outputCapture(outputDetails)
             generate(input)
@@ -146,10 +171,118 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestAdditionalPropertiesSchemaExtra3")) { outputDetails.output() }
     }
 
-    // TODO - also check that all of this works for nested classes
+    @Test fun `should generate code for aP false with pattern`() {
+        val input = File("src/test/resources/test-ap-false-pattern.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApFalsePattern", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApFalsePattern")) { outputDetails.output() }
+    }
 
-    // TODO - check that when a delegating class uses a nested class, it is generated correctly
+    @Test fun `should generate code for aP false with pattern and extra`() {
+        val input = File("src/test/resources/test-ap-false-pattern-extra.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApFalsePatternExtra", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApFalsePatternExtra")) { outputDetails.output() }
+    }
 
-    // TODO - patternProperties
+    @Test fun `should generate code for aP false with pattern and optional extra`() {
+        val input = File("src/test/resources/test-ap-false-pattern-extra-opt.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApFalsePatternExtraOpt", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApFalsePatternExtraOpt")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with pattern`() {
+        val input = File("src/test/resources/test-ap-true-pattern.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTruePattern", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTruePattern")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with pattern with validation`() {
+        val input = File("src/test/resources/test-ap-true-pattern-valid.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTruePatternValid", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTruePatternValid")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with pattern and extra fields`() {
+        val input = File("src/test/resources/test-ap-true-extra-pattern.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraPattern", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraPattern")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for nested aP false`() {
+        val input = File("src/test/resources/test-ap-nested-false.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApNestedFalse", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApNestedFalse")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for nested aP true`() {
+        val input = File("src/test/resources/test-ap-nested-true.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApNestedTrue", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApNestedTrue")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with extra nested object`() {
+        val input = File("src/test/resources/test-ap-true-extra-nested.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraNested", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraNested")) { outputDetails.output() }
+    }
+
+    // TODO - more tests of nested classes?
+
+    // TODO - minProperties and maxProperties
+
+    // TODO - propertyNames
 
 }

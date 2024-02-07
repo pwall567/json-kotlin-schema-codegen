@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-pattern",
+  "description": "Test use of additionalProperties true with patternProperties.",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Z]{3}$": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-false-pattern-extra",
+  "description": "Test use of additionalProperties false with patternProperties and extra property.",
+  "type": "object",
+  "properties": {
+    "extra": {
+      "description": "Extra field",
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "patternProperties": {
+    "^[A-Z]{3}$": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99
+    }
+  },
+  "required": [ "extra" ],
+  "additionalProperties": false
+}

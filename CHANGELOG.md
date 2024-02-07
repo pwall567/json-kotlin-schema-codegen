@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
 ### Changed
+- `CodeGenerator`, `Configurator`, `Constraints`, `Target`, `Validation`, templates: added code generation for
+  `additionalProperties` and `patternProperties`
 - `pom.xml`: updated dependency version
 
 ## [0.99] - 2023-12-12

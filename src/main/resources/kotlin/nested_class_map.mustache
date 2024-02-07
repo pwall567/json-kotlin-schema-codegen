@@ -1,0 +1,41 @@
+{{&indent}}class {{&className}}(
+{{&indent}}    private val cg_map: Map<String, {{>class_map_type}}>
+{{&indent}}) : Map<String, {{>class_map_type}}> by cg_map {
+{{#additionalPropertiesNeedsInit}}
+{{&indent}}    init {
+{{#properties}}{{#defaultValue}}{{&indent}}        if (cg_map.containsKey("{{&name}}")){{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}
+{{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{#validations}}{{#first}}{{&indent}}        }
+{{/first}}{{/validations}}{{/defaultValue}}{{^defaultValue}}{{!
+}}{{#nullable}}{{&indent}}        if (cg_map.containsKey("{{&name}}")){{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}
+{{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{#validations}}{{#first}}{{&indent}}        }
+{{/first}}{{/validations}}{{/nullable}}{{^nullable}}{{&indent}}        require(cg_map.containsKey("{{&name}}")) { "required property missing - {{&name}}" }
+{{>class_map_property}}{{/nullable}}{{/defaultValue}}{{/properties}}{{!
+}}{{^properties}}{{#additionalProperties}}{{#validations}}{{#first}}{{&indent}}        cg_map.entries.forEach { (key, value) ->
+{{/first}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{#last}}{{&indent}}        }
+{{/last}}{{/validations}}{{/additionalProperties}}{{/properties}}{{#validations}}{{>validations_2}}{{/validations}}{{&indent}}    }{{/additionalPropertiesNeedsInit}}
+{{#properties}}
+{{#schema}}{{#description}}{{&indent}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}{{&indent}}    val {{&kotlinName}}: {{>type}}{{#defaultValue}}
+{{&indent}}        get() = if (cg_map.containsKey("{{&name}}")) cg_map["{{&name}}"] as {{>type}} else {{>default_value}}
+{{/defaultValue}}{{^defaultValue}}{{#nullable}}
+{{&indent}}        get() = cg_map["{{&name}}"] as {{>type}}
+{{/nullable}}{{^nullable}} by cg_map
+{{/nullable}}{{/defaultValue}}{{/properties}}
+{{&indent}}    override fun toString() = buildString {
+{{&indent}}        append("{{&className}}(")
+{{&indent}}        if (cg_map.isNotEmpty()) {
+{{&indent}}            var count = 0
+{{&indent}}            cg_map.entries.forEach { (key, value) ->
+{{&indent}}                append(key)
+{{&indent}}                append('=')
+{{&indent}}                append(value)
+{{&indent}}                if (++count < cg_map.size)
+{{&indent}}                    append(", ")
+{{&indent}}            }
+{{&indent}}        }
+{{&indent}}        append(')')
+{{&indent}}    }
+
+{{&indent}}    override fun equals(other: Any?): Boolean = this === other || other is {{&className}} && cg_map == other.cg_map
+
+{{&indent}}    override fun hashCode(): Int = cg_map.hashCode()

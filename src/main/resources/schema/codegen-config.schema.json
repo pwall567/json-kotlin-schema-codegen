@@ -53,6 +53,10 @@
       "type": "string",
       "enum": [ "property", "refSchema" ]
     },
+    "additionalPropertiesOption": {
+      "type": "string",
+      "enum": [ "ignore", "strict" ]
+    },
     "derivePackageFromStructure": {
       "type": "boolean"
     },

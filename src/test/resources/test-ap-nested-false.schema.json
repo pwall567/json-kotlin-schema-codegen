@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-nested-false",
+  "description": "Test use of nested additionalProperties false.",
+  "type": "object",
+  "properties": {
+    "nested": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "required": [ "nested" ],
+  "additionalProperties": false
+}

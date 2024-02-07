@@ -1,0 +1,9 @@
+{{&indent}}class {{&className}} {
+
+{{&indent}}    override fun toString(): String = "{{&className}}()"
+
+{{&indent}}    override fun equals(other: Any?): Boolean = this === other || other is {{&className}}
+
+{{&indent}}    override fun hashCode(): Int = 1
+
+{{&indent}}{{&closeBrace}}

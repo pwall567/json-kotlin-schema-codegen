@@ -83,7 +83,7 @@ object Configurator {
         ref.ifPresent<JSONString>("additionalPropertiesOption") {
             generator.additionalPropertiesOption = when (it.value) {
                 "ignore" -> CodeGenerator.AdditionalPropertiesOption.IGNORE
-                "map" -> CodeGenerator.AdditionalPropertiesOption.MAP
+                "strict" -> CodeGenerator.AdditionalPropertiesOption.STRICT
                 else -> invalid(it)
             }
         }

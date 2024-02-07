@@ -73,13 +73,44 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
 
     val properties = mutableListOf<NamedConstraints>()
 
-    val patternProperties = mutableListOf<Pair<Regex, Constraints>>()
+    val patternProperties = mutableListOf<Triple<Regex, Constraints, Target.Static?>>()
 
     var additionalProperties: Constraints? = null
 
     @Suppress("unused")
-    val hasAdditionalProperties: Boolean
-        get() = patternProperties.isNotEmpty() || additionalProperties?.let { it.schema !is JSONSchema.False } ?: false
+    val additionalPropertiesFalse: Boolean
+        get() = additionalProperties?.let { it.schema is JSONSchema.False } ?: false
+
+    @Suppress("unused")
+    val additionalPropertiesTrue: Boolean
+        get() = additionalProperties?.let { it.schema is JSONSchema.True } ?: true
+
+    @Suppress("unused")
+    val additionalPropertiesSchema: Boolean
+        get() = additionalProperties?.let { it.schema !is JSONSchema.True && it.schema !is JSONSchema.False } ?: false
+
+    @Suppress("unused")
+    val hasProperties: Boolean
+        get() = properties.isNotEmpty()
+
+    @Suppress("unused")
+    val hasPatternProperties: Boolean
+        get() = patternProperties.isNotEmpty()
+
+    @Suppress("unused")
+    val additionalPropertiesNeedsInit: Boolean
+        get() {
+            if (properties.isNotEmpty() || patternProperties.isNotEmpty())
+                return true
+            additionalProperties?.let {
+                if (it.validations.isNotEmpty())
+                    return true
+            }
+            return false
+        }
+
+    val mapMayBeEmpty: Boolean
+        get() = properties.all { it.nullable == true || it.defaultValue != null }
 
     @Suppress("unused")
     val numberOfProperties: Int
@@ -287,8 +318,9 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
         for (property in other.properties)
             properties.add(NamedConstraints(property.schema, property.name).also { it.copyFrom(property) })
         for (patternPropertyPair in other.patternProperties)
-            patternProperties.add(Pair(patternPropertyPair.first,
-                    Constraints(patternPropertyPair.second.schema).also { it.copyFrom(patternPropertyPair.second) }))
+            patternProperties.add(Triple(patternPropertyPair.first,
+                    Constraints(patternPropertyPair.second.schema).also { it.copyFrom(patternPropertyPair.second) },
+                    patternPropertyPair.third))
         additionalProperties = other.additionalProperties
         arrayItems = other.arrayItems?.let { Constraints(it.schema).also { a -> a.copyFrom(it) } }
         minItems = other.minItems
