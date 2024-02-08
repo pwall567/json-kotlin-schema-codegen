@@ -279,9 +279,43 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApTrueExtraNested")) { outputDetails.output() }
     }
 
-    // TODO - more tests of nested classes?
+    @Test fun `should generate code for aP true with minimum`() {
+        val input = File("src/test/resources/test-ap-true-min.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueMin", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueMin")) { outputDetails.output() }
+    }
 
-    // TODO - minProperties and maxProperties
+    @Test fun `should generate code for aP true with maximum`() {
+        val input = File("src/test/resources/test-ap-true-max.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueMax", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueMax")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with minimum and maximum`() {
+        val input = File("src/test/resources/test-ap-true-min-max.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueMinMax", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueMinMax")) { outputDetails.output() }
+    }
+
+    // TODO - more tests of nested classes?
 
     // TODO - propertyNames
 

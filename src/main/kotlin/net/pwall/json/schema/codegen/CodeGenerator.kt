@@ -25,6 +25,11 @@
 
 package net.pwall.json.schema.codegen
 
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
+
 import java.io.File
 import java.io.Reader
 import java.math.BigDecimal
@@ -68,6 +73,7 @@ import net.pwall.json.schema.validation.EnumValidator
 import net.pwall.json.schema.validation.FormatValidator
 import net.pwall.json.schema.validation.NumberValidator
 import net.pwall.json.schema.validation.PatternValidator
+import net.pwall.json.schema.validation.PropertiesValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
@@ -79,8 +85,6 @@ import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.DefaultValue
 import net.pwall.util.Strings
 import net.pwall.yaml.YAMLSimple
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
@@ -1154,35 +1158,15 @@ class CodeGenerator(
                         }
                     }
                 }
-//                if (it.schema !is JSONSchema.True) {
-//                    additionalPropertiesValidationRequired = analyseProperty(target, it, it, "additionalProperties")
-//                    // if no properties or patternProperties, the map will use the a/p type, so no check needed
-//                    // also, no point in checking if the a/p type is Any?
-//                    if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
-//                            !it.isUntyped) {
-//                        constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
-//                        additionalPropertiesValidationRequired = true
-//                    }
-//                }
+            }
+            constraints.minProperties?.let { minP ->
+                constraints.maxProperties?.let { maxP ->
+                    constraints.addValidation(Validation.Type.RANGE_PROPERTIES, minP to maxP)
+                } ?: constraints.addValidation(Validation.Type.MINIMUM_PROPERTIES, minP)
+            } ?: constraints.maxProperties?.let { maxP ->
+                constraints.addValidation(Validation.Type.MAXIMUM_PROPERTIES, maxP)
             }
         }
-//        additionalPropertiesValidationRequired = additionalPropertiesOption != AdditionalPropertiesOption.IGNORE &&
-//                constraints.additionalProperties?.let {
-//                    if (it.schema is JSONSchema.True || it.schema is JSONSchema.False)
-//                        false
-//                    else {
-//                        var hasValidations = analyseProperty(target, it, it, "additionalProperties")
-//                        // if no properties or patternProperties, the map will use the a/p type, so no check needed
-//                        // also, no point in checking if the a/p type is Any?
-//                        if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
-//                                !it.isUntyped) {
-//                            constraints.addValidation(Validation.Type.ADDITIONAL_PROPERTIES, it)
-//                            hasValidations = true
-//                        }
-//                        hasValidations
-//                    }
-//                } ?: false
-        // TODO include patternProperties
         return constraints.properties.fold(additionalPropertiesValidationRequired) { result, property ->
             analyseProperty(target, property, property, property.name) || result
         }
@@ -1902,6 +1886,7 @@ class CodeGenerator(
             is EnumValidator -> processEnumValidator(validator, constraints)
             is FormatValidator -> processFormatValidator(validator, constraints)
             is NumberValidator -> processNumberValidator(validator, constraints)
+            is PropertiesValidator -> processPropertiesValidator(validator, constraints)
             is PatternValidator -> processPatternValidator(validator, constraints)
             is StringValidator -> processStringValidator(validator, constraints)
             is TypeValidator -> processTypeValidator(validator, constraints)
@@ -1944,6 +1929,15 @@ class CodeGenerator(
                     minimumOf(constraints.maximum, numberValidator.value)
             NumberValidator.ValidationType.EXCLUSIVE_MAXIMUM -> constraints.exclusiveMaximum =
                     minimumOf(constraints.exclusiveMaximum, numberValidator.value)
+        }
+    }
+
+    private fun processPropertiesValidator(propertiesValidator: PropertiesValidator, constraints: Constraints) {
+        when (propertiesValidator.condition) {
+            PropertiesValidator.ValidationType.MIN_PROPERTIES -> constraints.minProperties =
+                    constraints.minProperties?.let { min(it, propertiesValidator.value) } ?: propertiesValidator.value
+            PropertiesValidator.ValidationType.MAX_PROPERTIES -> constraints.maxProperties =
+                    constraints.maxProperties?.let { max(it, propertiesValidator.value) } ?: propertiesValidator.value
         }
     }
 

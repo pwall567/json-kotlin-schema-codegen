@@ -100,7 +100,8 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     @Suppress("unused")
     val additionalPropertiesNeedsInit: Boolean
         get() {
-            if (properties.isNotEmpty() || patternProperties.isNotEmpty())
+            if (properties.isNotEmpty() || patternProperties.isNotEmpty() || minProperties != null ||
+                    maxProperties != null)
                 return true
             additionalProperties?.let {
                 if (it.validations.isNotEmpty())
@@ -109,6 +110,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
             return false
         }
 
+    @Suppress("unused")
     val mapMayBeEmpty: Boolean
         get() = properties.all { it.nullable == true || it.defaultValue != null }
 
@@ -123,6 +125,9 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     @Suppress("unused")
     val nonBaseProperties: List<NamedConstraints>
         get() = properties.filter { it.baseProperty == null }
+
+    var minProperties: Int? = null
+    var maxProperties: Int? = null
 
     var extendedInDerived: Boolean = false
     var extendedFromBase: Boolean = false
@@ -322,6 +327,8 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
                     Constraints(patternPropertyPair.second.schema).also { it.copyFrom(patternPropertyPair.second) },
                     patternPropertyPair.third))
         additionalProperties = other.additionalProperties
+        minProperties = other.minProperties
+        maxProperties = other.maxProperties
         arrayItems = other.arrayItems?.let { Constraints(it.schema).also { a -> a.copyFrom(it) } }
         minItems = other.minItems
         maxItems = other.maxItems

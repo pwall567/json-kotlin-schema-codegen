@@ -70,4 +70,7 @@
     {{/hasProperties}}{{^hasProperties}}{{#hasPatternProperties}}{{&indent}}            if ({{#patternProperties}}{{^first}} && {{/first}}!{{&third.staticName}}.matches(key){{/patternProperties}})
     {{/hasPatternProperties}}{{/hasProperties}}{{&indent}}            throw IllegalArgumentException("Unexpected field $key")
 {{&indent}}        }
-{{/UNEXPECTED_PROPERTIES}}{{/type}}
+{{/UNEXPECTED_PROPERTIES}}{{#MINIMUM_PROPERTIES}}{{&indent}}        require(cg_map.size >= {{&value}}) { "Number of properties < minimum {{&value}} - ${cg_map.size}" }
+{{/MINIMUM_PROPERTIES}}{{#MAXIMUM_PROPERTIES}}{{&indent}}        require(cg_map.size <= {{&value}}) { "Number of properties > minimum {{&value}} - ${cg_map.size}" }
+{{/MAXIMUM_PROPERTIES}}{{#RANGE_PROPERTIES}}{{&indent}}        require(cg_map.size in {{&value.first}}..{{&value.second}}) { "Number of properties not in range {{&value.first}}..{{&value.second}} - ${cg_map.size}" }
+{{/RANGE_PROPERTIES}}{{/type}}

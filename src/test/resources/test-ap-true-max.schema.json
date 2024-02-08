@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-max",
+  "description": "Test use of additionalProperties true with maximum.",
+  "type": "object",
+  "additionalProperties": true,
+  "maxProperties": 5
+}
