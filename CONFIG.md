@@ -35,6 +35,7 @@ The configuration file includes the following:
 - [`packageName`](#packagename)
 - [`markerInterface`](#markerinterface)
 - [`generatorComment`](#generatorcomment)
+- [`additionalPropertiesOption`](#additionalpropertiesoption)
 - [`nestedClassNameOption`](#nestedclassnameoption)
 - [`derivePackageFromStructure`](#derivepackagefromstructure)
 - [`extensionValidations`](#extensionvalidations)
@@ -111,6 +112,25 @@ configuration option:
 ```
 The value must be a non-empty string, or `null` to specify that no generator comment is to be used (this is the
 default).
+
+
+## `additionalPropertiesOption`
+
+This option may be used to enable the use of the JSON Schema `additionalProperties` validation, along with
+`patternProperties`, `minProperties` and `maxProperties`.
+
+For more information see the [`additionalProperties` and `patternProperties`](PROPERTIES.md) guide, but in summary:
+The use of `additionalProperties` or `patternProperties` requires the generated class to handle object properties with
+names that are not known in advance.
+The best way of accommodating this is for the generated class to implement the `Map` interface, but this results in code
+that is very much more complicated than it otherwise would be, and for this reason, this form of code generation is used
+only when the `additionalPropertiesOption` is set to `strict`:
+```json
+{
+   "additionalPropertiesOption": "strict"
+}
+```
+The default is `ignore`, which causes `additionalProperties` and `patternProperties` to be ignored.
 
 
 ## `nestedClassNameOption`

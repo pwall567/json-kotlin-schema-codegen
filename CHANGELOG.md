@@ -2,10 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.100] - 2024-02-08
 ### Changed
 - `CodeGenerator`, `Configurator`, `Constraints`, `Target`, `Validation`, templates: added code generation for
-  `additionalProperties` and `patternProperties`
+  `additionalProperties`, `patternProperties` `minProperties` and `maxProperties`
 - `pom.xml`: updated dependency version
 
 ## [0.99] - 2023-12-12

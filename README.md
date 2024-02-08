@@ -11,6 +11,10 @@ Code generation for JSON Schema (Draft 07).
 
 ## NEW
 
+New in version 0.100 &ndash; the generator will produce classes that handle `additionalProperties` and
+`patternProperties`.
+See the [`additionalProperties` and `patternProperties`](PROPERTIES.md) guide for more details.
+
 New in version 0.87 &ndash; the generator now recognises a special case of `anyOf` or `oneOf` to specify nullability.
 See [below](#nullability).
 
@@ -320,25 +324,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.99, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.100, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.99</version>
+      <version>0.100</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.99'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.100'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.99")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.100")
 ```
 
 Peter Wall
 
-2023-12-12
+2024-02-08
