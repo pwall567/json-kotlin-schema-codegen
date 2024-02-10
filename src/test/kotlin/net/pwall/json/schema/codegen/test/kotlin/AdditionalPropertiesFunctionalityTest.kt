@@ -674,4 +674,111 @@ class AdditionalPropertiesFunctionalityTest {
         expect("TestApTrueExtraNested(extra=Extra(field1=ABC, field2=true))") { testClass1.toString() }
     }
 
+    @Test fun `should generate functional TestApTrueMin`() {
+        val testClass1 = TestApTrueMin(mapOf(
+            "field1" to "George",
+            "field2" to "Henry",
+        ))
+        expect("George") { testClass1["field1"] }
+        expect("Henry") { testClass1["field2"] }
+        expect("TestApTrueMin(field1=George, field2=Henry)") { testClass1.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueMin(mapOf(
+                "field1" to "George",
+            ))
+        }.let {
+            expect("Number of properties < minimum 2 - 1") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueMin1`() {
+        val testClass1 = TestApTrueMin1(mapOf(
+            "field1" to "George",
+            "field2" to "Henry",
+        ))
+        expect("George") { testClass1["field1"] }
+        expect("Henry") { testClass1["field2"] }
+        expect("TestApTrueMin1(field1=George, field2=Henry)") { testClass1.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueMin1(emptyMap())
+        }.let {
+            expect("Number of properties < minimum 1") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueMax`() {
+        val testClass1 = TestApTrueMax(mapOf(
+            "field1" to "George",
+            "field2" to "Henry",
+        ))
+        expect("George") { testClass1["field1"] }
+        expect("Henry") { testClass1["field2"] }
+        expect("TestApTrueMax(field1=George, field2=Henry)") { testClass1.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueMax(mapOf(
+                "field1" to "George",
+                "field2" to "Henry",
+                "field3" to "Arthur",
+                "field4" to "Robert",
+                "field5" to "Edward",
+                "field6" to "Roger",
+            ))
+        }.let {
+            expect("Number of properties > maximum 5 - 6") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueMinMax`() {
+        val testClass1 = TestApTrueMinMax(mapOf(
+            "field1" to "George",
+            "field2" to "Henry",
+        ))
+        expect("George") { testClass1["field1"] }
+        expect("Henry") { testClass1["field2"] }
+        expect("TestApTrueMinMax(field1=George, field2=Henry)") { testClass1.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueMinMax(mapOf(
+                "field1" to "George",
+            ))
+        }.let {
+            expect("Number of properties not in range 2..5 - 1") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueMinMax(mapOf(
+                "field1" to "George",
+                "field2" to "Henry",
+                "field3" to "Arthur",
+                "field4" to "Robert",
+                "field5" to "Edward",
+                "field6" to "Roger",
+            ))
+        }.let {
+            expect("Number of properties not in range 2..5 - 6") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueConst`() {
+        val testClass1 = TestApTrueConst(mapOf(
+            "field1" to "George",
+            "field2" to "Henry",
+            "field3" to "Arthur",
+        ))
+        expect("George") { testClass1["field1"] }
+        expect("Henry") { testClass1["field2"] }
+        expect("TestApTrueConst(field1=George, field2=Henry, field3=Arthur)") { testClass1.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueConst(mapOf(
+                "field1" to "George",
+            ))
+        }.let {
+            expect("Number of properties != constant 3 - 1") { it.message }
+        }
+    }
+
 }

@@ -39,20 +39,7 @@ class TestApFalsePatternExtraOpt(
     val extra: String?
         get() = cg_map["extra"] as String?
 
-    override fun toString() = buildString {
-        append("TestApFalsePatternExtraOpt(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestApFalsePatternExtraOpt(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestApFalsePatternExtraOpt && cg_map == other.cg_map
 

@@ -291,6 +291,18 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApTrueMin")) { outputDetails.output() }
     }
 
+    @Test fun `should generate code for aP true with minimum 1`() {
+        val input = File("src/test/resources/test-ap-true-min-1.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueMin1", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueMin1")) { outputDetails.output() }
+    }
+
     @Test fun `should generate code for aP true with maximum`() {
         val input = File("src/test/resources/test-ap-true-max.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestApTrueMax", "kt", packageDirs))
@@ -313,6 +325,17 @@ class CodeGeneratorAdditionalPropertiesTest {
             generate(input)
         }
         expect(resultFile("TestApTrueMinMax")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with const number`() {
+        val input = File("src/test/resources/test-ap-true-const.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueConst", "kt", packageDirs))
+        CodeGenerator().apply {
+            configure(File("src/test/resources/config/ap-config.json"))
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueConst")) { outputDetails.output() }
     }
 
     // TODO - more tests of nested classes?

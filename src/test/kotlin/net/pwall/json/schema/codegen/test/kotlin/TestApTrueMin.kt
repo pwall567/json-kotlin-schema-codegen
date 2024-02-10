@@ -20,20 +20,7 @@ class TestApTrueMin(
         require(cg_map.size >= 2) { "Number of properties < minimum 2 - ${cg_map.size}" }
     }
 
-    override fun toString() = buildString {
-        append("TestApTrueMin(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestApTrueMin(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestApTrueMin && cg_map == other.cg_map
 

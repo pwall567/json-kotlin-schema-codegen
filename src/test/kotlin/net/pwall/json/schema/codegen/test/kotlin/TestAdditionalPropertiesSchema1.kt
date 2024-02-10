@@ -18,20 +18,7 @@ class TestAdditionalPropertiesSchema1(
     private val cg_map: Map<String, LocalDate>
 ) : Map<String, LocalDate> by cg_map {
 
-    override fun toString() = buildString {
-        append("TestAdditionalPropertiesSchema1(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestAdditionalPropertiesSchema1(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestAdditionalPropertiesSchema1 && cg_map == other.cg_map
 

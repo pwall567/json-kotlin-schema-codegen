@@ -43,20 +43,7 @@ class TestAdditionalPropertiesSchemaExtra3(
     val extra2: Int?
         get() = cg_map["extra2"] as Int?
 
-    override fun toString() = buildString {
-        append("TestAdditionalPropertiesSchemaExtra3(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestAdditionalPropertiesSchemaExtra3(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestAdditionalPropertiesSchemaExtra3 && cg_map == other.cg_map
 

@@ -28,20 +28,7 @@ class TestApTrueExtraDefault(
     val extra: String
         get() = if (cg_map.containsKey("extra")) cg_map["extra"] as String else "default-value"
 
-    override fun toString() = buildString {
-        append("TestApTrueExtraDefault(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestApTrueExtraDefault(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestApTrueExtraDefault && cg_map == other.cg_map
 

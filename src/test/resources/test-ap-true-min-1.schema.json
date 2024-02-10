@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-min-1",
+  "description": "Test use of additionalProperties true with minimum 1.",
+  "type": "object",
+  "additionalProperties": true,
+  "minProperties": 1
+}

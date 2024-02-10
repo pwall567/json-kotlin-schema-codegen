@@ -35,7 +35,7 @@
 {{/MIN_ITEMS}}{{#CONST_ITEMS}}{{&indent}}        require({{&kotlinName}}.size {{>cond_eq}} {{&value}}) { "{{&displayName}} length {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value {{&value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
 {{/CONST_ITEMS}}{{#RANGE_ITEMS}}{{&indent}}        require({{&kotlinName}}.size {{#negate}}!{{/negate}}in {{#value}}{{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&kotlinName}}.size}" }
 {{/RANGE_ITEMS}}{{#MAX_LENGTH}}{{&indent}}        require({{&kotlinName}}.length {{>cond_le}} {{&value}}) { "{{&displayName}} length {{#negate}}not {{/negate}}> maximum {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
-{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}{{#isOne}}is{{^negate}}Not{{/negate}}Empty(){{/isOne}}{{^isOne}}length {{>cond_ge}} {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length {{#negate}}Not{{/negate}}< minimum {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
+{{/MAX_LENGTH}}{{#MIN_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}{{#isOne}}is{{^negate}}Not{{/negate}}Empty(){{/isOne}}{{^isOne}}length {{>cond_ge}} {{&rawNumber}}{{/isOne}}{{/value}}) { "{{&displayName}} length {{#negate}}not {{/negate}}< minimum {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
 {{/MIN_LENGTH}}{{#CONST_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}length {{>cond_eq}} {{&rawNumber}}{{/value}}) { "{{&displayName}} length {{^negate}}!={{/negate}}{{#negate}}=={{/negate}} constant {{&value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
 {{/CONST_LENGTH}}{{#RANGE_LENGTH}}{{&indent}}        require({{&kotlinName}}.{{#value}}length {{#negate}}!{{/negate}}in {{&first}}..{{&second}}{{/value}}) { "{{&displayName}} length {{^negate}}not {{/negate}}in range {{#value}}{{&first}}..{{&second}}{{/value}} - ${{&openBrace}}{{&kotlinName}}.length}" }
 {{/RANGE_LENGTH}}{{#CONST_STRING}}{{&indent}}        require({{&kotlinName}} {{>cond_eq}} {{&value.staticName}}) { "{{&displayName}} {{^negate}}not{{/negate}}{{#negate}}is{{/negate}} constant value ${{&value.staticName}} - ${{&kotlinName}}" }
@@ -70,7 +70,9 @@
     {{/hasProperties}}{{^hasProperties}}{{#hasPatternProperties}}{{&indent}}            if ({{#patternProperties}}{{^first}} && {{/first}}!{{&third.staticName}}.matches(key){{/patternProperties}})
     {{/hasPatternProperties}}{{/hasProperties}}{{&indent}}            throw IllegalArgumentException("Unexpected field $key")
 {{&indent}}        }
-{{/UNEXPECTED_PROPERTIES}}{{#MINIMUM_PROPERTIES}}{{&indent}}        require(cg_map.size >= {{&value}}) { "Number of properties < minimum {{&value}} - ${cg_map.size}" }
-{{/MINIMUM_PROPERTIES}}{{#MAXIMUM_PROPERTIES}}{{&indent}}        require(cg_map.size <= {{&value}}) { "Number of properties > minimum {{&value}} - ${cg_map.size}" }
-{{/MAXIMUM_PROPERTIES}}{{#RANGE_PROPERTIES}}{{&indent}}        require(cg_map.size in {{&value.first}}..{{&value.second}}) { "Number of properties not in range {{&value.first}}..{{&value.second}} - ${cg_map.size}" }
+{{/UNEXPECTED_PROPERTIES}}{{#MINIMUM_PROPERTIES}}{{#value}}{{#isOne}}{{&indent}}        require(cg_map.isNotEmpty()) { "Number of properties < minimum 1" }
+{{/isOne}}{{^isOne}}{{&indent}}        require(cg_map.size >= {{&rawNumber}}) { "Number of properties < minimum {{&rawNumber}} - ${cg_map.size}" }
+{{/isOne}}{{/value}}{{/MINIMUM_PROPERTIES}}{{#MAXIMUM_PROPERTIES}}{{&indent}}        require(cg_map.size <= {{&value}}) { "Number of properties > maximum {{&value}} - ${cg_map.size}" }
+{{/MAXIMUM_PROPERTIES}}{{#CONST_PROPERTIES}}{{&indent}}        require(cg_map.size == {{&value}}) { "Number of properties != constant {{&value}} - ${cg_map.size}" }
+{{/CONST_PROPERTIES}}{{#RANGE_PROPERTIES}}{{&indent}}        require(cg_map.size in {{&value.first}}..{{&value.second}}) { "Number of properties not in range {{&value.first}}..{{&value.second}} - ${cg_map.size}" }
 {{/RANGE_PROPERTIES}}{{/type}}

@@ -1161,8 +1161,11 @@ class CodeGenerator(
             }
             constraints.minProperties?.let { minP ->
                 constraints.maxProperties?.let { maxP ->
-                    constraints.addValidation(Validation.Type.RANGE_PROPERTIES, minP to maxP)
-                } ?: constraints.addValidation(Validation.Type.MINIMUM_PROPERTIES, minP)
+                    if (minP == maxP)
+                        constraints.addValidation(Validation.Type.CONST_PROPERTIES, minP)
+                    else
+                        constraints.addValidation(Validation.Type.RANGE_PROPERTIES, minP to maxP)
+                } ?: constraints.addValidation(Validation.Type.MINIMUM_PROPERTIES, NumberValue(minP))
             } ?: constraints.maxProperties?.let { maxP ->
                 constraints.addValidation(Validation.Type.MAXIMUM_PROPERTIES, maxP)
             }

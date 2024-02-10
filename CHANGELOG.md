@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- `CodeGenerator`, `Validation`, templates: improved validations, improved `toString` in delegating classes
+
 ## [0.100] - 2024-02-08
 ### Changed
 - `CodeGenerator`, `Configurator`, `Constraints`, `Target`, `Validation`, templates: added code generation for

@@ -21,20 +21,7 @@
 {{&indent}}        get() = cg_map["{{&name}}"] as {{>type}}
 {{/nullable}}{{^nullable}} by cg_map
 {{/nullable}}{{/defaultValue}}{{/properties}}
-{{&indent}}    override fun toString() = buildString {
-{{&indent}}        append("{{&className}}(")
-{{&indent}}        if (cg_map.isNotEmpty()) {
-{{&indent}}            var count = 0
-{{&indent}}            cg_map.entries.forEach { (key, value) ->
-{{&indent}}                append(key)
-{{&indent}}                append('=')
-{{&indent}}                append(value)
-{{&indent}}                if (++count < cg_map.size)
-{{&indent}}                    append(", ")
-{{&indent}}            }
-{{&indent}}        }
-{{&indent}}        append(')')
-{{&indent}}    }
+{{&indent}}    override fun toString(): String = "{{&className}}(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
 {{&indent}}    override fun equals(other: Any?): Boolean = this === other || other is {{&className}} && cg_map == other.cg_map
 

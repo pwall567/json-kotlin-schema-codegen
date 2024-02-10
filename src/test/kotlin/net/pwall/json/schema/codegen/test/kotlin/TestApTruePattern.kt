@@ -23,20 +23,7 @@ class TestApTruePattern(
         }
     }
 
-    override fun toString() = buildString {
-        append("TestApTruePattern(")
-        if (cg_map.isNotEmpty()) {
-            var count = 0
-            cg_map.entries.forEach { (key, value) ->
-                append(key)
-                append('=')
-                append(value)
-                if (++count < cg_map.size)
-                    append(", ")
-            }
-        }
-        append(')')
-    }
+    override fun toString(): String = "TestApTruePattern(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
     override fun equals(other: Any?): Boolean = this === other || other is TestApTruePattern && cg_map == other.cg_map
 
