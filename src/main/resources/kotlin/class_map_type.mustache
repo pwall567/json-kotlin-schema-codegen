@@ -1,1 +1,4 @@
-{{#properties}}{{#first}}Any?{{/first}}{{/properties}}{{^properties}}{{#patternProperties}}{{#first}}Any?{{/first}}{{/patternProperties}}{{^patternProperties}}{{#additionalProperties}}{{>type}}{{/additionalProperties}}{{/patternProperties}}{{/properties}}
+{{#properties}}{{#first}}Any?{{/first}}{{/properties}}{{!
+}}{{^properties}}{{#patternProperties}}{{#first}}Any?{{/first}}{{/patternProperties}}{{!
+}}{{^patternProperties}}{{#additionalProperties}}{{>type}}{{/additionalProperties}}{{!
+}}{{^additionalProperties}}Any?{{/additionalProperties}}{{/patternProperties}}{{/properties}}

@@ -673,7 +673,26 @@ class AdditionalPropertiesFunctionalityTest {
         expect("ABC") { testClass1.extra.field1 }
         assertTrue(testClass1.extra.field2)
         expect(TestApTrueExtraNested.Codes.ALPHA) { testClass1.codes }
-        expect("TestApTrueExtraNested(extra=Extra(field1=ABC, field2=true), codes=ALPHA)") { testClass1.toString() }
+        assertNull(testClass1.empty)
+        val name = "TestApTrueExtraNested"
+        expect("$name(extra=Extra(field1=ABC, field2=true), codes=ALPHA)") { testClass1.toString() }
+
+        val testClass2 = TestApTrueExtraNested(mapOf(
+            "extra" to TestApTrueExtraNested.Extra(field1 = "ABC", field2 = true),
+            "codes" to TestApTrueExtraNested.Codes.ALPHA,
+            "empty" to TestApTrueExtraNested.Empty(mapOf(
+                "abc" to 123,
+                "def" to 456,
+            )),
+        ))
+        expect("ABC") { testClass2.extra.field1 }
+        assertTrue(testClass2.extra.field2)
+        expect(TestApTrueExtraNested.Codes.ALPHA) { testClass2.codes }
+        expect(123) { testClass2.empty?.get("abc") }
+        expect(456) { testClass2.empty?.get("def") }
+        expect("$name(extra=Extra(field1=ABC, field2=true), codes=ALPHA, empty=Empty(abc=123, def=456))") {
+            testClass2.toString()
+        }
     }
 
     @Test fun `should generate functional TestApTrueMin`() {

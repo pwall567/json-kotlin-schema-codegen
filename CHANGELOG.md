@@ -2,12 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.102] - 2024-02-18
 ### Changed
-- `CodeGenerator`, `Validation`, templates: improved validations, improved `toString` in delegating classes
+- templates: fixed another bug in nested map classes
 
 ## [0.101] - 2024-02-18
 ### Changed
+- `CodeGenerator`, `Validation`, templates: improved validations, improved `toString` in delegating classes
 - templates: fixed bug in enums nested in map classes
 - `pom.xml`: updated dependency version
 

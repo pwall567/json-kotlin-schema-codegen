@@ -21,6 +21,8 @@ class TestApTrueExtraNested(
         require(cg_map["extra"] is Extra) { "extra is not the correct type, expecting Extra" }
         require(cg_map.containsKey("codes")) { "required property missing - codes" }
         require(cg_map["codes"] is Codes) { "codes is not the correct type, expecting Codes" }
+        if (cg_map.containsKey("empty"))
+            require(cg_map["empty"] is Empty) { "empty is not the correct type, expecting Empty?" }
     }
 
     /** Extra data. */
@@ -28,6 +30,10 @@ class TestApTrueExtraNested(
 
     /** Extra enum. */
     val codes: Codes by cg_map
+
+    /** Extra empty object. */
+    val empty: Empty?
+        get() = cg_map["empty"] as Empty?
 
     override fun toString(): String = "TestApTrueExtraNested(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
@@ -49,6 +55,21 @@ class TestApTrueExtraNested(
     enum class Codes {
         ALPHA,
         BETA
+    }
+
+    /**
+     * Extra empty object.
+     */
+    class Empty(
+        private val cg_map: Map<String, Any?>
+    ) : Map<String, Any?> by cg_map {
+
+        override fun toString(): String = "Empty(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
+
+        override fun equals(other: Any?): Boolean = this === other || other is Empty && cg_map == other.cg_map
+
+        override fun hashCode(): Int = cg_map.hashCode()
+
     }
 
 }

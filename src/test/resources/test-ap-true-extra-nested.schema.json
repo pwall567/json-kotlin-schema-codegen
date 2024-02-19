@@ -22,6 +22,10 @@
       "description": "Extra enum.",
       "type": "string",
       "enum": [ "ALPHA", "BETA" ]
+    },
+    "empty": {
+      "description": "Extra empty object.",
+      "type": "object"
     }
   },
   "required": [ "extra", "codes" ],
