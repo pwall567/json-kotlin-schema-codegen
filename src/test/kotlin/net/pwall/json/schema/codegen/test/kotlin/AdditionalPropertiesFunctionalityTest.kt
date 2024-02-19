@@ -668,10 +668,12 @@ class AdditionalPropertiesFunctionalityTest {
     @Test fun `should generate functional TestApTrueExtraNested`() {
         val testClass1 = TestApTrueExtraNested(mapOf(
             "extra" to TestApTrueExtraNested.Extra(field1 = "ABC", field2 = true),
+            "codes" to TestApTrueExtraNested.Codes.ALPHA,
         ))
         expect("ABC") { testClass1.extra.field1 }
         assertTrue(testClass1.extra.field2)
-        expect("TestApTrueExtraNested(extra=Extra(field1=ABC, field2=true))") { testClass1.toString() }
+        expect(TestApTrueExtraNested.Codes.ALPHA) { testClass1.codes }
+        expect("TestApTrueExtraNested(extra=Extra(field1=ABC, field2=true), codes=ALPHA)") { testClass1.toString() }
     }
 
     @Test fun `should generate functional TestApTrueMin`() {

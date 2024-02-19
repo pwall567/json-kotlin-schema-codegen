@@ -338,6 +338,17 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApTrueConst")) { outputDetails.output() }
     }
 
+//    @Test fun `should generate code for experiment`() {
+//        val input = File("src/test/resources/test-xxx.schema.json")
+//        val outputDetails = OutputDetails(TargetFileName("TestXxx", "kt", packageDirs))
+//        CodeGenerator().apply {
+//            configure(File("src/test/resources/config/ap-config.json"))
+//            outputResolver = outputCapture(outputDetails)
+//            generate(input)
+//        }
+//        expect("Dummy") { outputDetails.output() }
+//    }
+
     // TODO - more tests of nested classes?
 
     // TODO - propertyNames

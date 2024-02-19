@@ -19,9 +19,15 @@ class TestApTrueExtraNested(
     init {
         require(cg_map.containsKey("extra")) { "required property missing - extra" }
         require(cg_map["extra"] is Extra) { "extra is not the correct type, expecting Extra" }
+        require(cg_map.containsKey("codes")) { "required property missing - codes" }
+        require(cg_map["codes"] is Codes) { "codes is not the correct type, expecting Codes" }
     }
 
+    /** Extra data. */
     val extra: Extra by cg_map
+
+    /** Extra enum. */
+    val codes: Codes by cg_map
 
     override fun toString(): String = "TestApTrueExtraNested(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"
 
@@ -29,9 +35,20 @@ class TestApTrueExtraNested(
 
     override fun hashCode(): Int = cg_map.hashCode()
 
+    /**
+     * Extra data.
+     */
     data class Extra(
         val field1: String,
         val field2: Boolean
     )
+
+    /**
+     * Extra enum.
+     */
+    enum class Codes {
+        ALPHA,
+        BETA
+    }
 
 }

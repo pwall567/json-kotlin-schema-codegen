@@ -5,6 +5,7 @@
   "type": "object",
   "properties": {
     "extra": {
+      "description": "Extra data.",
       "type": "object",
       "properties": {
         "field1": {
@@ -16,8 +17,13 @@
       },
       "required": [ "field1", "field2" ],
       "additionalProperties": false
+    },
+    "codes": {
+      "description": "Extra enum.",
+      "type": "string",
+      "enum": [ "ALPHA", "BETA" ]
     }
   },
-  "required": [ "extra" ],
+  "required": [ "extra", "codes" ],
   "additionalProperties": true
 }

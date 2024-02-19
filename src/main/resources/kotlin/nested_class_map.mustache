@@ -1,4 +1,4 @@
-{{&indent}}class {{&className}}(
+{{#isObject}}{{&indent}}class {{&className}}(
 {{&indent}}    private val cg_map: Map<String, {{>class_map_type}}>
 {{&indent}}) : Map<String, {{>class_map_type}}> by cg_map {
 {{#additionalPropertiesNeedsInit}}
@@ -26,3 +26,6 @@
 {{&indent}}    override fun equals(other: Any?): Boolean = this === other || other is {{&className}} && cg_map == other.cg_map
 
 {{&indent}}    override fun hashCode(): Int = cg_map.hashCode()
+{{/isObject}}{{#isString}}{{&indent}}enum class {{&className}} {
+{{#enumValues}}{{&indent}}    {{&.}}{{^last}},
+{{/last}}{{/enumValues}}{{/isString}}
