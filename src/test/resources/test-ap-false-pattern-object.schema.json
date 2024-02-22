@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-false-pattern-object",
+  "description": "Test use of additionalProperties false with patternProperties specifying object.",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Z]{3}$": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -207,6 +207,18 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApFalsePatternExtraOpt")) { outputDetails.output() }
     }
 
+    @Test fun `should generate code for aP false with pattern specifying object`() {
+        val input = File("src/test/resources/test-ap-false-pattern-object.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApFalsePatternObject", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApFalsePatternObject")) { outputDetails.output() }
+    }
+
     @Test fun `should generate code for aP true with pattern`() {
         val input = File("src/test/resources/test-ap-true-pattern.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestApTruePattern", "kt", packageDirs))

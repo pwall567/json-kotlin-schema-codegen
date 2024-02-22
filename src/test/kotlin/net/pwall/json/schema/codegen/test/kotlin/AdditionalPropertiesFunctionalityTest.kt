@@ -560,6 +560,32 @@ class AdditionalPropertiesFunctionalityTest {
         }
     }
 
+    @Test fun `should generate functional TestApFalsePatternObject`() {
+        val testClass = TestApFalsePatternObject(mapOf(
+            "ABC" to TestApFalsePatternObject.PatternProperty(),
+            "PIG" to TestApFalsePatternObject.PatternProperty(),
+        ))
+        expect(TestApFalsePatternObject.PatternProperty()) { testClass["ABC"] }
+        expect(TestApFalsePatternObject.PatternProperty()) { testClass["PIG"] }
+        expect("TestApFalsePatternObject(ABC=PatternProperty(), PIG=PatternProperty())") { testClass.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApFalsePatternObject(mapOf(
+                "DOG" to "Wrong type",
+            ))
+        }.let {
+            expect("DOG is not the correct type, expecting PatternProperty") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApFalsePatternObject(mapOf(
+                "WOLF" to TestApFalsePatternObject.PatternProperty(),
+            ))
+        }.let {
+            expect("Unexpected field WOLF") { it.message }
+        }
+    }
+
     @Test fun `should generate functional TestApTruePattern`() {
         val testClass1 = TestApTruePattern(mapOf(
             "ABC" to "first",

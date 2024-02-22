@@ -1127,17 +1127,15 @@ class CodeGenerator(
             for (i in constraints.patternProperties.indices) {
                 val patternPropertyTriple = constraints.patternProperties[i]
                 val patternPropertyConstraints = patternPropertyTriple.second
-                if (!patternPropertyConstraints.isUntyped) {
-                    analyseProperty(target, patternPropertyConstraints, patternPropertyConstraints, "patternProperty")
-                    val patternPropertyRegex = patternPropertyTriple.first
-                    val patternPropertyStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex",
-                            StringValue(patternPropertyRegex.toString()))
-                    val newPatternPropertyTriple = Triple(patternPropertyRegex, patternPropertyConstraints,
-                            patternPropertyStatic)
-                    constraints.patternProperties.removeAt(i)
-                    constraints.patternProperties.add(i, newPatternPropertyTriple)
-                    constraints.addValidation(Validation.Type.PATTERN_PROPERTIES, newPatternPropertyTriple)
-                }
+                analyseProperty(target, patternPropertyConstraints, patternPropertyConstraints, "patternProperty")
+                val patternPropertyRegex = patternPropertyTriple.first
+                val patternPropertyStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex",
+                        StringValue(patternPropertyRegex.toString()))
+                val newPatternPropertyTriple = Triple(patternPropertyRegex, patternPropertyConstraints,
+                        patternPropertyStatic)
+                constraints.patternProperties.removeAt(i)
+                constraints.patternProperties.add(i, newPatternPropertyTriple)
+                constraints.addValidation(Validation.Type.PATTERN_PROPERTIES, newPatternPropertyTriple)
             }
             constraints.additionalProperties?.let {
                 when (it.schema) {
