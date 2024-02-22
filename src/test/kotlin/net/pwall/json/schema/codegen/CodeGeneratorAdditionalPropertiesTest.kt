@@ -123,6 +123,18 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApTrueExtra")) { outputDetails.output() }
     }
 
+    @Test fun `should generate code for aP true with extra array`() {
+        val input = File("src/test/resources/test-ap-true-extra-array.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraArray", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraArray")) { outputDetails.output() }
+    }
+
     @Test fun `should generate code for aP true with extra with default value`() {
         val input = File("src/test/resources/test-ap-true-extra-default.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraDefault", "kt", packageDirs))

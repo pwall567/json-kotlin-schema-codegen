@@ -13,5 +13,5 @@
 }}{{#isLong}}Long{{/isLong}}{{^isLong}}{{! is it a decimal?
 }}{{#isDecimal}}BigDecimal{{/isDecimal}}{{^isDecimal}}{{! is it a boolean?
 }}{{#isBoolean}}Boolean{{/isBoolean}}{{^isBoolean}}{{! is it an array?
-}}{{#isArray}}{{#uniqueItems}}Set{{/uniqueItems}}{{^uniqueItems}}List{{/uniqueItems}}<{{#arrayItems}}{{>type}}{{/arrayItems}}>{{/isArray}}{{^isArray}}{{! default Any
+}}{{#isArray}}{{>list_or_set}}<{{#arrayItems}}{{>type}}{{/arrayItems}}>{{/isArray}}{{^isArray}}{{! default Any
 }}Any{{/isArray}}{{/isBoolean}}{{/isDecimal}}{{/isLong}}{{/isInt}}{{/isString}}{{/isLocalType}}{{/isSystemClass}}

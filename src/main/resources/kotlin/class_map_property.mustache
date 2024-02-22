@@ -1,4 +1,7 @@
-{{&indent}}        require(cg_map["{{&name}}"] is {{>type_ex_nullable}}) { "{{&name}} is not the correct type, expecting {{>type}}" }
-{{#validations}}{{#first}}{{&indent}}        (cg_map["{{&name}}"] as {{>type_ex_nullable}}).let { {{&kotlinName}} ->
+{{&indent}}        require(cg_map["{{&name}}"] is {{#isArray}}{{>list_or_set}}<*>{{/isArray}}{{!
+}}{{^isArray}}{{>type_ex_nullable}}{{/isArray}}) { "{{&name}} is not the correct type, expecting {{>type}}" }
+{{#isArray}}{{&indent}}        (cg_map["{{&name}}"] as {{>list_or_set}}<*>).forEach { {{#indent.increment}}{{#arrayItems}}{{&kotlinName}} ->
+{{>class_map_property_item}}{{/arrayItems}}{{/indent.increment}}{{&indent}}        }
+{{/isArray}}{{^isArray}}{{#validations}}{{#first}}{{&indent}}        (cg_map["{{&name}}"] as {{>type_ex_nullable}}).let { {{&kotlinName}} ->
 {{/first}}{{#indent.increment}}{{>validations_2}}{{/indent.increment}}{{#last}}{{&indent}}        }
-{{/last}}{{/validations}}
+{{/last}}{{/validations}}{{/isArray}}

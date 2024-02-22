@@ -1,0 +1,5 @@
+{{&indent}}        require({{&kotlinName}} is {{#isArray}}{{>list_or_set}}<*>{{/isArray}}{{!
+}}{{^isArray}}{{>type_ex_nullable}}{{/isArray}}) { "{{&displayName}} is not the correct type, expecting {{>type}}" }
+{{#isArray}}{{&indent}}        (cg_map["{{&name}}"] as {{>list_or_set}}<*>).forEach { {{&name}} ->
+{{#indent.increment}}{{#arrayItems}}{{>class_map_property_item}}{{/arrayItems}}{{/indent.increment}}{{&indent}}        }
+{{/isArray}}{{^isArray}}{{#validations}}{{>validations_2}}{{/validations}}{{/isArray}}

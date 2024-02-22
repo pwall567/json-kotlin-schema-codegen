@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [0.103] - 2024-02-22
 ### Changed
 - `CodeGenerator`: fixed a bug in `patternProperties`
+- templates: fixed bug in arrays in map classes
+- `pom.xml`: updated dependency version
 
 ## [0.102] - 2024-02-18
 ### Changed
