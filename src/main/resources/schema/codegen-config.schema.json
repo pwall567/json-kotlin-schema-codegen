@@ -57,6 +57,14 @@
       "type": "string",
       "enum": [ "ignore", "strict" ]
     },
+    "examplesValidationOption": {
+      "type": "string",
+      "enum": [ "none", "warn", "block" ]
+    },
+    "defaultValidationOption": {
+      "type": "string",
+      "enum": [ "none", "warn", "block" ]
+    },
     "derivePackageFromStructure": {
       "type": "boolean"
     },
