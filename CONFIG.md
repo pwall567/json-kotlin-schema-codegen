@@ -36,6 +36,7 @@ The configuration file includes the following:
 - [`markerInterface`](#markerinterface)
 - [`generatorComment`](#generatorcomment)
 - [`additionalPropertiesOption`](#additionalpropertiesoption)
+- [`examplesValidationOption` and `defaultValidationOption`](#examplesvalidationoption-and-defaultvalidationoption)
 - [`nestedClassNameOption`](#nestedclassnameoption)
 - [`derivePackageFromStructure`](#derivepackagefromstructure)
 - [`extensionValidations`](#extensionvalidations)
@@ -131,6 +132,26 @@ only when the `additionalPropertiesOption` is set to `strict`:
 }
 ```
 The default is `ignore`, which causes `additionalProperties` and `patternProperties` to be ignored.
+
+
+## `examplesValidationOption` and `defaultValidationOption`
+
+The JSON Schema specification says, of `examples` and `default`: &ldquo;It is RECOMMENDED that these values be valid
+against the associated schema.&rdquo;
+The code generator allows for the optional validation of `examples` and `default` entries; either or both of
+`examplesValidationOption` and `defaultValidationOption` may be set to:
+
+- `none`: no validation will be performed (this is the default)
+- `warn`: warning messages will be logged for any validation errors
+- `block`: block the code generator from continuing if any validation errors are encountered
+
+For example:
+```json
+{
+   "examplesValidationOption": "none",
+   "defaultValidationOption": "block"
+}
+```
 
 
 ## `nestedClassNameOption`

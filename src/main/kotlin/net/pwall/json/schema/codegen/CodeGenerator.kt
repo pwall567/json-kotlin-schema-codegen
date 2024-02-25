@@ -128,6 +128,16 @@ class CodeGenerator(
 
     var nestedClassNameOption = NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
 
+    enum class ValidationOption {
+        NONE,
+        WARN,
+        BLOCK,
+    }
+
+    var examplesValidationOption = ValidationOption.NONE
+
+    var defaultValidationOption = ValidationOption.NONE
+
     var commentTemplate: Template? = null
 
     private val customClassesByURI = mutableListOf<CustomClassByURI>()
@@ -141,7 +151,10 @@ class CodeGenerator(
     }
 
     var schemaParser by DefaultValue {
-        Parser()
+        Parser().apply {
+            options.validateExamples = examplesValidationOption != ValidationOption.NONE
+            options.validateDefault = defaultValidationOption != ValidationOption.NONE
+        }
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -348,7 +361,24 @@ class CodeGenerator(
     fun addTarget(uri: URI, packageNames: List<String> = emptyList()) {
         val json = schemaParser.jsonReader.readJSON(uri)
         val schema = schemaParser.parse(uri)
+        checkValidationErrors()
         addTarget(packageNames, schema, uri.toString(), json)
+    }
+
+    private fun checkValidationErrors() {
+        if (defaultValidationOption != ValidationOption.NONE || examplesValidationOption != ValidationOption.NONE) {
+            for (validationError in schemaParser.parserValidationErrors) {
+                validationError.errors?.forEach {
+                    if (it.error != JSONSchema.subSchemaErrorMessage)
+                        log.warn { "${it.absoluteKeywordLocation}: ${it.error}, at ${it.instanceLocation}" }
+                }
+            }
+            if (schemaParser.parserValidationErrors.isNotEmpty() &&
+                (defaultValidationOption == ValidationOption.BLOCK ||
+                        examplesValidationOption == ValidationOption.BLOCK))
+                fatal("Validation errors encountered")
+            schemaParser.parserValidationErrors.clear()
+        }
     }
 
     /**
@@ -506,6 +536,7 @@ class CodeGenerator(
             inputFile.isFile -> {
                 val json = schemaParser.jsonReader.readJSON(inputFile)
                 val schema = schemaParser.parse(inputFile)
+                checkValidationErrors()
                 addTarget(packageNames, schema, inputFile.toString(), json)
             }
             inputFile.isDirectory -> {
@@ -536,6 +567,7 @@ class CodeGenerator(
             Files.isRegularFile(inputPath) -> {
                 val json = schemaParser.jsonReader.readJSON(inputPath)
                 val schema = schemaParser.parse(inputPath)
+                checkValidationErrors()
                 addTarget(packageNames, schema, inputPath.toString(), json)
             }
             Files.isDirectory(inputPath) -> {
@@ -816,7 +848,9 @@ class CodeGenerator(
         for (name in definitions.keys) {
             if (filter(name))
                 addTarget(
-                    schema = schemaParser.parseSchema(base, pointer.child(name), documentURI),
+                    schema = schemaParser.parseSchema(base, pointer.child(name), documentURI).also {
+                        checkValidationErrors()
+                    },
                     className = name,
                     subDirectories = subDirectories,
                     source = "$documentURI#$pointer/$name",

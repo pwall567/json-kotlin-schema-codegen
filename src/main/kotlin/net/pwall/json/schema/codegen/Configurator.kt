@@ -87,6 +87,22 @@ object Configurator {
                 else -> invalid(it)
             }
         }
+        ref.ifPresent<JSONString>("examplesValidationOption") {
+            generator.examplesValidationOption = when (it.value) {
+                "none" -> CodeGenerator.ValidationOption.NONE
+                "warn" -> CodeGenerator.ValidationOption.WARN
+                "block" -> CodeGenerator.ValidationOption.BLOCK
+                else -> invalid(it)
+            }
+        }
+        ref.ifPresent<JSONString>("defaultValidationOption") {
+            generator.defaultValidationOption = when (it.value) {
+                "none" -> CodeGenerator.ValidationOption.NONE
+                "warn" -> CodeGenerator.ValidationOption.WARN
+                "block" -> CodeGenerator.ValidationOption.BLOCK
+                else -> invalid(it)
+            }
+        }
         ref.ifPresent<JSONBoolean>("derivePackageFromStructure") {
             generator.derivePackageFromStructure = it.value
         }

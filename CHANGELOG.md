@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.104] - 2024-02-25
+### Changed
+- `CodeGenerator`, `Configurator`: added ability to validate examples and default values
+- `pom.xml`: updated dependency versions
+
 ## [0.103] - 2024-02-22
 ### Changed
 - `CodeGenerator`: fixed a bug in `patternProperties`

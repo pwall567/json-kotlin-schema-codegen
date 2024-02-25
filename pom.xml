@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.103</version>
+  <version>0.104</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.45</version>
+      <version>0.46</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>net.pwall.yaml</groupId>
       <artifactId>yaml-simple</artifactId>
-      <version>1.16</version>
+      <version>1.17</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.util</groupId>
@@ -108,8 +108,8 @@
     </dependency>
     <dependency>
       <groupId>net.pwall.log</groupId>
-      <artifactId>log-front</artifactId>
-      <version>5.2</version>
+      <artifactId>log-front-kotlin</artifactId>
+      <version>5.3</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
