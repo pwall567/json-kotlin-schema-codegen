@@ -18,11 +18,11 @@ class TestApFalsePatternObject(
 
     init {
         cg_map.entries.forEach { (key, value) ->
-            if (cg_regex0.matches(key))
+            if (cg_regex0.containsMatchIn(key))
                 require(value is PatternProperty) { "$key is not the correct type, expecting PatternProperty" }
         }
         cg_map.keys.forEach { key ->
-            if (!cg_regex0.matches(key))
+            if (!cg_regex0.containsMatchIn(key))
                 throw IllegalArgumentException("Unexpected field $key")
         }
     }

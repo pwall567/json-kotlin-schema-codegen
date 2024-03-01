@@ -55,19 +55,19 @@
 }}{{#last}}{{#nullable}}{{&indent}}        }
 {{/nullable}}{{&indent}}    }
 {{/last}}{{/first}}{{/validations}}{{/indent.increment}}{{/arrayItems}}{{/ARRAY_ITEMS}}{{#PATTERN_PROPERTIES}}{{&indent}}        cg_map.entries.forEach { (key, value) ->
-{{&indent}}            if ({{#value}}{{&third.staticName}}.matches(key)){{#second}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/second}}
+{{&indent}}            if ({{#value}}{{&third.staticName}}.containsMatchIn(key)){{#second}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/second}}
 {{&indent}}                require({{#second}}{{>additional_props_type_check}}{{/second}}) { "$key is not the correct type, expecting {{#second}}{{>type}}{{/second}}" }
 {{#second}}{{#validations}}{{#indent.increment}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{/indent.increment}}{{#last}}            }
 {{/last}}{{/validations}}{{/second}}{{/value}}        }
 {{/PATTERN_PROPERTIES}}{{#ADDITIONAL_PROPERTIES}}{{&indent}}        cg_map.entries.forEach { (key, value) ->
-{{#properties}}{{#first}}{{&indent}}            if ({{/first}}{{^first}} && {{/first}}key != "{{&kotlinName}}"{{#last}}{{#patternProperties}} && !{{&third.staticName}}.matches(key){{/patternProperties}}){{#value}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/value}}
-    {{/last}}{{/properties}}{{^properties}}{{#patternProperties}}{{#first}}{{&indent}}            if ({{/first}}{{^first}} && {{/first}}!{{&third.staticName}}.matches(key){{/patternProperties}})){{#value}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/value}}
+{{#properties}}{{#first}}{{&indent}}            if ({{/first}}{{^first}} && {{/first}}key != "{{&kotlinName}}"{{#last}}{{#patternProperties}} && !{{&third.staticName}}.containsMatchIn(key){{/patternProperties}}){{#value}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/value}}
+    {{/last}}{{/properties}}{{^properties}}{{#patternProperties}}{{#first}}{{&indent}}            if ({{/first}}{{^first}} && {{/first}}!{{&third.staticName}}.containsMatchIn(key){{/patternProperties}})){{#value}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/value}}
 {{/properties}}{{&indent}}            require({{#value}}{{>additional_props_type_check}}{{/value}}) { "$key is not the correct type, expecting {{#value}}{{>type}}{{/value}}" }
 {{#value}}{{#validations}}{{#indent.increment}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{/indent.increment}}{{#last}}            }
 {{/last}}{{/validations}}{{/value}}{{&indent}}        }
 {{/ADDITIONAL_PROPERTIES}}{{#UNEXPECTED_PROPERTIES}}{{&indent}}        cg_map.keys.forEach { key ->
-{{#hasProperties}}{{&indent}}            if ({{#properties}}{{^first}} && {{/first}}key != "{{&kotlinName}}"{{/properties}}{{#patternProperties}} && !{{&third.staticName}}.matches(key){{/patternProperties}})
-    {{/hasProperties}}{{^hasProperties}}{{#hasPatternProperties}}{{&indent}}            if ({{#patternProperties}}{{^first}} && {{/first}}!{{&third.staticName}}.matches(key){{/patternProperties}})
+{{#hasProperties}}{{&indent}}            if ({{#properties}}{{^first}} && {{/first}}key != "{{&kotlinName}}"{{/properties}}{{#patternProperties}} && !{{&third.staticName}}.containsMatchIn(key){{/patternProperties}})
+    {{/hasProperties}}{{^hasProperties}}{{#hasPatternProperties}}{{&indent}}            if ({{#patternProperties}}{{^first}} && {{/first}}!{{&third.staticName}}.containsMatchIn(key){{/patternProperties}})
     {{/hasPatternProperties}}{{/hasProperties}}{{&indent}}            throw IllegalArgumentException("Unexpected field $key")
 {{&indent}}        }
 {{/UNEXPECTED_PROPERTIES}}{{#MINIMUM_PROPERTIES}}{{#value}}{{#isOne}}{{&indent}}        require(cg_map.isNotEmpty()) { "Number of properties < minimum 1" }

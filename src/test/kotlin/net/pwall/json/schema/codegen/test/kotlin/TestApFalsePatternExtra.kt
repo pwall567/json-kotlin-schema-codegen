@@ -23,13 +23,13 @@ class TestApFalsePatternExtra(
             require(extra.isNotEmpty()) { "extra length < minimum 1 - ${extra.length}" }
         }
         cg_map.entries.forEach { (key, value) ->
-            if (cg_regex0.matches(key)) {
+            if (cg_regex0.containsMatchIn(key)) {
                 require(value is Int) { "$key is not the correct type, expecting Int" }
                 require(value in 0..99) { "$key not in range 0..99 - $value" }
             }
         }
         cg_map.keys.forEach { key ->
-            if (key != "extra" && !cg_regex0.matches(key))
+            if (key != "extra" && !cg_regex0.containsMatchIn(key))
                 throw IllegalArgumentException("Unexpected field $key")
         }
     }

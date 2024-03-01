@@ -46,7 +46,7 @@ object Configurator {
     fun configure(generator: CodeGenerator, ref: JSONReference, uri: URI? = null) {
         // TODO validate against schema?
         val extensionValidators = mutableMapOf<String, MutableMap<String, CustomValidator>>()
-        val nonStandardFormats = mutableMapOf<String, CustomValidator>()
+        val nonStandardFormats = mutableMapOf<String, CustomFormat>()
         val parser = generator.schemaParser
         if (ref.value !is JSONMapping<*>)
             fatal("Config must be object")
@@ -89,18 +89,40 @@ object Configurator {
         }
         ref.ifPresent<JSONString>("examplesValidationOption") {
             generator.examplesValidationOption = when (it.value) {
-                "none" -> CodeGenerator.ValidationOption.NONE
-                "warn" -> CodeGenerator.ValidationOption.WARN
-                "block" -> CodeGenerator.ValidationOption.BLOCK
-                else -> invalid(it)
+                "none" -> {
+                    parser.options.validateExamples = false
+                    CodeGenerator.ValidationOption.NONE
+                }
+                "warn" -> {
+                    parser.options.validateExamples = true
+                    CodeGenerator.ValidationOption.WARN
+                }
+                "block" -> {
+                    parser.options.validateExamples = true
+                    CodeGenerator.ValidationOption.BLOCK
+                }
+                else -> {
+                    invalid(it)
+                }
             }
         }
         ref.ifPresent<JSONString>("defaultValidationOption") {
             generator.defaultValidationOption = when (it.value) {
-                "none" -> CodeGenerator.ValidationOption.NONE
-                "warn" -> CodeGenerator.ValidationOption.WARN
-                "block" -> CodeGenerator.ValidationOption.BLOCK
-                else -> invalid(it)
+                "none" -> {
+                    parser.options.validateDefault = false
+                    CodeGenerator.ValidationOption.NONE
+                }
+                "warn" -> {
+                    parser.options.validateDefault = true
+                    CodeGenerator.ValidationOption.WARN
+                }
+                "block" -> {
+                    CodeGenerator.ValidationOption.BLOCK
+                }
+                else -> {
+                    parser.options.validateDefault = true
+                    invalid(it)
+                }
             }
         }
         ref.ifPresent<JSONBoolean>("derivePackageFromStructure") {
@@ -114,7 +136,7 @@ object Configurator {
                     if (it.value !is JSONMapping<*>)
                         fatal("Config entry ${it.pointer} invalid entry")
                     extensionValidators.getOrPut(ext.current) { mutableMapOf() }[it.current] =
-                        CustomValidator(uri, it.pointer, parser.parseSchema(ref.base, it, null))
+                            CustomValidator(uri, it.pointer, it.current, parser.parseSchema(ref.base, it, uri))
                 }
             }
         }
@@ -123,7 +145,7 @@ object Configurator {
                 if (it.value !is JSONMapping<*>)
                     fatal("Config entry ${it.pointer} invalid entry")
                 nonStandardFormats[it.current] =
-                        CustomValidator(uri, it.pointer, parser.parseSchema(ref.base, it, null))
+                        CustomFormat(uri, it.pointer, it.current, parser.parseSchema(ref.base, it, uri))
             }
         }
         ref.ifPresent<JSONMapping<*>>("customClasses") {
@@ -286,7 +308,7 @@ object Configurator {
         fatal("Config entry $pointer invalid - ${value.displayValue()}")
     }
 
-    class CustomValidator(uri: URI?, location: JSONPointer, val schema: JSONSchema) :
+    class CustomValidator(uri: URI?, location: JSONPointer, val name: String, val schema: JSONSchema) :
             JSONSchema.Validator(uri, location) {
 
         override fun getErrorEntry(
@@ -294,12 +316,37 @@ object Configurator {
             json: JSONValue?,
             instanceLocation: JSONPointer,
         ): BasicErrorEntry? {
-            fatal("Config error - validation for code generation only")
+            if (schema is Validator)
+                return schema.getErrorEntry(relativeLocation.child(name), json, instanceLocation)
+            val basicOutput = schema.validateBasic(relativeLocation.child(name), json, instanceLocation)
+            return basicOutput.errors?.let {
+                it.firstOrNull { e -> e.error != subSchemaErrorMessage }
+            }
         }
 
-        override fun validate(json: JSONValue?, instanceLocation: JSONPointer): Boolean {
-            fatal("Config error - validation for code generation only")
+        override fun validate(json: JSONValue?, instanceLocation: JSONPointer): Boolean =
+            schema.validate(json, instanceLocation)
+
+    }
+
+    class CustomFormat(uri: URI?, location: JSONPointer, val name: String, val schema: JSONSchema) :
+            JSONSchema.Validator(uri, location) {
+
+        override fun getErrorEntry(
+            relativeLocation: JSONPointer,
+            json: JSONValue?,
+            instanceLocation: JSONPointer,
+        ): BasicErrorEntry? {
+            if (schema is Validator)
+                return schema.getErrorEntry(relativeLocation, json, instanceLocation)
+            val basicOutput = schema.validateBasic(relativeLocation, json, instanceLocation)
+            return basicOutput.errors?.let {
+                it.firstOrNull { e -> e.error != subSchemaErrorMessage }
+            }
         }
+
+        override fun validate(json: JSONValue?, instanceLocation: JSONPointer): Boolean =
+            schema.validate(json, instanceLocation)
 
     }
 

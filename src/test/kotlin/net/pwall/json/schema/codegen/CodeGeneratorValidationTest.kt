@@ -58,4 +58,24 @@ class CodeGeneratorValidationTest {
         }
     }
 
+    @Test fun `should warn on validation errors involving nonstandard format`() {
+        LogList().use { logList ->
+            val input = File("src/test/resources/test-validation-errors-format.schema.json")
+            val configFile = File("src/test/resources/config/nonstandard-format-config.json")
+            val outputDetails = OutputDetails(TargetFileName("TestValidationErrorsFormat", "kt", packageDirs))
+            CodeGenerator().apply {
+                examplesValidationOption = CodeGenerator.ValidationOption.BLOCK
+                configure(configFile)
+                basePackageName = packageName
+                outputResolver = outputCapture(outputDetails)
+                assertFailsWith<JSONSchemaException> { generate(input) }.let {
+                    expect("Validation errors encountered") { it.message }
+                }
+            }
+            val expectedError = "http://pwall.net/test-validation-errors-format#/format/money/pattern: " +
+                    "String doesn't match pattern ^[0-9]{1,16}\\.[0-9]{2}\$ - \"wrong\", at #/examples/1"
+            logList.assertHasWarning(expectedError)
+        }
+    }
+
 }

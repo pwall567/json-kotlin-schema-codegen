@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0,105] - 2024-03-01
+### Changed
+- templates: switch from `matches` to `containsMatchIn` for `Regex` pattern matching in `patternProperties`
+- `CodeGenerator`: updated for changes to default and examples validation
+- `pom.xml`: updated dependency versions
+
 ## [0.104] - 2024-02-25
 ### Changed
 - `CodeGenerator`, `Configurator`: added ability to validate examples and default values

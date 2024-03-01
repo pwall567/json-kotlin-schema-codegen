@@ -23,7 +23,7 @@ class TestApTrueExtraPattern(
             require(extra.isNotEmpty()) { "extra length < minimum 1 - ${extra.length}" }
         }
         cg_map.entries.forEach { (key, value) ->
-            if (cg_regex0.matches(key))
+            if (cg_regex0.containsMatchIn(key))
                 require(value is Long || value is Int) { "$key is not the correct type, expecting Long" }
         }
     }

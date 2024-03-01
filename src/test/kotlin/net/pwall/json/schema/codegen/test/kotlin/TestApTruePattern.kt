@@ -18,7 +18,7 @@ class TestApTruePattern(
 
     init {
         cg_map.entries.forEach { (key, value) ->
-            if (cg_regex0.matches(key))
+            if (cg_regex0.containsMatchIn(key))
                 require(value is String) { "$key is not the correct type, expecting String" }
         }
     }

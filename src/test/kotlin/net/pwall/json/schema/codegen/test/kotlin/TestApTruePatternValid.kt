@@ -18,7 +18,7 @@ class TestApTruePatternValid(
 
     init {
         cg_map.entries.forEach { (key, value) ->
-            if (cg_regex0.matches(key)) {
+            if (cg_regex0.containsMatchIn(key)) {
                 require(value is Int) { "$key is not the correct type, expecting Int" }
                 require(value in 0..99) { "$key not in range 0..99 - $value" }
             }

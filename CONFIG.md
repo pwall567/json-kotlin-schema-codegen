@@ -148,7 +148,7 @@ The code generator allows for the optional validation of `examples` and `default
 For example:
 ```json
 {
-   "examplesValidationOption": "none",
+   "examplesValidationOption": "warn",
    "defaultValidationOption": "block"
 }
 ```

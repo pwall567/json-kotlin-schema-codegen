@@ -361,24 +361,34 @@ class CodeGenerator(
     fun addTarget(uri: URI, packageNames: List<String> = emptyList()) {
         val json = schemaParser.jsonReader.readJSON(uri)
         val schema = schemaParser.parse(uri)
-        checkValidationErrors()
+        checkValidationErrors(uri)
         addTarget(packageNames, schema, uri.toString(), json)
     }
 
-    private fun checkValidationErrors() {
-        if (defaultValidationOption != ValidationOption.NONE || examplesValidationOption != ValidationOption.NONE) {
-            for (validationError in schemaParser.parserValidationErrors) {
+    private fun checkValidationErrors(identifier: Any) {
+        val defaultValidationErrors = schemaParser.defaultValidationErrors
+        if (defaultValidationOption != ValidationOption.NONE) {
+            for (validationError in defaultValidationErrors) {
                 validationError.errors?.forEach {
                     if (it.error != JSONSchema.subSchemaErrorMessage)
-                        log.warn { "${it.absoluteKeywordLocation}: ${it.error}, at ${it.instanceLocation}" }
+                        log.warn { "$identifier${it.keywordLocation}: ${it.error}, at ${it.instanceLocation}" }
                 }
             }
-            if (schemaParser.parserValidationErrors.isNotEmpty() &&
-                (defaultValidationOption == ValidationOption.BLOCK ||
-                        examplesValidationOption == ValidationOption.BLOCK))
-                fatal("Validation errors encountered")
-            schemaParser.parserValidationErrors.clear()
         }
+        val examplesValidationErrors = schemaParser.examplesValidationErrors
+        if (examplesValidationOption != ValidationOption.NONE) {
+            for (validationError in examplesValidationErrors) {
+                validationError.errors?.forEach {
+                    if (it.error != JSONSchema.subSchemaErrorMessage)
+                        log.warn { "$identifier${it.keywordLocation}: ${it.error}, at ${it.instanceLocation}" }
+                }
+            }
+        }
+        if (defaultValidationOption == ValidationOption.BLOCK && defaultValidationErrors.isNotEmpty() ||
+                examplesValidationOption == ValidationOption.BLOCK && examplesValidationErrors.isNotEmpty())
+            fatal("Validation errors encountered")
+        defaultValidationErrors.clear()
+        examplesValidationErrors.clear()
     }
 
     /**
@@ -536,7 +546,7 @@ class CodeGenerator(
             inputFile.isFile -> {
                 val json = schemaParser.jsonReader.readJSON(inputFile)
                 val schema = schemaParser.parse(inputFile)
-                checkValidationErrors()
+                checkValidationErrors(schema.uri ?: inputFile)
                 addTarget(packageNames, schema, inputFile.toString(), json)
             }
             inputFile.isDirectory -> {
@@ -567,7 +577,7 @@ class CodeGenerator(
             Files.isRegularFile(inputPath) -> {
                 val json = schemaParser.jsonReader.readJSON(inputPath)
                 val schema = schemaParser.parse(inputPath)
-                checkValidationErrors()
+                checkValidationErrors(schema.uri ?: inputPath)
                 addTarget(packageNames, schema, inputPath.toString(), json)
             }
             Files.isDirectory(inputPath) -> {
@@ -849,7 +859,7 @@ class CodeGenerator(
             if (filter(name))
                 addTarget(
                     schema = schemaParser.parseSchema(base, pointer.child(name), documentURI).also {
-                        checkValidationErrors()
+                        checkValidationErrors(uri)
                     },
                     className = name,
                     subDirectories = subDirectories,
@@ -1929,6 +1939,7 @@ class CodeGenerator(
             is UniqueItemsValidator -> processUniqueItemsValidator(constraints)
             is DelegatingValidator -> processValidator(validator.validator, constraints)
             is Configurator.CustomValidator -> processSchema(validator.schema, constraints)
+            is Configurator.CustomFormat -> processSchema(validator.schema, constraints)
         }
     }
 
