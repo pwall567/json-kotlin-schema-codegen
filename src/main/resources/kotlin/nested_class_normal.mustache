@@ -22,6 +22,5 @@
 {{>component}}
 
 {{/hasBaseClassWithProperties}}    }{{/validationsOrBaseClassWithPropertiesPresent}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{#isString}}    enum class {{&className}} {
-{{#enumValues}}        {{&.}}{{^last}},{{/last}}
-{{/enumValues}}    }{{/isString}}
+}}{{^numberOfProperties}}open class {{&className}}{{/numberOfProperties}}{{/isObject}}{{!
+}}{{#isString}}{{>enum_body}}{{/isString}}

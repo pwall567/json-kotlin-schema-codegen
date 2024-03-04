@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [0,106] - 2024-03-04
 ### Changed
 - `CodeGenerator`: extended `classNames` configuration option to cover nested classes
+- `CodeGenerator`, `Configurator`, `Constraints`, templates: added extensible enum (experimental)
 
 ## [0,105] - 2024-03-01
 ### Changed

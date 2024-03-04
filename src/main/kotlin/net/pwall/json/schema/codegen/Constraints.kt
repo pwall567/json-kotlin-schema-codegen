@@ -154,6 +154,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
 
     var enumValues: JSONSequence<*>? = null
     var constValue: JSONValue? = null
+    var extensibleEnum: Boolean = false
 
     @Suppress("MemberVisibilityCanBePrivate")
     val isSystemClass: Boolean

@@ -38,6 +38,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import net.pwall.json.JSON
+import net.pwall.json.JSONArray
 import net.pwall.json.JSONBoolean
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONDouble
@@ -138,6 +139,8 @@ class CodeGenerator(
     var examplesValidationOption = ValidationOption.NONE
 
     var defaultValidationOption = ValidationOption.NONE
+
+    var extensibleEnumKeyword: String? = null
 
     var commentTemplate: Template? = null
 
@@ -1897,6 +1900,20 @@ class CodeGenerator(
             is RefSchema -> processSchema(subSchema.target, constraints)
             is RequiredSchema -> subSchema.properties.forEach {
                     if (it !in constraints.required) constraints.required.add(it) }
+            is ExtensionSchema -> processExtensionSchema(subSchema, constraints)
+        }
+    }
+
+    private fun processExtensionSchema(extensionSchema: ExtensionSchema, constraints: Constraints) {
+        if (extensionSchema.name == extensibleEnumKeyword) {
+            val enumValues = extensionSchema.value
+            if (enumValues !is List<*>)
+                fatal("Extensible enum content is not array - ${extensionSchema.location}")
+            val enumJSONArray = JSONArray(enumValues.map { JSONString(it.toString()) })
+            if (constraints.enumValues != null && constraints.enumValues != enumJSONArray)
+                fatal("Duplicate enum - ${extensionSchema.location}")
+            constraints.enumValues = enumJSONArray
+            constraints.extensibleEnum = true
         }
     }
 

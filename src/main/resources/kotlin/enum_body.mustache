@@ -1,0 +1,34 @@
+{{#constraints}}{{#schema}}{{#description}}{{&indent}}/**
+{{&indent}} * {{&description}}
+{{&indent}} */
+{{/description}}{{/schema}}{{^extensibleEnum}}{{&indent}}enum class {{&className}} {
+{{#enumValues}}{{&indent}}    {{&.}}{{^last}},{{/last}}
+{{/enumValues}}{{&indent}}{{&closeBrace}}{{/extensibleEnum}}{{#extensibleEnum}}{{&indent}}@JvmInline
+{{&indent}}value class {{&className}}(val name: String) : CharSequence {
+
+{{&indent}}    override fun toString(): String = name
+
+{{&indent}}    override val length: Int
+{{&indent}}        get() = name.length
+
+{{&indent}}    override fun get(index: Int): Char = name[index]
+
+{{&indent}}    override fun subSequence(startIndex: Int, endIndex: Int): {{&className}} =
+{{&indent}}        valueOf(name.subSequence(startIndex, endIndex).toString())
+
+{{&indent}}    companion object {
+
+{{#enumValues}}{{&indent}}        val {{&.}} = {{&className}}("{{&.}}")
+{{/enumValues}}
+{{&indent}}        fun valueOf(name: String): {{&className}} = when (name) {
+{{#enumValues}}{{&indent}}            "{{&.}}" -> {{&.}}
+{{/enumValues}}{{&indent}}            else -> {{&className}}(name)
+{{&indent}}        }
+
+{{&indent}}        val entries: List<{{&className}}> = listOf(
+{{#enumValues}}{{&indent}}            {{&.}}{{^last}},{{/last}}
+{{/enumValues}}{{&indent}}        )
+
+{{&indent}}    }
+
+{{&indent}}{{&closeBrace}}{{/extensibleEnum}}{{/constraints}}

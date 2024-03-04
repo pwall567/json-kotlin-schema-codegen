@@ -68,6 +68,10 @@
     "derivePackageFromStructure": {
       "type": "boolean"
     },
+    "extensibleEnumKeyword": {
+      "type": "string",
+      "pattern": "^x(-[A-Za-z0-9]+)+$"
+    },
     "extensionValidations": {
       "type": "object",
       "additionalProperties": {
@@ -86,7 +90,7 @@
     "classNames": {
       "type": "object",
       "patternProperties": {
-        "^[a-z]+:": {
+        "^[a-zA-Z0-9%:./_~-]+:$": {
           "$ref": "#/$defs/QualifiedClassName"
         }
       }

@@ -1,0 +1,5 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "net.pwall.json.schema.codegen.test.kotlin",
+  "extensibleEnumKeyword": "x-extensible-enum"
+}

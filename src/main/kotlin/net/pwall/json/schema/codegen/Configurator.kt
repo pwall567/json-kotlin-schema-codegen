@@ -43,6 +43,8 @@ import net.pwall.mustache.Template
 
 object Configurator {
 
+    val extensionKeywordPattern = Regex("^x(-[A-Za-z0-9]+)+$")
+
     fun configure(generator: CodeGenerator, ref: JSONReference, uri: URI? = null) {
         // TODO validate against schema?
         val extensionValidators = mutableMapOf<String, MutableMap<String, CustomValidator>>()
@@ -123,6 +125,13 @@ object Configurator {
                     parser.options.validateDefault = true
                     invalid(it)
                 }
+            }
+        }
+        ref.ifPresent<JSONString>("extensibleEnumKeyword") {
+            it.value.let { keyword ->
+                if (!extensionKeywordPattern.containsMatchIn(keyword))
+                    fatal("Illegal extension keyword at $pointer")
+                generator.extensibleEnumKeyword = keyword
             }
         }
         ref.ifPresent<JSONBoolean>("derivePackageFromStructure") {
