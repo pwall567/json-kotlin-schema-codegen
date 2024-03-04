@@ -231,6 +231,20 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApFalsePatternObject")) { outputDetails.output() }
     }
 
+    @Test fun `should use supplied name for nested class`() {
+        val input = File("src/test/resources/test-ap-false-pattern-object.schema.json")
+        val config = File("src/test/resources/config/class-name-nested-config.json")
+        val outputDetails = OutputDetails(TargetFileName("TestClassNaming", "kt", packageDirs))
+        CodeGenerator().apply {
+            configure(config, config.toURI())
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestClassNaming")) { outputDetails.output() }
+    }
+
     @Test fun `should generate code for aP true with pattern`() {
         val input = File("src/test/resources/test-ap-true-pattern.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestApTruePattern", "kt", packageDirs))

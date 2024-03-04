@@ -11,6 +11,16 @@ Code generation for JSON Schema (Draft 07).
 
 ## NEW
 
+New in version 0.106 &ndash; the `classNames` configuration option has been extended to allow the configuration of
+generated nested class names.
+See [`classNames`](CONFIG.md#classnames) in the [Configuration Guide](CONFIG.md) for more details.
+
+New in version 0.105 &ndash; the generator will optionally validate `default` and `examples` entries against the schema
+in which they appear.
+See the
+[`examplesValidationOption` and `defaultValidationOption`](CONFIG.md#examplesvalidationoption-and-defaultvalidationoption)
+section in the [Configuration Guide](CONFIG.md).
+
 New in version 0.100 &ndash; the generator will produce classes that handle `additionalProperties` and
 `patternProperties`.
 See the [`additionalProperties` and `patternProperties`](PROPERTIES.md) guide for more details.
@@ -324,25 +334,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.105, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.106, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.105</version>
+      <version>0.106</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.105'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.106'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.105")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.106")
 ```
 
 Peter Wall
 
-2024-03-01
+2024-03-04

@@ -196,6 +196,8 @@ The naming option may be specified by:
 ```
 The values allowed are `refSchema` (this is the default) or `property`.
 
+For greater flexibility in naming nested classes, see the [`classNames`](#classnames) section below.
+
 
 ## `derivePackageFromStructure`
 
@@ -404,6 +406,7 @@ schema files that are not open to modification, for example schema files that ar
 constructor for the custom class, with the default value as a single parameter.
 If no such constructor exists, default values should be avoided.
 
+
 ## `classNames`
 
 The code generator will attempt to choose names for generated classes based on the `$id` of the schema.
@@ -420,6 +423,56 @@ This will cause the schema definition with the specified `$id` to be generated a
 Note that in this case, the class name is **not** a fully-qualified class name &ndash; the package name used will be the
 one specified with the [`packageName`](#packagename) configuration option (possibly extended by the directory structure
 &ndash; see the [`derivePackageFromStructure`](#derivepackagefromstructure) option).
+
+From version 0.106 onward, this has been extended to allow the naming of nested classes.
+This requires the specification of the full URI, including the &ldquo;fragment&rdquo; containing the path to the schema.
+For example, given this schema:
+```json
+{
+   "$schema": "http://json-schema.org/draft/2019-09/schema",
+   "$id": "http://example.com/test-9",
+   "type": "object",
+   "properties": {
+      "name": {
+         "type": "string",
+         "minLength": 1
+      },
+      "addr": {
+         "type": "object",
+         "properties": {
+            "line1": {
+               "type": "string"
+            },
+            "line2": {
+               "type": "string"
+            }
+         }
+      }
+   }
+}
+```
+Without additional configuration, the property `addr` would be generated as a nested class named `Addr`.
+To name the nested class `Address`, add the following to the configuration:
+```json
+{
+   "classNames": {
+      "http://example.com/test-9#/properties/addr": "Address"
+   }
+}
+```
+Note that the full URI of the nested class is the URI of the enclosing schema, followed by `#` and the JSON path to the
+nested schema.
+
+When the path contains special characters, for example when specifying a `patternProperties` schema, the special
+characters must be escaped using the URI encoding scheme.
+For example:
+```json
+{
+   "classNames": {
+      "http://example.com/test-8#/patternProperties/%5e%5bA-Z%5d%7b3%7d%24": "Currency"
+   }
+}
+```
 
 
 ## `annotations`

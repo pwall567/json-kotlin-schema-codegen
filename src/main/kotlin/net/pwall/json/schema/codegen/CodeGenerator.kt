@@ -56,6 +56,7 @@ import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.Constraints.Companion.asLong
 import net.pwall.json.schema.parser.Parser
+import net.pwall.json.schema.parser.Parser.Companion.dropFragment
 import net.pwall.json.schema.subschema.AdditionalPropertiesSchema
 import net.pwall.json.schema.subschema.AllOfSchema
 import net.pwall.json.schema.subschema.CombinationSchema
@@ -1242,7 +1243,10 @@ class CodeGenerator(
         defaultName: () -> String,
     ) {
         if (!findRefClass(constraints, target)) {
-            val nestedClassName = when (nestedClassNameOption) {
+            val nestedClassName = refConstraints.uri?.let { uri ->
+                val location = refConstraints.schema.location.toString()
+                classNameMapping.find { it.first.dropFragment() == uri && it.first.fragment == location }?.second
+            } ?: when (nestedClassNameOption) {
                 NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA ->
                     refConstraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()

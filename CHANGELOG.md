@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0,106] - 2024-03-04
+### Changed
+- `CodeGenerator`: extended `classNames` configuration option to cover nested classes
+
 ## [0,105] - 2024-03-01
 ### Changed
 - templates: switch from `matches` to `containsMatchIn` for `Regex` pattern matching in `patternProperties`

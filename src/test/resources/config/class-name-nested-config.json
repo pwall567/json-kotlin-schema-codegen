@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../main/resources/schema/codegen-config.schema.json",
+  "packageName": "com.example",
+  "classNames": {
+    "http://pwall.net/test-ap-false-pattern-object": "TestClassNaming",
+    "http://pwall.net/test-ap-false-pattern-object#/patternProperties/%5e%5bA-Z%5d%7b3%7d%24": "NestedClass"
+  }
+}
