@@ -1,4 +1,4 @@
-# `additionalProperties` and `paternProperties`
+# `additionalProperties` and `patternProperties`
 
 ## Background
 
