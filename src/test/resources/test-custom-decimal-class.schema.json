@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-custom-decimal-class",
+  "title": "TestCustomDecimalClass",
+  "description": "Test custom decimal class.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "bbb": {
+      "type": "number",
+      "maximum": 1.0
+    }
+  },
+  "required": [
+    "aaa",
+    "bbb"
+  ]
+}

@@ -231,13 +231,22 @@ class CodeGenerator(
         fieldAnnotations.add(ClassName.of(className) to template)
     }
 
+    var decimalClass = ClassName.of(BigDecimal::class)
+
     private val generatorContext = Context(GeneratorContext).child(object {
+
         @Suppress("unused")
         val additionalPropertiesOption: AdditionalPropertiesOption
             get() = this@CodeGenerator.additionalPropertiesOption
+
         @Suppress("unused")
         val nestedClassName: NestedClassNameOption
             get() = nestedClassNameOption
+
+        @Suppress("unused")
+        val decimalClass: ClassId
+            get() = this@CodeGenerator.decimalClass
+
     })
 
     fun setTemplateDirectory(directory: File, suffix: String = "mustache") {

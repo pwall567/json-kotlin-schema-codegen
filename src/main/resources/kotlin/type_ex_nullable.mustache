@@ -1,6 +1,6 @@
 {{! is it a system class? (UUID etc.)
 }}{{#isSystemClass}}{{#systemClass}}{{! is it a DECIMAL?
-}}{{#DECIMAL}}BigDecimal{{/DECIMAL}}{{! is it a DATE_TIME?
+}}{{#DECIMAL}}{{&decimalClass.className}}{{/DECIMAL}}{{! is it a DATE_TIME?
 }}{{#DATE_TIME}}OffsetDateTime{{/DATE_TIME}}{{! is it a DATE?
 }}{{#DATE}}LocalDate{{/DATE}}{{! is it a TIME?
 }}{{#TIME}}OffsetTime{{/TIME}}{{! is it a DURATION?
@@ -11,7 +11,7 @@
 }}{{#isString}}String{{/isString}}{{^isString}}{{! is it an int?
 }}{{#isInt}}Int{{/isInt}}{{^isInt}}{{! is it a long?
 }}{{#isLong}}Long{{/isLong}}{{^isLong}}{{! is it a decimal?
-}}{{#isDecimal}}BigDecimal{{/isDecimal}}{{^isDecimal}}{{! is it a boolean?
+}}{{#isDecimal}}{{&decimalClass.className}}{{/isDecimal}}{{^isDecimal}}{{! is it a boolean?
 }}{{#isBoolean}}Boolean{{/isBoolean}}{{^isBoolean}}{{! is it an array?
 }}{{#isArray}}{{>list_or_set}}<{{#arrayItems}}{{>type}}{{/arrayItems}}>{{/isArray}}{{^isArray}}{{! default Any
 }}Any{{/isArray}}{{/isBoolean}}{{/isDecimal}}{{/isLong}}{{/isInt}}{{/isString}}{{/isLocalType}}{{/isSystemClass}}

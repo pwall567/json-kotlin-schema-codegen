@@ -188,6 +188,9 @@ object Configurator {
                     fatal("Config entry ${it.pointer} unrecognised mapping type")
             }
         }
+        ref.ifPresent<JSONString>("decimalClassName") {
+            generator.decimalClass = ClassName.of(it.value)
+        }
         ref.ifPresent<JSONMapping<*>>("classNames") {
             forEachKey {
                 (it.value as? JSONString)?.let { s ->

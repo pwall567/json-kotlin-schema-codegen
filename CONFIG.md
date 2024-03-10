@@ -42,6 +42,7 @@ The configuration file includes the following:
 - [`extensionValidations`](#extensionvalidations)
 - [`nonStandardFormat`](#nonstandardformat)
 - [`customClasses`](#customclasses)
+- [`decimalClassName`](#decimalclassname)
 - [`classNames`](#classnames)
 - [`annotations`](#annotations)
 - [`companionObject`](#companionobject)
@@ -406,6 +407,26 @@ schema files that are not open to modification, for example schema files that ar
 constructor for the custom class, with the default value as a single parameter.
 If no such constructor exists, default values should be avoided.
 
+
+## `decimalClassName`
+
+For non-integer decimal number properties. the code generator will use the class `java.math.BigDecimal`.
+When generating code for use in a Kotlin Multi-Platform environment this can be a problem, since this class exists only
+in the JVM environment.
+
+The `decimalClassName` option allows the name of a substitute decimal class to be specified.
+There are a number of constraints on a class used for this purpose:
+1. It must have a constructor taking a `String` which may hold any valid JSON number value.
+2. It must implement `Comparable<itself>`.
+3. It must have the constant values `ZERO` and `ONE`.
+
+For example:
+```json
+{
+   "decimalClassName": "com.example.decimal.Decimal"
+}
+```
+Note that the fully-qualified class name must be specified.
 
 ## `classNames`
 

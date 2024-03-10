@@ -1,4 +1,4 @@
 {{! is it a long?
 }}{{#isLong}}value is Long || value is Int{{/isLong}}{{^isLong}}{{! is it a decimal?
-}}{{#isDecimal}}value is BigDecimal || value is Long || value is Int{{/isDecimal}}{{^isDecimal}}{{!
+}}{{#isDecimal}}value is {{&decimalClass.className}} || value is Long || value is Int{{/isDecimal}}{{^isDecimal}}{{!
 }}value is {{>type}}{{/isDecimal}}{{/isLong}}

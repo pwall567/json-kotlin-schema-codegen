@@ -87,6 +87,9 @@
         "$ref": "https://json-schema.org/draft/2019-09/meta/applicator"
       }
     },
+    "decimalClassName": {
+      "$ref": "#/$defs/QualifiedClassName"
+    },
     "classNames": {
       "type": "object",
       "patternProperties": {

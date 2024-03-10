@@ -1,8 +1,8 @@
 /*
- * @(#) ClassName.kt
+ * @(#) TestDecimal.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021, 2022, 2024 Peter Wall
+ * Copyright (c) 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,19 @@
  * SOFTWARE.
  */
 
-package net.pwall.json.schema.codegen
+package net.pwall.json.schema.codegen.test.kotlin.decimal
 
-import kotlin.reflect.KClass
+import java.math.BigDecimal
 
-data class ClassName(override val className: String, override val packageName: String? = null) : ClassId {
+class DecimalClass(val string: String) : Comparable<DecimalClass> {
+
+    val value = BigDecimal(string)
+
+    override fun compareTo(other: DecimalClass): Int = value.compareTo(other.value)
 
     companion object {
-
-        fun of(name: String): ClassName {
-            val i = name.lastIndexOf('.')
-            return if (i < 0) ClassName(name) else ClassName(name.substring(i + 1), name.substring(0, i))
-        }
-
-        fun of(kotlinClass: KClass<*>): ClassName =
-            of(kotlinClass.qualifiedName ?: throw IllegalArgumentException("Can't get name of class"))
-
+        val ZERO = DecimalClass("0")
+        val ONE = DecimalClass("1")
     }
 
 }
