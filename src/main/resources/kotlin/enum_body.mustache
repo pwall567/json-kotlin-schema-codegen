@@ -1,7 +1,4 @@
-{{#constraints}}{{#schema}}{{#description}}{{&indent}}/**
-{{&indent}} * {{&description}}
-{{&indent}} */
-{{/description}}{{/schema}}{{^extensibleEnum}}{{&indent}}enum class {{&className}} {
+{{#constraints}}{{^extensibleEnum}}{{&indent}}enum class {{&className}} {
 {{#enumValues}}{{&indent}}    {{&.}}{{^last}},{{/last}}
 {{/enumValues}}{{&indent}}{{&closeBrace}}{{/extensibleEnum}}{{#extensibleEnum}}{{&indent}}@JvmInline
 {{&indent}}value class {{&className}}(val name: String) : CharSequence {

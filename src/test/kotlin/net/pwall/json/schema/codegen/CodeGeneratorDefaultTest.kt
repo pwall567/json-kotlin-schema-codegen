@@ -67,19 +67,33 @@ import com.example.util.TestString
  * Test default values.
  */
 data class TestDefault(
+    /** Integer value. */
     val aaa: Long = 0,
+    /** Nullable string value. */
     val bbb: String? = null,
+    /** String value. */
     val ccc: String = "CCC",
+    /** Array value. */
     val ddd: List<Long> = listOf(123, 456),
+    /** Date-time value. */
     val eee: OffsetDateTime = OffsetDateTime.parse("2021-09-22T10:26:09.123+10:00"),
+    /** Date value. */
     val fff: LocalDate = LocalDate.parse("2021-09-22"),
+    /** Time value. */
     val ggg: OffsetTime = OffsetTime.parse("10:27:26"),
+    /** URI value. */
     val hhh: URI = URI("http://json-schema.org/draft/2019-09/schema"),
+    /** UUID value. */
     val iii: UUID = UUID.fromString("9be4c4b6-1b37-11ec-b9d6-c71d791f2a0a"),
+    /** String value. */
     val jjj: TestString = TestString("xyz"),
+    /** Enum array value. */
     val kkk: List<Kkk> = listOf(Kkk.ABC)
 ) {
 
+    /**
+     * Enum value.
+     */
     enum class Kkk {
         ABC,
         XYZ

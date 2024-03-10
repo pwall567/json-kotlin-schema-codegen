@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0,107] - 2024-03-11
+### Changed
+- `CodeGenerator`, `Configurator`, `ClassName`, templates: added ability to configure class name for decimal values
+- templates: fixed bug in output of comments for nested enum classes
+
 ## [0,106] - 2024-03-04
 ### Changed
 - `CodeGenerator`: extended `classNames` configuration option to cover nested classes

@@ -1,3 +1,6 @@
 {{>header}}{{#packageName}}package {{&packageName}}
 
-{{/packageName}}{{>enum_body}}
+{{/packageName}}{{#constraints}}{{#schema}}{{#description}}{{&indent}}/**
+{{&indent}} * {{&description}}
+{{&indent}} */
+{{/description}}{{/schema}}{{/constraints}}{{>enum_body}}
