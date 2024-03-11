@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `CodeGenerator`, `Configurator`, `ClassName`, templates: added ability to configure class name for decimal values
 - templates: fixed bug in output of comments for nested enum classes
+- `pom.xml`: updated dependency version
 
 ## [0,106] - 2024-03-04
 ### Changed
