@@ -2,18 +2,26 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [0,107] - 2024-03-11
+## [0.108] - 2024-08-07
+### Added
+- `build.yml`, `deploy.yml`: converted project to GitHub Actions
+### Changed
+- `pom.xml`: updated Kotlin version to 1.9.24, updated dependency versions
+### Removed
+- `.travis.yml`
+
+## [0.107] - 2024-03-11
 ### Changed
 - `CodeGenerator`, `Configurator`, `ClassName`, templates: added ability to configure class name for decimal values
 - templates: fixed bug in output of comments for nested enum classes
 - `pom.xml`: updated dependency version
 
-## [0,106] - 2024-03-04
+## [0.106] - 2024-03-04
 ### Changed
 - `CodeGenerator`: extended `classNames` configuration option to cover nested classes
 - `CodeGenerator`, `Configurator`, `Constraints`, templates: added extensible enum (experimental)
 
-## [0,105] - 2024-03-01
+## [0.105] - 2024-03-01
 ### Changed
 - templates: switch from `matches` to `containsMatchIn` for `Regex` pattern matching in `patternProperties`
 - `CodeGenerator`: updated for changes to default and examples validation
