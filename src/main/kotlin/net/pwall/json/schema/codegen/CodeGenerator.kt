@@ -1256,7 +1256,9 @@ class CodeGenerator(
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
             }
             val nestedClass = target.addNestedClass(constraints, constraints.schema,
-                    Strings.capitalise(nestedClassName).replace(Regex("_+([a-z])")) { Strings.capitalise(it.groups[1]!!.value) })
+                Strings.capitalise(nestedClassName).replace(Regex("_+([a-z])")) {
+                    Strings.capitalise(it.groups[1]!!.value)
+                })
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
             constraints.localType = nestedClass
         }
