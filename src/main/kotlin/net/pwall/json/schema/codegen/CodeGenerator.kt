@@ -886,19 +886,11 @@ class CodeGenerator(
         val className = schema.uri?.let { uri ->
             classNameMapping.find { it.first == uri }?.second ?: run {
                 // TODO change to allow name ending with "/schema"?
-                val uriName = uri.toString().substringBefore('#').substringAfterLast(':').substringAfterLast('/')
-                val uriNameNoExtension = when {
-                    uriName.endsWith(".json", ignoreCase = true) -> uriName.dropLast(5)
-                    uriName.endsWith(".yaml", ignoreCase = true) -> uriName.dropLast(5)
-                    uriName.endsWith(".yml", ignoreCase = true) -> uriName.dropLast(4)
-                    else -> uriName
-                }
-                when {
-                    uriNameNoExtension.endsWith(".schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
-                    uriNameNoExtension.endsWith("-schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
-                    uriNameNoExtension.endsWith("_schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
-                    else -> uriNameNoExtension
-                }.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.sanitiseName()
+                uri.toString().substringBefore('#').substringAfterLast(':').substringAfterLast('/')
+                    .replace(
+                        Regex("""(?:[.-_]json)?(?:[.-_]schema)?(?:\.(?:json|ya?ml))?$""", RegexOption.IGNORE_CASE),
+                        ""
+                    ).split('-', '.', '_').joinToString(separator = "") { Strings.capitalise(it) }.sanitiseName()
             }
         } ?: "GeneratedClass$numTargets"
         addTarget(
@@ -1283,7 +1275,9 @@ class CodeGenerator(
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
             }
             val nestedClass = target.addNestedClass(constraints, constraints.schema,
-                    Strings.capitalise(nestedClassName))
+                Strings.capitalise(nestedClassName).replace(Regex("_+([a-z])")) {
+                    Strings.capitalise(it.groups[1]!!.value)
+                })
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, chain)
             constraints.localType = nestedClass
         }
