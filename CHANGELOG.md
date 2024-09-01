@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## Unreleased
+### Changed
+- `CodeGenerator`: added explicit types to public APIs
+
 ## [0.108] - 2024-08-07
 ### Added
 - `build.yml`, `deploy.yml`: converted project to GitHub Actions

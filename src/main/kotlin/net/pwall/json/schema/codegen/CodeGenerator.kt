@@ -154,7 +154,7 @@ class CodeGenerator(
         classNameMapping.add(uri to name)
     }
 
-    var schemaParser by DefaultValue {
+    var schemaParser: Parser by DefaultValue {
         Parser().apply {
             options.validateExamples = examplesValidationOption != ValidationOption.NONE
             options.validateDefault = defaultValidationOption != ValidationOption.NONE
@@ -162,8 +162,8 @@ class CodeGenerator(
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var templateParser by DefaultValue {
-        MustacheParser {name ->
+    var templateParser: MustacheParser by DefaultValue {
+        MustacheParser { name ->
             partialResolver(name)
         }
     }
@@ -174,7 +174,7 @@ class CodeGenerator(
         fatal("Can't locate template partial $name")
     }
 
-    var template by DefaultValue {
+    var template: Template by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
         parser.parse(parser.resolver(templateName))
@@ -184,14 +184,14 @@ class CodeGenerator(
     var interfaceTemplateName = "interface"
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var interfaceTemplate by DefaultValue {
+    var interfaceTemplate: Template by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
         parser.parse(parser.resolver(interfaceTemplateName))
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var enumTemplate by DefaultValue {
+    var enumTemplate: Template by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
         parser.parse(parser.resolver(enumTemplateName))
@@ -203,13 +203,13 @@ class CodeGenerator(
     var indexTemplateName: String = "index"
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var indexTemplate by DefaultValue {
+    var indexTemplate: Template by DefaultValue {
         val parser = templateParser
         val resolver = parser.resolvePartial
         parser.parse(parser.resolver(indexTemplateName))
     }
 
-    var outputResolver by DefaultValue<OutputResolver> {
+    var outputResolver: OutputResolver by DefaultValue {
         { targetFileName ->
             targetFileName.resolve(File(baseDirectoryName)).also { checkDirectory(it.parentFile) }.writer()
         }
