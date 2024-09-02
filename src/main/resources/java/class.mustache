@@ -9,7 +9,7 @@
 {{>add_statics}}
 {{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}    public {{&className}}({{#properties}}{{^first}},{{/first}}
+{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}{{! TODO java.beans.ConstructorProperties ? }}    public {{&className}}({{#properties}}{{^first}},{{/first}}
             {{>type}} {{&javaName}}{{/properties}}
     ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{#extendedInDerived}}cg_valid_{{&javaName}}({{&javaName}}){{/extendedInDerived}}{{!
