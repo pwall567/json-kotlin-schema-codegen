@@ -27,6 +27,7 @@ package net.pwall.json.schema.codegen.test.kotlin
 
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.test.expect
@@ -130,9 +131,143 @@ class AdditionalPropertiesFunctionalityTest {
         }.let {
             expect("extra is not the correct type, expecting String") { it.message }
         }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraOptional`() {
+        val testClass1 = TestApTrueExtraOptional(mapOf(
+            "extra" to "content",
+        ))
+        expect("content") { testClass1.extra }
+        assertNull(testClass1["whatever"])
+        expect("TestApTrueExtraOptional(extra=content)") { testClass1.toString() }
+
+        val testClass2 = TestApTrueExtraOptional(mapOf(
+            "extra" to "content",
+            "anything" to "another",
+        ))
+        expect("content") { testClass2.extra }
+        expect("another") { testClass2["anything"] }
+        assertNull(testClass2["whatever"])
+        expect("TestApTrueExtraOptional(extra=content, anything=another)") { testClass2.toString() }
+
+        val testClass3 = TestApTrueExtraOptional(mapOf(
+            "extra" to null,
+        ))
+        assertNull(testClass3.extra)
+        assertNull(testClass3["whatever"])
+        expect("TestApTrueExtraOptional(extra=null)") { testClass3.toString() }
+
+        val testClass4 = TestApTrueExtraOptional(emptyMap())
+        assertNull(testClass4.extra)
+        assertNull(testClass4["whatever"])
+        expect("TestApTrueExtraOptional()") { testClass4.toString() }
+
+        val testClass5 = TestApTrueExtraOptional(mapOf(
+            "anything" to "another",
+        ))
+        assertNull(testClass5.extra)
+        expect("another") { testClass5["anything"] }
+        assertNull(testClass5["whatever"])
+        expect("TestApTrueExtraOptional(anything=another)") { testClass5.toString() }
 
         assertFailsWith<IllegalArgumentException> {
-            TestApTrueExtra(mapOf(
+            TestApTrueExtraOptional(mapOf(
+                "extra" to 123,
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting String?") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraValid`() {
+        val testClass1 = TestApTrueExtraValid(mapOf(
+            "extra" to "content",
+        ))
+        expect("content") { testClass1.extra }
+        assertNull(testClass1["whatever"])
+        expect("TestApTrueExtraValid(extra=content)") { testClass1.toString() }
+
+        val testClass2 = TestApTrueExtraValid(mapOf(
+            "extra" to "content",
+            "anything" to "another",
+        ))
+        expect("content") { testClass2.extra }
+        expect("another") { testClass2["anything"] }
+        assertNull(testClass2["whatever"])
+        expect("TestApTrueExtraValid(extra=content, anything=another)") { testClass2.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraValid(mapOf(
+                "anything" to "another",
+            ))
+        }.let {
+            expect("required property missing - extra") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraValid(mapOf(
+                "extra" to 123,
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting String") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraValid(mapOf(
+                "extra" to "",
+            ))
+        }.let {
+            expect("extra length < minimum 1 - 0") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraOptValid`() {
+        val testClass1 = TestApTrueExtraOptValid(mapOf(
+            "extra" to "content",
+        ))
+        expect("content") { testClass1.extra }
+        assertNull(testClass1["whatever"])
+        expect("TestApTrueExtraOptValid(extra=content)") { testClass1.toString() }
+
+        val testClass2 = TestApTrueExtraOptValid(mapOf(
+            "extra" to "content",
+            "anything" to "another",
+        ))
+        expect("content") { testClass2.extra }
+        expect("another") { testClass2["anything"] }
+        assertNull(testClass2["whatever"])
+        expect("TestApTrueExtraOptValid(extra=content, anything=another)") { testClass2.toString() }
+
+        val testClass3 = TestApTrueExtraOptValid(mapOf(
+            "extra" to null,
+        ))
+        assertNull(testClass3.extra)
+        assertNull(testClass3["whatever"])
+        expect("TestApTrueExtraOptValid(extra=null)") { testClass3.toString() }
+
+        val testClass4 = TestApTrueExtraOptValid(emptyMap())
+        assertNull(testClass4.extra)
+        assertNull(testClass4["whatever"])
+        expect("TestApTrueExtraOptValid()") { testClass4.toString() }
+
+        val testClass5 = TestApTrueExtraOptValid(mapOf(
+            "anything" to "another",
+        ))
+        assertNull(testClass5.extra)
+        expect("another") { testClass5["anything"] }
+        assertNull(testClass5["whatever"])
+        expect("TestApTrueExtraOptValid(anything=another)") { testClass5.toString() }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraOptValid(mapOf(
+                "extra" to 123,
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting String?") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraOptValid(mapOf(
                 "extra" to "",
             ))
         }.let {
@@ -179,6 +314,170 @@ class AdditionalPropertiesFunctionalityTest {
             ))
         }.let {
             expect("extra length < minimum 1 - 0") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraArray`() {
+        with(TestApTrueExtraArray(mapOf(
+            "extra" to listOf("alpha", "beta"),
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArray(extra=[alpha, beta])") { toString() }
+        }
+
+        with(TestApTrueExtraArray(mapOf(
+            "extra" to listOf("alpha", "beta"),
+            "anything" to "another",
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            expect("another") { this["anything"] }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArray(extra=[alpha, beta], anything=another)") { toString() }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArray(emptyMap())
+        }.let {
+            expect("required property missing - extra") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArray(mapOf(
+                "extra" to "wrong",
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting List<String>") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArray(mapOf(
+                "extra" to listOf(123, 456),
+            ))
+        }.let {
+            expect("extra item is not the correct type, expecting String") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraArrayOpt`() {
+        with(TestApTrueExtraArrayOpt(mapOf(
+            "extra" to listOf("alpha", "beta"),
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOpt(extra=[alpha, beta])") { toString() }
+        }
+
+        with(TestApTrueExtraArrayOpt(mapOf(
+            "extra" to listOf("alpha", "beta"),
+            "anything" to "another",
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            expect("another") { this["anything"] }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOpt(extra=[alpha, beta], anything=another)") { toString() }
+        }
+
+        with(TestApTrueExtraArrayOpt(emptyMap())) {
+            assertNull(this["extra"])
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOpt()") { toString() }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArrayOpt(mapOf(
+                "extra" to "wrong",
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting List<String>?") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArrayOpt(mapOf(
+                "extra" to listOf(123, 456),
+            ))
+        }.let {
+            expect("extra item is not the correct type, expecting String") { it.message }
+        }
+    }
+
+    @Test fun `should generate functional TestApTrueExtraArrayOptValid`() {
+        with(TestApTrueExtraArrayOptValid(mapOf(
+            "extra" to listOf("alpha", "beta"),
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOptValid(extra=[alpha, beta])") { toString() }
+        }
+
+        with(TestApTrueExtraArrayOptValid(mapOf(
+            "extra" to listOf("alpha", "beta"),
+            "anything" to "another",
+        ))) {
+            with(extra) {
+                assertIs<List<String>>(this)
+                expect(2) { size }
+                expect("alpha") { this[0] }
+                expect("beta") { this[1] }
+            }
+            expect("another") { this["anything"] }
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOptValid(extra=[alpha, beta], anything=another)") { toString() }
+        }
+
+        with(TestApTrueExtraArrayOptValid(emptyMap())) {
+            assertNull(this["extra"])
+            assertNull(this["whatever"])
+            expect("TestApTrueExtraArrayOptValid()") { toString() }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArrayOptValid(mapOf(
+                "extra" to "wrong",
+            ))
+        }.let {
+            expect("extra is not the correct type, expecting List<String>?") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArrayOptValid(mapOf(
+                "extra" to listOf(123, 456),
+            ))
+        }.let {
+            expect("extra item is not the correct type, expecting String") { it.message }
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            TestApTrueExtraArrayOptValid(mapOf(
+                "extra" to listOf("alpha", ""),
+            ))
+        }.let {
+            expect("extra item length < minimum 1 - 0") { it.message }
         }
     }
 

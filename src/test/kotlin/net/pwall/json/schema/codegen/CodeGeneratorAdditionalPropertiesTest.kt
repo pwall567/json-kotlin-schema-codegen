@@ -123,6 +123,42 @@ class CodeGeneratorAdditionalPropertiesTest {
         expect(resultFile("TestApTrueExtra")) { outputDetails.output() }
     }
 
+    @Test fun `should generate code for aP true with optional extra`() {
+        val input = File("src/test/resources/test-ap-true-extra-optional.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraOptional", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraOptional")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with extra with validation`() {
+        val input = File("src/test/resources/test-ap-true-extra-valid.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraValid", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraValid")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with optional extra with validation`() {
+        val input = File("src/test/resources/test-ap-true-extra-opt-valid.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraOptValid", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraOptValid")) { outputDetails.output() }
+    }
+
     @Test fun `should generate code for aP true with extra array`() {
         val input = File("src/test/resources/test-ap-true-extra-array.schema.json")
         val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraArray", "kt", packageDirs))
@@ -133,6 +169,30 @@ class CodeGeneratorAdditionalPropertiesTest {
             generate(input)
         }
         expect(resultFile("TestApTrueExtraArray")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with optional extra array`() {
+        val input = File("src/test/resources/test-ap-true-extra-array-opt.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraArrayOpt", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraArrayOpt")) { outputDetails.output() }
+    }
+
+    @Test fun `should generate code for aP true with optional extra array with validation`() {
+        val input = File("src/test/resources/test-ap-true-extra-array-opt-valid.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueExtraArrayOptValid", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        expect(resultFile("TestApTrueExtraArrayOptValid")) { outputDetails.output() }
     }
 
     @Test fun `should generate code for aP true with extra with default value`() {

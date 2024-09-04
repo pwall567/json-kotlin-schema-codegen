@@ -22,7 +22,7 @@ class TestApTrueExtraNested(
         require(cg_map.containsKey("codes")) { "required property missing - codes" }
         require(cg_map["codes"] is Codes) { "codes is not the correct type, expecting Codes" }
         if (cg_map.containsKey("empty"))
-            require(cg_map["empty"] is Empty) { "empty is not the correct type, expecting Empty?" }
+            require(cg_map["empty"] is Empty?) { "empty is not the correct type, expecting Empty?" }
     }
 
     /** Extra data. */

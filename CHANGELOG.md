@@ -2,8 +2,9 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Unreleased
+## [0.109] - 2024-09-05
 ### Changed
+- templates: fixed bug in templates for map-based classes
 - `CodeGenerator`: added explicit types to public APIs
 
 ## [0.108] - 2024-08-07

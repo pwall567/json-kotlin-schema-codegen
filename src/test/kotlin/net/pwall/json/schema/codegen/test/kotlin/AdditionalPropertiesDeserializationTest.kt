@@ -94,31 +94,31 @@ class AdditionalPropertiesDeserializationTest {
 
     @Test fun `should deserialize TestApTrueExtra`() {
         val json1 = """{"extra":"content"}"""
-        val result1 = json1.parseJSON<TestApTrueExtra>()
+        val result1 = json1.parseJSON<TestApTrueExtraValid>()
         expect("content") { result1.extra }
         assertNull(result1["whatever"])
 
         val json2 = """{"extra":"content","anything":"another"}"""
-        val result2 = json2.parseJSON<TestApTrueExtra>()
+        val result2 = json2.parseJSON<TestApTrueExtraValid>()
         expect("content") { result2.extra }
         expect("another") { result2["anything"] }
         assertNull(result2["whatever"])
 
         assertFailsWith<JSONKotlinException> {
-            """{"anything":"another"}""".parseJSON<TestApTrueExtra>()
+            """{"anything":"another"}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
             assertIs<IllegalArgumentException>(it)
             expect("required property missing - extra") { it.message }
         }
 
         assertFailsWith<JSONKotlinException> {
-            """{"extra":123}""".parseJSON<TestApTrueExtra>()
+            """{"extra":123}""".parseJSON<TestApTrueExtraValid>()
         }.let {
             expect("Can't deserialize 123 as String at /extra") { it.message }
         }
 
         assertFailsWith<JSONKotlinException> {
-            """{"extra":""}""".parseJSON<TestApTrueExtra>()
+            """{"extra":""}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
             assertIs<IllegalArgumentException>(it)
             expect("extra length < minimum 1 - 0") { it.message }
@@ -150,7 +150,7 @@ class AdditionalPropertiesDeserializationTest {
         }
 
         assertFailsWith<JSONKotlinException> {
-            """{"extra":""}""".parseJSON<TestApTrueExtra>()
+            """{"extra":""}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
             assertIs<IllegalArgumentException>(it)
             expect("extra length < minimum 1 - 0") { it.message }

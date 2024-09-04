@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-extra-valid",
+  "description": "Test use of additionalProperties true with extra fields with validation.",
+  "type": "object",
+  "properties": {
+    "extra": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [ "extra" ],
+  "additionalProperties": true
+}

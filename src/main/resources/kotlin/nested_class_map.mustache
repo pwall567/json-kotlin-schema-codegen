@@ -6,9 +6,12 @@
 {{#properties}}{{#defaultValue}}{{&indent}}        if (cg_map.containsKey("{{&name}}")){{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}
 {{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{#validations}}{{#first}}{{&indent}}        }
 {{/first}}{{/validations}}{{/defaultValue}}{{^defaultValue}}{{!
-}}{{#nullable}}{{&indent}}        if (cg_map.containsKey("{{&name}}")){{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}
-{{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{#validations}}{{#first}}{{&indent}}        }
-{{/first}}{{/validations}}{{/nullable}}{{^nullable}}{{&indent}}        require(cg_map.containsKey("{{&name}}")) { "required property missing - {{&name}}" }
+}}{{#nullable}}{{&indent}}        if (cg_map.containsKey("{{&name}}")){{!
+}}{{#isArray}} {{&openBrace}}{{/isArray}}{{^isArray}}{{#validations}}{{#first}} {{&openBrace}}{{/first}}{{/validations}}{{/isArray}}
+{{#indent.increment}}{{>class_map_property}}{{/indent.increment}}{{!
+}}{{#isArray}}{{&indent}}        }
+{{/isArray}}{{^isArray}}{{#validations}}{{#first}}{{&indent}}        }
+{{/first}}{{/validations}}{{/isArray}}{{/nullable}}{{^nullable}}{{&indent}}        require(cg_map.containsKey("{{&name}}")) { "required property missing - {{&name}}" }
 {{>class_map_property}}{{/nullable}}{{/defaultValue}}{{/properties}}{{!
 }}{{^properties}}{{#additionalProperties}}{{#validations}}{{#first}}{{&indent}}        cg_map.entries.forEach { (key, value) ->
 {{/first}}{{#indent.increment}}{{#mapEntryContext}}{{>validations_2}}{{/mapEntryContext}}{{/indent.increment}}{{#last}}{{&indent}}        }
@@ -16,9 +19,11 @@
 {{#properties}}
 {{#schema}}{{#description}}{{&indent}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}{{&indent}}    val {{&kotlinName}}: {{>type}}{{#defaultValue}}
-{{&indent}}        get() = if (cg_map.containsKey("{{&name}}")) cg_map["{{&name}}"] as {{>type}} else {{>default_value}}
+{{#isArray}}{{&indent}}        @Suppress("unchecked_cast")
+{{/isArray}}{{&indent}}        get() = if (cg_map.containsKey("{{&name}}")) cg_map["{{&name}}"] as {{>type}} else {{>default_value}}
 {{/defaultValue}}{{^defaultValue}}{{#nullable}}
-{{&indent}}        get() = cg_map["{{&name}}"] as {{>type}}
+{{#isArray}}{{&indent}}        @Suppress("unchecked_cast")
+{{/isArray}}{{&indent}}        get() = cg_map["{{&name}}"] as {{>type}}
 {{/nullable}}{{^nullable}} by cg_map
 {{/nullable}}{{/defaultValue}}{{/properties}}
 {{&indent}}    override fun toString(): String = "{{&className}}(${cg_map.entries.joinToString { "${it.key}=${it.value}" }})"

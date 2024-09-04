@@ -23,8 +23,8 @@ class TestAdditionalPropertiesSchemaExtra3(
             require(extra.isNotEmpty()) { "extra length < minimum 1 - ${extra.length}" }
         }
         if (cg_map.containsKey("extra2")) {
-            require(cg_map["extra2"] is Int) { "extra2 is not the correct type, expecting Int?" }
-            (cg_map["extra2"] as Int).let { extra2 ->
+            require(cg_map["extra2"] is Int?) { "extra2 is not the correct type, expecting Int?" }
+            (cg_map["extra2"] as Int?)?.let { extra2 ->
                 require(extra2 in 0..99) { "extra2 not in range 0..99 - $extra2" }
             }
         }

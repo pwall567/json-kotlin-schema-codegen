@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-ap-true-extra-array-opt-valid",
+  "description": "Test use of additionalProperties true with optional extra list field with item validation.",
+  "type": "object",
+  "properties": {
+    "extra": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": true
+}

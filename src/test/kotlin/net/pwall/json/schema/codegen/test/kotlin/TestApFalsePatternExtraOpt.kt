@@ -18,8 +18,8 @@ class TestApFalsePatternExtraOpt(
 
     init {
         if (cg_map.containsKey("extra")) {
-            require(cg_map["extra"] is String) { "extra is not the correct type, expecting String?" }
-            (cg_map["extra"] as String).let { extra ->
+            require(cg_map["extra"] is String?) { "extra is not the correct type, expecting String?" }
+            (cg_map["extra"] as String?)?.let { extra ->
                 require(extra.isNotEmpty()) { "extra length < minimum 1 - ${extra.length}" }
             }
         }
