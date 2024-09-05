@@ -2,7 +2,7 @@
  * @(#) Constraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2023 Peter Wall
+ * Copyright (c) 2020, 2021, 2023, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,12 +29,11 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URI
 
-import net.pwall.json.JSONDecimal
-import net.pwall.json.JSONInteger
-import net.pwall.json.JSONLong
-import net.pwall.json.JSONSequence
-import net.pwall.json.JSONString
-import net.pwall.json.JSONValue
+import io.kjson.JSONArray
+import io.kjson.JSONNumber
+import io.kjson.JSONString
+import io.kjson.JSONValue
+
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
 import net.pwall.json.schema.validation.FormatValidator
@@ -152,7 +151,7 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     val format = mutableListOf<FormatValidator.FormatChecker>()
     val regex = mutableListOf<Regex>()
 
-    var enumValues: JSONSequence<*>? = null
+    var enumValues: JSONArray? = null
     var constValue: JSONValue? = null
     var extensibleEnum: Boolean = false
 
@@ -241,24 +240,12 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     private fun isType(type: JSONSchema.Type): Boolean = types.size == 1 && types[0] == type
 
     private fun constImpliesInt(): Boolean = constValue?.let {
-        when (it) {
-            is JSONInteger -> true
-            is JSONLong -> it.value in Int.MIN_VALUE..Int.MAX_VALUE
-            is JSONDecimal -> it.value.asLong() in Int.MIN_VALUE..Int.MAX_VALUE
-            else -> false
-        }
+        it is JSONNumber && it.isInt()
     } ?: false
 
     private fun enumImpliesInt(): Boolean {
         enumValues?.let { array ->
-            return array.all {
-                when (it) {
-                    is JSONInteger -> true
-                    is JSONLong -> it.value in Int.MIN_VALUE..Int.MAX_VALUE
-                    is JSONDecimal -> it.value.asLong() in Int.MIN_VALUE..Int.MAX_VALUE
-                    else -> false
-                }
-            }
+            return array.all { it is JSONNumber && it.isInt() }
         }
         return false
     }

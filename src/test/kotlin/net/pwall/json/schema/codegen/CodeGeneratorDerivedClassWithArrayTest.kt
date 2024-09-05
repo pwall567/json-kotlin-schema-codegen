@@ -27,9 +27,12 @@ package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
 import kotlin.test.expect
+
 import java.io.File
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -45,7 +48,7 @@ class CodeGeneratorDerivedClassWithArrayTest {
         val outputDetails2 = OutputDetails(TargetFileName("Base", "kt", dirs))
         val outputDetails3 = OutputDetails(TargetFileName("Derived", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2, outputDetails3)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("ItemType.kt") + expected1) { outputDetails1.output() }
         expect(createHeader("Base.kt") + expected2) { outputDetails2.output() }
         expect(createHeader("Derived.kt") + expected3) { outputDetails3.output() }

@@ -30,34 +30,36 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.expect
 
-import net.pwall.json.JSON
+import io.kjson.JSON
+import io.kjson.JSONTypeException
+
 import net.pwall.json.schema.JSONSchemaException
 
 class ConfiguratorTest {
 
     @Test fun `should accept configuration title, version and description`() {
         val generator = CodeGenerator()
-        generator.configure(JSON.parse("""{"title":"Test config"}"""))
-        generator.configure(JSON.parse("""{"version":"v0.1"}"""))
-        generator.configure(JSON.parse("""{"description":"Dummy description"}"""))
+        generator.configure(JSON.parseObject("""{"title":"Test config"}"""))
+        generator.configure(JSON.parseObject("""{"version":"v0.1"}"""))
+        generator.configure(JSON.parseObject("""{"description":"Dummy description"}"""))
     }
 
     @Test fun `should reject invalid configuration title, version and description`() {
         val generator = CodeGenerator()
         assertNull(generator.basePackageName)
-        JSON.parse("""{"title":8}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /title incorrect type - 8") { it.message }
+        JSON.parseObject("""{"title":8}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was 8, at /title") { it.message }
             }
         }
-        JSON.parse("""{"version":true}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /version incorrect type - true") { it.message }
+        JSON.parseObject("""{"version":true}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was true, at /version") { it.message }
             }
         }
-        JSON.parse("""{"description":null}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /description incorrect type - null") { it.message }
+        JSON.parseObject("""{"description":null}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was null, at /description") { it.message }
             }
         }
     }
@@ -65,23 +67,23 @@ class ConfiguratorTest {
     @Test fun `should apply packageName configuration`() {
         val generator = CodeGenerator()
         assertNull(generator.basePackageName)
-        generator.configure(JSON.parse("""{"packageName":"com.example.testing"}"""))
+        generator.configure(JSON.parseObject("""{"packageName":"com.example.testing"}"""))
         expect("com.example.testing") { generator.basePackageName }
-        generator.configure(JSON.parse("""{"packageName":null}"""))
+        generator.configure(JSON.parseObject("""{"packageName":null}"""))
         assertNull(generator.basePackageName)
     }
 
     @Test fun `should reject invalid packageName configuration`() {
         val generator = CodeGenerator()
         assertNull(generator.basePackageName)
-        JSON.parse("""{"packageName":123}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /packageName incorrect type - 123") { it.message }
+        JSON.parseObject("""{"packageName":123}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString?), was 123, at /packageName") { it.message }
             }
         }
-        JSON.parse("""{"packageName":""}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /packageName must not be empty") { it.message }
+        JSON.parseObject("""{"packageName":""}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Config item not correct type (non-empty string), was \"\", at /packageName") { it.message }
             }
         }
     }
@@ -89,23 +91,23 @@ class ConfiguratorTest {
     @Test fun `should apply generatorComment configuration`() {
         val generator = CodeGenerator()
         assertNull(generator.generatorComment)
-        generator.configure(JSON.parse("""{"generatorComment":"Test comment"}"""))
+        generator.configure(JSON.parseObject("""{"generatorComment":"Test comment"}"""))
         expect("Test comment") { generator.generatorComment }
-        generator.configure(JSON.parse("""{"generatorComment":null}"""))
+        generator.configure(JSON.parseObject("""{"generatorComment":null}"""))
         assertNull(generator.generatorComment)
     }
 
     @Test fun `should reject invalid generatorComment configuration`() {
         val generator = CodeGenerator()
         assertNull(generator.generatorComment)
-        JSON.parse("""{"generatorComment":123}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /generatorComment incorrect type - 123") { it.message }
+        JSON.parseObject("""{"generatorComment":123}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString?), was 123, at /generatorComment") { it.message }
             }
         }
-        JSON.parse("""{"generatorComment":""}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /generatorComment must not be empty") { it.message }
+        JSON.parseObject("""{"generatorComment":""}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Config item not correct type (non-empty string), was \"\", at /generatorComment") { it.message }
             }
         }
     }
@@ -113,31 +115,31 @@ class ConfiguratorTest {
     @Test fun `should apply targetLanguage configuration`() {
         val generator = CodeGenerator()
         expect(TargetLanguage.KOTLIN) { generator.targetLanguage }
-        val json = JSON.parse("""{"targetLanguage":"java"}""")
+        val json = JSON.parseObject("""{"targetLanguage":"java"}""")
         generator.configure(json)
         expect(TargetLanguage.JAVA) { generator.targetLanguage }
     }
 
     @Test fun `should reject invalid targetLanguage configuration`() {
         val generator = CodeGenerator()
-        JSON.parse("""{"targetLanguage":null}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /targetLanguage incorrect type - null") { it.message }
+        JSON.parseObject("""{"targetLanguage":null}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was null, at /targetLanguage") { it.message }
             }
         }
-        JSON.parse("""{"targetLanguage":123}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /targetLanguage incorrect type - 123") { it.message }
+        JSON.parseObject("""{"targetLanguage":123}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was 123, at /targetLanguage") { it.message }
             }
         }
-        JSON.parse("""{"targetLanguage":""}""").let { json ->
+        JSON.parseObject("""{"targetLanguage":""}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /targetLanguage invalid - \"\"") { it.message }
+                expect("Config item /targetLanguage invalid - \"\"") { it.message }
             }
         }
-        JSON.parse("""{"targetLanguage":"fortran"}""").let { json ->
+        JSON.parseObject("""{"targetLanguage":"fortran"}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /targetLanguage invalid - \"fortran\"") { it.message }
+                expect("Config item /targetLanguage invalid - \"fortran\"") { it.message }
             }
         }
     }
@@ -145,104 +147,108 @@ class ConfiguratorTest {
     @Test fun `should apply nestedClassNameOption configuration`() {
         val generator = CodeGenerator()
         expect(CodeGenerator.NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA) { generator.nestedClassNameOption }
-        val json = JSON.parse("""{"nestedClassNameOption":"property"}""")
+        val json = JSON.parseObject("""{"nestedClassNameOption":"property"}""")
         generator.configure(json)
         expect(CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY) { generator.nestedClassNameOption }
     }
 
     @Test fun `should reject invalid nestedClassNameOption configuration`() {
         val generator = CodeGenerator()
-        JSON.parse("""{"nestedClassNameOption":null}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /nestedClassNameOption incorrect type - null") { it.message }
+        JSON.parseObject("""{"nestedClassNameOption":null}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was null, at /nestedClassNameOption") { it.message }
             }
         }
-        JSON.parse("""{"nestedClassNameOption":88}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /nestedClassNameOption incorrect type - 88") { it.message }
+        JSON.parseObject("""{"nestedClassNameOption":88}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was 88, at /nestedClassNameOption") { it.message }
             }
         }
-        JSON.parse("""{"nestedClassNameOption":""}""").let { json ->
+        JSON.parseObject("""{"nestedClassNameOption":""}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /nestedClassNameOption invalid - \"\"") { it.message }
+                expect("Config item /nestedClassNameOption invalid - \"\"") { it.message }
             }
         }
-        JSON.parse("""{"nestedClassNameOption":"unknown"}""").let { json ->
+        JSON.parseObject("""{"nestedClassNameOption":"unknown"}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /nestedClassNameOption invalid - \"unknown\"") { it.message }
+                expect("Config item /nestedClassNameOption invalid - \"unknown\"") { it.message }
             }
         }
     }
 
     @Test fun `should reject invalid customClasses configuration`() {
         val generator = CodeGenerator()
-        JSON.parse("""{"customClasses":null}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses incorrect type - null") { it.message }
+        JSON.parseObject("""{"customClasses":null}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was null, at /customClasses") { it.message }
             }
         }
-        JSON.parse("""{"customClasses":"abc"}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses incorrect type - \"abc\"") { it.message }
+        JSON.parseObject("""{"customClasses":"abc"}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was \"abc\", at /customClasses") { it.message }
             }
         }
-        JSON.parse("""{"customClasses":{"form":{"money":true}}}""").let { json ->
+        JSON.parseObject("""{"customClasses":{"form":{"money":true}}}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses/form unrecognised mapping type") { it.message }
+                expect("Config item /customClasses/form unrecognised mapping type") { it.message }
             }
         }
-        JSON.parse("""{"customClasses":{"format":{"money":true}}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses/format/money invalid - true") { it.message }
+        JSON.parseObject("""{"customClasses":{"format":{"money":true}}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was true, at /customClasses/format/money") { it.message }
             }
         }
-        JSON.parse("""{"customClasses":{"format":{"money":""}}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses/format/money must not be empty") { it.message }
+        JSON.parseObject("""{"customClasses":{"format":{"money":""}}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Config item not correct type (non-empty string), was \"\", at /customClasses/format/money") {
+                    it.message
+                }
             }
         }
-        JSON.parse("""{"customClasses":{"uri":{"urn:test:test":123}}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /customClasses/uri/urn:test:test invalid - 123") { it.message }
+        JSON.parseObject("""{"customClasses":{"uri":{"urn:test:test":123}}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString), was 123, at /customClasses/uri/urn:test:test") {
+                    it.message
+                }
             }
         }
     }
 
     @Test fun `should reject invalid annotations configuration`() {
         val generator = CodeGenerator()
-        JSON.parse("""{"annotations":null}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations incorrect type - null") { it.message }
+        JSON.parseObject("""{"annotations":null}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was null, at /annotations") { it.message }
             }
         }
-        JSON.parse("""{"annotations":"abc"}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations incorrect type - \"abc\"") { it.message }
+        JSON.parseObject("""{"annotations":"abc"}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was \"abc\", at /annotations") { it.message }
             }
         }
-        JSON.parse("""{"annotations":{"classes":null}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations/classes incorrect type - null") { it.message }
+        JSON.parseObject("""{"annotations":{"classes":null}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was null, at /annotations/classes") { it.message }
             }
         }
-        JSON.parse("""{"annotations":{"classes":"abc"}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations/classes incorrect type - \"abc\"") { it.message }
+        JSON.parseObject("""{"annotations":{"classes":"abc"}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONObject), was \"abc\", at /annotations/classes") { it.message }
             }
         }
-        JSON.parse("""{"annotations":{"classes":{"123":null}}}""").let { json ->
+        JSON.parseObject("""{"annotations":{"classes":{"123":null}}}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
                 expect("Not a valid annotation class name - \"123\"") { it.message }
             }
         }
-        JSON.parse("""{"annotations":{"classes":{"abc":true}}}""").let { json ->
-            assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations/classes/abc invalid entry") { it.message }
+        JSON.parseObject("""{"annotations":{"classes":{"abc":true}}}""").let { json ->
+            assertFailsWith<JSONTypeException> { generator.configure(json) }.let {
+                expect("Child not correct type (JSONString?), was true, at /annotations/classes/abc") { it.message }
             }
         }
-        JSON.parse("""{"annotations":{"other":{"abc":true}}}""").let { json ->
+        JSON.parseObject("""{"annotations":{"other":{"abc":true}}}""").let { json ->
             assertFailsWith<JSONSchemaException> { generator.configure(json) }.let {
-                expect("Config entry /annotations/other unrecognised annotation type") { it.message }
+                expect("Config item /annotations/other unrecognised annotation type") { it.message }
             }
         }
     }

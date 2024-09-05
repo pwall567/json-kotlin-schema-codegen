@@ -30,8 +30,9 @@ import kotlin.test.expect
 
 import java.io.File
 
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -48,7 +49,7 @@ class CodeGeneratorMultipleTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.commentTemplate = Template.parse("Generated from {{\$comment}}")
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.kt", "Generated from Multiple schema") + expectedTypeA) { outputDetailsA.output() }
         expect(createHeader("TypeB.kt", "Generated from Multiple schema") + expectedTypeB) { outputDetailsB.output() }
     }
@@ -60,7 +61,7 @@ class CodeGeneratorMultipleTest {
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "java", dirs))
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.java") + expectedTypeAJava) { outputDetailsA.output() }
         expect(createHeader("TypeB.java") + expectedTypeBJava) { outputDetailsB.output() }
     }
@@ -73,7 +74,7 @@ class CodeGeneratorMultipleTest {
         val outputDetailsIndex = OutputDetails(TargetFileName("index", "d.ts"))
         codeGenerator.indexFileName = TargetFileName("index", "d.ts")
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsIndex)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.ts") + expectedTypeATypeScript) { outputDetailsA.output() }
         expect(createHeader("TypeB.ts") + expectedTypeBTypeScript) { outputDetailsB.output() }
         expect(createHeader("index.d.ts") + expectedIndexTypeScript) { outputDetailsIndex.output() }

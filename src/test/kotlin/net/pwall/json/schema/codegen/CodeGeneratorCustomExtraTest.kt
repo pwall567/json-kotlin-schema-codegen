@@ -32,9 +32,10 @@ import java.io.File
 import java.io.StringWriter
 import java.net.URI
 
-import net.pwall.json.JSON
-import net.pwall.json.JSONValue
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.JSON
+import io.kjson.JSONValue
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -53,7 +54,7 @@ class CodeGeneratorCustomExtraTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.Stock")
-        val schema: JSONValue = JSON.parse(input)
+        val schema: JSONValue = JSON.parseNonNull(input.readText())
         val parser = JSONSchema.parser
         codeGenerator.generateClasses(listOf(
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",
@@ -73,7 +74,7 @@ class CodeGeneratorCustomExtraTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.StockEntry")
-        val schema: JSONValue = JSON.parse(input)
+        val schema: JSONValue = JSON.parseNonNull(input.readText())
         val parser = JSONSchema.parser
         codeGenerator.generateClasses(listOf(
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",

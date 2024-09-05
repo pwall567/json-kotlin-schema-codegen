@@ -31,8 +31,9 @@ import kotlin.test.expect
 import java.io.File
 import java.nio.file.FileSystems
 
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -121,7 +122,7 @@ class CodeGeneratorTargetTest {
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.clearTargets()
         expect(0) { codeGenerator.numTargets }
-        codeGenerator.addCompositeTargets(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.addCompositeTargets(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(2) { codeGenerator.numTargets }
         codeGenerator.generateAllTargets()
         expect(createHeader("TypeA.kt") + CodeGeneratorMultipleTest.expectedTypeA) { outputDetailsA.output() }

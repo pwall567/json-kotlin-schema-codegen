@@ -30,7 +30,8 @@ import kotlin.test.expect
 
 import java.net.URI
 
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture

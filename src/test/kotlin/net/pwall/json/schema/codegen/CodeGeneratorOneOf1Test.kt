@@ -27,10 +27,13 @@ package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
 import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -51,7 +54,7 @@ class CodeGeneratorOneOf1Test {
         val outputDetailsD = OutputDetails(TargetFileName("TypeD", "kt", dirs), stringWriterD)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.kt") + expectedTypeA) { stringWriterA.toString() }
         expect(createHeader("TypeB.kt") + expectedTypeB) { stringWriterB.toString() }
         expect(createHeader("TypeC.kt") + expectedTypeC) { stringWriterC.toString() }
@@ -71,7 +74,7 @@ class CodeGeneratorOneOf1Test {
         val outputDetailsD = OutputDetails(TargetFileName("TypeD", "java", dirs), stringWriterD)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("TypeA.java") + expectedTypeAJava) { stringWriterA.toString() }
         expect(createHeader("TypeB.java") + expectedTypeBJava) { stringWriterB.toString() }
         expect(createHeader("TypeC.java") + expectedTypeCJava) { stringWriterC.toString() }

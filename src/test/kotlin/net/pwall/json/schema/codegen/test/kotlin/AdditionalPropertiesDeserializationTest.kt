@@ -25,14 +25,16 @@
 
 package net.pwall.json.schema.codegen.test.kotlin
 
-import io.kjson.JSONKotlinException
-import io.kjson.parseJSON
-import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.expect
+
+import java.time.LocalDate
+
+import io.kjson.JSONKotlinException
+import io.kjson.parseJSON
 
 class AdditionalPropertiesDeserializationTest {
 
@@ -114,7 +116,7 @@ class AdditionalPropertiesDeserializationTest {
         assertFailsWith<JSONKotlinException> {
             """{"extra":123}""".parseJSON<TestApTrueExtraValid>()
         }.let {
-            expect("Can't deserialize 123 as String at /extra") { it.message }
+            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
         assertFailsWith<JSONKotlinException> {
@@ -146,7 +148,7 @@ class AdditionalPropertiesDeserializationTest {
         assertFailsWith<JSONKotlinException> {
             """{"extra":123}""".parseJSON<TestApTrueExtraDefault>()
         }.let {
-            expect("Can't deserialize 123 as String at /extra") { it.message }
+            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
         assertFailsWith<JSONKotlinException> {
@@ -189,7 +191,7 @@ class AdditionalPropertiesDeserializationTest {
         assertFailsWith<JSONKotlinException> {
             """{"extra":123}""".parseJSON<TestAdditionalPropertiesSchemaExtra>()
         }.let {
-            expect("Can't deserialize 123 as String at /extra") { it.message }
+            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
         assertFailsWith<JSONKotlinException> {

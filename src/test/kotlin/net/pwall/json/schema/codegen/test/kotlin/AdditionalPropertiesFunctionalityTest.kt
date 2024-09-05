@@ -451,7 +451,7 @@ class AdditionalPropertiesFunctionalityTest {
         }
 
         with(TestApTrueExtraArrayOptValid(emptyMap())) {
-            assertNull(this["extra"])
+            assertNull(extra)
             assertNull(this["whatever"])
             expect("TestApTrueExtraArrayOptValid()") { toString() }
         }

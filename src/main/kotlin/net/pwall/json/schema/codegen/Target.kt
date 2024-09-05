@@ -25,7 +25,8 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.json.JSONValue
+import io.kjson.JSONValue
+
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce

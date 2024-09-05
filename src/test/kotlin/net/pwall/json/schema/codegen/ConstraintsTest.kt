@@ -30,9 +30,10 @@ import kotlin.test.expect
 
 import java.io.File
 
-import net.pwall.json.JSONArray
-import net.pwall.json.JSONInteger
-import net.pwall.json.JSONLong
+import io.kjson.JSONArray
+import io.kjson.JSONInt
+import io.kjson.JSONLong
+
 import net.pwall.json.schema.JSONSchema
 
 class ConstraintsTest {
@@ -65,7 +66,7 @@ class ConstraintsTest {
         constraints.types.add(JSONSchema.Type.INTEGER)
         expect(false) { constraints.isInt }
         expect(true) { constraints.isLong }
-        constraints.constValue = JSONInteger(5)
+        constraints.constValue = JSONInt(5)
         expect(true) { constraints.isInt }
         expect(false) { constraints.isLong }
     }
@@ -95,7 +96,7 @@ class ConstraintsTest {
         constraints.types.add(JSONSchema.Type.INTEGER)
         expect(false) { constraints.isInt }
         expect(true) { constraints.isLong }
-        constraints.enumValues = JSONArray(JSONInteger(1), JSONInteger(2), JSONInteger(3), JSONInteger(4))
+        constraints.enumValues = JSONArray(JSONInt(1), JSONInt(2), JSONInt(3), JSONInt(4))
         expect(true) { constraints.isInt }
         expect(false) { constraints.isLong }
     }

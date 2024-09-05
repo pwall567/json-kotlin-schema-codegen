@@ -31,7 +31,8 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.json.JSONString
+import io.kjson.JSONString
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture

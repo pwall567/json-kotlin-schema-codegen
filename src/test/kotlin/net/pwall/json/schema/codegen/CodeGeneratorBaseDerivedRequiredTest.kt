@@ -30,8 +30,9 @@ import kotlin.test.expect
 
 import java.io.File
 
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -46,7 +47,7 @@ class CodeGeneratorBaseDerivedRequiredTest {
         val outputDetailsDerived = OutputDetails(TargetFileName("Derived", "kt", dirs))
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("Base.kt") + expectedBase) { outputDetailsBase.output() }
         expect(createHeader("Derived.kt") + expectedDerived) { outputDetailsDerived.output() }
     }
@@ -58,7 +59,7 @@ class CodeGeneratorBaseDerivedRequiredTest {
         val outputDetailsDerived = OutputDetails(TargetFileName("Derived", "java", dirs))
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
-        codeGenerator.generateAll(JSON.parse(input), JSONPointer("/\$defs"))
+        codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
         expect(createHeader("Base.java") + expectedBaseJava) { outputDetailsBase.output() }
         expect(createHeader("Derived.java") + expectedDerivedJava) { outputDetailsDerived.output() }
     }

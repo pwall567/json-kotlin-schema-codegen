@@ -33,7 +33,8 @@ import java.io.StringWriter
 import java.net.URI
 import java.nio.file.FileSystems
 
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture

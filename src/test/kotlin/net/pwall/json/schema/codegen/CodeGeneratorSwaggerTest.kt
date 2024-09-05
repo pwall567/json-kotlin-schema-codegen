@@ -31,18 +31,19 @@ import kotlin.test.expect
 import java.io.File
 import java.io.StringWriter
 
-import net.pwall.json.pointer.JSONPointer
+import io.kjson.pointer.JSONPointer
+import io.kjson.yaml.YAML
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
-import net.pwall.yaml.YAMLSimple
 
 class CodeGeneratorSwaggerTest {
 
     @Test fun `should generate classes from Swagger file`() {
         val input = File("src/test/resources/test-swagger.yaml")
-        val swaggerDoc = YAMLSimple.process(input)
+        val swaggerDoc = YAML.parse(input)
         val codeGenerator = CodeGenerator()
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "kt", dirs), stringWriter1)
@@ -50,14 +51,14 @@ class CodeGeneratorSwaggerTest {
         val outputDetails2 = OutputDetails(TargetFileName("Person", "kt", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
-        codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions"))
+        codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions"))
         expect(createHeader("QueryResponse.kt") + expectedExample1) { stringWriter1.toString() }
         expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
     }
 
     @Test fun `should generate classes from Swagger file applying filter`() {
         val input = File("src/test/resources/test-swagger.yaml")
-        val swaggerDoc = YAMLSimple.process(input)
+        val swaggerDoc = YAML.parse(input)
         val codeGenerator = CodeGenerator()
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "kt", dirs), stringWriter1)
@@ -65,14 +66,14 @@ class CodeGeneratorSwaggerTest {
         val outputDetails2 = OutputDetails(TargetFileName("Person", "kt", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
-        codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions")) { it == "Person" }
+        codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions")) { it == "Person" }
         expect("") { stringWriter1.toString() }
         expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
     }
 
     @Test fun `should generate classes from Swagger file in Java`() {
         val input = File("src/test/resources/test-swagger.yaml")
-        val swaggerDoc = YAMLSimple.process(input)
+        val swaggerDoc = YAML.parse(input)
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("QueryResponse", "java", dirs), stringWriter1)
@@ -80,7 +81,7 @@ class CodeGeneratorSwaggerTest {
         val outputDetails2 = OutputDetails(TargetFileName("Person", "java", dirs), stringWriter2)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
-        codeGenerator.generateAll(swaggerDoc.rootNode, JSONPointer("/definitions"))
+        codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions"))
         expect(createHeader("QueryResponse.java") + expectedExample1Java) { stringWriter1.toString() }
         expect(createHeader("Person.java") + expectedExample2Java) { stringWriter2.toString() }
     }

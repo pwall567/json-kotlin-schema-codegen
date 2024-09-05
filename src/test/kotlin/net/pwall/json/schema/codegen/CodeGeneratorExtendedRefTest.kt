@@ -27,10 +27,13 @@ package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
 import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
-import net.pwall.json.JSON
-import net.pwall.json.pointer.JSONPointer
+
+import io.kjson.JSON
+import io.kjson.pointer.JSONPointer
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -39,7 +42,7 @@ class CodeGeneratorExtendedRefTest {
 
     @Test fun `should generate classes for extended nested class`() {
         val input = File("src/test/resources/test-extended-ref.schema.json")
-        val schemaDoc = JSON.parse(input)
+        val schemaDoc = JSON.parseNonNull(input.readText())
         val codeGenerator = CodeGenerator()
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("Main", "kt", dirs), stringWriter1)
@@ -54,7 +57,7 @@ class CodeGeneratorExtendedRefTest {
 
     @Test fun `should generate classes for extended nested class in Java`() {
         val input = File("src/test/resources/test-extended-ref.schema.json")
-        val schemaDoc = JSON.parse(input)
+        val schemaDoc = JSON.parseNonNull(input.readText())
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val stringWriter1 = StringWriter()
         val outputDetails1 = OutputDetails(TargetFileName("Main", "java", dirs), stringWriter1)

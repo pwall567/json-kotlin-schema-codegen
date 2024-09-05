@@ -27,14 +27,19 @@ package net.pwall.json.schema.codegen
 
 import java.net.URI
 
-import net.pwall.json.JSONBoolean
-import net.pwall.json.JSONFunctions.displayString
-import net.pwall.json.JSONMapping
-import net.pwall.json.JSONSequence
-import net.pwall.json.JSONString
-import net.pwall.json.JSONValue
-import net.pwall.json.pointer.JSONPointer
-import net.pwall.json.pointer.JSONReference
+import io.kjson.JSON.displayValue
+import io.kjson.JSON.typeError
+import io.kjson.JSONArray
+import io.kjson.JSONBoolean
+import io.kjson.JSONObject
+import io.kjson.JSONString
+import io.kjson.JSONValue
+import io.kjson.pointer.JSONPointer
+import io.kjson.pointer.JSONRef
+import io.kjson.pointer.forEachKey
+import io.kjson.pointer.optionalChild
+import io.kjson.pointer.withOptionalChild
+
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.fatal
 import net.pwall.json.schema.output.BasicErrorEntry
@@ -45,51 +50,49 @@ object Configurator {
 
     val extensionKeywordPattern = Regex("^x(-[A-Za-z0-9]+)+$")
 
-    fun configure(generator: CodeGenerator, ref: JSONReference, uri: URI? = null) {
+    fun configure(generator: CodeGenerator, ref: JSONRef<JSONObject>, uri: URI? = null) {
         // TODO validate against schema?
         val extensionValidators = mutableMapOf<String, MutableMap<String, CustomValidator>>()
         val nonStandardFormats = mutableMapOf<String, CustomFormat>()
         val parser = generator.schemaParser
-        if (ref.value !is JSONMapping<*>)
-            fatal("Config must be object")
-        ref.ifPresent<JSONString>("title") {}
-        ref.ifPresent<JSONString>("version") {}
-        ref.ifPresent<JSONString>("description") {}
-        ref.ifPresent<JSONString?>("packageName") {
-            generator.basePackageName = it?.let { nonEmptyString(it) }
+        ref.optionalChild<JSONString>("title")?.nonEmptyString()
+        ref.optionalChild<JSONString>("version")?.nonEmptyString()
+        ref.optionalChild<JSONString>("description")?.nonEmptyString()
+        ref.withOptionalChild<JSONString?>("packageName") {
+            generator.basePackageName = optionalNonEmptyString()
         }
-        ref.ifPresent<JSONString?>("markerInterface") {
-            generator.markerInterface = it?.let { ClassName.of(nonEmptyString(it)) }
+        ref.withOptionalChild<JSONString?>("markerInterface") {
+            generator.markerInterface = optionalNonEmptyString()?.let { ClassName.of(it) }
         }
-        ref.ifPresent<JSONString?>("generatorComment") {
-            generator.generatorComment = it?.let { nonEmptyString(it) }
+        ref.withOptionalChild<JSONString?>("generatorComment") {
+            generator.generatorComment = optionalNonEmptyString()
         }
-        ref.ifPresent<JSONString?>("commentTemplate") {
-            generator.commentTemplate = it?.let { Template.parse(nonEmptyString(it)) }
+        ref.withOptionalChild<JSONString?>("commentTemplate") {
+            generator.commentTemplate = optionalNonEmptyString()?.let { Template.parse(it) }
         }
-        ref.ifPresent<JSONString>("targetLanguage") {
+        ref.withOptionalChild<JSONString>("targetLanguage") {
             generator.targetLanguage = when (it.value) {
                 "kotlin" -> TargetLanguage.KOTLIN
                 "java" -> TargetLanguage.JAVA
                 "typescript" -> TargetLanguage.TYPESCRIPT
-                else -> invalid(it)
+                else -> invalid()
             }
         }
-        ref.ifPresent<JSONString>("nestedClassNameOption") {
+        ref.withOptionalChild<JSONString>("nestedClassNameOption") {
             generator.nestedClassNameOption = when (it.value) {
                 "property" -> CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY
                 "refSchema" -> CodeGenerator.NestedClassNameOption.USE_NAME_FROM_REF_SCHEMA
-                else -> invalid(it)
+                else -> invalid()
             }
         }
-        ref.ifPresent<JSONString>("additionalPropertiesOption") {
+        ref.withOptionalChild<JSONString>("additionalPropertiesOption") {
             generator.additionalPropertiesOption = when (it.value) {
                 "ignore" -> CodeGenerator.AdditionalPropertiesOption.IGNORE
                 "strict" -> CodeGenerator.AdditionalPropertiesOption.STRICT
-                else -> invalid(it)
+                else -> invalid()
             }
         }
-        ref.ifPresent<JSONString>("examplesValidationOption") {
+        ref.withOptionalChild<JSONString>("examplesValidationOption") {
             generator.examplesValidationOption = when (it.value) {
                 "none" -> {
                     parser.options.validateExamples = false
@@ -103,12 +106,10 @@ object Configurator {
                     parser.options.validateExamples = true
                     CodeGenerator.ValidationOption.BLOCK
                 }
-                else -> {
-                    invalid(it)
-                }
+                else -> invalid()
             }
         }
-        ref.ifPresent<JSONString>("defaultValidationOption") {
+        ref.withOptionalChild<JSONString>("defaultValidationOption") {
             generator.defaultValidationOption = when (it.value) {
                 "none" -> {
                     parser.options.validateDefault = false
@@ -123,116 +124,97 @@ object Configurator {
                 }
                 else -> {
                     parser.options.validateDefault = true
-                    invalid(it)
+                    invalid()
                 }
             }
         }
-        ref.ifPresent<JSONString>("extensibleEnumKeyword") {
+        ref.withOptionalChild<JSONString>("extensibleEnumKeyword") {
             it.value.let { keyword ->
                 if (!extensionKeywordPattern.containsMatchIn(keyword))
                     fatal("Illegal extension keyword at $pointer")
                 generator.extensibleEnumKeyword = keyword
             }
         }
-        ref.ifPresent<JSONBoolean>("derivePackageFromStructure") {
+        ref.withOptionalChild<JSONBoolean>("derivePackageFromStructure") {
             generator.derivePackageFromStructure = it.value
         }
-        ref.ifPresent<JSONMapping<*>>("extensionValidations") {
-            forEachKey { ext ->
-                if (ext.value !is JSONMapping<*>)
-                    fatal("Config entry ${ext.pointer} invalid entry")
-                ext.forEachKey {
-                    if (it.value !is JSONMapping<*>)
-                        fatal("Config entry ${it.pointer} invalid entry")
-                    extensionValidators.getOrPut(ext.current) { mutableMapOf() }[it.current] =
-                            CustomValidator(uri, it.pointer, it.current, parser.parseSchema(ref.base, it, uri))
+        ref.withOptionalChild<JSONObject>("extensionValidations") {
+            forEachKey<JSONObject> { ext ->
+                forEachKey<JSONObject> {
+                    extensionValidators.getOrPut(ext) { mutableMapOf() }[it] =
+                            CustomValidator(uri, pointer, it, parser.parseSchema(base!!, pointer, uri))
                 }
             }
         }
-        ref.ifPresent<JSONMapping<*>>("nonStandardFormat") {
-            forEachKey {
-                if (it.value !is JSONMapping<*>)
-                    fatal("Config entry ${it.pointer} invalid entry")
-                nonStandardFormats[it.current] =
-                        CustomFormat(uri, it.pointer, it.current, parser.parseSchema(ref.base, it, uri))
+        ref.withOptionalChild<JSONObject>("nonStandardFormat") {
+            forEachKey<JSONObject> {
+                nonStandardFormats[it] = CustomFormat(uri, pointer, it, parser.parseSchema(base!!, pointer, uri))
             }
         }
-        ref.ifPresent<JSONMapping<*>>("customClasses") {
-            ifPresent<JSONMapping<*>>("format") {
-                forEachKey {
-                    (it.value as? JSONString)?.let { s ->
-                        generator.addCustomClassByFormat(it.current, it.nonEmptyString(s))
-                    } ?: it.invalid(it.value)
+        ref.withOptionalChild<JSONObject>("customClasses") {
+            withOptionalChild<JSONObject>("format") {
+                forEachKey<JSONString> {
+                    generator.addCustomClassByFormat(it, nonEmptyString())
                 }
             }
-            ifPresent<JSONMapping<*>>("uri") {
-                forEachKey {
-                    (it.value as? JSONString)?.let { s ->
-                        generator.addCustomClassByURI(URI(it.current), it.nonEmptyString(s))
-                    } ?: it.invalid(it.value)
+            withOptionalChild<JSONObject>("uri") {
+                forEachKey<JSONString> {
+                    generator.addCustomClassByURI(URI(it), nonEmptyString())
                 }
             }
-            ifPresent<JSONMapping<*>>("extension") {
-                forEachKey { ext ->
-                    if (ext.value !is JSONMapping<*>)
-                        fatal("Config entry ${ext.pointer} invalid entry")
-                    ext.forEachKey {
-                        (it.value as? JSONString)?.let { s ->
-                            generator.addCustomClassByExtension(ext.current, it.current, it.nonEmptyString(s))
-                        } ?: it.invalid(it.value)
+            withOptionalChild<JSONObject>("extension") {
+                forEachKey<JSONObject> { ext ->
+                    forEachKey<JSONString> {
+                        generator.addCustomClassByExtension(ext, it, nonEmptyString())
                     }
                 }
             }
-            forEachKey {
-                if (it.current !in listOf("format", "uri", "extension"))
-                    fatal("Config entry ${it.pointer} unrecognised mapping type")
+            forEachKey<JSONValue?> {
+                if (it !in listOf("format", "uri", "extension"))
+                    fatal("Config item $pointer unrecognised mapping type")
             }
         }
-        ref.ifPresent<JSONString>("decimalClassName") {
-            generator.decimalClass = ClassName.of(it.value)
+        ref.withOptionalChild<JSONString>("decimalClassName") {
+            generator.decimalClass = ClassName.of(nonEmptyString())
         }
-        ref.ifPresent<JSONMapping<*>>("classNames") {
-            forEachKey {
-                (it.value as? JSONString)?.let { s ->
-                    generator.addClassNameMapping(URI(it.current), it.nonEmptyString(s))
-                } ?: it.invalid(it.value)
+        ref.withOptionalChild<JSONObject>("classNames") {
+            forEachKey<JSONString> {
+                generator.addClassNameMapping(URI(it), nonEmptyString())
             }
         }
-        ref.ifPresent<JSONMapping<*>>("annotations") {
-            ifPresent<JSONMapping<*>>("classes") {
-                forEachKey { entry ->
-                    when (val value = entry.value) {
-                        null -> generator.addClassAnnotation(entry.current)
-                        is JSONString -> generator.addClassAnnotation(entry.current, Template.parse(value.value))
-                        else -> fatal("Config entry ${entry.pointer} invalid entry")
-                    }
+        ref.withOptionalChild<JSONObject>("annotations") {
+            withOptionalChild<JSONObject>("classes") {
+                forEachKey<JSONString?> { entry ->
+                    if (node != null)
+                        generator.addClassAnnotation(entry, Template.parse(asRef<JSONString>().nonEmptyString()))
+                    else
+                        generator.addClassAnnotation(entry)
                 }
             }
-            ifPresent<JSONMapping<*>>("fields") {
-                forEachKey { entry ->
-                    when (val value = entry.value) {
-                        null -> generator.addFieldAnnotation(entry.current)
-                        is JSONString -> generator.addFieldAnnotation(entry.current, Template.parse(value.value))
-                        else -> fatal("Config entry ${entry.pointer} invalid entry")
-                    }
+            withOptionalChild<JSONObject>("fields") {
+                forEachKey<JSONString?> { entry ->
+                    if (node != null)
+                        generator.addFieldAnnotation(entry, Template.parse(asRef<JSONString>().nonEmptyString()))
+                    else
+                        generator.addFieldAnnotation(entry)
                 }
             }
-            forEachKey {
-                if (it.current != "classes" && it.current != "fields")
-                    fatal("Config entry ${it.pointer} unrecognised annotation type")
+            forEachKey<JSONValue?> {
+                if (it != "classes" && it != "fields")
+                    fatal("Config item $pointer unrecognised annotation type")
             }
         }
-        ref.ifPresent<JSONValue>("companionObject") {
+        ref.withOptionalChild<JSONValue>("companionObject") {
             when (it) {
                 is JSONBoolean -> generator.companionObjectForAll = it.value
-                is JSONSequence<*> -> {
+                is JSONArray -> {
                     generator.companionObjectForClasses.addAll(it.map { v ->
                         if (v !is JSONString)
-                            fatal("Config entry companionObject invalid value")
+                            fatal("Config item companionObject invalid value")
                         v.value
                     })
                 }
-                else -> fatal("Config entry companionObject invalid value")
+                else -> fatal("Config item companionObject invalid value")
             }
         }
         if (extensionValidators.isNotEmpty()) {
@@ -247,77 +229,20 @@ object Configurator {
         }
     }
 
-    private fun JSONReference.forEachKey(block: (JSONReference) -> Unit) {
-        value.let {
-            if (it !is JSONMapping<*>)
-                fatal("Config entry ${this.pointer} must be object - ${it.displayValue()}")
-            for (key in it.keys)
-                block(child(key))
-        }
+    private fun JSONRef<JSONString?>.optionalNonEmptyString(): String? = node?.let {
+        if (it.value.isEmpty())
+            it.typeError("non-empty string", pointer, "Config item")
+        it.value
     }
 
-    private inline fun <reified T : JSONValue?> JSONReference.ifPresent(
-        name: String,
-        block: JSONReference.(T) -> Unit
-    ): ConditionDSL {
-        child(name).let {
-            if (it.isValid) {
-                it.checkType<T, Unit>(it.value) { v ->
-                    it.block(v)
-                    return ConditionDSL(this@ifPresent, true)
-                }
-            }
-        }
-        return ConditionDSL(this@ifPresent, false)
+    private fun JSONRef<JSONString>.nonEmptyString(): String = node.let {
+        if (it.value.isEmpty())
+            it.typeError("non-empty string", pointer, "Config item")
+        it.value
     }
 
-    class ConditionDSL(val ref: JSONReference, private val condition: Boolean) {
-
-        fun andAlso(block: JSONReference.() -> Unit): ConditionDSL {
-            if (condition)
-                ref.block()
-            return this
-        }
-
-        fun orElse(block: JSONReference.() -> Unit): ConditionDSL {
-            if (!condition)
-                ref.block()
-            return ConditionDSL(ref, !condition)
-        }
-
-    }
-
-    private inline fun <reified T : JSONValue?, V> JSONReference.checkType(
-        value: JSONValue?,
-        block: JSONReference.(T) -> V
-    ): V = when (value) {
-        is T -> block(value)
-        else -> fatal("Config entry $pointer incorrect type - ${value.displayValue()}")
-    }
-
-    private fun JSONReference.nonEmptyString(s: JSONString): String = s.value.takeIf { it.isNotEmpty() } ?:
-            fatal("Config entry $pointer must not be empty")
-
-    private fun JSONValue?.displayValue(): String {
-        return when (this) {
-            null -> "null"
-            is JSONString -> displayString(value, 21)
-            is JSONSequence<*> -> when (size) {
-                0 -> "[]"
-                1 -> "[${this[0].displayValue()}]"
-                else -> "[...]"
-            }
-            is JSONMapping<*> -> when (size) {
-                0 -> "{}"
-                1 -> entries.iterator().next().let { "{${displayString(it.key, 21)}:${it.value.displayValue()}}" }
-                else -> "{...}"
-            }
-            else -> toString()
-        }
-    }
-
-    private fun JSONReference.invalid(value: JSONValue?): Nothing {
-        fatal("Config entry $pointer invalid - ${value.displayValue()}")
+    private fun JSONRef<JSONValue?>.invalid(): Nothing {
+        fatal("Config item $pointer invalid - ${node.displayValue()}")
     }
 
     class CustomValidator(uri: URI?, location: JSONPointer, val name: String, val schema: JSONSchema) :
