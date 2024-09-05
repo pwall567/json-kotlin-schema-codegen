@@ -25,8 +25,8 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.mustache.Context
-import net.pwall.mustache.Template
+import io.kjson.mustache.Context
+import io.kjson.mustache.Template
 
 /**
  * Base class for output constructs that can have Java/Kotlin annotations.

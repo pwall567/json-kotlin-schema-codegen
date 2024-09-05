@@ -26,13 +26,13 @@
 package net.pwall.json.schema.codegen
 
 import io.kjson.JSONValue
+import io.kjson.mustache.Context
+import io.kjson.mustache.Template
 
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.addOnce
 import net.pwall.json.schema.subschema.RefSchema
-import net.pwall.mustache.Context
-import net.pwall.mustache.Template
 
 /**
  * A code generation target.  The class contains several properties that exist just for the purposes of template

@@ -31,7 +31,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 import java.io.File
-import java.io.Reader
 import java.math.BigDecimal
 import java.net.URI
 import java.nio.file.Files
@@ -48,9 +47,13 @@ import io.kjson.JSONNumber
 import io.kjson.JSONObject
 import io.kjson.JSONString
 import io.kjson.JSONValue
+import io.kjson.mustache.Template
+import io.kjson.mustache.parser.Parser as MustacheParser
+import io.kjson.mustache.Context
 import io.kjson.pointer.JSONPointer
 import io.kjson.pointer.JSONRef
 import io.kjson.pointer.get
+import io.kjson.resource.Resource
 import io.kjson.yaml.YAML
 
 import net.pwall.json.schema.JSONSchema
@@ -81,9 +84,6 @@ import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
 import net.pwall.log.Log.getLogger
 import net.pwall.log.Logger
-import net.pwall.mustache.Context
-import net.pwall.mustache.Template
-import net.pwall.mustache.parser.Parser as MustacheParser
 import net.pwall.util.DefaultValue
 import net.pwall.util.Strings
 
@@ -162,21 +162,16 @@ class CodeGenerator(
 
     @Suppress("MemberVisibilityCanBePrivate")
     var templateParser: MustacheParser by DefaultValue {
-        MustacheParser { name ->
-            partialResolver(name)
+        MustacheParser().apply {
+            for (directory in targetLanguage.directories) {
+                val url = Resource.classPathURL("/$directory/") ?: fatal("Can't locate template directory /$directory")
+                addDirectory(url)
+            }
         }
     }
 
-    private fun partialResolver(name: String): Reader {
-        for (dir in targetLanguage.directories)
-            CodeGenerator::class.java.getResourceAsStream("/$dir/$name.mustache")?.let { return it.reader() }
-        fatal("Can't locate template partial $name")
-    }
-
     var template: Template by DefaultValue {
-        val parser = templateParser
-        val resolver = parser.resolvePartial
-        parser.parse(parser.resolver(templateName))
+        templateParser.parseByName(templateName)
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -184,16 +179,12 @@ class CodeGenerator(
 
     @Suppress("MemberVisibilityCanBePrivate")
     var interfaceTemplate: Template by DefaultValue {
-        val parser = templateParser
-        val resolver = parser.resolvePartial
-        parser.parse(parser.resolver(interfaceTemplateName))
+        templateParser.parseByName(interfaceTemplateName)
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
     var enumTemplate: Template by DefaultValue {
-        val parser = templateParser
-        val resolver = parser.resolvePartial
-        parser.parse(parser.resolver(enumTemplateName))
+        templateParser.parseByName(enumTemplateName)
     }
 
     var indexFileName: TargetFileName? = null
@@ -203,9 +194,7 @@ class CodeGenerator(
 
     @Suppress("MemberVisibilityCanBePrivate")
     var indexTemplate: Template by DefaultValue {
-        val parser = templateParser
-        val resolver = parser.resolvePartial
-        parser.parse(parser.resolver(indexTemplateName))
+        templateParser.parseByName(indexTemplateName)
     }
 
     var outputResolver: OutputResolver by DefaultValue {
@@ -248,16 +237,14 @@ class CodeGenerator(
 
     })
 
-    fun setTemplateDirectory(directory: File, suffix: String = "mustache") {
+    fun setTemplateDirectory(directory: File) {
         when {
             directory.isFile -> fatal("Template directory must be a directory")
             directory.isDirectory -> {}
             else -> fatal("Error accessing template directory")
         }
-        templateParser = MustacheParser().also {
-            it.resolvePartial = { name ->
-                File(directory, "$name.$suffix").reader()
-            }
+        templateParser = MustacheParser().apply {
+            addDirectory(directory)
         }
     }
 
@@ -623,7 +610,7 @@ class CodeGenerator(
         indexFileName?.let { name ->
             log.info { "-- index $name" }
             outputResolver(name).use {
-                indexTemplate.processTo(AppendableFilter(it), TargetIndex(
+                indexTemplate.renderTo(AppendableFilter(it), TargetIndex(
                     targets = targets.filter { t ->
                         t.constraints.isObject ||
                                 t.constraints.isEnumClass && t.constraints.enumValues.let { e ->

@@ -30,24 +30,24 @@ import kotlin.test.expect
 
 import java.io.StringReader
 
-import net.pwall.mustache.Template
+import io.kjson.mustache.Template
 
 class IndentTest {
 
     @Test fun `should output no indent initially`() {
         val template = Template.parse(StringReader("[{{&indent}}]"))
-        expect("[]") { template.processToString(Indent()) }
+        expect("[]") { template.render(Indent()) }
     }
 
     @Test fun `should output incremented indent`() {
         val template = Template.parse(StringReader("[{{#indent.increment}}{{&indent}}{{/indent.increment}}]"))
-        expect("[    ]") { template.processToString(Indent()) }
+        expect("[    ]") { template.render(Indent()) }
     }
 
     @Test fun `should output doubly incremented indent`() {
         val template = Template.parse(StringReader(
                 "[{{#indent.increment}}{{#indent.increment}}{{&indent}}{{/indent.increment}}{{/indent.increment}}]"))
-        expect("[        ]") { template.processToString(Indent()) }
+        expect("[        ]") { template.render(Indent()) }
     }
 
 }

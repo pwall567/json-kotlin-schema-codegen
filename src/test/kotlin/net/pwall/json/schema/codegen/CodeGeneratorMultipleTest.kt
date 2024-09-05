@@ -31,13 +31,13 @@ import kotlin.test.expect
 import java.io.File
 
 import io.kjson.JSON
+import io.kjson.mustache.Template
 import io.kjson.pointer.JSONPointer
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
-import net.pwall.mustache.Template
 
 class CodeGeneratorMultipleTest {
 

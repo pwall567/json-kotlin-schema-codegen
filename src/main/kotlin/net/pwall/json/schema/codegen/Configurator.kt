@@ -34,6 +34,7 @@ import io.kjson.JSONBoolean
 import io.kjson.JSONObject
 import io.kjson.JSONString
 import io.kjson.JSONValue
+import io.kjson.mustache.Template
 import io.kjson.pointer.JSONPointer
 import io.kjson.pointer.JSONRef
 import io.kjson.pointer.forEachKey
@@ -44,7 +45,6 @@ import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.fatal
 import net.pwall.json.schema.output.BasicErrorEntry
 import net.pwall.json.schema.validation.FormatValidator
-import net.pwall.mustache.Template
 
 object Configurator {
 

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `CodeGenerator`, `Configurator`, `Constraints`, `Target`: Switched from `jsonutil` library to `kjson-core`, and from
   `yaml-simple` to `kjson-yaml`
+- `CodeGenerator`, `Configurer`, `Target`, `Annotated`: Switched from `kotlin-mustache` to `mustache-k`
 - `CodeGenerator`: added explicit types to public APIs
 
 ## [0.109] - 2024-09-05

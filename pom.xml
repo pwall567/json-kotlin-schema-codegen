@@ -87,9 +87,9 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-      <groupId>net.pwall.mustache</groupId>
-      <artifactId>kotlin-mustache</artifactId>
-      <version>0.12</version>
+      <groupId>io.kjson</groupId>
+      <artifactId>mustache-k</artifactId>
+      <version>3.2</version>
     </dependency>
     <dependency>
       <groupId>io.kjson</groupId>

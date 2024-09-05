@@ -16,6 +16,9 @@ Code generation for JSON Schema (Draft 07).
 [`kjson-core`](https://github.com/pwall567/kjson-core) and [`kjson-yaml`](https://github.com/pwall567/kjson-yaml).
 The change should be transparent to most users.
 
+Also, the Mustache processor has been switched from `kotlin-mustache` to `mustache-k`, but this change will almost
+certainly not affect any users.
+
 New in version 0.106 &ndash; the `classNames` configuration option has been extended to allow the configuration of
 generated nested class names.
 See [`classNames`](CONFIG.md#classnames) in the [Configuration Guide](CONFIG.md) for more details.
