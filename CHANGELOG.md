@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.111] - 2024-09-11
+### Changed
+- templates: relocated under base template directory
+- `CodeGenerator`: changed to load templates from new location
+
 ## [0.110] - 2024-09-05
 ### Changed
 - `CodeGenerator`, `Configurator`, `Constraints`, `Target`: Switched from `jsonutil` library to `kjson-core`, and from

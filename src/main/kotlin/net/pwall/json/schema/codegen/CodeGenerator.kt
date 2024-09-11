@@ -164,7 +164,8 @@ class CodeGenerator(
     var templateParser: MustacheParser by DefaultValue {
         MustacheParser().apply {
             for (directory in targetLanguage.directories) {
-                val url = Resource.classPathURL("/$directory/") ?: fatal("Can't locate template directory /$directory")
+                val url = Resource.classPathURL("/templates/$directory/") ?:
+                        fatal("Can't locate template directory /templates/$directory")
                 addDirectory(url)
             }
         }
