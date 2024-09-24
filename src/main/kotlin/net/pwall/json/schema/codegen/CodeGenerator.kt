@@ -638,12 +638,12 @@ class CodeGenerator(
 
     private fun processTargetCrossReferences() {
         for (target in targets)
-            processSchema(target.schema, target.constraints)
+            processSchema(target.schema, target.constraints, mutableListOf())
         for (target in targets)
             if (target.constraints.isObject)
-                target.validationsPresent = analyseObject(target, target, target.constraints)
+                target.validationsPresent = analyseObject(target, target, target.constraints, mutableListOf())
         for (target in targets)
-            findOneOfDerivedClasses(target.constraints, target)
+            findOneOfDerivedClasses(target.constraints, target, mutableListOf())
     }
 
     private fun generateTarget(target: Target) {
@@ -688,7 +688,7 @@ class CodeGenerator(
         }
     }
 
-    private fun findOneOfDerivedClasses(constraints: Constraints, target: Target) {
+    private fun findOneOfDerivedClasses(constraints: Constraints, target: Target, chain: MutableList<Constraints>) {
         for (i in constraints.oneOfSchemata.indices) {
             val oneOfItem = constraints.oneOfSchemata[i]
             val oneOfTarget = oneOfItem.schema.findTarget()
@@ -698,17 +698,17 @@ class CodeGenerator(
                     target.derivedClasses.add(oneOfTarget)
                 }
                 else
-                    createCombinedClass(i, constraints, oneOfTarget.constraints, target)
+                    createCombinedClass(i, constraints, oneOfTarget.constraints, target, chain)
             }
             else {
                 if (oneOfItem.isObject)
-                    createCombinedClass(i, constraints, oneOfItem, target)
+                    createCombinedClass(i, constraints, oneOfItem, target, chain)
             }
         }
     }
 
     private fun createCombinedClass(i: Int, constraints: Constraints, additionalConstraints: Constraints,
-            target: Target) {
+            target: Target, chain: MutableList<Constraints>) {
         // create a nested class with current as a base class and oneOfTarget properties,
         // and remove (merge?) overlapping properties
         val nestedConstraints = Constraints(constraints.schema)
@@ -733,7 +733,7 @@ class CodeGenerator(
         }
         val nestedClass = target.addNestedClass(nestedConstraints, null, Strings.toIdentifier(i))
         nestedClass.baseClass = target
-        nestedClass.validationsPresent = analyseProperties(target, nestedConstraints)
+        nestedClass.validationsPresent = analyseProperties(target, nestedConstraints, chain)
         target.derivedClasses.add(nestedClass)
     }
 
@@ -897,7 +897,8 @@ class CodeGenerator(
         )
     }
 
-    private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints): Boolean {
+    private fun analyseObject(target: Target, classDescriptor: ClassDescriptor, constraints: Constraints,
+                              chain: MutableList<Constraints>): Boolean {
         constraints.objectValidationsPresent?.let { return it }
         (constraints.schema as? JSONSchema.General)?.let {
             for (child in it.children) {
@@ -910,8 +911,8 @@ class CodeGenerator(
                             refTarget.derivedClasses.add(classDescriptor)
                             classDescriptor.baseClass = refTarget
                             target.addImport(refTarget)
-                            analyseObject(refTarget, refTarget, refTarget.constraints)
-                            return analyseDerivedObject(target, constraints, refTarget)
+                            analyseObject(refTarget, refTarget, refTarget.constraints, chain)
+                            return analyseDerivedObject(target, constraints, refTarget, chain)
                         }
                     }
                     break
@@ -919,10 +920,10 @@ class CodeGenerator(
             }
         }
         // now carry on and analyse properties
-        return analyseProperties(target, constraints).also { constraints.objectValidationsPresent = it }
+        return analyseProperties(target, constraints, chain).also { constraints.objectValidationsPresent = it }
     }
 
-    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target): Boolean {
+    private fun analyseDerivedObject(target: Target, constraints: Constraints, refTarget: Target, chain: MutableList<Constraints>): Boolean {
         analysePropertiesRequired(constraints)
         var validationsPresent = false
         constraints.properties.forEach { property ->
@@ -953,7 +954,7 @@ class CodeGenerator(
                             validationsPresent = true
                     }
                     baseConstraints.isArray -> {
-                        if (property.processAdditionalConstraintsArray(baseConstraints, target))
+                        if (property.processAdditionalConstraintsArray(baseConstraints, target, chain))
                             validationsPresent = true
                     }
                     // TODO other types with additional constraints?? (decimal, object)
@@ -980,19 +981,20 @@ class CodeGenerator(
                 }
             }
             else {
-                if (analyseProperty(target, property, property, property.name))
+                if (analyseProperty(target, property, property, property.name, chain))
                     validationsPresent = true
             }
         }
         return validationsPresent
     }
 
-    private fun NamedConstraints.processAdditionalConstraintsArray(baseConstraints: Constraints, target: Target): Boolean {
+    private fun NamedConstraints.processAdditionalConstraintsArray(baseConstraints: Constraints, target: Target,
+                                                                   chain: MutableList<Constraints>): Boolean {
         var validationsPresent = false
         arrayItems?.let {
             baseConstraints.arrayItems.let { baseItems ->
                 if (baseItems == null || it != baseItems) {
-                    if (analyseProperty(target, it, this, name.depluralise())) {
+                    if (analyseProperty(target, it, this, name.depluralise(), chain)) {
                         addValidation(Validation.Type.ARRAY_ITEMS)
                         validationsPresent = true
                     }
@@ -1164,14 +1166,20 @@ class CodeGenerator(
      * add validation, excess properties must be a/p type      - - - - - X X X -
      * ```
      */
-    private fun analyseProperties(target: Target, constraints: Constraints): Boolean {
+    private fun analyseProperties(target: Target, constraints: Constraints, chain: MutableList<Constraints>): Boolean {
         analysePropertiesRequired(constraints)
         var additionalPropertiesValidationRequired = false
         if (additionalPropertiesOption != AdditionalPropertiesOption.IGNORE) {
             for (i in constraints.patternProperties.indices) {
                 val patternPropertyTriple = constraints.patternProperties[i]
                 val patternPropertyConstraints = patternPropertyTriple.second
-                analyseProperty(target, patternPropertyConstraints, patternPropertyConstraints, "patternProperty")
+                analyseProperty(
+                    target,
+                    patternPropertyConstraints,
+                    patternPropertyConstraints,
+                    "patternProperty",
+                    chain
+                )
                 val patternPropertyRegex = patternPropertyTriple.first
                 val patternPropertyStatic = target.addStatic(Target.StaticType.PATTERN, "cg_regex",
                         StringValue(patternPropertyRegex.toString()))
@@ -1190,7 +1198,8 @@ class CodeGenerator(
                         additionalPropertiesValidationRequired = true
                     }
                     else -> {
-                        additionalPropertiesValidationRequired = analyseProperty(target, it, it, "additionalProperties")
+                        additionalPropertiesValidationRequired =
+                            analyseProperty(target, it, it, "additionalProperties", chain)
                         // if no properties or patternProperties, the map will use the a/p type, so no check needed
                         // also, no point in checking if the a/p type is Any?
                         if (!(constraints.properties.isEmpty() && constraints.patternProperties.isEmpty()) &&
@@ -1213,7 +1222,16 @@ class CodeGenerator(
             }
         }
         return constraints.properties.fold(additionalPropertiesValidationRequired) { result, property ->
-            analyseProperty(target, property, property, property.name) || result
+            // When encountering the same NameConstraints object again (by recursion, within a call stack),
+            // we skip it because this property already is under analysis.
+            if (chain.firstOrNull { it === property } == null) {
+                chain += property
+                try {
+                    analyseProperty(target, property, property, property.name, chain) || result
+                } finally {
+                    chain.removeLast()
+                }
+            } else result
         }
     }
 
@@ -1240,6 +1258,7 @@ class CodeGenerator(
         refConstraints: Constraints,
         target: Target,
         defaultName: () -> String,
+        chain: MutableList<Constraints>,
     ) {
         if (!findRefClass(constraints, target)) {
             val nestedClassName = refConstraints.uri?.let { uri ->
@@ -1252,7 +1271,7 @@ class CodeGenerator(
             }
             val nestedClass = target.addNestedClass(constraints, constraints.schema,
                     Strings.capitalise(nestedClassName))
-            nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
+            nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints, chain)
             constraints.localType = nestedClass
         }
     }
@@ -1276,6 +1295,7 @@ class CodeGenerator(
         property: Constraints,
         arrayProperty: Constraints,
         name: String,
+        chain: MutableList<Constraints>,
     ): Boolean {
         // true == validations present
         findCustomClass(property.schema, target)?.let {
@@ -1296,10 +1316,10 @@ class CodeGenerator(
         return when {
             property.isObject -> {
                 val referringProperty = arrayProperty.takeIf { it.schema.findRefChild() != null } ?: property
-                findTargetClass(property, referringProperty, target) { name }
+                findTargetClass(property, referringProperty, target, { name }, chain)
                 false
             }
-            property.isArray -> analyseArray(target, property, name)
+            property.isArray -> analyseArray(target, property, name, chain)
             property.isInt -> analyseInt(property, target)
             property.isLong -> analyseLong(property, target)
             property.isDecimal -> {
@@ -1307,7 +1327,7 @@ class CodeGenerator(
                 property.systemClass = SystemClass.DECIMAL
                 analyseDecimal(target, property)
             }
-            property.isString -> analyseString(property, target) { name }
+            property.isString -> analyseString(property, target, { name }, chain)
             property.isBoolean -> false
             else -> {
                 findRefClass(property, target)
@@ -1340,11 +1360,16 @@ class CodeGenerator(
         return false
     }
 
-    private fun analyseArray(target: Target, property: Constraints, name: String): Boolean {
+    private fun analyseArray(
+        target: Target,
+        property: Constraints,
+        name: String,
+        chain: MutableList<Constraints>
+    ): Boolean {
         target.systemClasses.addOnce(if (property.uniqueItems) SystemClass.SET else SystemClass.LIST)
         var validationsPresent = false
         property.arrayItems?.let { item ->
-            if (analyseProperty(target, item, property, name.depluralise())) {
+            if (analyseProperty(target, item, property, name.depluralise(), chain)) {
                 property.addValidation(Validation.Type.ARRAY_ITEMS)
                 validationsPresent = true
             }
@@ -1353,7 +1378,8 @@ class CodeGenerator(
                     property.defaultValue = Constraints.DefaultPropertyValue(
                         defaultValue = array.mapNotNull{
                             (it as? Constraints.DefaultPropertyValue)?.let { defaultItem ->
-                                val enumDefault = EnumValue(item.localType!!.className, defaultItem.defaultValue.toString())
+                                val enumDefault =
+                                    EnumValue(item.localType!!.className, defaultItem.defaultValue.toString())
                                 Constraints.DefaultPropertyValue(enumDefault, JSONSchema.Type.STRING)
                             }
                         },
@@ -1391,14 +1417,19 @@ class CodeGenerator(
         } ?: false
     }
 
-    private fun analyseString(property: Constraints, target: Target, defaultName: () -> String): Boolean {
+    private fun analyseString(
+        property: Constraints,
+        target: Target,
+        defaultName: () -> String,
+        chain: MutableList<Constraints>
+    ): Boolean {
         var validationsPresent = analyseFormat(target, property)
         if (property.systemClass != null)
             return false
         property.enumValues?.let { array ->
             if (allIdentifier(array)) {
                 property.isEnumClass = true
-                findTargetClass(property, property, target, defaultName)
+                findTargetClass(property, property, target, defaultName, chain)
                 property.defaultValue?.let {
                     if (it.type == JSONSchema.Type.STRING &&
                             array.any { a -> a.toString() == it.defaultValue.toString() } ) {
@@ -1818,25 +1849,35 @@ class CodeGenerator(
         return children.filterIsInstance<RefSchema>().firstOrNull()
     }
 
-    private fun processSchema(schema: JSONSchema, constraints: Constraints) {
+    private fun processSchema(
+        schema: JSONSchema,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
+        chain += Pair(schema, constraints)
         when (schema) {
-            is JSONSchema.SubSchema -> processSubSchema(schema, constraints)
-            is JSONSchema.Validator -> processValidator(schema, constraints)
-            is JSONSchema.General -> schema.children.forEach { processSchema(it, constraints) }
-            is JSONSchema.Not -> processNotSchema(schema.nested, constraints)
+            is JSONSchema.SubSchema -> processSubSchema(schema, constraints, chain)
+            is JSONSchema.Validator -> processValidator(schema, constraints, chain)
+            is JSONSchema.General -> schema.children.forEach { processSchema(it, constraints, chain) }
+            is JSONSchema.Not -> processNotSchema(schema.nested, constraints, chain)
             is JSONSchema.False -> constraints.nullable = true
             is JSONSchema.True -> constraints.nullable = true
             else -> {} // is there anything else?
         }
+        chain.removeLast()
     }
 
-    private fun processNotSchema(schema: JSONSchema, constraints: Constraints) {
+    private fun processNotSchema(
+        schema: JSONSchema,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         val constraintsNot = constraints.negatedConstraints ?: Constraints(constraints.schema, true).also {
             it.negatedConstraints = constraints
             constraints.negatedConstraints = it
             it.validations = constraints.validations
         }
-        processSchema(schema, constraintsNot)
+        processSchema(schema, constraintsNot, chain)
     }
 
     private fun processDefaultValue(value: JSONValue?): Constraints.DefaultPropertyValue =
@@ -1853,16 +1894,25 @@ class CodeGenerator(
                 else -> fatal("Unexpected default value")
             }
 
-    private fun processSubSchema(subSchema: JSONSchema.SubSchema, constraints: Constraints) {
+    private fun processSubSchema(
+        subSchema: JSONSchema.SubSchema,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         when (subSchema) {
-            is CombinationSchema -> processCombinationSchema(subSchema, constraints)
-            is ItemsSchema -> processSchema(subSchema.itemSchema,
-                    constraints.arrayItems ?: ItemConstraints(subSchema.itemSchema, constraints.displayName,
-                            nameGenerator.generate()).also { constraints.arrayItems = it })
-            is PropertiesSchema -> processPropertySchema(subSchema, constraints)
-            is PatternPropertiesSchema -> processPatternPropertiesSchema(subSchema, constraints)
-            is AdditionalPropertiesSchema -> processAdditionalPropertiesSchema(subSchema, constraints)
-            is RefSchema -> processSchema(subSchema.target, constraints)
+            is CombinationSchema -> processCombinationSchema(subSchema, constraints, chain)
+            is ItemsSchema -> processSchema(
+                subSchema.itemSchema,
+                constraints.arrayItems ?: ItemConstraints(
+                    subSchema.itemSchema, constraints.displayName,
+                    nameGenerator.generate()
+                ).also { constraints.arrayItems = it },
+                chain
+            )
+            is PropertiesSchema -> processPropertySchema(subSchema, constraints, chain)
+            is PatternPropertiesSchema -> processPatternPropertiesSchema(subSchema, constraints, chain)
+            is AdditionalPropertiesSchema -> processAdditionalPropertiesSchema(subSchema, constraints, chain)
+            is RefSchema -> processSchema(subSchema.target, constraints, chain)
             is RequiredSchema -> subSchema.properties.forEach {
                     if (it !in constraints.required) constraints.required.add(it) }
             is ExtensionSchema -> processExtensionSchema(subSchema, constraints)
@@ -1882,18 +1932,22 @@ class CodeGenerator(
         }
     }
 
-    private fun processCombinationSchema(combinationSchema: CombinationSchema, constraints: Constraints) {
+    private fun processCombinationSchema(
+        combinationSchema: CombinationSchema,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         when (combinationSchema.name) {
-            "allOf" -> combinationSchema.array.forEach { processSchema(it, constraints) }
+            "allOf" -> combinationSchema.array.forEach { processSchema(it, constraints, chain) }
             "oneOf" -> {
                 when (val i = combinationSchema.findNullableSpecialCase()) {
                     0, 1 -> {
-                        processSchema(combinationSchema.array[i], constraints)
+                        processSchema(combinationSchema.array[i], constraints, chain)
                         constraints.nullable = true
                     }
                     else -> {
                         constraints.oneOfSchemata = combinationSchema.array.map { schema ->
-                            Constraints(schema).also { processSchema(schema, it) }
+                            Constraints(schema).also { processSchema(schema, it, chain) }
                         }
                     }
                 }
@@ -1901,7 +1955,7 @@ class CodeGenerator(
             "anyOf" -> { // special case involving anyOf and type null (otherwise ignore for now)
                 when (val i = combinationSchema.findNullableSpecialCase()) {
                     0, 1 -> {
-                        processSchema(combinationSchema.array[i], constraints)
+                        processSchema(combinationSchema.array[i], constraints, chain)
                         constraints.nullable = true
                     }
                     else -> {}
@@ -1910,12 +1964,16 @@ class CodeGenerator(
         }
     }
 
-    private fun processValidator(validator: JSONSchema.Validator, constraints: Constraints) {
+    private fun processValidator(
+        validator: JSONSchema.Validator,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         when (validator) {
             is DefaultValidator -> constraints.defaultValue = processDefaultValue(validator.value)
             is ConstValidator -> processConstValidator(validator, constraints)
             is EnumValidator -> processEnumValidator(validator, constraints)
-            is FormatValidator -> processFormatValidator(validator, constraints)
+            is FormatValidator -> processFormatValidator(validator, constraints, chain)
             is NumberValidator -> processNumberValidator(validator, constraints)
             is PropertiesValidator -> processPropertiesValidator(validator, constraints)
             is PatternValidator -> processPatternValidator(validator, constraints)
@@ -1923,9 +1981,9 @@ class CodeGenerator(
             is TypeValidator -> processTypeValidator(validator, constraints)
             is ArrayValidator -> processArrayValidator(validator, constraints)
             is UniqueItemsValidator -> processUniqueItemsValidator(constraints)
-            is DelegatingValidator -> processValidator(validator.validator, constraints)
-            is Configurator.CustomValidator -> processSchema(validator.schema, constraints)
-            is Configurator.CustomFormat -> processSchema(validator.schema, constraints)
+            is DelegatingValidator -> processValidator(validator.validator, constraints, chain)
+            is Configurator.CustomValidator -> processSchema(validator.schema, constraints, chain)
+            is Configurator.CustomFormat -> processSchema(validator.schema, constraints, chain)
         }
     }
 
@@ -1941,12 +1999,16 @@ class CodeGenerator(
         constraints.enumValues = enumValidator.array
     }
 
-    private fun processFormatValidator(formatValidator: FormatValidator, constraints: Constraints) {
+    private fun processFormatValidator(
+        formatValidator: FormatValidator,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         val newFormat = formatValidator.checker
         constraints.format.add(newFormat)
         if (newFormat is FormatValidator.DelegatingFormatChecker) {
             for (validator in newFormat.validators)
-                processValidator(validator, constraints)
+                processValidator(validator, constraints, chain)
         }
     }
 
@@ -1999,28 +2061,38 @@ class CodeGenerator(
         }
     }
 
-    private fun processPropertySchema(propertySchema: PropertiesSchema, constraints: Constraints) {
+    private fun processPropertySchema(
+        propertySchema: PropertiesSchema,
+        constraints: Constraints,
+        chain: MutableList<Pair<JSONSchema, Constraints>>
+    ) {
         propertySchema.properties.forEach { (name, schema) ->
-            val propertyConstraints = constraints.properties.find { it.name == name } ?:
-                    NamedConstraints(schema, name).also { constraints.properties.add(it) }
-            processSchema(schema, propertyConstraints)
+            // When encountering the same PropertiesSchema again (by recursion, within a call stack),
+            // we return the already existing NamedConstraint object instead of creating one.
+            val propertyConstraints = chain.find { it.first === schema }?.second?.also {
+                constraints.properties.add(it as NamedConstraints)
+                return@forEach
+            }
+                ?: constraints.properties.find { it.name == name }
+                ?: NamedConstraints(schema, name).also { constraints.properties.add(it) }
+            processSchema(schema, propertyConstraints, chain)
         }
     }
 
     private fun processPatternPropertiesSchema(patternPropertiesSchema: PatternPropertiesSchema,
-            constraints: Constraints) {
+            constraints: Constraints, chain: MutableList<Pair<JSONSchema, Constraints>>) {
         patternPropertiesSchema.properties.forEach { (regex, schema) ->
             val patternPropertyPair = constraints.patternProperties.find { it.first == regex } ?:
                     Triple(regex, Constraints(schema), null).also { constraints.patternProperties.add(it) }
-            processSchema(schema, patternPropertyPair.second)
+            processSchema(schema, patternPropertyPair.second, chain)
         }
     }
 
     private fun processAdditionalPropertiesSchema(additionalPropertiesSchema: AdditionalPropertiesSchema,
-            constraints: Constraints) {
+            constraints: Constraints, chain: MutableList<Pair<JSONSchema, Constraints>>) {
         val additionalPropertiesConstraints = constraints.additionalProperties ?:
                 Constraints(additionalPropertiesSchema.schema).also { constraints.additionalProperties = it }
-        processSchema(additionalPropertiesSchema.schema, additionalPropertiesConstraints)
+        processSchema(additionalPropertiesSchema.schema, additionalPropertiesConstraints, chain)
     }
 
     private fun processTypeValidator(typeValidator: TypeValidator, constraints: Constraints) {
