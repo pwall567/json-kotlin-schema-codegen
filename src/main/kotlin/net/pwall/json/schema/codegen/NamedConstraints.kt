@@ -2,7 +2,7 @@
  * @(#) NamedConstraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2020, 2021, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
 package net.pwall.json.schema.codegen
 
 import net.pwall.json.schema.JSONSchema
-import net.pwall.util.Strings
+import net.pwall.util.Name.Companion.capitalise
 
 class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
 
@@ -50,7 +50,7 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
 
     @Suppress("unused")
     val capitalisedName: String
-        get() = Strings.capitalise(javaName)
+        get() = javaName.capitalise()
 
     companion object {
 

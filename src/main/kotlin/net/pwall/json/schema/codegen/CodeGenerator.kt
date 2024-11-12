@@ -85,7 +85,7 @@ import net.pwall.json.schema.validation.UniqueItemsValidator
 import net.pwall.log.Log.getLogger
 import net.pwall.log.Logger
 import net.pwall.util.DefaultValue
-import net.pwall.util.Strings
+import net.pwall.util.Name.Companion.capitalise
 
 /**
  * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
@@ -292,7 +292,7 @@ class CodeGenerator(
         Configurator.configure(this, JSONRef(json), uri)
     }
 
-    private val targets = mutableListOf<Target>()
+    val targets = mutableListOf<Target>()
 
     /**
      * Clear the target list.
@@ -731,7 +731,7 @@ class CodeGenerator(
             if (additionalConstraints.required.contains(property.name))
                 nestedConstraints.required.add(property.name)
         }
-        val nestedClass = target.addNestedClass(nestedConstraints, null, Strings.toIdentifier(i))
+        val nestedClass = target.addNestedClass(nestedConstraints, null, i.toColumnId())
         nestedClass.baseClass = target
         nestedClass.validationsPresent = analyseProperties(target, nestedConstraints)
         target.derivedClasses.add(nestedClass)
@@ -885,7 +885,7 @@ class CodeGenerator(
                     uriNameNoExtension.endsWith("-schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
                     uriNameNoExtension.endsWith("_schema", ignoreCase = true) -> uriNameNoExtension.dropLast(7)
                     else -> uriNameNoExtension
-                }.split('-', '.').joinToString(separator = "") { part -> Strings.capitalise(part) }.sanitiseName()
+                }.split('-', '.').joinToString(separator = "") { part -> part.capitalise() }.sanitiseName()
             }
         } ?: "GeneratedClass$numTargets"
         addTarget(
@@ -1250,8 +1250,7 @@ class CodeGenerator(
                     refConstraints.schema.findRefChild()?.fragment?.substringAfterLast('/') ?: defaultName()
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
             }
-            val nestedClass = target.addNestedClass(constraints, constraints.schema,
-                    Strings.capitalise(nestedClassName))
+            val nestedClass = target.addNestedClass(constraints, constraints.schema, nestedClassName.capitalise())
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
             constraints.localType = nestedClass
         }
@@ -1672,42 +1671,42 @@ class CodeGenerator(
         var result = false
         property.format.forEach {
             when (it.name) {
-                FormatValidator.EmailFormatChecker.name -> {
+                "email" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.EMAIL)
                     result = true
                 }
-                FormatValidator.HostnameFormatChecker.name -> {
+                "hostname" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.HOSTNAME)
                     result = true
                 }
-                FormatValidator.IPV4FormatChecker.name -> {
+                "ipv4" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.IPV4)
                     result = true
                 }
-                FormatValidator.IPV6FormatChecker.name -> {
+                "ipv6" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.IPV6)
                     result = true
                 }
-                FormatValidator.DurationFormatChecker.name -> {
+                "duration" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.DURATION)
                     result = true
                 }
-                FormatValidator.JSONPointerFormatChecker.name -> {
+                "json-pointer" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.JSON_POINTER)
                     result = true
                 }
-                FormatValidator.RelativeJSONPointerFormatChecker.name -> {
+                "relative-json-pointer" -> {
                     target.systemClasses.addOnce(SystemClass.VALIDATION)
                     property.addValidation(Validation.Type.RELATIVE_JSON_POINTER)
                     result = true
                 }
-                FormatValidator.DateTimeFormatChecker.name -> {
+                "date-time" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.DATE_TIME)
@@ -1718,7 +1717,7 @@ class CodeGenerator(
                         property.systemClass = SystemClass.DATE_TIME
                     }
                 }
-                FormatValidator.DateFormatChecker.name -> {
+                "date" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.DATE)
@@ -1729,7 +1728,7 @@ class CodeGenerator(
                         property.systemClass = SystemClass.DATE
                     }
                 }
-                FormatValidator.TimeFormatChecker.name -> {
+                "time" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.TIME)
@@ -1740,7 +1739,7 @@ class CodeGenerator(
                         property.systemClass = SystemClass.TIME
                     }
                 }
-                FormatValidator.UUIDFormatChecker.name -> {
+                "uuid" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.UUID)
@@ -1751,7 +1750,7 @@ class CodeGenerator(
                         property.systemClass = SystemClass.UUID
                     }
                 }
-                FormatValidator.URIFormatChecker.name -> {
+                "uri" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.URI)
@@ -1762,7 +1761,7 @@ class CodeGenerator(
                         property.systemClass = SystemClass.URI
                     }
                 }
-                FormatValidator.URIReferenceFormatChecker.name -> {
+                "uri-reference" -> {
                     if (property.negated) {
                         target.systemClasses.addOnce(SystemClass.VALIDATION)
                         property.addValidation(Validation.Type.URI_REFERENCE)
@@ -1772,6 +1771,11 @@ class CodeGenerator(
                         target.systemClasses.addOnce(SystemClass.URI)
                         property.systemClass = SystemClass.URI
                     }
+                }
+                "uri-template" -> {
+                    target.systemClasses.addOnce(SystemClass.VALIDATION)
+                    property.addValidation(Validation.Type.URI_TEMPLATE)
+                    result = true
                 }
             }
         }
@@ -2285,6 +2289,14 @@ class CodeGenerator(
             return this is JSONSchema.General && children.size == 1 && children[0].let {
                 it is TypeValidator && it.types == listOf(JSONSchema.Type.NULL)
             }
+        }
+
+        fun Int.toColumnId(): String = buildString {
+            var i = if (this@toColumnId < 0) -this@toColumnId else this@toColumnId
+            do {
+                insert(0, ((i % 26) + 'A'.code).toChar())
+                i = i / 26 - 1
+            } while (i >= 0)
         }
 
     }

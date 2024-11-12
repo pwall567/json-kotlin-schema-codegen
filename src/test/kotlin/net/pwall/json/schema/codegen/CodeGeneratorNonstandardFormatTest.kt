@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorNonstandardFormatTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2021, 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.FormatValidator
 import net.pwall.json.schema.validation.StringValidator
+import net.pwall.json.validation.JSONValidation
 
 class CodeGeneratorNonstandardFormatTest {
 
@@ -64,7 +65,9 @@ class CodeGeneratorNonstandardFormatTest {
         parser.nonstandardFormatHandler = { keyword ->
             when (keyword) {
                 "guid" -> FormatValidator.DelegatingFormatChecker(keyword,
-                        FormatValidator(null, JSONPointer.root, FormatValidator.UUIDFormatChecker))
+                        FormatValidator(null, JSONPointer.root, FormatValidator.StringFormatChecker("uuid") {
+                            JSONValidation.isUUID(it)
+                        }))
                 else -> null
             }
         }

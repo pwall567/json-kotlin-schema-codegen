@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.112] - 2024-11-13
+### Changed
+- `CodeGenerator`, `Validation`: updated for changes in validations in `json-kotlin-schema` 0.51
+- `CodeGenerator`, `NamedConstraints`: eliminated use of `javautil` library
+- `CodeGenerator`: make `targets` list public
+- `pom.xml`: updated dependency versions
+
 ## [0.111] - 2024-09-11
 ### Changed
 - templates: relocated under base template directory

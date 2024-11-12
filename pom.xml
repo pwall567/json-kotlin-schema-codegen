@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.111</version>
+  <version>0.112</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.50</version>
+      <version>0.51</version>
     </dependency>
     <dependency>
       <groupId>io.kjson</groupId>
@@ -82,14 +82,9 @@
       <version>1.9</version>
     </dependency>
     <dependency>
-      <groupId>net.pwall.util</groupId>
-      <artifactId>javautil</artifactId>
-      <version>2.4</version>
-    </dependency>
-    <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>mustache-k</artifactId>
-      <version>3.2</version>
+      <version>3.3</version>
     </dependency>
     <dependency>
       <groupId>io.kjson</groupId>
@@ -118,7 +113,7 @@
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson</artifactId>
-      <version>8.1</version>
+      <version>9.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
