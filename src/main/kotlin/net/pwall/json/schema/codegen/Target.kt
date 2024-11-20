@@ -101,7 +101,7 @@ class Target(
     val staticsPresent: Boolean
         get() = statics.isNotEmpty()
 
-    val nestedClasses = mutableListOf<ClassDescriptor>()
+    val nestedClasses = mutableListOf<NestedClassDescriptor>()
     @Suppress("unused", "MemberVisibilityCanBePrivate")
     val nestedClassesPresent: Boolean
         get() = nestedClasses.isNotEmpty()
@@ -128,7 +128,7 @@ class Target(
         nestedClassConstraints: Constraints,
         comparisonSchema: JSONSchema?,
         innerClassName: String,
-    ): ClassDescriptor {
+    ): NestedClassDescriptor {
         nestedClasses.find {
             it.constraints.schema === comparisonSchema || sameReference(it.constraints, nestedClassConstraints)
         }?.let { return it }
@@ -147,7 +147,7 @@ class Target(
                 }
             }
         }
-        return ClassDescriptor(nestedClassConstraints, actualInnerClassName).also { nestedClasses.add(it) }
+        return NestedClassDescriptor(this, nestedClassConstraints, actualInnerClassName).also { nestedClasses.add(it) }
     }
 
     private fun sameReference(constraints1: Constraints, constraints2: Constraints): Boolean {

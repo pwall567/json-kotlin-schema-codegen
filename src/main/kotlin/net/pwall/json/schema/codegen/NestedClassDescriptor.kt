@@ -1,8 +1,8 @@
 /*
- * @(#) ClassId.kt
+ * @(#) NestedClassDescriptor.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,13 @@
 
 package net.pwall.json.schema.codegen
 
-interface ClassId {
+class NestedClassDescriptor(
+    val parent: ClassDescriptor,
+    constraints: Constraints,
+    className: String,
+) : ClassDescriptor(constraints, className) {
 
-    val packageName: String?
-
-    val className: String
-
-    val fullClassName: String
-        get() = className
-
-    val qualifiedClassName: String
-        get() = packageName?.let { "$it.$fullClassName" } ?: fullClassName
-
-    fun samePackage(other: ClassId): Boolean = packageName == other.packageName
+    override val fullClassName: String
+        get() = "${parent.className}.$className"
 
 }

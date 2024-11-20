@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.113] - 2024-11-21
+### Added
+- `NestedClassDescriptor`: improve handling of nested classes
+### Changed
+- `ClassId`, `Target`: improve handling of nested classes
+- `pom.xml`: updated dependency versions
+
 ## [0.112] - 2024-11-13
 ### Changed
 - `CodeGenerator`, `Validation`: updated for changes in validations in `json-kotlin-schema` 0.51

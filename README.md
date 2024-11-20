@@ -16,8 +16,8 @@ Code generation for JSON Schema (Draft 07).
 [`kjson-core`](https://github.com/pwall567/kjson-core) and [`kjson-yaml`](https://github.com/pwall567/kjson-yaml).
 The change should be transparent to most users.
 
-Also, the Mustache processor has been switched from `kotlin-mustache` to `mustache-k`, but this change will almost
-certainly not affect any users.
+Also, the Mustache processor has been switched from [`kotlin-mustache`](https://github.com/pwall567/kotlin-mustache) to
+[`mustache-k`](https://github.com/pwall567/mustache-k), but this change will almost certainly not affect any users.
 
 New in version 0.106 &ndash; the `classNames` configuration option has been extended to allow the configuration of
 generated nested class names.
@@ -394,25 +394,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.112, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.113, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.112</version>
+      <version>0.113</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.112'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.113'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.112")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.113")
 ```
 
 Peter Wall
 
-2024-11-13
+2024-11-21
