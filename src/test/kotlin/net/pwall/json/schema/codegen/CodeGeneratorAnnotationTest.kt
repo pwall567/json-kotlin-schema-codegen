@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -49,7 +50,7 @@ class CodeGeneratorAnnotationTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(expected.readText()) { outputDetails.output() }
+        outputDetails.output() shouldBe expected.readText()
     }
 
     @Test fun `should generate correct code for annotations in Java`() {
@@ -64,7 +65,7 @@ class CodeGeneratorAnnotationTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(expected.readText()) { outputDetails.output() }
+        outputDetails.output() shouldBe expected.readText()
     }
 
     @Test fun `should generate correct code for annotations including nested classes`() {
@@ -76,7 +77,7 @@ class CodeGeneratorAnnotationTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(createHeader("Test.kt") + expected) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + expected
     }
 
     @Test fun `should generate correct code for annotations in Java including nested classes`() {
@@ -88,7 +89,7 @@ class CodeGeneratorAnnotationTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(createHeader("Test.java") + expectedJava) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.java") + expectedJava
     }
 
     companion object {

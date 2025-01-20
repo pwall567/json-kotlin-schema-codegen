@@ -26,10 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldThrow
 
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
@@ -49,8 +49,8 @@ class CodeGeneratorValidationTest {
                 examplesValidationOption = CodeGenerator.ValidationOption.BLOCK
                 basePackageName = packageName
                 outputResolver = outputCapture(outputDetails)
-                assertFailsWith<JSONSchemaException> { generate(input) }.let {
-                    expect("Validation errors encountered") { it.message }
+                shouldThrow<JSONSchemaException>("Validation errors encountered") {
+                    generate(input)
                 }
             }
             logList.assertHasWarning("http://pwall.net/test-validation-errors#/minimum: " +
@@ -68,8 +68,8 @@ class CodeGeneratorValidationTest {
                 configure(configFile)
                 basePackageName = packageName
                 outputResolver = outputCapture(outputDetails)
-                assertFailsWith<JSONSchemaException> { generate(input) }.let {
-                    expect("Validation errors encountered") { it.message }
+                shouldThrow<JSONSchemaException>("Validation errors encountered") {
+                    generate(input)
                 }
             }
             val expectedError = "http://pwall.net/test-validation-errors-format#/format/money/pattern: " +

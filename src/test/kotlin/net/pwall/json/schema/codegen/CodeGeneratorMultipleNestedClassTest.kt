@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +45,7 @@ class CodeGeneratorMultipleNestedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedClasses.kt") + expected1) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNestedClasses.kt") + expected1
     }
 
     @Test fun `should output nested class using property name`() {
@@ -55,7 +56,7 @@ class CodeGeneratorMultipleNestedClassTest {
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.nestedClassNameOption = CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedClasses.kt") + expected2) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNestedClasses.kt") + expected2
     }
 
     @Test fun `should output nested class for array`() {
@@ -65,7 +66,7 @@ class CodeGeneratorMultipleNestedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedClassesArray.kt") + expected3) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNestedClassesArray.kt") + expected3
     }
 
     @Test fun `should output nested class for array using property name`() {
@@ -76,7 +77,7 @@ class CodeGeneratorMultipleNestedClassTest {
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.nestedClassNameOption = CodeGenerator.NestedClassNameOption.USE_NAME_FROM_PROPERTY
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedClassesArray.kt") + expected4) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNestedClassesArray.kt") + expected4
     }
 
     companion object {

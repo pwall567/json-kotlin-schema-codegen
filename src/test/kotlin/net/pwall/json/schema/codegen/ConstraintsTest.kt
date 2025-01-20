@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSONArray
 import io.kjson.JSONInt
@@ -41,84 +42,84 @@ class ConstraintsTest {
     @Test fun `should recognise type string`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.STRING)
-        expect(true) { constraints.isIdentifiableType }
-        expect(true) { constraints.isString }
-        expect(false) { constraints.isInt }
+        constraints.isIdentifiableType shouldBe true
+        constraints.isString shouldBe true
+        constraints.isInt shouldBe false
     }
 
     @Test fun `should recognise type integer when maximum and minimum added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.minimum = 0
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.maximum = 4000
-        expect(true) { constraints.isIdentifiableType }
-        expect(false) { constraints.isString }
-        expect(true) { constraints.isInt }
-        expect(false) { constraints.isLong }
+        constraints.isIdentifiableType shouldBe true
+        constraints.isString shouldBe false
+        constraints.isInt shouldBe true
+        constraints.isLong shouldBe false
     }
 
     @Test fun `should recognise type integer when const int added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.constValue = JSONInt(5)
-        expect(true) { constraints.isInt }
-        expect(false) { constraints.isLong }
+        constraints.isInt shouldBe true
+        constraints.isLong shouldBe false
     }
 
     @Test fun `should recognise type integer when small const long added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.constValue = JSONLong(999)
-        expect(true) { constraints.isInt }
-        expect(false) { constraints.isLong }
+        constraints.isInt shouldBe true
+        constraints.isLong shouldBe false
     }
 
     @Test fun `should not recognise type integer when const long added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.constValue = JSONLong(123456789123456789)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
     }
 
     @Test fun `should recognise type integer when enum of int added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.enumValues = JSONArray(JSONInt(1), JSONInt(2), JSONInt(3), JSONInt(4))
-        expect(true) { constraints.isInt }
-        expect(false) { constraints.isLong }
+        constraints.isInt shouldBe true
+        constraints.isLong shouldBe false
     }
 
     @Test fun `should recognise type integer when enum of small long added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.enumValues = JSONArray(JSONLong(1111), JSONLong(2222), JSONLong(3333), JSONLong(4444))
-        expect(true) { constraints.isInt }
-        expect(false) { constraints.isLong }
+        constraints.isInt shouldBe true
+        constraints.isLong shouldBe false
     }
 
     @Test fun `should not recognise type integer when enum of long added`() {
         val constraints = Constraints(dummySchema)
         constraints.types.add(JSONSchema.Type.INTEGER)
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
         constraints.enumValues = JSONArray(JSONLong(0L), JSONLong(123456789123456789))
-        expect(false) { constraints.isInt }
-        expect(true) { constraints.isLong }
+        constraints.isInt shouldBe false
+        constraints.isLong shouldBe true
     }
 
     companion object {

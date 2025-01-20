@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.nio.file.FileSystems
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -47,14 +48,14 @@ class CodeGeneratorTargetTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         val parser = Parser()
         codeGenerator.addTarget(parser.parse(input), "Test")
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should add to target list by File`() {
@@ -62,13 +63,13 @@ class CodeGeneratorTargetTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input)
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should add to target list by File with subpackage name`() {
@@ -76,13 +77,13 @@ class CodeGeneratorTargetTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = "com"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input, "example")
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should add to target list by Path`() {
@@ -90,13 +91,13 @@ class CodeGeneratorTargetTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = "com.example"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input.toPath())
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should add to target list by Path with subpackage name`() {
@@ -104,13 +105,13 @@ class CodeGeneratorTargetTest {
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = "com"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input.toPath(), "example")
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should add targets for multiple schemata`() {
@@ -121,12 +122,12 @@ class CodeGeneratorTargetTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addCompositeTargets(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(2) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 2
         codeGenerator.generateAllTargets()
-        expect(createHeader("TypeA.kt") + CodeGeneratorMultipleTest.expectedTypeA) { outputDetailsA.output() }
-        expect(createHeader("TypeB.kt") + CodeGeneratorMultipleTest.expectedTypeB) { outputDetailsB.output() }
+        outputDetailsA.output() shouldBe createHeader("TypeA.kt") + CodeGeneratorMultipleTest.expectedTypeA
+        outputDetailsB.output() shouldBe createHeader("TypeB.kt") + CodeGeneratorMultipleTest.expectedTypeB
     }
 
     @Test fun `should add targets for multiple files in directory`() {
@@ -137,16 +138,12 @@ class CodeGeneratorTargetTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTargets(listOf(input))
-        expect(2) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 2
         codeGenerator.generateAllTargets()
-        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
-            outputDetailsOuter.output()
-        }
-        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
-            outputDetailsInner.output()
-        }
+        outputDetailsOuter.output() shouldBe createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter
+        outputDetailsInner.output() shouldBe createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner
     }
 
     @Test fun `should add targets for multiple files in directory with subpackage name`() {
@@ -157,16 +154,12 @@ class CodeGeneratorTargetTest {
         codeGenerator.basePackageName = "com"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTargets(listOf(input), "example")
-        expect(2) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 2
         codeGenerator.generateAllTargets()
-        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
-            outputDetailsOuter.output()
-        }
-        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
-            outputDetailsInner.output()
-        }
+        outputDetailsOuter.output() shouldBe createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter
+        outputDetailsInner.output() shouldBe createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner
     }
 
     @Test fun `should add targets for multiple files in directory specified by path`() {
@@ -177,16 +170,12 @@ class CodeGeneratorTargetTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTargetsByPath(listOf(input))
-        expect(2) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 2
         codeGenerator.generateAllTargets()
-        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
-            outputDetailsOuter.output()
-        }
-        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
-            outputDetailsInner.output()
-        }
+        outputDetailsOuter.output() shouldBe createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter
+        outputDetailsInner.output() shouldBe createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner
     }
 
     @Test fun `should add targets for multiple files in directory specified by path with subpackage name`() {
@@ -197,16 +186,12 @@ class CodeGeneratorTargetTest {
         codeGenerator.basePackageName = "com"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTargetsByPath(listOf(input), "example")
-        expect(2) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 2
         codeGenerator.generateAllTargets()
-        expect(createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter) {
-            outputDetailsOuter.output()
-        }
-        expect(createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner) {
-            outputDetailsInner.output()
-        }
+        outputDetailsOuter.output() shouldBe createHeader("TestRefClassOuter.kt") + CodeGeneratorRefClassTest.expectedOuter
+        outputDetailsInner.output() shouldBe createHeader("TestRefClassInner.kt") + CodeGeneratorRefClassTest.expectedInner
     }
 
 }

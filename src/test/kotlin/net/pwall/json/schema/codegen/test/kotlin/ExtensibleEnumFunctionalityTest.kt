@@ -26,31 +26,29 @@
 package net.pwall.json.schema.codegen.test.kotlin
 
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
+import io.kstuff.test.shouldNotBe
 
 class ExtensibleEnumFunctionalityTest {
 
-    @Suppress("ReplaceAssertBooleanWithAssertEquality")
     @Test fun `should compare extensible enum`() {
         val enum1 = getAlpha()
-        assertTrue(enum1 == TestExtensibleEnum.ALPHA)
-        assertTrue(enum1 != getBeta())
+        (enum1 == TestExtensibleEnum.ALPHA) shouldBe true
+        (enum1 != getBeta()) shouldBe true
     }
 
     @Test fun `should compare extensible enum with constructed enum`() {
         val enum1 = getAlpha()
-        assertEquals(enum1, TestExtensibleEnum("ALPHA"))
-        assertNotEquals(enum1, TestExtensibleEnum("DELTA"))
+        TestExtensibleEnum("ALPHA") shouldBe enum1
+        TestExtensibleEnum("DELTA") shouldNotBe enum1
     }
 
     @Test fun `should toString extensible enum`() {
         val enum1 = getAlpha()
-        expect("ALPHA") { enum1.toString() }
+        enum1.toString() shouldBe "ALPHA"
         val enum2 = TestExtensibleEnum("GAMMA")
-        expect("GAMMA") { enum2.toString() }
+        enum2.toString() shouldBe "GAMMA"
     }
 
     companion object {

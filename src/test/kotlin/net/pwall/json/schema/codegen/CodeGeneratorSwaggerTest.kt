@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.pointer.JSONPointer
 import io.kjson.yaml.YAML
@@ -52,8 +53,8 @@ class CodeGeneratorSwaggerTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions"))
-        expect(createHeader("QueryResponse.kt") + expectedExample1) { stringWriter1.toString() }
-        expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
+        stringWriter1.toString() shouldBe createHeader("QueryResponse.kt") + expectedExample1
+        stringWriter2.toString() shouldBe createHeader("Person.kt") + expectedExample2
     }
 
     @Test fun `should generate classes from Swagger file applying filter`() {
@@ -67,8 +68,8 @@ class CodeGeneratorSwaggerTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions")) { it == "Person" }
-        expect("") { stringWriter1.toString() }
-        expect(createHeader("Person.kt") + expectedExample2) { stringWriter2.toString() }
+        stringWriter1.toString() shouldBe ""
+        stringWriter2.toString() shouldBe createHeader("Person.kt") + expectedExample2
     }
 
     @Test fun `should generate classes from Swagger file in Java`() {
@@ -82,8 +83,8 @@ class CodeGeneratorSwaggerTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(swaggerDoc.rootNode!!, JSONPointer("/definitions"))
-        expect(createHeader("QueryResponse.java") + expectedExample1Java) { stringWriter1.toString() }
-        expect(createHeader("Person.java") + expectedExample2Java) { stringWriter2.toString() }
+        stringWriter1.toString() shouldBe createHeader("QueryResponse.java") + expectedExample1Java
+        stringWriter2.toString() shouldBe createHeader("Person.java") + expectedExample2Java
     }
 
     companion object {

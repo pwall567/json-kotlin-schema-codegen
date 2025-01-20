@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +45,7 @@ class CodeGeneratorEmptyClassTest {
             val outputDetails = OutputDetails(TargetFileName("TestEmpty", "kt", dirs))
             outputResolver = outputCapture(outputDetails)
             generate(input)
-            expect(createHeader("TestEmpty.kt") + expected) { outputDetails.output() }
+            outputDetails.output() shouldBe createHeader("TestEmpty.kt") + expected
         }
     }
 
@@ -55,7 +56,7 @@ class CodeGeneratorEmptyClassTest {
             val outputDetails = OutputDetails(TargetFileName("TestEmpty", "kt", dirs))
             outputResolver = outputCapture(outputDetails)
             generate(input)
-            expect(createHeader("TestEmpty.kt") + expected2) { outputDetails.output() }
+            outputDetails.output() shouldBe createHeader("TestEmpty.kt") + expected2
         }
     }
 
@@ -66,7 +67,7 @@ class CodeGeneratorEmptyClassTest {
             val outputDetails = OutputDetails(TargetFileName("TestEmpty", "java", dirs))
             outputResolver = outputCapture(outputDetails)
             generate(input)
-            expect(createHeader("TestEmpty.java") + expectedJava) { outputDetails.output() }
+            outputDetails.output() shouldBe createHeader("TestEmpty.java") + expectedJava
         }
     }
 

@@ -26,8 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +46,7 @@ class CodeGeneratorCommentTest {
         val outputDetails = OutputDetails(TargetFileName("TestEmpty", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestEmpty.kt", "Created for test purposes") + expected) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestEmpty.kt", "Created for test purposes") + expected
     }
 
     @Test fun `should output generator comment in Java`() {
@@ -55,7 +57,7 @@ class CodeGeneratorCommentTest {
         val outputDetails = OutputDetails(TargetFileName("TestEmpty", "java", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestEmpty.java", "Created for test purposes") + expectedJava) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestEmpty.java", "Created for test purposes") + expectedJava
     }
 
     companion object {

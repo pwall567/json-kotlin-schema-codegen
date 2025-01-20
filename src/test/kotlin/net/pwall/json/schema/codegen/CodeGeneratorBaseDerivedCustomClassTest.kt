@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -48,8 +49,8 @@ class CodeGeneratorBaseDerivedCustomClassTest {
             addCustomClassByFormat("date-time", "java.time.Instant")
             generate(inputA, inputB)
         }
-        expect(createHeader("TestBaseCustomClass.kt") + expectedA) { outputDetailsA.output() }
-        expect(createHeader("TestBaseDerivedCustomClass.kt") + expectedB) { outputDetailsB.output() }
+        outputDetailsA.output() shouldBe createHeader("TestBaseCustomClass.kt") + expectedA
+        outputDetailsB.output() shouldBe createHeader("TestBaseDerivedCustomClass.kt") + expectedB
     }
 
     @Test fun `should generate base and derived classes with custom class properties in Java`() {
@@ -63,8 +64,8 @@ class CodeGeneratorBaseDerivedCustomClassTest {
             addCustomClassByFormat("date-time", "java.time.Instant")
             generate(inputA, inputB)
         }
-        expect(createHeader("TestBaseCustomClass.java") + expectedAJava) { outputDetailsA.output() }
-        expect(createHeader("TestBaseDerivedCustomClass.java") + expectedBJava) { outputDetailsB.output() }
+        outputDetailsA.output() shouldBe createHeader("TestBaseCustomClass.java") + expectedAJava
+        outputDetailsB.output() shouldBe createHeader("TestBaseDerivedCustomClass.java") + expectedBJava
     }
 
     companion object {

@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.114] - 2025-01-20
+### Changed
+- `CodeGenerator`: improved handling of special case of `anyOf` for nullability
+- `CodeGenerator`: added `findClassDescriptorInTargets()`
+- templates: fixed bug in use of explicit `null` for `default`
+- tests: converted to `should-test` library
+- `pom.xml`: updated dependency versions
+
 ## [0.113] - 2024-11-21
 ### Added
 - `NestedClassDescriptor`: improve handling of nested classes

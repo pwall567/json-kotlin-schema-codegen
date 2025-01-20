@@ -26,11 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.JSONValue
@@ -56,12 +57,14 @@ class CodeGeneratorCustomExtraTest {
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.Stock")
         val schema: JSONValue = JSON.parseNonNull(input.readText())
         val parser = JSONSchema.parser
-        codeGenerator.generateClasses(listOf(
+        codeGenerator.generateClasses(
+            listOf(
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",
-                parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "Stock"
-        ))
-        expect(createHeader("Test.kt") + expectedExample1) { stringWriter1.toString() }
-        expect(createHeader("Stock.kt") + expectedExample2) { stringWriter2.toString() }
+                parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "Stock",
+            )
+        )
+        stringWriter1.toString() shouldBe createHeader("Test.kt") + expectedExample1
+        stringWriter2.toString() shouldBe createHeader("Stock.kt") + expectedExample2
     }
 
     @Test fun `should generate correct classes for custom generation in Java`() {
@@ -76,12 +79,14 @@ class CodeGeneratorCustomExtraTest {
         codeGenerator.addCustomClassByURI(URI("#/properties/stock"), "com.example.StockEntry")
         val schema: JSONValue = JSON.parseNonNull(input.readText())
         val parser = JSONSchema.parser
-        codeGenerator.generateClasses(listOf(
+        codeGenerator.generateClasses(
+            listOf(
                 parser.parseSchema(schema, JSONPointer.root, input.toURI()) to "Test",
-                parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "StockEntry"
-        ))
-        expect(createHeader("Test.java") + expectedExample1Java) { stringWriter1.toString() }
-        expect(createHeader("StockEntry.java") + expectedExample2Java) { stringWriter2.toString() }
+                parser.parseSchema(schema, JSONPointer("/properties/stock"), input.toURI()) to "StockEntry",
+            )
+        )
+        stringWriter1.toString() shouldBe createHeader("Test.java") + expectedExample1Java
+        stringWriter2.toString() shouldBe createHeader("StockEntry.java") + expectedExample2Java
     }
 
     companion object {

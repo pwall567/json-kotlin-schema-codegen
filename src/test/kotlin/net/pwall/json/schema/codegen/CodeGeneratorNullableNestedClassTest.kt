@@ -1,8 +1,8 @@
 /*
- * @(#) CodeGeneratorMultipleRefTest.kt
+ * @(#) CodeGeneratorNullableNestedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021 Peter Wall
+ * Copyright (c) 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,44 +28,26 @@ package net.pwall.json.schema.codegen
 import kotlin.test.Test
 
 import java.io.File
-import java.io.StringWriter
 
 import io.kstuff.test.shouldBe
 
-import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
-import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.packageDirs
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.packageName
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.resultFile
 
-class CodeGeneratorMultipleRefTest {
+class CodeGeneratorNullableNestedClassTest {
 
-    @Test fun `should reuse nested class on multiple references`() {
-        val input = File("src/test/resources/test-multiple-ref.schema.json")
-        val codeGenerator = CodeGenerator()
-        val stringWriter = StringWriter()
-        codeGenerator.basePackageName = "com.example"
-        codeGenerator.outputResolver = outputCapture(TargetFileName("TestMultipleRef", "kt", dirs), stringWriter)
-        codeGenerator.generate(input)
-        stringWriter.toString() shouldBe createHeader("TestMultipleRef.kt") + expected
-    }
-
-    companion object {
-
-        const val expected =
-"""package com.example
-
-data class TestMultipleRef(
-    val aaa: TwoPart? = null,
-    val bbb: TwoPart? = null
-) {
-
-    data class TwoPart(
-        val a1: Long? = null,
-        val a2: Long? = null
-    )
-
-}
-"""
-
+    @Test fun `should generate nullable nested class reference`() {
+        val input = File("src/test/resources/test-nullable-nested-class.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestNullableNestedClass", "kt", packageDirs))
+        CodeGenerator().apply {
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        outputDetails.output() shouldBe resultFile("TestNullableNestedClass")
     }
 
 }

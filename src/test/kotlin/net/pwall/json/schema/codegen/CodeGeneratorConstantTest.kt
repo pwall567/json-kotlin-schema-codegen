@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorConstantTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestConst", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestConst.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestConst.kt") + expected
     }
 
     @Test fun `should generate correct code for constants in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorConstantTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestConst", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestConst.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestConst.java") + expectedJava
     }
 
     companion object {

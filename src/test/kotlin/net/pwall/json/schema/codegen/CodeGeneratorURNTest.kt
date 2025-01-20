@@ -26,9 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -42,7 +45,7 @@ class CodeGeneratorURNTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Gen123", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Gen123.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Gen123.kt") + expected
     }
 
     @Test fun `should generate class using name from URN in Java`() {
@@ -52,7 +55,7 @@ class CodeGeneratorURNTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Gen123", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Gen123.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Gen123.java") + expectedJava
     }
 
     companion object {

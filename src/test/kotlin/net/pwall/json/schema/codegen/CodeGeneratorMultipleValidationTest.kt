@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorNestedClassOptionTest.kt
+ * @(#) CodeGeneratorMultipleValidationTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2022 Peter Wall
@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -45,7 +46,7 @@ class CodeGeneratorMultipleValidationTest {
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(expected.readText()) { outputDetails.output() }
+        outputDetails.output() shouldBe expected.readText()
     }
 
     @Test fun `should generate correct code for decimals with multipleOf constraints in Java`() {
@@ -58,7 +59,7 @@ class CodeGeneratorMultipleValidationTest {
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(expected.readText()) { outputDetails.output() }
+        outputDetails.output() shouldBe expected.readText()
     }
 
 }

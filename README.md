@@ -257,6 +257,8 @@ specific case to output the `deliveryAddress` as nullable:
 
 1. The `anyOf` or `oneOf` array must have exactly two sub-schema items
 2. One of the items must be just `{ "type": "null" }`
+3. The `anyOf` or `oneOf` keyword must be the only keyword in the sub-schema that defines the property, other than
+   `default`, or documentary keywords such as `description`.
 
 In this case, the code generator will generate code for the other sub-schema item (the one that is not
 `{ "type": "null" }`, often a `$ref`), and treat the result as nullable.
@@ -394,25 +396,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.113, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.114, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.113</version>
+      <version>0.114</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.113'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.114'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.113")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.114")
 ```
 
 Peter Wall
 
-2024-11-21
+2025-01-20

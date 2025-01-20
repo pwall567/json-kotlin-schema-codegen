@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -55,10 +56,10 @@ class CodeGeneratorOneOf1Test {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.kt") + expectedTypeA) { stringWriterA.toString() }
-        expect(createHeader("TypeB.kt") + expectedTypeB) { stringWriterB.toString() }
-        expect(createHeader("TypeC.kt") + expectedTypeC) { stringWriterC.toString() }
-        expect(createHeader("TypeD.kt") + expectedTypeD) { stringWriterD.toString() }
+        stringWriterA.toString() shouldBe createHeader("TypeA.kt") + expectedTypeA
+        stringWriterB.toString() shouldBe createHeader("TypeB.kt") + expectedTypeB
+        stringWriterC.toString() shouldBe createHeader("TypeC.kt") + expectedTypeC
+        stringWriterD.toString() shouldBe createHeader("TypeD.kt") + expectedTypeD
     }
 
     @Test fun `should generate classes for multiple oneOf schemata in Java`() {
@@ -75,10 +76,10 @@ class CodeGeneratorOneOf1Test {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC, outputDetailsD)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.java") + expectedTypeAJava) { stringWriterA.toString() }
-        expect(createHeader("TypeB.java") + expectedTypeBJava) { stringWriterB.toString() }
-        expect(createHeader("TypeC.java") + expectedTypeCJava) { stringWriterC.toString() }
-        expect(createHeader("TypeD.java") + expectedTypeDJava) { stringWriterD.toString() }
+        stringWriterA.toString() shouldBe createHeader("TypeA.java") + expectedTypeAJava
+        stringWriterB.toString() shouldBe createHeader("TypeB.java") + expectedTypeBJava
+        stringWriterC.toString() shouldBe createHeader("TypeC.java") + expectedTypeCJava
+        stringWriterD.toString() shouldBe createHeader("TypeD.java") + expectedTypeDJava
     }
 
     companion object {
@@ -176,7 +177,7 @@ public class TypeB implements TypeA {
 """
 
         const val expectedTypeCJava =
-            """package com.example;
+"""package com.example;
 
 public class TypeC implements TypeA {
 

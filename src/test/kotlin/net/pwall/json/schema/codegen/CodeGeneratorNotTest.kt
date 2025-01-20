@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +45,7 @@ class CodeGeneratorNotTest {
         val outputDetails = OutputDetails(TargetFileName("TestNot", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestNot.kt") + expected) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNot.kt") + expected
     }
 
     @Test fun `should output negated format tests in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorNotTest {
         val outputDetails = OutputDetails(TargetFileName("TestNot", "java", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestNot.java") + expectedJava) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestNot.java") + expectedJava
     }
 
     companion object {

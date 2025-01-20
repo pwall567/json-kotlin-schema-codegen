@@ -26,9 +26,8 @@
 package net.pwall.util
 
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.util.Name.Companion.capitalise
 import net.pwall.util.Name.Companion.isDigit
@@ -42,228 +41,228 @@ class NameTest {
 
     @Test fun `should handle simple name`() {
         with(Name("alpha")) {
-            expect("gen") { defaultPrefix }
-            expect("n") { numberPrefix }
-            expect("alpha") { toString() }
-            expect(1) { size }
-            expect("alpha") { this[0] }
-            expect("alpha") { lowerCamelCase }
-            expect("alpha") { camelCase }
-            expect("Alpha") { UpperCamelCase }
-            expect("Alpha") { CamelCase }
-            expect("alpha") { lower_snake_case }
-            expect("alpha") { snake_case }
-            expect("ALPHA") { UPPER_SNAKE_CASE }
-            expect("ALPHA") { SNAKE_CASE }
-            expect("Alpha") { Capital_Snake_Case }
-            expect("Alpha") { Snake_Case }
-            expect("alpha") { `lower-kebab-case` }
-            expect("alpha") { `kebab-case` }
-            expect("ALPHA") { `UPPER-KEBAB-CASE` }
-            expect("ALPHA") { `KEBAB-CASE` }
-            expect("Alpha") { `Capital-Kebab-Case` }
-            expect("Alpha") { `Kebab-Case` }
+            defaultPrefix shouldBe "gen"
+            numberPrefix shouldBe "n"
+            toString() shouldBe "alpha"
+            size shouldBe 1
+            this[0] shouldBe "alpha"
+            lowerCamelCase shouldBe "alpha"
+            camelCase shouldBe "alpha"
+            UpperCamelCase shouldBe "Alpha"
+            CamelCase shouldBe "Alpha"
+            lower_snake_case shouldBe "alpha"
+            snake_case shouldBe "alpha"
+            UPPER_SNAKE_CASE shouldBe "ALPHA"
+            SNAKE_CASE shouldBe "ALPHA"
+            Capital_Snake_Case shouldBe "Alpha"
+            Snake_Case shouldBe "Alpha"
+            `lower-kebab-case` shouldBe "alpha"
+            `kebab-case` shouldBe "alpha"
+            `UPPER-KEBAB-CASE` shouldBe "ALPHA"
+            `KEBAB-CASE` shouldBe "ALPHA"
+            `Capital-Kebab-Case` shouldBe "Alpha"
+            `Kebab-Case` shouldBe "Alpha"
         }
     }
 
     @Test fun `should handle compound name`() {
         with(Name("alpha-beta-gamma")) {
-            expect("alpha-beta-gamma") { toString() }
-            expect(3) { size }
-            expect("alpha") { this[0] }
-            expect("beta") { this[1] }
-            expect("gamma") { this[2] }
-            expect("alphaBetaGamma") { lowerCamelCase }
-            expect("AlphaBetaGamma") { UpperCamelCase }
-            expect("alpha_beta_gamma") { lower_snake_case }
-            expect("ALPHA_BETA_GAMMA") { UPPER_SNAKE_CASE }
-            expect("Alpha_Beta_Gamma") { Capital_Snake_Case }
-            expect("alpha-beta-gamma") { `lower-kebab-case` }
-            expect("ALPHA-BETA-GAMMA") { `UPPER-KEBAB-CASE` }
-            expect("Alpha-Beta-Gamma") { `Capital-Kebab-Case` }
+            toString() shouldBe "alpha-beta-gamma"
+            size shouldBe 3
+            this[0] shouldBe "alpha"
+            this[1] shouldBe "beta"
+            this[2] shouldBe "gamma"
+            lowerCamelCase shouldBe "alphaBetaGamma"
+            UpperCamelCase shouldBe "AlphaBetaGamma"
+            lower_snake_case shouldBe "alpha_beta_gamma"
+            UPPER_SNAKE_CASE shouldBe "ALPHA_BETA_GAMMA"
+            Capital_Snake_Case shouldBe "Alpha_Beta_Gamma"
+            `lower-kebab-case` shouldBe "alpha-beta-gamma"
+            `UPPER-KEBAB-CASE` shouldBe "ALPHA-BETA-GAMMA"
+            `Capital-Kebab-Case` shouldBe "Alpha-Beta-Gamma"
         }
     }
 
     @Test fun `should handle compound name with upper case acronym`() {
         with(Name("UUID-label")) {
-            expect(2) { size }
-            expect("UUID") { this[0] }
-            expect("label") { this[1] }
-            expect("uuidLabel") { lowerCamelCase }
-            expect("UUIDLabel") { UpperCamelCase }
-            expect("uuid_label") { lower_snake_case }
-            expect("UUID_LABEL") { UPPER_SNAKE_CASE }
-            expect("UUID_Label") { Capital_Snake_Case }
-            expect("uuid-label") { `lower-kebab-case` }
-            expect("UUID-LABEL") { `UPPER-KEBAB-CASE` }
-            expect("UUID-Label") { `Capital-Kebab-Case` }
+            size shouldBe 2
+            this[0] shouldBe "UUID"
+            this[1] shouldBe "label"
+            lowerCamelCase shouldBe "uuidLabel"
+            UpperCamelCase shouldBe "UUIDLabel"
+            lower_snake_case shouldBe "uuid_label"
+            UPPER_SNAKE_CASE shouldBe "UUID_LABEL"
+            Capital_Snake_Case shouldBe "UUID_Label"
+            `lower-kebab-case` shouldBe "uuid-label"
+            `UPPER-KEBAB-CASE` shouldBe "UUID-LABEL"
+            `Capital-Kebab-Case` shouldBe "UUID-Label"
         }
     }
 
     @Test fun `should handle compound name input as camelCase`() {
         with(Name("alphaBetaGamma")) {
-            expect(3) { size }
-            expect("alpha") { this[0] }
-            expect("Beta") { this[1] }
-            expect("Gamma") { this[2] }
-            expect("alphaBetaGamma") { lowerCamelCase }
-            expect("AlphaBetaGamma") { UpperCamelCase }
-            expect("alpha_beta_gamma") { lower_snake_case }
-            expect("ALPHA_BETA_GAMMA") { UPPER_SNAKE_CASE }
-            expect("Alpha_Beta_Gamma") { Capital_Snake_Case }
-            expect("alpha-beta-gamma") { `lower-kebab-case` }
-            expect("ALPHA-BETA-GAMMA") { `UPPER-KEBAB-CASE` }
-            expect("Alpha-Beta-Gamma") { `Capital-Kebab-Case` }
+            size shouldBe 3
+            this[0] shouldBe "alpha"
+            this[1] shouldBe "Beta"
+            this[2] shouldBe "Gamma"
+            lowerCamelCase shouldBe "alphaBetaGamma"
+            UpperCamelCase shouldBe "AlphaBetaGamma"
+            lower_snake_case shouldBe "alpha_beta_gamma"
+            UPPER_SNAKE_CASE shouldBe "ALPHA_BETA_GAMMA"
+            Capital_Snake_Case shouldBe "Alpha_Beta_Gamma"
+            `lower-kebab-case` shouldBe "alpha-beta-gamma"
+            `UPPER-KEBAB-CASE` shouldBe "ALPHA-BETA-GAMMA"
+            `Capital-Kebab-Case` shouldBe "Alpha-Beta-Gamma"
         }
     }
 
     @Test fun `should handle compound name including acronym`() {
         with(Name("JSONValue")) {
-            expect(2) { size }
-            expect("JSON") { this[0] }
-            expect("Value") { this[1] }
-            expect("jsonValue") { lowerCamelCase }
-            expect("JSONValue") { UpperCamelCase }
-            expect("json_value") { lower_snake_case }
-            expect("JSON_VALUE") { UPPER_SNAKE_CASE }
-            expect("JSON_Value") { Capital_Snake_Case }
-            expect("json-value") { `lower-kebab-case` }
-            expect("JSON-Value") { `Capital-Kebab-Case` }
+            size shouldBe 2
+            this[0] shouldBe "JSON"
+            this[1] shouldBe "Value"
+            lowerCamelCase shouldBe "jsonValue"
+            UpperCamelCase shouldBe "JSONValue"
+            lower_snake_case shouldBe "json_value"
+            UPPER_SNAKE_CASE shouldBe "JSON_VALUE"
+            Capital_Snake_Case shouldBe "JSON_Value"
+            `lower-kebab-case` shouldBe "json-value"
+            `Capital-Kebab-Case` shouldBe "JSON-Value"
         }
     }
 
     @Test fun `should handle compound name with number`() {
         with(Name("alpha-27-delta")) {
-            expect(3) { size }
-            expect("alpha") { this[0] }
-            expect("27") { this[1] }
-            expect("delta") { this[2] }
-            expect("alpha27Delta") { lowerCamelCase }
-            expect("Alpha27Delta") { UpperCamelCase }
-            expect("alpha_27_delta") { lower_snake_case }
-            expect("ALPHA_27_DELTA") { UPPER_SNAKE_CASE }
-            expect("Alpha_27_Delta") { Capital_Snake_Case }
-            expect("alpha-27-delta") { `lower-kebab-case` }
-            expect("ALPHA-27-DELTA") { `UPPER-KEBAB-CASE` }
-            expect("Alpha-27-Delta") { `Capital-Kebab-Case` }
+            size shouldBe 3
+            this[0] shouldBe "alpha"
+            this[1] shouldBe "27"
+            this[2] shouldBe "delta"
+            lowerCamelCase shouldBe "alpha27Delta"
+            UpperCamelCase shouldBe "Alpha27Delta"
+            lower_snake_case shouldBe "alpha_27_delta"
+            UPPER_SNAKE_CASE shouldBe "ALPHA_27_DELTA"
+            Capital_Snake_Case shouldBe "Alpha_27_Delta"
+            `lower-kebab-case` shouldBe "alpha-27-delta"
+            `UPPER-KEBAB-CASE` shouldBe "ALPHA-27-DELTA"
+            `Capital-Kebab-Case` shouldBe "Alpha-27-Delta"
         }
     }
 
     @Test fun `should handle empty name`() {
         with(Name("")) {
-            expect(0) { size }
-            assertTrue(Regex("^gen[0-9]+$").containsMatchIn(lowerCamelCase))
-            assertTrue(Regex("^Gen[0-9]+$").containsMatchIn(UpperCamelCase))
-            assertTrue(Regex("^gen[0-9]+$").containsMatchIn(lower_snake_case))
-            assertTrue(Regex("^GEN[0-9]+$").containsMatchIn(UPPER_SNAKE_CASE))
-            assertTrue(Regex("^Gen[0-9]+$").containsMatchIn(Capital_Snake_Case))
-            assertTrue(Regex("^gen[0-9]+$").containsMatchIn(`lower-kebab-case`))
-            assertTrue(Regex("^GEN[0-9]+$").containsMatchIn(`UPPER-KEBAB-CASE`))
-            assertTrue(Regex("^Gen[0-9]+$").containsMatchIn(`Capital-Kebab-Case`))
+            size shouldBe 0
+            Regex("^gen[0-9]+$").containsMatchIn(lowerCamelCase) shouldBe true
+            Regex("^Gen[0-9]+$").containsMatchIn(UpperCamelCase) shouldBe true
+            Regex("^gen[0-9]+$").containsMatchIn(lower_snake_case) shouldBe true
+            Regex("^GEN[0-9]+$").containsMatchIn(UPPER_SNAKE_CASE) shouldBe true
+            Regex("^Gen[0-9]+$").containsMatchIn(Capital_Snake_Case) shouldBe true
+            Regex("^gen[0-9]+$").containsMatchIn(`lower-kebab-case`) shouldBe true
+            Regex("^GEN[0-9]+$").containsMatchIn(`UPPER-KEBAB-CASE`) shouldBe true
+            Regex("^Gen[0-9]+$").containsMatchIn(`Capital-Kebab-Case`) shouldBe true
         }
     }
 
     @Test fun `should handle empty name with specified prefix`() {
         with(Name("", defaultPrefix = "cg_")) {
-            expect("cg_") { defaultPrefix }
-            expect(0) { size }
-            assertTrue(Regex("^cg_[0-9]+$").containsMatchIn(lowerCamelCase))
-            assertTrue(Regex("^Cg_[0-9]+$").containsMatchIn(UpperCamelCase))
-            assertTrue(Regex("^cg_[0-9]+$").containsMatchIn(lower_snake_case))
-            assertTrue(Regex("^CG_[0-9]+$").containsMatchIn(UPPER_SNAKE_CASE))
-            assertTrue(Regex("^Cg_[0-9]+$").containsMatchIn(Capital_Snake_Case))
-            assertTrue(Regex("^cg_[0-9]+$").containsMatchIn(`lower-kebab-case`))
-            assertTrue(Regex("^CG_[0-9]+$").containsMatchIn(`UPPER-KEBAB-CASE`))
-            assertTrue(Regex("^Cg_[0-9]+$").containsMatchIn(`Capital-Kebab-Case`))
+            defaultPrefix shouldBe "cg_"
+            size shouldBe 0
+            Regex("^cg_[0-9]+$").containsMatchIn(lowerCamelCase) shouldBe true
+            Regex("^Cg_[0-9]+$").containsMatchIn(UpperCamelCase) shouldBe true
+            Regex("^cg_[0-9]+$").containsMatchIn(lower_snake_case) shouldBe true
+            Regex("^CG_[0-9]+$").containsMatchIn(UPPER_SNAKE_CASE) shouldBe true
+            Regex("^Cg_[0-9]+$").containsMatchIn(Capital_Snake_Case) shouldBe true
+            Regex("^cg_[0-9]+$").containsMatchIn(`lower-kebab-case`) shouldBe true
+            Regex("^CG_[0-9]+$").containsMatchIn(`UPPER-KEBAB-CASE`) shouldBe true
+            Regex("^Cg_[0-9]+$").containsMatchIn(`Capital-Kebab-Case`) shouldBe true
         }
     }
 
     @Test fun `should handle name starting with digit`() {
         with(Name("99luftballons")) {
-            expect(1) { size }
-            expect("99luftballons") { this[0] }
-            expect("n99luftballons") { lowerCamelCase }
-            expect("N99luftballons") { UpperCamelCase }
-            expect("n99luftballons") { lower_snake_case }
-            expect("N99LUFTBALLONS") { UPPER_SNAKE_CASE }
-            expect("N99luftballons") { Capital_Snake_Case }
-            expect("n99luftballons") { `lower-kebab-case` }
-            expect("N99LUFTBALLONS") { `UPPER-KEBAB-CASE` }
-            expect("N99luftballons") { `Capital-Kebab-Case` }
+            size shouldBe 1
+            this[0] shouldBe "99luftballons"
+            lowerCamelCase shouldBe "n99luftballons"
+            UpperCamelCase shouldBe "N99luftballons"
+            lower_snake_case shouldBe "n99luftballons"
+            UPPER_SNAKE_CASE shouldBe "N99LUFTBALLONS"
+            Capital_Snake_Case shouldBe "N99luftballons"
+            `lower-kebab-case` shouldBe "n99luftballons"
+            `UPPER-KEBAB-CASE` shouldBe "N99LUFTBALLONS"
+            `Capital-Kebab-Case` shouldBe "N99luftballons"
         }
     }
 
     @Test fun `should handle name starting with digit using specified prefix`() {
         with(Name("99luftballons", numberPrefix = "no_")) {
-            expect(1) { size }
-            expect("99luftballons") { this[0] }
-            expect("no_99luftballons") { lowerCamelCase }
-            expect("No_99luftballons") { UpperCamelCase }
-            expect("no_99luftballons") { lower_snake_case }
-            expect("NO_99LUFTBALLONS") { UPPER_SNAKE_CASE }
-            expect("No_99luftballons") { Capital_Snake_Case }
-            expect("no_99luftballons") { `lower-kebab-case` }
-            expect("NO_99LUFTBALLONS") { `UPPER-KEBAB-CASE` }
-            expect("No_99luftballons") { `Capital-Kebab-Case` }
+            size shouldBe 1
+            this[0] shouldBe "99luftballons"
+            lowerCamelCase shouldBe "no_99luftballons"
+            UpperCamelCase shouldBe "No_99luftballons"
+            lower_snake_case shouldBe "no_99luftballons"
+            UPPER_SNAKE_CASE shouldBe "NO_99LUFTBALLONS"
+            Capital_Snake_Case shouldBe "No_99luftballons"
+            `lower-kebab-case` shouldBe "no_99luftballons"
+            `UPPER-KEBAB-CASE` shouldBe "NO_99LUFTBALLONS"
+            `Capital-Kebab-Case` shouldBe "No_99luftballons"
         }
     }
 
     @Test fun `should create other patterns`() {
         with(Name("alpha-beta-gamma")) {
-            expect("Alpha.Beta.Gamma") { separatedCase('.') { capitalise() } }
+            separatedCase('.') { capitalise() } shouldBe "Alpha.Beta.Gamma"
         }
     }
 
     @Test fun `should correctly test isDigit`() {
         for (i in 0 until '0'.code)
-            assertFalse(i.toChar().isDigit())
+            i.toChar().isDigit() shouldBe false
         for (i in '0'.code..'9'.code)
-            assertTrue(i.toChar().isDigit())
+            i.toChar().isDigit() shouldBe true
         for (i in ('9'.code + 1)..Char.MAX_VALUE.code)
-            assertFalse(i.toChar().isDigit())
+            i.toChar().isDigit() shouldBe false
     }
 
     @Test fun `should correctly test isUpper`() {
         for (i in 0 until 'A'.code)
-            assertFalse(i.toChar().isUpper())
+            i.toChar().isUpper() shouldBe false
         for (i in 'A'.code..'Z'.code)
-            assertTrue(i.toChar().isUpper())
+            i.toChar().isUpper() shouldBe true
         for (i in ('Z'.code + 1)..Char.MAX_VALUE.code)
-            assertFalse(i.toChar().isUpper())
+            i.toChar().isUpper() shouldBe false
     }
 
     @Test fun `should correctly test isLower`() {
         for (i in 0 until 'a'.code)
-            assertFalse(i.toChar().isLower())
+            i.toChar().isLower() shouldBe false
         for (i in 'a'.code..'z'.code)
-            assertTrue(i.toChar().isLower())
+            i.toChar().isLower() shouldBe true
         for (i in ('z'.code + 1)..Char.MAX_VALUE.code)
-            assertFalse(i.toChar().isLower())
+            i.toChar().isLower() shouldBe false
     }
 
     @Test fun `should convert to upper case`() {
         for (i in LOWER.indices)
-            expect(UPPER[i]) { LOWER[i].toUpper() }
+            LOWER[i].toUpper() shouldBe UPPER[i]
     }
 
     @Test fun `should convert to lower case`() {
         for (i in UPPER.indices)
-            expect(LOWER[i]) { UPPER[i].toLower() }
+            UPPER[i].toLower() shouldBe LOWER[i]
     }
 
     @Test fun `should capitalise string`() {
-        expect("Alpha") { "alpha".capitalise() }
-        expect("Fred") { "Fred".capitalise() }
+        "alpha".capitalise() shouldBe "Alpha"
+        "Fred".capitalise() shouldBe "Fred"
     }
 
     @Test fun `should uncapitalise string`() {
-        expect("alpha") { "Alpha".uncapitalise() }
-        expect("gamma") { "gamma".uncapitalise() }
+        "Alpha".uncapitalise() shouldBe "alpha"
+        "gamma".uncapitalise() shouldBe "gamma"
     }
 
     @Test fun `should uncapitalise all upper case as all lower case`() {
-        expect("json") { "JSON".uncapitalise() }
-        expect("iso8601") { "ISO8601".uncapitalise() }
+        "JSON".uncapitalise() shouldBe "json"
+        "ISO8601".uncapitalise() shouldBe "iso8601"
     }
 
     companion object {

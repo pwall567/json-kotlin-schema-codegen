@@ -26,10 +26,13 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
+
+import io.kstuff.test.shouldBe
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -48,10 +51,10 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-complex-base#/\$defs/extra"),
-                "com.example.extra.Extra")
+            "com.example.extra.Extra")
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestComplexBase.kt") + expectedA) { stringWriterA.toString() }
-        expect(createHeader("TestComplexBaseDerived.kt") + expectedB) { stringWriterB.toString() }
+        stringWriterA.toString() shouldBe createHeader("TestComplexBase.kt") + expectedA
+        stringWriterB.toString() shouldBe createHeader("TestComplexBaseDerived.kt") + expectedB
     }
 
     @Test fun `should generate complex base and derived classes in Java`() {
@@ -65,10 +68,10 @@ class CodeGeneratorComplexBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-complex-base#/\$defs/extra"),
-                "com.example.extra.Extra")
+            "com.example.extra.Extra")
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestComplexBase.java") + expectedAJava) { stringWriterA.toString() }
-        expect(createHeader("TestComplexBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
+        stringWriterA.toString() shouldBe createHeader("TestComplexBase.java") + expectedAJava
+        stringWriterB.toString() shouldBe createHeader("TestComplexBaseDerived.java") + expectedBJava
     }
 
     companion object {

@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSONString
 
@@ -61,7 +62,7 @@ class CodeGeneratorCustomValidatorTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expected
     }
 
     @Test fun `should generate correct code for custom validation when specified in config file`() {
@@ -71,7 +72,7 @@ class CodeGeneratorCustomValidatorTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expected
     }
 
     @Test fun `should generate correct code for custom validation in Java`() {
@@ -94,7 +95,7 @@ class CodeGeneratorCustomValidatorTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.java") + expectedJava
     }
 
     companion object {

@@ -26,15 +26,15 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
 import java.nio.file.FileSystems
 
-import io.kjson.pointer.JSONPointer
+import io.kstuff.test.shouldBe
 
+import io.kjson.pointer.JSONPointer
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -54,7 +54,7 @@ class CodeGeneratorCustomClassTest {
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("#/properties/name"), "com.example.person.PersonName")
         codeGenerator.generate(input)
-        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.kt") + expected
     }
 
     @Test fun `should use specified custom class when specified as name and package`() {
@@ -67,7 +67,7 @@ class CodeGeneratorCustomClassTest {
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("#/properties/name"), "PersonName", "com.example.person")
         codeGenerator.generate(input)
-        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.kt") + expected
     }
 
     @Test fun `should use specified custom class when specified as ClassName`() {
@@ -80,7 +80,7 @@ class CodeGeneratorCustomClassTest {
                 "com.example.person.PersonId")
         codeGenerator.addCustomClassByURI(URI("#/properties/name"), ClassName("PersonName", "com.example.person"))
         codeGenerator.generate(input)
-        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.kt") + expected
     }
 
     @Test fun `should use specified custom class when specified in config file`() {
@@ -90,7 +90,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt", dirs + "person"), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Person.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.kt") + expected
     }
 
     @Test fun `should use specified custom class in Java`() {
@@ -104,7 +104,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test/schema/person#/properties/name"),
                 "PersonName", "com.example.person")
         codeGenerator.generate(input)
-        expect(createHeader("Person.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.java") + expectedJava
     }
 
     @Test fun `should use specified custom class for extension`() {
@@ -115,7 +115,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByExtension("x-test", "money", "com.example.util.Money")
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for extension when specified as name and package`() {
@@ -126,7 +126,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByExtension("x-test", "money", "Money", "com.example.util")
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for extension when specified as ClassName`() {
@@ -137,7 +137,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByExtension("x-test", "money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for extension when specified in config file`() {
@@ -147,7 +147,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for extension in Java`() {
@@ -158,7 +158,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
         codeGenerator.addCustomClassByExtension("x-test", "money", "Money", "com.example.util")
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.java") + expectedJavaForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.java") + expectedJavaForExtension
     }
 
     @Test fun `should use specified custom validation for format`() {
@@ -167,7 +167,7 @@ class CodeGeneratorCustomClassTest {
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                    PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -177,7 +177,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForFormat) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForFormat
     }
 
     @Test fun `should use specified custom validation for format in Java`() {
@@ -186,7 +186,7 @@ class CodeGeneratorCustomClassTest {
         parser.nonstandardFormatHandler = { keyword ->
             if (keyword == "money")
                 FormatValidator.DelegatingFormatChecker(keyword,
-                    PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
+                        PatternValidator(null, JSONPointer.root, Regex("^[0-9]{1,16}\\.[0-9]{2}$")))
             else
                 null
         }
@@ -196,7 +196,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.java") + expectedJavaForFormat) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.java") + expectedJavaForFormat
     }
 
     @Test fun `should use specified custom validation for format when specified in config file by path`() {
@@ -207,7 +207,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForFormat) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForFormat
     }
 
     @Test fun `should use specified custom class for format`() {
@@ -227,7 +227,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByFormat("money", "com.example.util.Money")
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for format when specified as name and package`() {
@@ -247,7 +247,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByFormat("money", "Money", "com.example.util")
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for format when specified as ClassName`() {
@@ -267,7 +267,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.addCustomClassByFormat("money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for format when specified in config file`() {
@@ -277,7 +277,7 @@ class CodeGeneratorCustomClassTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.kt") + expectedForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expectedForExtension
     }
 
     @Test fun `should use specified custom class for format in Java`() {
@@ -297,7 +297,7 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "java", dirs), stringWriter)
         codeGenerator.addCustomClassByFormat("money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
-        expect(createHeader("TestCustom.java") + expectedJavaForExtension) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.java") + expectedJavaForExtension
     }
 
     companion object {

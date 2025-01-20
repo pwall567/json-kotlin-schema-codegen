@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorHTTPTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2022 Peter Wall
+ * Copyright (c) 2022, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,64 +26,65 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.net.URI
 
 import io.kjson.pointer.JSONPointer
 
+import io.kstuff.test.shouldBe
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
-import net.pwall.json.schema.parser.Parser.Companion.defaultExtendedResolver
 
 class CodeGeneratorHTTPTest {
 
     @Test fun `should process schema from HTTP URI`() {
         val input = URI("http://kjson.io/json/http/testhttp1.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.schemaParser.setExtendedResolver(defaultExtendedResolver)
+        codeGenerator.schemaParser.setExtendedResolver(codeGenerator.schemaParser.defaultExtendedResolver)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input)
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Testhttp1", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1) { outputDetails.output() }
+        outputDetails.output() shouldBe CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1
     }
 
     @Test fun `should process schema from HTTP URI with subpackage name`() {
         val input = URI("http://kjson.io/json/http/testhttp1.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.schemaParser.setExtendedResolver(defaultExtendedResolver)
+        codeGenerator.schemaParser.setExtendedResolver(codeGenerator.schemaParser.defaultExtendedResolver)
         codeGenerator.basePackageName = "com"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addTarget(input, "example")
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Testhttp1", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1) { outputDetails.output() }
+        outputDetails.output() shouldBe CodeGeneratorTestUtil.createHeader("Testhttp1.kt") + expected1
     }
 
     @Test fun `should process composite from HTTP URI`() {
         val input = URI("http://kjson.io/json/http/testhttp2.json")
         val codeGenerator = CodeGenerator()
-        codeGenerator.schemaParser.setExtendedResolver(defaultExtendedResolver)
+        codeGenerator.schemaParser.setExtendedResolver(codeGenerator.schemaParser.defaultExtendedResolver)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.clearTargets()
-        expect(0) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 0
         codeGenerator.addCompositeTargets(input, JSONPointer("/\$defs"))
-        expect(1) { codeGenerator.numTargets }
+        codeGenerator.numTargets shouldBe 1
         val outputDetails = OutputDetails(TargetFileName("Def1", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()
-        expect(CodeGeneratorTestUtil.createHeader("Def1.kt") + expected2) { outputDetails.output() }
+        outputDetails.output() shouldBe CodeGeneratorTestUtil.createHeader("Def1.kt") + expected2
     }
 
+    @Suppress("ConstPropertyName")
     companion object {
 
         const val expected1 =

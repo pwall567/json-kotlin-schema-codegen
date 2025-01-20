@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorDerivedClassTest.kt
+ * @(#) CodeGeneratorDerivedClassImportTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2023 Peter Wall
@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -48,10 +49,10 @@ class CodeGeneratorDerivedClassImportTest {
             basePackageName = "com.example"
             generate(input)
         }
-        expect(createHeader("TestBaseClass.kt") + expectedBase) { outputDetailsBase.output() }
-        expect(createHeader("TestEnum.kt") + expectedEnum) { outputDetailsEnum.output() }
-        expect(createHeader("TestRefClass.kt") + expectedNested) { outputDetailsRef.output() }
-        expect(createHeader("TestDerivedClass.kt") + expectedDerived) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("TestBaseClass.kt") + expectedBase
+        outputDetailsEnum.output() shouldBe createHeader("TestEnum.kt") + expectedEnum
+        outputDetailsRef.output() shouldBe createHeader("TestRefClass.kt") + expectedNested
+        outputDetailsDerived.output() shouldBe createHeader("TestDerivedClass.kt") + expectedDerived
     }
 
     @Test fun `should generate base class and derived class in Java`() {
@@ -65,10 +66,10 @@ class CodeGeneratorDerivedClassImportTest {
             outputResolver = outputCapture(outputDetailsBase, outputDetailsEnum, outputDetailsRef, outputDetailsDerived)
             generate(input)
         }
-        expect(createHeader("TestBaseClass.java") + expectedBaseJava) { outputDetailsBase.output() }
-        expect(createHeader("TestEnum.java") + expectedEnumJava) { outputDetailsEnum.output() }
-        expect(createHeader("TestRefClass.java") + expectedNestedJava) { outputDetailsRef.output() }
-        expect(createHeader("TestDerivedClass.java") + expectedDerivedJava) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("TestBaseClass.java") + expectedBaseJava
+        outputDetailsEnum.output() shouldBe createHeader("TestEnum.java") + expectedEnumJava
+        outputDetailsRef.output() shouldBe createHeader("TestRefClass.java") + expectedNestedJava
+        outputDetailsDerived.output() shouldBe createHeader("TestDerivedClass.java") + expectedDerivedJava
     }
 
     companion object {

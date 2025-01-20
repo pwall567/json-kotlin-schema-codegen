@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +45,7 @@ class CodeGeneratorCompanionObjectTest {
         val outputDetails = OutputDetails(TargetFileName("TestGenerateAny", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.kt") + expectedWithCO) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestGenerateAny.kt") + expectedWithCO
     }
 
     @Test fun `should generate companion object when individual class selected`() {
@@ -55,7 +56,7 @@ class CodeGeneratorCompanionObjectTest {
         val outputDetails = OutputDetails(TargetFileName("TestGenerateAny", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.kt") + expectedWithCO) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestGenerateAny.kt") + expectedWithCO
     }
 
     @Test fun `should not generate companion object when individual class not selected`() {
@@ -66,7 +67,7 @@ class CodeGeneratorCompanionObjectTest {
         val outputDetails = OutputDetails(TargetFileName("TestGenerateAny", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.kt") + expectedWithoutCO) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestGenerateAny.kt") + expectedWithoutCO
     }
 
     companion object {

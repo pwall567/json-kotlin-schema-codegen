@@ -1,8 +1,8 @@
 /*
- * @(#) JSONSchemaOrgTest.kt
+ * @(#) CodeGeneratorFindClassDescriptorTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2021, 2022 Peter Wall
+ * Copyright (c) 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,43 @@ package net.pwall.json.schema.codegen
 import kotlin.test.Test
 
 import java.io.File
-import java.io.StringWriter
 
 import io.kstuff.test.shouldBe
+import io.kstuff.test.shouldBeNonNull
 
+import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+import net.pwall.json.schema.subschema.PropertiesSchema
 
-/**
- * This class runs the code generator on the example JSON Schema that is detailed in the
- * [Getting Started Step-By-Step](https://json-schema.org/learn/getting-started-step-by-step) of the
- * [JSON Schema](https://json-schema.org/) website.
- *
- * The expected results are at:
- * - [Product.kt](https://github.com/pwall567/json-kotlin-schema-codegen/blob/main/src/test/kotlin/net/pwall/json/schema/generated/Product.kt)
- * - [GeographicalLocation.kt](https://github.com/pwall567/json-kotlin-schema-codegen/blob/main/src/test/kotlin/net/pwall/json/schema/generated/GeographicalLocation.kt)
- *
- * @author  Peter Wall
- */
-class JSONSchemaOrgTest {
+class CodeGeneratorFindClassDescriptorTest {
 
-    @Test fun `should generate classes for example in JSON Schema website`() {
+    @Test fun `should find class descriptor`() {
         val inputA = File("src/test/resources/json-schema-org/product.schema.json")
         val inputB = File("src/test/resources/json-schema-org/geographical-location.schema.json")
         val outputA = File("src/test/kotlin/net/pwall/json/schema/generated/Product.kt")
         val outputB = File("src/test/kotlin/net/pwall/json/schema/generated/GeographicalLocation.kt")
         val packageName = "net.pwall.json.schema.generated"
         val dirs = packageName.split('.')
-        val stringWriterA = StringWriter()
-        val outputDetailsA = OutputDetails(TargetFileName("Product", "kt", dirs), stringWriterA)
-        val stringWriterB = StringWriter()
-        val outputDetailsB = OutputDetails(TargetFileName("GeographicalLocation", "kt", dirs), stringWriterB)
+        val outputDetailsA = OutputDetails(TargetFileName("Product", "kt", dirs))
+        val outputDetailsB = OutputDetails(TargetFileName("GeographicalLocation", "kt", dirs))
         val codeGenerator = CodeGenerator()
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
-        stringWriterA.toString() shouldBe outputA.reader().readText()
-        stringWriterB.toString() shouldBe outputB.reader().readText()
+        outputDetailsA.output() shouldBe outputA.reader().readText()
+        outputDetailsB.output() shouldBe outputB.reader().readText()
+        val schemaA = codeGenerator.schemaParser.parse(inputA)
+        val productClassDescriptor = codeGenerator.findClassDescriptorInTargets(schemaA)
+        productClassDescriptor.shouldBeNonNull()
+        productClassDescriptor.className shouldBe "Product"
+        val propertiesSchema = (schemaA as JSONSchema.General).children.filterIsInstance<PropertiesSchema>().first()
+        val dimensionsSchema = propertiesSchema.properties.find { it.first == "dimensions" }?.second
+        dimensionsSchema.shouldBeNonNull()
+        val dimensionsClassDescriptor = codeGenerator.findClassDescriptorInTargets(dimensionsSchema)
+        dimensionsClassDescriptor.shouldBeNonNull()
+        dimensionsClassDescriptor.className shouldBe "Dimensions"
+        dimensionsClassDescriptor.fullClassName shouldBe "Product.Dimensions"
     }
 
 }

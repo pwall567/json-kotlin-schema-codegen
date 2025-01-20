@@ -26,12 +26,12 @@
 package net.pwall.json.schema.codegen.test.kotlin
 
 import kotlin.test.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertNull
-import kotlin.test.expect
 
 import java.time.LocalDate
+
+import io.kstuff.test.shouldBe
+import io.kstuff.test.shouldBeType
+import io.kstuff.test.shouldThrow
 
 import io.kjson.JSONKotlinException
 import io.kjson.parseJSON
@@ -41,129 +41,125 @@ class AdditionalPropertiesDeserializationTest {
     @Test fun `should deserialize TestAdditionalPropertiesFalse`() {
         val json = "{}"
         val result = json.parseJSON<TestAdditionalPropertiesFalse>()
-        expect(TestAdditionalPropertiesFalse()) { result }
+        result shouldBe TestAdditionalPropertiesFalse()
     }
 
     @Test fun `should deserialize TestAdditionalPropertiesTrue`() {
         val json1 = "{}"
         val result1 = json1.parseJSON<TestAdditionalPropertiesTrue>()
-        expect(TestAdditionalPropertiesTrue(emptyMap())) { result1 }
+        result1 shouldBe TestAdditionalPropertiesTrue(emptyMap())
 
         val json2 = """{"data":"something"}"""
         val result2 = json2.parseJSON<TestAdditionalPropertiesTrue>()
-        expect("something") { result2["data"] }
+        result2["data"] shouldBe "something"
     }
 
     @Test fun `should deserialize TestAdditionalPropertiesSchema1`() {
         val json = """{"date1":"2024-01-28","date2":"2024-01-29"}"""
         val result = json.parseJSON<TestAdditionalPropertiesSchema1>()
-        expect(LocalDate.parse("2024-01-28")) { result["date1"] }
-        assertNull(result["date99"])
+        result["date1"] shouldBe LocalDate.parse("2024-01-28")
+        result["date99"] shouldBe null
     }
 
     @Test fun `should deserialize TestAdditionalPropertiesSchemaValid`() {
         val json = """{"field1":"ABC","field2":"xxx"}"""
         val result = json.parseJSON<TestAdditionalPropertiesSchemaValid>()
-        expect("ABC") { result["field1"] }
-        assertNull(result["field99"])
+        result["field1"] shouldBe "ABC"
+        result["field99"] shouldBe null
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"field1":"ABC","field2":""}""".parseJSON<TestAdditionalPropertiesSchemaValid>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("field2 length < minimum 1 - 0") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "field2 length < minimum 1 - 0"
         }
     }
 
     @Test fun `should deserialize TestAdditionalPropertiesFalseExtra`() {
         val json = """{"extra":"content"}"""
         val result = json.parseJSON<TestAdditionalPropertiesFalseExtra>()
-        expect("content") { result.extra }
+        result.extra shouldBe "content"
     }
 
     @Test fun `should deserialize TestApFalseExtraValid`() {
         val json = """{"extra":"content"}"""
         val result = json.parseJSON<TestApFalseExtraValid>()
-        expect("content") { result.extra }
+        result.extra shouldBe "content"
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"extra":""}""".parseJSON<TestApFalseExtraValid>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("extra length < minimum 1 - 0") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "extra length < minimum 1 - 0"
         }
     }
 
     @Test fun `should deserialize TestApTrueExtra`() {
         val json1 = """{"extra":"content"}"""
         val result1 = json1.parseJSON<TestApTrueExtraValid>()
-        expect("content") { result1.extra }
-        assertNull(result1["whatever"])
+        result1.extra shouldBe "content"
+        result1["whatever"] shouldBe null
 
         val json2 = """{"extra":"content","anything":"another"}"""
         val result2 = json2.parseJSON<TestApTrueExtraValid>()
-        expect("content") { result2.extra }
-        expect("another") { result2["anything"] }
-        assertNull(result2["whatever"])
+        result2.extra shouldBe "content"
+        result2["anything"] shouldBe "another"
+        result2["whatever"] shouldBe null
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"anything":"another"}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("required property missing - extra") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "required property missing - extra"
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException>("Incorrect type, expected string but was 123, at /extra") {
             """{"extra":123}""".parseJSON<TestApTrueExtraValid>()
-        }.let {
-            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"extra":""}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("extra length < minimum 1 - 0") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "extra length < minimum 1 - 0"
         }
     }
 
     @Test fun `should deserialize TestApTrueExtraDefault`() {
         val json1 = """{"extra":"content"}"""
         val result1 = json1.parseJSON<TestApTrueExtraDefault>()
-        expect("content") { result1.extra }
-        assertNull(result1["whatever"])
+        result1.extra shouldBe "content"
+        result1["whatever"] shouldBe null
 
         val json2 = """{"extra":"content","anything":"another"}"""
         val result2 = json2.parseJSON<TestApTrueExtraDefault>()
-        expect("content") { result2.extra }
-        expect("another") { result2["anything"] }
-        assertNull(result2["whatever"])
+        result2.extra shouldBe "content"
+        result2["anything"] shouldBe "another"
+        result2["whatever"] shouldBe null
 
         val json3 = """{"anything":"another"}"""
         val result3 = json3.parseJSON<TestApTrueExtraDefault>()
-        expect("default-value") { result3.extra }
-        expect("another") { result3["anything"] }
-        assertNull(result3["whatever"])
+        result3.extra shouldBe "default-value"
+        result3["anything"] shouldBe "another"
+        result3["whatever"] shouldBe null
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException>("Incorrect type, expected string but was 123, at /extra") {
             """{"extra":123}""".parseJSON<TestApTrueExtraDefault>()
-        }.let {
-            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"extra":""}""".parseJSON<TestApTrueExtraValid>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("extra length < minimum 1 - 0") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "extra length < minimum 1 - 0"
         }
     }
 
     @Test fun `should deserialize TestAdditionalPropertiesSchemaExtra`() {
         val json1 = """{"extra":"content"}"""
         val result1 = json1.parseJSON<TestAdditionalPropertiesSchemaExtra>()
-        expect("content") { result1.extra }
-        assertNull(result1["whatever"])
+        result1.extra shouldBe "content"
+        result1["whatever"] shouldBe null
 
 // TODO - can we find a way of deserializing into additionalProperties with a schema when there are other properties?
 //      the test below fails with: anything is not the correct type, expecting LocalDate
@@ -181,31 +177,29 @@ class AdditionalPropertiesDeserializationTest {
 //        expect(LocalDate.parse("2024-01-28")) { result2["anything"] }
 //        assertNull(result2["whatever"])
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"anything":"another"}""".parseJSON<TestAdditionalPropertiesSchemaExtra>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("required property missing - extra") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "required property missing - extra"
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException>("Incorrect type, expected string but was 123, at /extra") {
             """{"extra":123}""".parseJSON<TestAdditionalPropertiesSchemaExtra>()
-        }.let {
-            expect("Incorrect type, expected string but was 123, at /extra") { it.message }
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"extra":""}""".parseJSON<TestAdditionalPropertiesSchemaExtra>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("extra length < minimum 1 - 0") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "extra length < minimum 1 - 0"
         }
 
-        assertFailsWith<JSONKotlinException> {
+        shouldThrow<JSONKotlinException> {
             """{"extra":"OK","anything":"another"}""".parseJSON<TestAdditionalPropertiesSchemaExtra>()
         }.cause.let {
-            assertIs<IllegalArgumentException>(it)
-            expect("anything is not the correct type, expecting LocalDate") { it.message }
+            it.shouldBeType<IllegalArgumentException>()
+            it.message shouldBe "anything is not the correct type, expecting LocalDate"
         }
     }
 

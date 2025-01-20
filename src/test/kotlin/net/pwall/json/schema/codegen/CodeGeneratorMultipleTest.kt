@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.mustache.Template
@@ -50,8 +51,8 @@ class CodeGeneratorMultipleTest {
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.commentTemplate = Template.parse("Generated from {{\$comment}}")
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.kt", "Generated from Multiple schema") + expectedTypeA) { outputDetailsA.output() }
-        expect(createHeader("TypeB.kt", "Generated from Multiple schema") + expectedTypeB) { outputDetailsB.output() }
+        outputDetailsA.output() shouldBe createHeader("TypeA.kt", "Generated from Multiple schema") + expectedTypeA
+        outputDetailsB.output() shouldBe createHeader("TypeB.kt", "Generated from Multiple schema") + expectedTypeB
     }
 
     @Test fun `should generate classes for multiple schemata in Java`() {
@@ -62,8 +63,8 @@ class CodeGeneratorMultipleTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.java") + expectedTypeAJava) { outputDetailsA.output() }
-        expect(createHeader("TypeB.java") + expectedTypeBJava) { outputDetailsB.output() }
+        outputDetailsA.output() shouldBe createHeader("TypeA.java") + expectedTypeAJava
+        outputDetailsB.output() shouldBe createHeader("TypeB.java") + expectedTypeBJava
     }
 
     @Test fun `should generate classes for multiple schemata in TypeScript`() {
@@ -75,9 +76,9 @@ class CodeGeneratorMultipleTest {
         codeGenerator.indexFileName = TargetFileName("index", "d.ts")
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsIndex)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.ts") + expectedTypeATypeScript) { outputDetailsA.output() }
-        expect(createHeader("TypeB.ts") + expectedTypeBTypeScript) { outputDetailsB.output() }
-        expect(createHeader("index.d.ts") + expectedIndexTypeScript) { outputDetailsIndex.output() }
+        outputDetailsA.output() shouldBe createHeader("TypeA.ts") + expectedTypeATypeScript
+        outputDetailsB.output() shouldBe createHeader("TypeB.ts") + expectedTypeBTypeScript
+        outputDetailsIndex.output() shouldBe createHeader("index.d.ts") + expectedIndexTypeScript
     }
 
     companion object {

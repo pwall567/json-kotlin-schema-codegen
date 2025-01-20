@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorNestedClassOptionTest.kt
+ * @(#) CodeGeneratorDerivedClassWithValidationTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2022 Peter Wall
@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -52,9 +53,9 @@ class CodeGeneratorDerivedClassWithValidationTest {
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(baseOutputDetails, derivedOutputDetails0, derivedOutputDetails1)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(baseExpected.readText()) { baseOutputDetails.output() }
-        expect(derivedExpected0.readText()) { derivedOutputDetails0.output() }
-        expect(derivedExpected1.readText()) { derivedOutputDetails1.output() }
+        baseOutputDetails.output() shouldBe baseExpected.readText()
+        derivedOutputDetails0.output() shouldBe derivedExpected0.readText()
+        derivedOutputDetails1.output() shouldBe derivedExpected1.readText()
     }
 
     @Test fun `should generate init check for const on derived class in Java`() {
@@ -71,9 +72,9 @@ class CodeGeneratorDerivedClassWithValidationTest {
         codeGenerator.basePackageName = packageName
         codeGenerator.outputResolver = outputCapture(baseOutputDetails, derivedOutputDetails0, derivedOutputDetails1)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(baseExpected.readText()) { baseOutputDetails.output() }
-        expect(derivedExpected0.readText()) { derivedOutputDetails0.output() }
-        expect(derivedExpected1.readText()) { derivedOutputDetails1.output() }
+        baseOutputDetails.output() shouldBe baseExpected.readText()
+        derivedOutputDetails0.output() shouldBe derivedExpected0.readText()
+        derivedOutputDetails1.output() shouldBe derivedExpected1.readText()
     }
 
 }

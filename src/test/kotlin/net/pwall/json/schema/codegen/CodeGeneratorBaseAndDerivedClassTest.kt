@@ -26,9 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -47,8 +50,8 @@ class CodeGeneratorBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestBase.kt") + expectedA) { stringWriterA.toString() }
-        expect(createHeader("TestBaseDerived.kt") + expectedB) { stringWriterB.toString() }
+        stringWriterA.toString() shouldBe createHeader("TestBase.kt") + expectedA
+        stringWriterB.toString() shouldBe createHeader("TestBaseDerived.kt") + expectedB
     }
 
     @Test fun `should generate base and derived classes in Java`() {
@@ -62,8 +65,8 @@ class CodeGeneratorBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestBase.java") + expectedAJava) { stringWriterA.toString() }
-        expect(createHeader("TestBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
+        stringWriterA.toString() shouldBe createHeader("TestBase.java") + expectedAJava
+        stringWriterB.toString() shouldBe createHeader("TestBaseDerived.java") + expectedBJava
     }
 
     @Test fun `should generate base and derived classes alternative form`() {
@@ -77,8 +80,8 @@ class CodeGeneratorBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestBaseDerived.kt") + expectedB) { stringWriterB.toString() }
-        expect(createHeader("TestBase.kt") + expectedA) { stringWriterA.toString() }
+        stringWriterB.toString() shouldBe createHeader("TestBaseDerived.kt") + expectedB
+        stringWriterA.toString() shouldBe createHeader("TestBase.kt") + expectedA
     }
 
     @Test fun `should generate base and derived classes in Java alternative form`() {
@@ -92,8 +95,8 @@ class CodeGeneratorBaseAndDerivedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB)
         codeGenerator.generate(inputA, inputB)
-        expect(createHeader("TestBase.java") + expectedAJava) { stringWriterA.toString() }
-        expect(createHeader("TestBaseDerived.java") + expectedBJava) { stringWriterB.toString() }
+        stringWriterA.toString() shouldBe createHeader("TestBase.java") + expectedAJava
+        stringWriterB.toString() shouldBe createHeader("TestBaseDerived.java") + expectedBJava
     }
 
     companion object {

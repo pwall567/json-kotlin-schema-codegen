@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorAnyOfNullTest.kt
+ * @(#) CodeGeneratorDuplicateValidationTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2023 Peter Wall
@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -45,7 +46,7 @@ class CodeGeneratorDuplicateValidationTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(createHeader("TestDuplicateValidation.kt") + expected) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestDuplicateValidation.kt") + expected
     }
 
     companion object {

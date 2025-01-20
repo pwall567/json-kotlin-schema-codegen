@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.StringReader
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.mustache.Template
 
@@ -36,18 +37,18 @@ class IndentTest {
 
     @Test fun `should output no indent initially`() {
         val template = Template.parse(StringReader("[{{&indent}}]"))
-        expect("[]") { template.render(Indent()) }
+        template.render(Indent()) shouldBe "[]"
     }
 
     @Test fun `should output incremented indent`() {
         val template = Template.parse(StringReader("[{{#indent.increment}}{{&indent}}{{/indent.increment}}]"))
-        expect("[    ]") { template.render(Indent()) }
+        template.render(Indent()) shouldBe "[    ]"
     }
 
     @Test fun `should output doubly incremented indent`() {
         val template = Template.parse(StringReader(
-                "[{{#indent.increment}}{{#indent.increment}}{{&indent}}{{/indent.increment}}{{/indent.increment}}]"))
-        expect("[        ]") { template.render(Indent()) }
+            "[{{#indent.increment}}{{#indent.increment}}{{&indent}}{{/indent.increment}}{{/indent.increment}}]"))
+        template.render(Indent()) shouldBe "[        ]"
     }
 
 }

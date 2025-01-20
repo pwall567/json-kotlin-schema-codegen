@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,9 +45,8 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
-        expect(createHeader("Person.kt") + expected2) {
-            File("$outputDirectory/net/pwall/json/schema/test/person/Person.kt").readText()
-        }
+        File("$outputDirectory/net/pwall/json/schema/test/person/Person.kt").readText() shouldBe
+                createHeader("Person.kt") + expected2
         codeGenerator.log.debug { "File $outputDirectory/person/Person.kt will be deleted" }
     }
 
@@ -57,7 +57,7 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "java", dirs + "person"), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Person.java") + expected2Java) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Person.java") + expected2Java
     }
 
     @Test fun `should use custom templates`() {
@@ -66,10 +66,10 @@ class CodeGeneratorGeneratedFileTest {
         codeGenerator.setTemplateDirectory(File("src/test/resources/dummy-template"))
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("Person", "kt",
-                listOf("net", "pwall", "json", "schema", "test", "person")), stringWriter)
+            listOf("net", "pwall", "json", "schema", "test", "person")), stringWriter)
         codeGenerator.basePackageName = "net.pwall.json.schema.test"
         codeGenerator.generate(input)
-        expect("// Dummy\n") { stringWriter.toString() }
+        stringWriter.toString() shouldBe "// Dummy\n"
     }
 
     companion object {

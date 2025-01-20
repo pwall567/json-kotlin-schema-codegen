@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -44,7 +45,7 @@ class CodeGeneratorCustomClassMaxLengthTest {
             val outputDetails = OutputDetails(TargetFileName("TestCustomMaxlength", "kt", dirs))
             outputResolver = outputCapture(outputDetails)
             generate(input)
-            expect(createHeader("TestCustomMaxlength.kt") + expected) { outputDetails.output() }
+            outputDetails.output() shouldBe createHeader("TestCustomMaxlength.kt") + expected
         }
     }
 

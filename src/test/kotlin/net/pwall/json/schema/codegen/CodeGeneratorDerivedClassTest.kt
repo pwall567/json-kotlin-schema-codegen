@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -46,8 +47,8 @@ class CodeGeneratorDerivedClassTest {
             basePackageName = "com.example"
             generate(input)
         }
-        expect(createHeader("TestBaseClass.kt") + expectedBase) { outputDetailsBase.output() }
-        expect(createHeader("TestDerivedClass.kt") + expectedDerived) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("TestBaseClass.kt") + expectedBase
+        outputDetailsDerived.output() shouldBe createHeader("TestDerivedClass.kt") + expectedDerived
     }
 
     @Test fun `should generate base class and derived class in Java`() {
@@ -59,8 +60,8 @@ class CodeGeneratorDerivedClassTest {
             outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
             generate(input)
         }
-        expect(createHeader("TestBaseClass.java") + expectedBaseJava) { outputDetailsBase.output() }
-        expect(createHeader("TestDerivedClass.java") + expectedDerivedJava) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("TestBaseClass.java") + expectedBaseJava
+        outputDetailsDerived.output() shouldBe createHeader("TestDerivedClass.java") + expectedDerivedJava
     }
 
     companion object {

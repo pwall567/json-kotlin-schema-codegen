@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -48,7 +49,7 @@ class CodeGeneratorAnyOfNullTest {
             schemaParser.preLoad(File("src/test/resources/test1/utility.schema.json"))
             generate(listOf(input, personInput))
         }
-        expect(createHeader("TestAnyofNull.kt") + expected) { outputDetails.output() }
+        outputDetails.output() shouldBe createHeader("TestAnyofNull.kt") + expected
     }
 
     companion object {

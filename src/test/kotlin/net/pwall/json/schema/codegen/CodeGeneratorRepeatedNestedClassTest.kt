@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorRepeatedNestedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestRepeatedObject", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestRepeatedObject.kt") + expectedRepeated) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestRepeatedObject.kt") + expectedRepeated
     }
 
     companion object {

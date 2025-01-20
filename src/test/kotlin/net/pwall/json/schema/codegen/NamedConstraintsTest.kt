@@ -26,21 +26,22 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
 
 class NamedConstraintsTest {
 
     @Test fun `should detect and modify illegal Kotlin names`(){
-        expect("name") { NamedConstraints.checkKotlinName("name") }
-        expect("`hyphenated-name`") { NamedConstraints.checkKotlinName("hyphenated-name") }
-        expect("`class`") { NamedConstraints.checkKotlinName("class") }
-        expect("`123test123`") { NamedConstraints.checkKotlinName("123test123") }
+        NamedConstraints.checkKotlinName("name") shouldBe "name"
+        NamedConstraints.checkKotlinName("hyphenated-name") shouldBe "`hyphenated-name`"
+        NamedConstraints.checkKotlinName("class") shouldBe "`class`"
+        NamedConstraints.checkKotlinName("123test123") shouldBe "`123test123`"
     }
 
     @Test fun `should detect and modify illegal Java names`(){
-        expect("name") { NamedConstraints.checkJavaName("name") }
-        expect("hyphenated_name") { NamedConstraints.checkJavaName("hyphenated-name") }
-        expect("_test123") { NamedConstraints.checkJavaName("123test123") }
+        NamedConstraints.checkJavaName("name") shouldBe "name"
+        NamedConstraints.checkJavaName("hyphenated-name") shouldBe "hyphenated_name"
+        NamedConstraints.checkJavaName("123test123") shouldBe "_test123"
     }
 
 }

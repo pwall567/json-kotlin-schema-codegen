@@ -26,74 +26,75 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
 
 class TargetFileNameTest {
 
     @Test fun `should create TargetFileName with just name`() {
         val targetFileName = TargetFileName("Testing")
-        expect("Testing") { targetFileName.name }
-        expect(null) { targetFileName.ext }
-        expect(emptyList()) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("Testing") { targetFileName.qualifiedClassName }
-        expect("Testing") { targetFileName.extendedName }
-        expect("Testing") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe null
+        targetFileName.dirs shouldBe emptyList()
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "Testing"
+        targetFileName.extendedName shouldBe "Testing"
+        targetFileName.toString() shouldBe "Testing"
     }
 
     @Test fun `should create TargetFileName with name and extension`() {
         val targetFileName = TargetFileName("Testing", "kt")
-        expect("Testing") { targetFileName.name }
-        expect("kt") { targetFileName.ext }
-        expect(emptyList()) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("Testing") { targetFileName.qualifiedClassName }
-        expect("Testing.kt") { targetFileName.extendedName }
-        expect("Testing.kt") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe "kt"
+        targetFileName.dirs shouldBe emptyList()
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "Testing"
+        targetFileName.extendedName shouldBe "Testing.kt"
+        targetFileName.toString() shouldBe "Testing.kt"
     }
 
     @Test fun `should create TargetFileName with name and single directory`() {
         val targetFileName = TargetFileName("Testing", dirs = listOf("test"))
-        expect("Testing") { targetFileName.name }
-        expect(null) { targetFileName.ext }
-        expect(listOf("test")) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("test.Testing") { targetFileName.qualifiedClassName }
-        expect("Testing") { targetFileName.extendedName }
-        expect("test/Testing") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe null
+        targetFileName.dirs shouldBe listOf("test")
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "test.Testing"
+        targetFileName.extendedName shouldBe "Testing"
+        targetFileName.toString() shouldBe "test/Testing"
     }
 
     @Test fun `should create TargetFileName with name and extension and single directory`() {
         val targetFileName = TargetFileName("Testing", "kt", dirs = listOf("test"))
-        expect("Testing") { targetFileName.name }
-        expect("kt") { targetFileName.ext }
-        expect(listOf("test")) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("test.Testing") { targetFileName.qualifiedClassName }
-        expect("Testing.kt") { targetFileName.extendedName }
-        expect("test/Testing.kt") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe "kt"
+        targetFileName.dirs shouldBe listOf("test")
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "test.Testing"
+        targetFileName.extendedName shouldBe "Testing.kt"
+        targetFileName.toString() shouldBe "test/Testing.kt"
     }
 
     @Test fun `should create TargetFileName with name and multiple directories`() {
         val targetFileName = TargetFileName("Testing", dirs = listOf("net", "pwall", "test"))
-        expect("Testing") { targetFileName.name }
-        expect(null) { targetFileName.ext }
-        expect(listOf("net", "pwall", "test")) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("net.pwall.test.Testing") { targetFileName.qualifiedClassName }
-        expect("Testing") { targetFileName.extendedName }
-        expect("net/pwall/test/Testing") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe null
+        targetFileName.dirs shouldBe listOf("net", "pwall", "test")
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "net.pwall.test.Testing"
+        targetFileName.extendedName shouldBe "Testing"
+        targetFileName.toString() shouldBe "net/pwall/test/Testing"
     }
 
     @Test fun `should create TargetFileName with name and extension and multiple directories`() {
         val targetFileName = TargetFileName("Testing", "kt", dirs = listOf("net", "pwall", "test"))
-        expect("Testing") { targetFileName.name }
-        expect("kt") { targetFileName.ext }
-        expect(listOf("net", "pwall", "test")) { targetFileName.dirs }
-        expect("Testing") { targetFileName.className }
-        expect("net.pwall.test.Testing") { targetFileName.qualifiedClassName }
-        expect("Testing.kt") { targetFileName.extendedName }
-        expect("net/pwall/test/Testing.kt") { targetFileName.toString() }
+        targetFileName.name shouldBe "Testing"
+        targetFileName.ext shouldBe "kt"
+        targetFileName.dirs shouldBe listOf("net", "pwall", "test")
+        targetFileName.className shouldBe "Testing"
+        targetFileName.qualifiedClassName shouldBe "net.pwall.test.Testing"
+        targetFileName.extendedName shouldBe "Testing.kt"
+        targetFileName.toString() shouldBe "net/pwall/test/Testing.kt"
     }
 
 }

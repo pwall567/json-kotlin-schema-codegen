@@ -26,36 +26,37 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
 
 class StringValueTest {
 
     @Test fun `should handle simple string`() {
         val testString = StringValue("abc")
-        expect("abc") { testString.rawString }
-        expect("\"abc\"") { testString.kotlinString }
-        expect("\"abc\"") { testString.javaString }
+        testString.rawString shouldBe "abc"
+        testString.kotlinString shouldBe "\"abc\""
+        testString.javaString shouldBe "\"abc\""
     }
 
     @Test fun `should handle special characters`() {
         val testString = StringValue("Fred's \$100 \"Special\"\n")
-        expect("Fred's \$100 \"Special\"\n") { testString.rawString }
-        expect("\"Fred's \\\$100 \\\"Special\\\"\\n\"") { testString.kotlinString }
-        expect("\"Fred's \$100 \\\"Special\\\"\\n\"") { testString.javaString }
+        testString.rawString shouldBe "Fred's \$100 \"Special\"\n"
+        testString.kotlinString shouldBe "\"Fred's \\\$100 \\\"Special\\\"\\n\""
+        testString.javaString shouldBe "\"Fred's \$100 \\\"Special\\\"\\n\""
     }
 
     @Test fun `should handle unicode sequences`() {
         val testString = StringValue("R\u00E9sum\u00E9 \u2014 CV")
-        expect("R\u00E9sum\u00E9 \u2014 CV") { testString.rawString }
-        expect("\"R\\u00E9sum\\u00E9 \\u2014 CV\"") { testString.kotlinString }
-        expect("\"R\\u00E9sum\\u00E9 \\u2014 CV\"") { testString.javaString }
+        testString.rawString shouldBe "R\u00E9sum\u00E9 \u2014 CV"
+        testString.kotlinString shouldBe "\"R\\u00E9sum\\u00E9 \\u2014 CV\""
+        testString.javaString shouldBe "\"R\\u00E9sum\\u00E9 \\u2014 CV\""
     }
 
     @Test fun `should use raw string literal where appropriate`() {
         val testString = StringValue("""{"a":"apple","b":"bear","c":"cat"}""")
-        expect("""{"a":"apple","b":"bear","c":"cat"}""") { testString.rawString }
-        expect("""""${'"'}{"a":"apple","b":"bear","c":"cat"}""${'"'}""") { testString.kotlinString }
-        expect("\"{\\\"a\\\":\\\"apple\\\",\\\"b\\\":\\\"bear\\\",\\\"c\\\":\\\"cat\\\"}\"") { testString.javaString }
+        testString.rawString shouldBe """{"a":"apple","b":"bear","c":"cat"}"""
+        testString.kotlinString shouldBe """""${'"'}{"a":"apple","b":"bear","c":"cat"}""${'"'}"""
+        testString.javaString shouldBe "\"{\\\"a\\\":\\\"apple\\\",\\\"b\\\":\\\"bear\\\",\\\"c\\\":\\\"cat\\\"}\""
     }
 
 }

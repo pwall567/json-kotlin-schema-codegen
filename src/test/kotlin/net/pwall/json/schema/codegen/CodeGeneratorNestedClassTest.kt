@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorNestedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestNestedObject", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedObject.kt") + expectedNested) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestNestedObject.kt") + expectedNested
     }
 
     @Test fun `should output deeply nested class in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorNestedClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestNestedObject", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestNestedObject.java") + expectedNestedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestNestedObject.java") + expectedNestedJava
     }
 
     companion object {

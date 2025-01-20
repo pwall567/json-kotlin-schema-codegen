@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.JSONSchema
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -46,7 +47,7 @@ class CodeGeneratorSingleSchemaTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "Test")
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
     @Test fun `should generate from pre-loaded schema as array`() {
@@ -57,7 +58,7 @@ class CodeGeneratorSingleSchemaTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generateClasses(listOf(schema to "Test"))
-        expect(createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Test.kt") + CodeGeneratorExampleTest.expectedExample
     }
 
 }

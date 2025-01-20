@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -51,8 +52,8 @@ class CodeGeneratorExtendedRefTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(schemaDoc, JSONPointer("/\$defs"))
-        expect(CodeGeneratorTestUtil.createHeader("Main.kt") + expected1) { stringWriter1.toString() }
-        expect(CodeGeneratorTestUtil.createHeader("Nested.kt") + expected2) { stringWriter2.toString() }
+        stringWriter1.toString() shouldBe CodeGeneratorTestUtil.createHeader("Main.kt") + expected1
+        stringWriter2.toString() shouldBe CodeGeneratorTestUtil.createHeader("Nested.kt") + expected2
     }
 
     @Test fun `should generate classes for extended nested class in Java`() {
@@ -66,8 +67,8 @@ class CodeGeneratorExtendedRefTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
         codeGenerator.generateAll(schemaDoc, JSONPointer("/\$defs"))
-        expect(CodeGeneratorTestUtil.createHeader("Main.java") + expected1Java) { stringWriter1.toString() }
-        expect(CodeGeneratorTestUtil.createHeader("Nested.java") + expected2Java) { stringWriter2.toString() }
+        stringWriter1.toString() shouldBe CodeGeneratorTestUtil.createHeader("Main.java") + expected1Java
+        stringWriter2.toString() shouldBe CodeGeneratorTestUtil.createHeader("Nested.java") + expected2Java
     }
 
     companion object {

@@ -15,6 +15,7 @@
 {{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        if ({{&javaName}} != cg_typedOther.{{&javaName}})
 {{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        if ({{&javaName}} == null ? cg_typedOther.{{&javaName}} != null : !{{&javaName}}.equals(cg_typedOther.{{&javaName}}))
 {{/nullable}}{{^nullable}}{{&indent}}        if (!{{&javaName}}.equals(cg_typedOther.{{&javaName}}))
-{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{&indent}}            return false;
+{{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{! TODO check if property is array (do we ever use array?) and if so emit "Arrays.equals"
+}}{{&indent}}            return false;
 {{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
 {{/nonBaseProperties}}{{&indent}}    }

@@ -1,6 +1,7 @@
-{{#isLocalType}}{{#isEnumClass}}{{&defaultValue.kotlinString}}{{/isEnumClass}}{{!
+{{#isLocalType}}{{#defaultValue}}{{#isEnumClass}}{{&defaultValue.kotlinString}}{{/isEnumClass}}{{!
 }}{{^isEnumClass}}{{&localType.className}}({{#type}}{{#STRING}}{{&defaultValue.kotlinString}}{{/STRING}}{{!
-}}{{^STRING}}{{&defaultValue}}{{/STRING}}{{/type}}){{/isEnumClass}}{{/isLocalType}}{{^isLocalType}}{{#type}}{{#NULL}}null{{/NULL}}{{!
+}}{{^STRING}}{{&defaultValue}}{{/STRING}}{{/type}}){{/isEnumClass}}{{/defaultValue}}{{^defaultValue}}null{{/defaultValue}}{{/isLocalType}}{{!
+}}{{^isLocalType}}{{#type}}{{#NULL}}null{{/NULL}}{{!
 }}{{#INTEGER}}{{&defaultValue}}{{/INTEGER}}{{!
 }}{{#STRING}}{{#isSystemClass}}{{#systemClass}}{{#DATE_TIME}}OffsetDateTime.parse({{&defaultValue.kotlinString}}){{/DATE_TIME}}{{!
 }}{{#DATE}}LocalDate.parse({{&defaultValue.kotlinString}}){{/DATE}}{{!

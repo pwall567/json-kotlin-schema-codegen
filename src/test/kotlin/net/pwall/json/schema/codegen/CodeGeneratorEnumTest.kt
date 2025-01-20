@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorEnumTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnum", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestEnum.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestEnum.kt") + expected
     }
 
     @Test fun `should output enum class as Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorEnumTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnum", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestEnum.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestEnum.java") + expectedJava
     }
 
     @Test fun `should output enum class as TypeScript`() {
@@ -63,7 +64,7 @@ class CodeGeneratorEnumTest {
         val stringWriter = StringWriter()
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnum", "ts"), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestEnum.ts") + expectedTypeScript) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestEnum.ts") + expectedTypeScript
     }
 
     companion object {

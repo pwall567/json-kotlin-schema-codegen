@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.pointer.JSONPointer
 
@@ -47,8 +48,15 @@ class CodeGeneratorNonstandardFormatTest {
         val input = File("src/test/resources/test-nonstandard-format.schema.json")
         val parser = Parser()
         parser.nonstandardFormatHandler = { keyword ->
-            FormatValidator.DelegatingFormatChecker(keyword,
-                    StringValidator(null, JSONPointer.root, StringValidator.ValidationType.MIN_LENGTH, 1))
+            FormatValidator.DelegatingFormatChecker(
+                keyword,
+                StringValidator(
+                    uri = null,
+                    location = JSONPointer.root,
+                    condition = StringValidator.ValidationType.MIN_LENGTH,
+                    value = 1
+                )
+            )
         }
         val schema = parser.parse(input)
         val codeGenerator = CodeGenerator()
@@ -56,7 +64,7 @@ class CodeGeneratorNonstandardFormatTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestCustom", "kt", dirs), stringWriter)
         codeGenerator.generateClass(schema, "TestCustom")
-        expect(createHeader("TestCustom.kt") + expected1) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestCustom.kt") + expected1
     }
 
     @Test fun `should generate correct code for format delegating to another format`() {
@@ -64,10 +72,14 @@ class CodeGeneratorNonstandardFormatTest {
         val parser = Parser()
         parser.nonstandardFormatHandler = { keyword ->
             when (keyword) {
-                "guid" -> FormatValidator.DelegatingFormatChecker(keyword,
-                        FormatValidator(null, JSONPointer.root, FormatValidator.StringFormatChecker("uuid") {
-                            JSONValidation.isUUID(it)
-                        }))
+                "guid" -> FormatValidator.DelegatingFormatChecker(
+                    keyword,
+                    FormatValidator(
+                        uri = null,
+                        location = JSONPointer.root,
+                        checker = FormatValidator.StringFormatChecker("uuid") { JSONValidation.isUUID(it) }
+                    )
+                )
                 else -> null
             }
         }
@@ -77,7 +89,7 @@ class CodeGeneratorNonstandardFormatTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestDelegating", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestDelegating.kt") + expected2) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestDelegating.kt") + expected2
     }
 
     companion object {

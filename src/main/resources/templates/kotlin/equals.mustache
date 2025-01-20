@@ -1,3 +1,4 @@
 {{&indent}}    override fun equals(other: Any?): Boolean = this === other || other is {{&className}}{{#hasBaseClassWithProperties}} &&
 {{&indent}}            super.equals(other){{/hasBaseClassWithProperties}}{{#nonBaseProperties}} &&
-{{&indent}}            {{&kotlinName}} == other.{{&kotlinName}}{{/nonBaseProperties}}
+{{! TODO check if property is array (do we ever use array?) and if so emit "contentEquals"
+}}{{&indent}}            {{&kotlinName}} == other.{{&kotlinName}}{{/nonBaseProperties}}

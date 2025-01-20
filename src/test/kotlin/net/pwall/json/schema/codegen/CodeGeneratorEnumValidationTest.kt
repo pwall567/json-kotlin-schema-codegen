@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorEnumValidationTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnumValidation", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestEnumValidation.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestEnumValidation.kt") + expected
     }
 
     @Test fun `should generate correct code for string enum validations in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorEnumValidationTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestEnumValidation", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestEnumValidation.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestEnumValidation.java") + expectedJava
     }
 
     companion object {

@@ -26,9 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
+
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
+
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -42,7 +45,7 @@ class CodeGeneratorAnyTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestGenerateAny", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestGenerateAny.kt") + expected
     }
 
     @Test fun `should generate property type Object when no details supplied in Java`() {
@@ -52,7 +55,7 @@ class CodeGeneratorAnyTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestGenerateAny", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestGenerateAny.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestGenerateAny.java") + expectedJava
     }
 
     companion object {

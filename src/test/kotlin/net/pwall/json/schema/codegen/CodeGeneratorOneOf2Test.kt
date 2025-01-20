@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -53,9 +54,9 @@ class CodeGeneratorOneOf2Test {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.kt") + expectedTypeA) { stringWriterA.toString() }
-        expect(createHeader("TypeB.kt") + expectedTypeB) { stringWriterB.toString() }
-        expect(createHeader("TypeC.kt") + expectedTypeC) { stringWriterC.toString() }
+        stringWriterA.toString() shouldBe createHeader("TypeA.kt") + expectedTypeA
+        stringWriterB.toString() shouldBe createHeader("TypeB.kt") + expectedTypeB
+        stringWriterC.toString() shouldBe createHeader("TypeC.kt") + expectedTypeC
     }
 
     @Test fun `should generate classes for complex multiple oneOf schemata in Java`() {
@@ -70,9 +71,9 @@ class CodeGeneratorOneOf2Test {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsA, outputDetailsB, outputDetailsC)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("TypeA.java") + expectedTypeAJava) { stringWriterA.toString() }
-        expect(createHeader("TypeB.java") + expectedTypeBJava) { stringWriterB.toString() }
-        expect(createHeader("TypeC.java") + expectedTypeCJava) { stringWriterC.toString() }
+        stringWriterA.toString() shouldBe createHeader("TypeA.java") + expectedTypeAJava
+        stringWriterB.toString() shouldBe createHeader("TypeB.java") + expectedTypeBJava
+        stringWriterC.toString() shouldBe createHeader("TypeC.java") + expectedTypeCJava
     }
 
     companion object {

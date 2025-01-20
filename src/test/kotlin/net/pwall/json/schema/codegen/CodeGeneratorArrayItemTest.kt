@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,9 +45,8 @@ class CodeGeneratorArrayItemTest {
         codeGenerator.baseDirectoryName = outputDirectory
         codeGenerator.basePackageName = "net.pwall.json.schema.codegen.test"
         codeGenerator.generate(input)
-        expect(createHeader("TestArrayItems.kt") + expected) {
-            File("$outputDirectory/net/pwall/json/schema/codegen/test/TestArrayItems.kt").readText()
-        }
+        File("$outputDirectory/net/pwall/json/schema/codegen/test/TestArrayItems.kt").readText() shouldBe
+                createHeader("TestArrayItems.kt") + expected
     }
 
     @Test fun `should generate correct validations for arrays of integer and string in Java`() {
@@ -56,7 +56,7 @@ class CodeGeneratorArrayItemTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestArrayItems", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArrayItems.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestArrayItems.java") + expectedJava
     }
 
     companion object {

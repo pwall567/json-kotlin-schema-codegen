@@ -26,8 +26,9 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.assertSame
-import kotlin.test.expect
+
+import io.kstuff.test.shouldBe
+import io.kstuff.test.shouldBeSameInstance
 
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.sanitiseName
 import net.pwall.json.schema.codegen.CodeGenerator.Companion.toColumnId
@@ -36,31 +37,31 @@ class CodeGeneratorUtilTest {
 
     @Test fun `should return original name from sanitiseName when no changes needed`() {
         "Abc".let {
-            assertSame(it, it.sanitiseName())
+            it.sanitiseName() shouldBeSameInstance it
         }
         "data12345".let {
-            assertSame(it, it.sanitiseName())
+            it.sanitiseName() shouldBeSameInstance it
         }
     }
 
     @Test fun `should sanitise name correctly`() {
-        expect("Abc123") { "Abc-123".sanitiseName() }
-        expect("Abc123456") { "Abc-123-456".sanitiseName() }
+        "Abc-123".sanitiseName() shouldBe "Abc123"
+        "Abc-123-456".sanitiseName() shouldBe "Abc123456"
     }
 
     @Test fun `should convert number to column id`() {
-        expect("A") { 0.toColumnId() }
-        expect("B") { 1.toColumnId() }
-        expect("Z") { 25.toColumnId() }
-        expect("AA") { 26.toColumnId() }
-        expect("AB") { 27.toColumnId() }
-        expect("AZ") { 51.toColumnId() }
-        expect("BA") { 52.toColumnId() }
-        expect("BB") { 53.toColumnId() }
-        expect("ZA") { (26 * 26).toColumnId() }
-        expect("ZZ") { (26 * 26 + 25).toColumnId() }
-        expect("AAA") { (27 * 26).toColumnId() }
-        expect("AAB") { (27 * 26 + 1).toColumnId() }
+        0.toColumnId() shouldBe "A"
+        1.toColumnId() shouldBe "B"
+        25.toColumnId() shouldBe "Z"
+        26.toColumnId() shouldBe "AA"
+        27.toColumnId() shouldBe "AB"
+        51.toColumnId() shouldBe "AZ"
+        52.toColumnId() shouldBe "BA"
+        53.toColumnId() shouldBe "BB"
+        (26 * 26).toColumnId() shouldBe "ZA"
+        (26 * 26 + 25).toColumnId() shouldBe "ZZ"
+        (27 * 26).toColumnId() shouldBe "AAA"
+        (27 * 26 + 1).toColumnId() shouldBe "AAB"
     }
 
 }

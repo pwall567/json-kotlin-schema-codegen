@@ -25,90 +25,92 @@
 
 package net.pwall.json.schema.codegen
 
-import java.math.BigDecimal
 import kotlin.test.Test
-import kotlin.test.expect
+
+import java.math.BigDecimal
+
+import io.kstuff.test.shouldBe
 
 class NumberValueTest {
 
     @Test fun `should handle int 0`() {
         val intValue = 0
         val numberValue = NumberValue(intValue)
-        expect(true) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(false) { numberValue.isDecimal }
-        expect(true) { numberValue.isZero }
-        expect(false) { numberValue.isOne }
+        numberValue.isInt shouldBe true
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe false
+        numberValue.isZero shouldBe true
+        numberValue.isOne shouldBe false
     }
 
     @Test fun `should handle int 1`() {
         val intValue = 1
         val numberValue = NumberValue(intValue)
-        expect(true) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(false) { numberValue.isDecimal }
-        expect(false) { numberValue.isZero }
-        expect(true) { numberValue.isOne }
+        numberValue.isInt shouldBe true
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe false
+        numberValue.isZero shouldBe false
+        numberValue.isOne shouldBe true
     }
 
     @Test fun `should handle other int`() {
         val intValue = -99
         val numberValue = NumberValue(intValue)
-        expect(true) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(false) { numberValue.isDecimal }
-        expect(false) { numberValue.isZero }
-        expect(false) { numberValue.isOne }
+        numberValue.isInt shouldBe true
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe false
+        numberValue.isZero shouldBe false
+        numberValue.isOne shouldBe false
     }
 
     @Test fun `should handle long 0`() {
         val longValue = 0L
         val numberValue = NumberValue(longValue)
-        expect(false) { numberValue.isInt }
-        expect(true) { numberValue.isLong }
-        expect(false) { numberValue.isDecimal }
-        expect(true) { numberValue.isZero }
-        expect(false) { numberValue.isOne }
+        numberValue.isInt shouldBe false
+        numberValue.isLong shouldBe true
+        numberValue.isDecimal shouldBe false
+        numberValue.isZero shouldBe true
+        numberValue.isOne shouldBe false
     }
 
     @Test fun `should handle long 1`() {
         val longValue = 1L
         val numberValue = NumberValue(longValue)
-        expect(false) { numberValue.isInt }
-        expect(true) { numberValue.isLong }
-        expect(false) { numberValue.isDecimal }
-        expect(false) { numberValue.isZero }
-        expect(true) { numberValue.isOne }
+        numberValue.isInt shouldBe false
+        numberValue.isLong shouldBe true
+        numberValue.isDecimal shouldBe false
+        numberValue.isZero shouldBe false
+        numberValue.isOne shouldBe true
     }
 
     @Test fun `should handle decimal 0`() {
         val decimalValue = BigDecimal.ZERO
         val numberValue = NumberValue(decimalValue)
-        expect(false) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(true) { numberValue.isDecimal }
-        expect(true) { numberValue.isZero }
-        expect(false) { numberValue.isOne }
+        numberValue.isInt shouldBe false
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe true
+        numberValue.isZero shouldBe true
+        numberValue.isOne shouldBe false
     }
 
     @Test fun `should handle decimal 1`() {
         val decimalValue = BigDecimal.ONE
         val numberValue = NumberValue(decimalValue)
-        expect(false) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(true) { numberValue.isDecimal }
-        expect(false) { numberValue.isZero }
-        expect(true) { numberValue.isOne }
+        numberValue.isInt shouldBe false
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe true
+        numberValue.isZero shouldBe false
+        numberValue.isOne shouldBe true
     }
 
     @Test fun `should handle other decimal`() {
         val decimalValue = BigDecimal("123.45")
         val numberValue = NumberValue(decimalValue)
-        expect(false) { numberValue.isInt }
-        expect(false) { numberValue.isLong }
-        expect(true) { numberValue.isDecimal }
-        expect(false) { numberValue.isZero }
-        expect(false) { numberValue.isOne }
+        numberValue.isInt shouldBe false
+        numberValue.isLong shouldBe false
+        numberValue.isDecimal shouldBe true
+        numberValue.isZero shouldBe false
+        numberValue.isOne shouldBe false
     }
 
 }

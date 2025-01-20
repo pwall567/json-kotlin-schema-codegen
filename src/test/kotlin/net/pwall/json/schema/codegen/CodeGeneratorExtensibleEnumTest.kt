@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -46,7 +47,7 @@ class CodeGeneratorExtensibleEnumTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestExtensibleEnum")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestExtensibleEnum")
     }
 
 }

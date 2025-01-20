@@ -1,5 +1,5 @@
 /*
- * @(#) CodeGeneratorCustomClassMaxLengthTest.kt
+ * @(#) CodeGeneratorBaseDerivedNestedClassTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2023 Peter Wall
@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -46,8 +47,8 @@ class CodeGeneratorBaseDerivedNestedClassTest {
             val outputC = OutputDetails(TargetFileName("TestBaseNestedExtra", "kt", dirs))
             outputResolver = outputCapture(outputA, outputB, outputC)
             generate(input)
-            expect(createHeader("TestBaseNested.kt") + expectedA) { outputA.output() }
-            expect(createHeader("TestBaseNestedDerived.kt") + expectedB) { outputB.output() }
+            outputA.output() shouldBe createHeader("TestBaseNested.kt") + expectedA
+            outputB.output() shouldBe createHeader("TestBaseNestedDerived.kt") + expectedB
         }
     }
 

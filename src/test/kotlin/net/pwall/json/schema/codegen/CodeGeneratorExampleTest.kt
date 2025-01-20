@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorExampleTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test.kt") + expectedExample) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Test.kt") + expectedExample
     }
 
     @Test fun `should output example data class in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorExampleTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test.java") + expectedExampleJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Test.java") + expectedExampleJava
     }
 
     @Test fun `should output example data class in TypeScript`() {
@@ -64,7 +65,7 @@ class CodeGeneratorExampleTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("Test", "ts", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("Test.ts") + expectedExampleTypeScript) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("Test.ts") + expectedExampleTypeScript
     }
 
     companion object {

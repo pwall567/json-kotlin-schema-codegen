@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import io.kjson.JSON
 import io.kjson.pointer.JSONPointer
@@ -48,8 +49,8 @@ class CodeGeneratorBaseDerivedRequiredTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("Base.kt") + expectedBase) { outputDetailsBase.output() }
-        expect(createHeader("Derived.kt") + expectedDerived) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("Base.kt") + expectedBase
+        outputDetailsDerived.output() shouldBe createHeader("Derived.kt") + expectedDerived
     }
 
     @Test fun `should generate base and derived classes where derived adds required in Java`() {
@@ -60,8 +61,8 @@ class CodeGeneratorBaseDerivedRequiredTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsBase, outputDetailsDerived)
         codeGenerator.generateAll(JSON.parseNonNull(input.readText()), JSONPointer("/\$defs"))
-        expect(createHeader("Base.java") + expectedBaseJava) { outputDetailsBase.output() }
-        expect(createHeader("Derived.java") + expectedDerivedJava) { outputDetailsDerived.output() }
+        outputDetailsBase.output() shouldBe createHeader("Base.java") + expectedBaseJava
+        outputDetailsDerived.output() shouldBe createHeader("Derived.java") + expectedDerivedJava
     }
 
     companion object {

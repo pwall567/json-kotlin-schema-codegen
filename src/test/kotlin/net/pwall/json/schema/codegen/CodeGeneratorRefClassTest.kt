@@ -26,11 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
 import java.nio.file.FileSystems
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -49,8 +50,8 @@ class CodeGeneratorRefClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.generate(input)
-        expect(createHeader("TestRefClassOuter.kt") + expectedOuter) { stringWriterOuter.toString() }
-        expect(createHeader("TestRefClassInner.kt") + expectedInner) { stringWriterInner.toString() }
+        stringWriterOuter.toString() shouldBe createHeader("TestRefClassOuter.kt") + expectedOuter
+        stringWriterInner.toString() shouldBe createHeader("TestRefClassInner.kt") + expectedInner
     }
 
     @Test fun `should generate class with reference to other generated class using Path`() {
@@ -63,8 +64,8 @@ class CodeGeneratorRefClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.generateFromPaths(input)
-        expect(createHeader("TestRefClassOuter.kt") + expectedOuter) { stringWriterOuter.toString() }
-        expect(createHeader("TestRefClassInner.kt") + expectedInner) { stringWriterInner.toString() }
+        stringWriterOuter.toString() shouldBe createHeader("TestRefClassOuter.kt") + expectedOuter
+        stringWriterInner.toString() shouldBe createHeader("TestRefClassInner.kt") + expectedInner
     }
 
     @Test fun `should generate class with reference to other generated class using Path list`() {
@@ -77,8 +78,8 @@ class CodeGeneratorRefClassTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(outputDetailsOuter, outputDetailsInner)
         codeGenerator.generateFromPaths(listOf(input))
-        expect(createHeader("TestRefClassOuter.kt") + expectedOuter) { stringWriterOuter.toString() }
-        expect(createHeader("TestRefClassInner.kt") + expectedInner) { stringWriterInner.toString() }
+        stringWriterOuter.toString() shouldBe createHeader("TestRefClassOuter.kt") + expectedOuter
+        stringWriterInner.toString() shouldBe createHeader("TestRefClassInner.kt") + expectedInner
     }
 
     companion object {

@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -47,7 +48,7 @@ class CodeGeneratorNestedClassOptionTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestArray", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArray.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestArray.kt") + expected
     }
 
     @Test fun `should generate nested class for array of object in Java`() {
@@ -58,7 +59,7 @@ class CodeGeneratorNestedClassOptionTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestArray", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestArray.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestArray.java") + expectedJava
     }
 
     companion object {

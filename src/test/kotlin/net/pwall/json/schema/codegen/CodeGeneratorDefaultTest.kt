@@ -26,11 +26,12 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
 import java.net.URI
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -45,9 +46,9 @@ class CodeGeneratorDefaultTest {
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestDefault", "kt", dirs), stringWriter)
         codeGenerator.basePackageName = "com.example"
         codeGenerator.addCustomClassByURI(URI("http://pwall.net/test-default#/properties/jjj"),
-                "com.example.util.TestString")
+            "com.example.util.TestString")
         codeGenerator.generate(listOf(input))
-        expect(createHeader("TestDefault.kt") + expectedDefault) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestDefault.kt") + expectedDefault
     }
 
     companion object {

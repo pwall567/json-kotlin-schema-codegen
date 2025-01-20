@@ -26,10 +26,11 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
 import java.io.StringWriter
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.dirs
@@ -44,7 +45,7 @@ class CodeGeneratorIntegerTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestIntegerFormat", "kt", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestIntegerFormat.kt") + expected) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestIntegerFormat.kt") + expected
     }
 
     @Test fun `should generate correct code for integer formats in Java`() {
@@ -54,7 +55,7 @@ class CodeGeneratorIntegerTest {
         codeGenerator.basePackageName = "com.example"
         codeGenerator.outputResolver = outputCapture(TargetFileName("TestIntegerFormat", "java", dirs), stringWriter)
         codeGenerator.generate(input)
-        expect(createHeader("TestIntegerFormat.java") + expectedJava) { stringWriter.toString() }
+        stringWriter.toString() shouldBe createHeader("TestIntegerFormat.java") + expectedJava
     }
 
     companion object {

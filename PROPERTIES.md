@@ -34,8 +34,8 @@ data class Person(
 
 There is great virtue in being able to generate code that is easy to understand; it makes the task of the developer who
 uses the generated class much easier if the code is uncluttered and is comprehensible at a glance.
-This code generator was designed with this principle in mind, and in the vast majority of cases, the generated code
-demonstrates those properties of clarity and comprehensibility.
+The `json-kotlin-schema-codegen` code generator was designed with this principle in mind, and in the vast majority of
+cases, the generated code demonstrates those properties of clarity and comprehensibility.
 
 But there is a problem.
 The JSON Schema Specification includes the validation `additionalProperties`, which specifies how properties other than
@@ -52,9 +52,9 @@ But this still does not provide a means of accessing such properties, if that is
 
 ## `additionalProperties`
 
-Starting with version 0.100 of the code generator (February 2024), the generation process may be configured to output
-classes that will handle `additionalProperties: true`, or the more complex case of `additionalProperties` with a defined
-schema specifying validations to be applied to any additional properties.
+Starting with version 0.100 of the `json-kotlin-schema-codegen` code generator (February 2024), the generation process
+may be configured to output classes that will handle `additionalProperties: true`, or the more complex case of
+`additionalProperties` with a defined schema specifying validations to be applied to any additional properties.
 
 The generated code produced with this feature enabled is much more complex than before; it makes use of the Kotlin
 [Delegation](https://kotlinlang.org/docs/delegation.html) functionality to access properties from a `Map`.
@@ -92,8 +92,8 @@ Any additional properties may be accessed by the `Map` syntax: `person["property
 
 In this case there is no schema information supplied for the additional properties; the absence of an
 `additionalProperties` validation implies `additionalProperties: true`, meaning that any values are allowed.
-If the `additionalProperties` validation included a schema, the `init` block would check all properties other than those
-named for conformity to the schema.
+If the `additionalProperties` validation included a schema, the `init` block would check all properties, other than
+those named, for conformity to the schema.
 And if there were no named `properties`, the `Map` would use the type derived from the schema (instead of `Any?`),
 simplifying the use of the additional properties.
 

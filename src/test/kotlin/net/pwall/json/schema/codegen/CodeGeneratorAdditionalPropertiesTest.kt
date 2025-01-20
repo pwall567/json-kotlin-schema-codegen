@@ -26,9 +26,10 @@
 package net.pwall.json.schema.codegen
 
 import kotlin.test.Test
-import kotlin.test.expect
 
 import java.io.File
+
+import io.kstuff.test.shouldBe
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
@@ -48,7 +49,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesFalse")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesFalse")
     }
 
     @Test fun `should generate code for additionalProperties true`() {
@@ -60,7 +61,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesTrue")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesTrue")
     }
 
     @Test fun `should generate code for additionalProperties with schema`() {
@@ -72,7 +73,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesSchema1")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesSchema1")
     }
 
     @Test fun `should generate code for additionalProperties with valid schema`() {
@@ -84,7 +85,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesSchemaValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesSchemaValid")
     }
 
     @Test fun `should generate code for additionalProperties false with extra`() {
@@ -96,7 +97,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesFalseExtra")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesFalseExtra")
     }
 
     @Test fun `should generate code for aP false with extra valid`() {
@@ -108,7 +109,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApFalseExtraValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApFalseExtraValid")
     }
 
     @Test fun `should generate code for aP true with extra`() {
@@ -120,7 +121,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtra")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtra")
     }
 
     @Test fun `should generate code for aP true with optional extra`() {
@@ -132,7 +133,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraOptional")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraOptional")
     }
 
     @Test fun `should generate code for aP true with extra with validation`() {
@@ -144,7 +145,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraValid")
     }
 
     @Test fun `should generate code for aP true with optional extra with validation`() {
@@ -156,7 +157,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraOptValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraOptValid")
     }
 
     @Test fun `should generate code for aP true with extra array`() {
@@ -168,7 +169,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraArray")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraArray")
     }
 
     @Test fun `should generate code for aP true with optional extra array`() {
@@ -180,7 +181,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraArrayOpt")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraArrayOpt")
     }
 
     @Test fun `should generate code for aP true with optional extra array with validation`() {
@@ -192,7 +193,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraArrayOptValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraArrayOptValid")
     }
 
     @Test fun `should generate code for aP true with extra with default value`() {
@@ -204,7 +205,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraDefault")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraDefault")
     }
 
     @Test fun `should generate code for additionalProperties with schema with extra`() {
@@ -216,7 +217,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesSchemaExtra")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesSchemaExtra")
     }
 
     @Test fun `should generate code for additionalProperties with schema with extra 2`() {
@@ -228,7 +229,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesSchemaExtra2")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesSchemaExtra2")
     }
 
     @Test fun `should generate code for additionalProperties with schema with extra 3`() {
@@ -240,7 +241,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestAdditionalPropertiesSchemaExtra3")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestAdditionalPropertiesSchemaExtra3")
     }
 
     @Test fun `should generate code for aP false with pattern`() {
@@ -252,7 +253,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApFalsePattern")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApFalsePattern")
     }
 
     @Test fun `should generate code for aP false with pattern and extra`() {
@@ -264,7 +265,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApFalsePatternExtra")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApFalsePatternExtra")
     }
 
     @Test fun `should generate code for aP false with pattern and optional extra`() {
@@ -276,7 +277,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApFalsePatternExtraOpt")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApFalsePatternExtraOpt")
     }
 
     @Test fun `should generate code for aP false with pattern specifying object`() {
@@ -288,7 +289,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApFalsePatternObject")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApFalsePatternObject")
     }
 
     @Test fun `should generate code for aP true with pattern`() {
@@ -300,7 +301,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTruePattern")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTruePattern")
     }
 
     @Test fun `should generate code for aP true with pattern with validation`() {
@@ -312,7 +313,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTruePatternValid")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTruePatternValid")
     }
 
     @Test fun `should generate code for aP true with pattern and extra fields`() {
@@ -324,7 +325,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraPattern")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraPattern")
     }
 
     @Test fun `should generate code for nested aP false`() {
@@ -336,7 +337,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApNestedFalse")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApNestedFalse")
     }
 
     @Test fun `should generate code for nested aP true`() {
@@ -348,7 +349,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApNestedTrue")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApNestedTrue")
     }
 
     @Test fun `should generate code for aP true with extra nested object`() {
@@ -360,7 +361,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueExtraNested")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueExtraNested")
     }
 
     @Test fun `should generate code for aP true with minimum`() {
@@ -372,7 +373,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueMin")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueMin")
     }
 
     @Test fun `should generate code for aP true with minimum 1`() {
@@ -384,7 +385,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueMin1")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueMin1")
     }
 
     @Test fun `should generate code for aP true with maximum`() {
@@ -396,7 +397,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueMax")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueMax")
     }
 
     @Test fun `should generate code for aP true with minimum and maximum`() {
@@ -408,7 +409,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueMinMax")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueMinMax")
     }
 
     @Test fun `should generate code for aP true with const number`() {
@@ -419,7 +420,7 @@ class CodeGeneratorAdditionalPropertiesTest {
             outputResolver = outputCapture(outputDetails)
             generate(input)
         }
-        expect(resultFile("TestApTrueConst")) { outputDetails.output() }
+        outputDetails.output() shouldBe resultFile("TestApTrueConst")
     }
 
     // TODO - more tests of nested classes?

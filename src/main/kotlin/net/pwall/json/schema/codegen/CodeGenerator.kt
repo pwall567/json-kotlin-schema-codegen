@@ -2,7 +2,7 @@
  * @(#) CodeGenerator.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2022, 2023, 2024 Peter Wall
+ * Copyright (c) 2020, 2021, 2022, 2023, 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,6 @@
 
 package net.pwall.json.schema.codegen
 
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
@@ -741,6 +739,21 @@ class CodeGenerator(
         return (this as? JSONSchema.General)?.children?.singleOrNull()?.let { ref ->
             if (ref is RefSchema) targets.find { it.schema === ref.target } else null
         }
+    }
+
+    /**
+     * Find the [ClassDescriptor] for the specified [JSONSchema], if it exists.
+     */
+    fun findClassDescriptorInTargets(schema: JSONSchema): ClassDescriptor? {
+        val absoluteLocation = schema.absoluteLocation ?: return null
+        for (target in targets) {
+            if (target.constraints.schema.absoluteLocation == absoluteLocation)
+                return target
+            for (nestedClass in target.nestedClasses)
+                if (nestedClass.constraints.schema.absoluteLocation == absoluteLocation)
+                    return nestedClass
+        }
+        return null
     }
 
     /**
@@ -1806,8 +1819,9 @@ class CodeGenerator(
     private fun JSONSchema.findRefChild(): RefSchema? {
         if (this !is JSONSchema.General)
             return null
-        if (children.size == 1 && children[0] is CombinationSchema) {
-            val combinationSchema = children[0] as CombinationSchema
+        val filteredChildren = children.filter { it !is DefaultValidator }
+        if (filteredChildren.size == 1 && filteredChildren[0] is CombinationSchema) {
+            val combinationSchema = filteredChildren[0] as CombinationSchema
             if (combinationSchema.name == "anyOf" || combinationSchema.name == "oneOf") {
                 return when (val i = combinationSchema.findNullableSpecialCase()) {
                     0, 1 -> (combinationSchema.array[i] as? JSONSchema.General)?.locateRefSchema()
@@ -1971,9 +1985,9 @@ class CodeGenerator(
     private fun processPropertiesValidator(propertiesValidator: PropertiesValidator, constraints: Constraints) {
         when (propertiesValidator.condition) {
             PropertiesValidator.ValidationType.MIN_PROPERTIES -> constraints.minProperties =
-                    constraints.minProperties?.let { min(it, propertiesValidator.value) } ?: propertiesValidator.value
+                    constraints.minProperties?.coerceAtMost(propertiesValidator.value) ?: propertiesValidator.value
             PropertiesValidator.ValidationType.MAX_PROPERTIES -> constraints.maxProperties =
-                    constraints.maxProperties?.let { max(it, propertiesValidator.value) } ?: propertiesValidator.value
+                    constraints.maxProperties?.coerceAtLeast(propertiesValidator.value) ?: propertiesValidator.value
         }
     }
 
@@ -2180,6 +2194,7 @@ class CodeGenerator(
 
     companion object {
 
+        @Suppress("ConstPropertyName")
         const val internalSchema = "internal schema"
 
         fun String.looksLikeYAML() = endsWith(".yaml", ignoreCase = true) || endsWith(".yml", ignoreCase = true)
