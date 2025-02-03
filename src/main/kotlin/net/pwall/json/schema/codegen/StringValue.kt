@@ -25,7 +25,7 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.util.IntOutput
+import io.jstuff.util.IntOutput
 
 class StringValue(val rawString: String) : ValidationValue {
 

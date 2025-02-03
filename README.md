@@ -1,10 +1,8 @@
-![Stop the war in Ukraine](https://pwall.net/ukraine1.png)
-
 # json-kotlin-schema-codegen
 
 [![Build Status](https://github.com/pwall567/json-kotlin-schema-codegen/actions/workflows/build.yml/badge.svg)](https://github.com/pwall567/json-kotlin-schema-codegen/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v1.9.24&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v1.9.24)
+[![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v2.0.21&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v2.0.21)
 [![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
 
 Code generation for JSON Schema (Draft 07).
@@ -396,25 +394,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.114, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.115, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.114</version>
+      <version>0.115</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.114'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.115'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.114")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.115")
 ```
 
 Peter Wall
 
-2025-01-20
+2025-02-03

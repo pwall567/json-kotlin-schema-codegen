@@ -31,13 +31,14 @@ import java.io.File
 
 import io.kstuff.test.shouldThrow
 
+import io.jstuff.log.LogList
+import io.kstuff.log.shouldHaveWarning
+
 import net.pwall.json.schema.JSONSchemaException
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.packageDirs
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.packageName
-import net.pwall.log.LogList
-import net.pwall.log.assertHasWarning
 
 class CodeGeneratorValidationTest {
 
@@ -53,7 +54,7 @@ class CodeGeneratorValidationTest {
                     generate(input)
                 }
             }
-            logList.assertHasWarning("http://pwall.net/test-validation-errors#/minimum: " +
+            logList.shouldHaveWarning("http://pwall.net/test-validation-errors#/minimum: " +
                     "Number fails check: minimum 10, was 5, at #/examples/1")
         }
     }
@@ -74,7 +75,7 @@ class CodeGeneratorValidationTest {
             }
             val expectedError = "http://pwall.net/test-validation-errors-format#/format/money/pattern: " +
                     "String doesn't match pattern ^[0-9]{1,16}\\.[0-9]{2}\$ - \"wrong\", at #/examples/1"
-            logList.assertHasWarning(expectedError)
+            logList.shouldHaveWarning(expectedError)
         }
     }
 

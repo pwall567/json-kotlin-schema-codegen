@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.115] - 2025-02-03
+### Changed
+- `pom.xml`: updated Kotlin version to 2.0.21, updated dependency versions
+
 ## [0.114] - 2025-01-20
 ### Changed
 - `CodeGenerator`: improved handling of special case of `anyOf` for nullability

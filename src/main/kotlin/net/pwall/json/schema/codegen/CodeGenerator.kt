@@ -34,6 +34,9 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 
+import io.kstuff.log.getLogger
+import io.jstuff.log.Logger
+
 import io.kjson.JSON
 import io.kjson.JSON.asObjectOr
 import io.kjson.JSONArray
@@ -80,8 +83,6 @@ import net.pwall.json.schema.validation.PropertiesValidator
 import net.pwall.json.schema.validation.StringValidator
 import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
-import net.pwall.log.Log.getLogger
-import net.pwall.log.Logger
 import net.pwall.util.DefaultValue
 import net.pwall.util.Name.Companion.capitalise
 
@@ -110,7 +111,7 @@ class CodeGenerator(
     /** An optional marker interface to add to each generated class */
     var markerInterface: ClassId? = null,
     /** A [Logger] object for the output of logging messages */
-    val log: Logger = getLogger(CodeGenerator::class.qualifiedName)
+    val log: Logger = getLogger(),
 ) {
 
     enum class AdditionalPropertiesOption {

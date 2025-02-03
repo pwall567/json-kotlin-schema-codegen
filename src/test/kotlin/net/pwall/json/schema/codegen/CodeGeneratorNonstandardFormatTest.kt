@@ -32,6 +32,7 @@ import java.io.StringWriter
 
 import io.kstuff.test.shouldBe
 
+import io.jstuff.json.validation.JSONValidation
 import io.kjson.pointer.JSONPointer
 
 import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.createHeader
@@ -40,7 +41,6 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 import net.pwall.json.schema.parser.Parser
 import net.pwall.json.schema.validation.FormatValidator
 import net.pwall.json.schema.validation.StringValidator
-import net.pwall.json.validation.JSONValidation
 
 class CodeGeneratorNonstandardFormatTest {
 
