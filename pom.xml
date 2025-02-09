@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.pwall.json</groupId>
   <artifactId>json-kotlin-schema-codegen</artifactId>
-  <version>0.115</version>
+  <version>0.116</version>
   <name>JSON Schema Code Generation</name>
   <description>Code generation from JSON Schema to Kotlin or Java</description>
   <packaging>jar</packaging>
@@ -64,7 +64,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema</artifactId>
-      <version>0.54</version>
+      <version>0.55</version>
     </dependency>
     <dependency>
       <groupId>io.kjson</groupId>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-pointer</artifactId>
-      <version>8.7</version>
+      <version>8.8</version>
     </dependency>
     <dependency>
       <groupId>io.jstuff</groupId>
@@ -84,12 +84,12 @@
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>mustache-k</artifactId>
-      <version>3.7</version>
+      <version>3.8</version>
     </dependency>
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson-yaml</artifactId>
-      <version>3.7</version>
+      <version>3.8</version>
     </dependency>
     <dependency>
       <groupId>io.jstuff</groupId>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>log-front-kotlin</artifactId>
-      <version>6.0</version>
+      <version>6.1</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -113,7 +113,7 @@
     <dependency>
       <groupId>io.kjson</groupId>
       <artifactId>kjson</artifactId>
-      <version>9.5</version>
+      <version>9.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>

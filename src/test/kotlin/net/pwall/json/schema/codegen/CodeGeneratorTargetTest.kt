@@ -52,6 +52,10 @@ class CodeGeneratorTargetTest {
         val parser = Parser()
         codeGenerator.addTarget(parser.parse(input), "Test")
         codeGenerator.numTargets shouldBe 1
+        with(codeGenerator.targets[0]) {
+            className shouldBe "Test"
+            packageName shouldBe "com.example"
+        }
         val outputDetails = OutputDetails(TargetFileName("Test", "kt", dirs))
         codeGenerator.outputResolver = outputCapture(outputDetails)
         codeGenerator.generateAllTargets()

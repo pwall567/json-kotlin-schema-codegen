@@ -64,7 +64,7 @@ class CodeGeneratorStringTest {
 """package com.example
 
 import java.net.URI
-import net.pwall.json.validation.JSONValidation
+import io.jstuff.json.validation.JSONValidation
 
 /**
  * Test string validations.
@@ -128,7 +128,7 @@ data class TestString(
 
 import java.net.URI;
 import java.util.regex.Pattern;
-import net.pwall.json.validation.JSONValidation;
+import io.jstuff.json.validation.JSONValidation;
 
 /**
  * Test string validations.

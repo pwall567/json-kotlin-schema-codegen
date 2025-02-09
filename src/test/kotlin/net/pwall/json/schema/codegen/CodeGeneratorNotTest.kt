@@ -63,7 +63,7 @@ class CodeGeneratorNotTest {
         const val expected =
 """package com.example
 
-import net.pwall.json.validation.JSONValidation
+import io.jstuff.json.validation.JSONValidation
 
 /**
  * Test "not" validations.
@@ -98,7 +98,7 @@ data class TestNot(
 
 import java.util.Arrays;
 import java.util.List;
-import net.pwall.json.validation.JSONValidation;
+import io.jstuff.json.validation.JSONValidation;
 
 /**
  * Test "not" validations.

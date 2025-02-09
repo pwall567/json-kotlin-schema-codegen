@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+### Changed
+- templates: switched validation imports to `io.jstuff.json.JSONValidation`
+
 ## [0.115] - 2025-02-03
 ### Changed
 - `pom.xml`: updated Kotlin version to 2.0.21, updated dependency versions
