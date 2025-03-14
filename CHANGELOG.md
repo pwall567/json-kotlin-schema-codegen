@@ -2,7 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Unreleased]
+## [0.117] - 2025-03-14
+### Changed
+- `CodeGenerator`, `Constraints`, `Target`, templates: major changes to handling of `oneOf` groups
+- `pom.xml`: updated dependency versions
+
+## [0.116] - 2025-02-09
 ### Changed
 - templates: switched validation imports to `io.jstuff.json.JSONValidation`
 

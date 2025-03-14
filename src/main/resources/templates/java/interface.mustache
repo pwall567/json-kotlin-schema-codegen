@@ -6,7 +6,8 @@
 * {{&safeDescription}}
 */
 {{/description}}{{/schema}}public interface {{&className}}{{>extends_implements}} {
-{{>add_statics}}
+{{#interfaceProperties}}{{#first}}
+{{/first}}{{>interface_getter}}{{/interfaceProperties}}{{>add_statics}}
 {{#nestedClasses}}
-  {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}
 }{{/constraints}}

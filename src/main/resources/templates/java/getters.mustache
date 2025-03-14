@@ -1,10 +1,1 @@
-{{#nonBaseProperties}}{{#schema}}{{#description}}{{&indent}}    /**
-{{&indent}}     * {{&safeDescription}}
-{{&indent}}     */
-{{/description}}{{/schema}}{{&indent}}{{!
-}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
-}}    public {{>type}} get{{&capitalisedName}}() {
-{{&indent}}        return {{&javaName}};
-{{&indent}}    }
-
-{{/nonBaseProperties}}
+{{#nonBaseAndInterfaceProperties}}{{>getter}}{{/nonBaseAndInterfaceProperties}}

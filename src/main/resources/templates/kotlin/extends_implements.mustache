@@ -1,3 +1,3 @@
-{{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{^first}}, {{/first}}{{&kotlinName}}{{/properties}}{{/constraints}}){{!
-}}{{#interfaces}}, {{&className}}{{/interfaces}}{{/baseClass}}{{!
+{{#hasBaseClass}}{{#baseClass}} : {{&className}}({{#constraints}}{{#properties}}{{^first}}, {{/first}}{{&kotlinName}}{{/properties}}{{/constraints}}){{!
+}}{{/baseClass}}{{#interfaces}}, {{&className}}{{/interfaces}}{{/hasBaseClass}}{{!
 }}{{^baseClass}}{{#interfaces}}{{#first}} : {{/first}}{{^first}}, {{/first}}{{&className}}{{/interfaces}}{{/baseClass}}

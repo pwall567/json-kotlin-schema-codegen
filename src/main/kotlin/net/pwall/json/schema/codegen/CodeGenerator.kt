@@ -35,7 +35,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 import io.kstuff.log.getLogger
-import io.jstuff.log.Logger
+import io.kstuff.log.Logger
 
 import io.kjson.JSON
 import io.kjson.JSON.asObjectOr
@@ -650,6 +650,12 @@ class CodeGenerator(
         nameGenerator = NameGenerator()
         val constraints = target.constraints
         when {
+            constraints.generateAsInterface -> {
+                log.info { "-- target interface ${target.qualifiedClassName}" }
+                outputResolver(target.targetFile).use {
+                    interfaceTemplate.appendTo(AppendableFilter(it), generatorContext.child(target))
+                }
+            }
             constraints.isObject -> { // does it look like an object? generate a class
                 log.info { "-- target class ${target.qualifiedClassName}" }
                 constraints.applyAnnotations(classAnnotations, target, target)
@@ -696,17 +702,74 @@ class CodeGenerator(
                     oneOfTarget.addInterface(target)
                     target.derivedClasses.add(oneOfTarget)
                 }
-                else
-                    createCombinedClass(i, constraints, oneOfTarget.constraints, target)
+                else // TODO tidy this up
+//                    createCombinedClass(oneOfTarget.className, constraints, oneOfItem, target)
+//                    addBaseClass(target, oneOfTarget, constraints, oneOfTarget.constraints)
+                    implementInterface(target, oneOfTarget, constraints, oneOfTarget.constraints)
             }
             else {
                 if (oneOfItem.isObject)
-                    createCombinedClass(i, constraints, oneOfItem, target)
+                    createCombinedClass(i.toColumnId(), constraints, oneOfItem, target)
             }
         }
     }
 
-    private fun createCombinedClass(i: Int, constraints: Constraints, additionalConstraints: Constraints,
+    private fun implementInterface(target: Target, oneOfTarget: Target, constraints: Constraints, oneOfConstraints: Constraints) {
+        oneOfTarget.addInterface(target)
+        target.derivedClasses.add(oneOfTarget)
+        constraints.generateAsInterface = true
+        constraints.properties.forEach { constraints.interfaceProperties.addOnce(it) }
+        var insertionPoint = 0
+        for (property in constraints.properties) {
+            val matchingProperty = oneOfConstraints.properties.find { it.name == property.name }
+            if (matchingProperty != null) {
+                matchingProperty.overridesInterface = true
+                matchingProperty.baseProperty?.let { it.overridden = true }
+            }
+            else {
+                oneOfConstraints.properties.add(
+                    insertionPoint++,
+                    NamedConstraints(property.schema, property.name).also {
+                        it.copyFrom(property)
+                        it.baseProperty = property
+                        it.overridesInterface = true
+                    }
+                )
+            }
+        }
+    }
+
+    private fun addBaseClass(
+        target: Target,
+        oneOfTarget: Target,
+        constraints: Constraints,
+        additionalConstraints: Constraints,
+    ) {
+        // Leaving this in place even though it is not being used - it may need to be revived at some stage.
+        // Add target as a base class to oneOfTarget
+        // (if it already has a base class, move all those base class properties into target)
+        oneOfTarget.baseClass?.let { baseClass ->
+            for (baseProperty in baseClass.constraints.properties) {
+                constraints.properties.find { it.name == baseProperty.name }?.let {
+                    it.baseProperty = null
+                }
+            }
+        }
+        oneOfTarget.putBaseClass(target)
+        target.derivedClasses.add(oneOfTarget)
+        var insertionPoint = 0
+        for (property in constraints.properties) {
+            additionalConstraints.properties.add(insertionPoint++, NamedConstraints(property.schema, property.name).also {
+                it.copyFrom(property)
+                it.baseProperty = property
+                it.validations.clear()
+            })
+            if (constraints.required.contains(property.name))
+                additionalConstraints.required.addOnce(property.name)
+        }
+    }
+
+    private fun createCombinedClass(name: String, constraints: Constraints, additionalConstraints: Constraints,
             target: Target) {
         // create a nested class with current as a base class and oneOfTarget properties,
         // and remove (merge?) overlapping properties
@@ -715,6 +778,7 @@ class CodeGenerator(
             nestedConstraints.properties.add(NamedConstraints(property.schema, property.name).also {
                 it.copyFrom(property)
                 it.baseProperty = property
+                it.overridesInterface = true
             })
         }
         nestedConstraints.required.addAll(constraints.required)
@@ -728,10 +792,11 @@ class CodeGenerator(
                 })
             }
             if (additionalConstraints.required.contains(property.name))
-                nestedConstraints.required.add(property.name)
+                nestedConstraints.required.addOnce(property.name)
         }
-        val nestedClass = target.addNestedClass(nestedConstraints, null, i.toColumnId())
-        nestedClass.baseClass = target
+        val nestedClass = target.addNestedClass(nestedConstraints, null, name)
+//        nestedClass.baseClass = target
+        nestedClass.interfaces.addOnce(target)
         nestedClass.validationsPresent = analyseProperties(target, nestedConstraints)
         target.derivedClasses.add(nestedClass)
     }
@@ -823,7 +888,7 @@ class CodeGenerator(
         base: JSONValue,
         pointer: JSONPointer,
         subDirectories: List<String> = emptyList(),
-        uri: URI = URI("https:/pwall.net/internal"),
+        uri: URI = URI("https://pwall.net/internal"),
         filter: (String) -> Boolean = { true }
     ) {
         clearTargets()
@@ -864,7 +929,7 @@ class CodeGenerator(
         base: JSONValue,
         pointer: JSONPointer,
         subDirectories: List<String> = emptyList(),
-        uri: URI = URI("https:/pwall.net/internal"),
+        uri: URI = URI("https://pwall.net/internal"),
         filter: (String) -> Boolean = { true }
     ) {
         val documentURI = Parser.getIdOrNull(base)?.let { URI(it) } ?: uri
@@ -1276,7 +1341,7 @@ class CodeGenerator(
             return it
         }
         schema.uri?.resolve("#${schema.location.toURIFragment()}")?.let { uri ->
-            customClassesByURI.find { uri.resolve(it.uri) == uri }?.let {
+            customClassesByURI.find { uri.resolve(it.uri) equalIgnoringEmptyFragment uri }?.let {
                 it.applyToTarget(target)
                 return it
             }
@@ -2315,6 +2380,12 @@ class CodeGenerator(
             } while (i >= 0)
         }
 
+    }
+
+    infix fun URI.equalIgnoringEmptyFragment(other: URI): Boolean {
+        if (this == other)
+            return true
+        return fragment.isNullOrEmpty() && other.fragment.isNullOrEmpty() && dropFragment() == other.dropFragment()
     }
 
 }

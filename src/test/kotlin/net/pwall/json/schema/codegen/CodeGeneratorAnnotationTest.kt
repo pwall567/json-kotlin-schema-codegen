@@ -291,13 +291,13 @@ public class Test {
             this.retail = retail;
         }
 
-            @DummyFieldAnnotation("warehouse")
-    public BigDecimal getWarehouse() {
+        @DummyFieldAnnotation("warehouse")
+        public BigDecimal getWarehouse() {
             return warehouse;
         }
 
-            @DummyFieldAnnotation("retail")
-    public BigDecimal getRetail() {
+        @DummyFieldAnnotation("retail")
+        public BigDecimal getRetail() {
             return retail;
         }
 

@@ -39,7 +39,8 @@ cases, the generated code demonstrates those properties of clarity and comprehen
 
 But there is a problem.
 The JSON Schema Specification includes the validation `additionalProperties`, which specifies how properties other than
-those listed in the `properties` set (and `patternProperties`; more about that later) are to be handled.
+those listed in the `properties` set (and `patternProperties`; more about that [later](#patternproperties)) are to be
+handled.
 This means that there are cases where the property names are not known in advance (and may not be valid Kotlin names,
 even when enclosed in backticks), and therefore the style of data class shown above will not work.
 What&rsquo;s more, the default for `additionalProperties` is `true`, meaning that any object covered by a schema which
@@ -94,8 +95,8 @@ In this case there is no schema information supplied for the additional properti
 `additionalProperties` validation implies `additionalProperties: true`, meaning that any values are allowed.
 If the `additionalProperties` validation included a schema, the `init` block would check all properties, other than
 those named, for conformity to the schema.
-And if there were no named `properties`, the `Map` would use the type derived from the schema (instead of `Any?`),
-simplifying the use of the additional properties.
+And if a class with this form of `additionalProperties` schema has no named `properties` (or `patternProperties`), the
+`Map` will use the type derived from the schema (instead of `Any?`), simplifying the use of the additional properties.
 
 ## `patternProperties`
 

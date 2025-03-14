@@ -3,11 +3,14 @@
 [![Build Status](https://github.com/pwall567/json-kotlin-schema-codegen/actions/workflows/build.yml/badge.svg)](https://github.com/pwall567/json-kotlin-schema-codegen/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/static/v1?label=Kotlin&message=v2.0.21&color=7f52ff&logo=kotlin&logoColor=7f52ff)](https://github.com/JetBrains/kotlin/releases/tag/v2.0.21)
-[![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.pwall.json%22%20AND%20a:%22json-kotlin-schema-codegen%22)
+[![Maven Central](https://img.shields.io/maven-central/v/net.pwall.json/json-kotlin-schema-codegen?label=Maven%20Central)](https://central.sonatype.com/artifact/net.pwall.json/json-kotlin-schema-codegen)
 
 Code generation for JSON Schema (Draft 07).
 
 ## NEW
+
+New in version 0.117 &ndash; the code output for `oneOf` groups has changed significantly; see
+[`oneOf` and Polymorphism](#oneof-and-polymorphism).
 
 **NOTE:** &ndash; from version 0.110, the underlying JSON and YAML libraries have been switched from
 [`jsonutil`](https://github.com/pwall567/jsonutil) and [`yaml-simple`](https://github.com/pwall567/yaml-simple) to
@@ -261,6 +264,66 @@ specific case to output the `deliveryAddress` as nullable:
 In this case, the code generator will generate code for the other sub-schema item (the one that is not
 `{ "type": "null" }`, often a `$ref`), and treat the result as nullable.
 
+## `oneOf` and Polymorphism
+
+The `oneOf` keyword is often used to specify a polymorphic group of objects.
+The following schema describes a `Contact` object, which may be a `PhoneContact` or an `EmailContact`:
+```json
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/contact",
+  "$defs": {
+    "PhoneContact": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string",
+          "const": "PHONE"
+        },
+        "localNumber": {
+          "type": "string",
+          "pattern": "^[0-9]{2,16}$"
+        }
+      },
+      "required": [ "contactType", "localNumber" ]
+    },
+    "EmailContact": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string",
+          "const": "EMAIL"
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "required": [ "contactType", "emailAddress" ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PhoneContact"
+    },
+    {
+      "$ref": "#/$defs/EmailContact"
+    }
+  ]
+}
+```
+
+In a case like this, the code generator will generate an interface for the outer schema `Contact`, with each of the two
+classes `PhoneContact` and `EmailContact` implementing that interface.
+
+A problem arises when there are additional properties in the outer object alongside the `oneOf`, since an interface is
+not allowed to contain fields.
+In this case, the implementing classes will have the properties from the outer class added at the start &ndash; this may
+lead to the duplication of some fields but the code is likely to be clearer and easier to work with.
+
+Anyone seeking to make use of `oneOf` may need to experiment with different combinations to find the one that gives the
+best result.
+
 ## Custom Classes
 
 (**NOTE** &ndash; the configuration file may be a simpler way to specify custom classes, particularly when combined with
@@ -394,25 +457,25 @@ operation:
 
 ## Dependency Specification
 
-The latest version of the library is 0.115, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.117, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-schema-codegen</artifactId>
-      <version>0.115</version>
+      <version>0.117</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.115'
+    implementation 'net.pwall.json:json-kotlin-schema-codegen:0.117'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-kotlin-schema-codegen:0.115")
+    implementation("net.pwall.json:json-kotlin-schema-codegen:0.117")
 ```
 
 Peter Wall
 
-2025-02-03
+2025-03-14

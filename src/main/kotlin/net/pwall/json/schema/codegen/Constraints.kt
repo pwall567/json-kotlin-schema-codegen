@@ -2,7 +2,7 @@
  * @(#) Constraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2023, 2024 Peter Wall
+ * Copyright (c) 2020, 2021, 2023, 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,8 @@ import net.pwall.json.schema.validation.FormatValidator
 
 open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : Annotated() {
 
+    var generateAsInterface: Boolean = false
+
     @Suppress("unused")
     open val displayName: String
         get() = "value"
@@ -75,6 +77,8 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     val patternProperties = mutableListOf<Triple<Regex, Constraints, Target.Static?>>()
 
     var additionalProperties: Constraints? = null
+
+    val interfaceProperties = mutableListOf<NamedConstraints>()
 
     @Suppress("unused")
     val additionalPropertiesFalse: Boolean
@@ -125,11 +129,17 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     val nonBaseProperties: List<NamedConstraints>
         get() = properties.filter { it.baseProperty == null }
 
+    @Suppress("unused")
+    val nonBaseAndInterfaceProperties: List<NamedConstraints>
+        get() = properties.filter { it.baseProperty == null || it.overridesInterface }
+
     var minProperties: Int? = null
     var maxProperties: Int? = null
 
     var extendedInDerived: Boolean = false
     var extendedFromBase: Boolean = false
+    var overridesInterface: Boolean = false
+    var overridden: Boolean = false
 
     val required = mutableListOf<String>()
 

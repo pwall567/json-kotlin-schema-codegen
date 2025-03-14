@@ -100,7 +100,7 @@ class CodeGeneratorMarkerInterfaceTest {
 /**
  * Test empty object.
  */
-open class TestEmpty : Marker
+interface TestEmpty : Marker
 """
 
         const val expectedJava =
@@ -145,7 +145,7 @@ import com.example.other.Marker
 /**
  * Test empty object.
  */
-open class TestEmpty : Marker
+interface TestEmpty : Marker
 """
 
         const val expectedExternalJava =

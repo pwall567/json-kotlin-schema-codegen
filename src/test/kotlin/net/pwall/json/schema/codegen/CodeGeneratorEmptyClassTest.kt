@@ -79,7 +79,7 @@ class CodeGeneratorEmptyClassTest {
 /**
  * Test empty object.
  */
-open class TestEmpty
+interface TestEmpty
 """
 
         const val expected2 =
@@ -88,7 +88,7 @@ open class TestEmpty
 /**
  * Test empty object.
  */
-open class TestEmpty {
+interface TestEmpty {
 
     companion object
 

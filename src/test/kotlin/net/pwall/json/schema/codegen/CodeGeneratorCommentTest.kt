@@ -68,7 +68,7 @@ class CodeGeneratorCommentTest {
 /**
  * Test empty object.
  */
-open class TestEmpty
+interface TestEmpty
 """
 
         const val expectedJava =

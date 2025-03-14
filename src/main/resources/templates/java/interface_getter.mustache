@@ -1,0 +1,7 @@
+{{#schema}}{{#description}}{{&indent}}    /**
+{{&indent}}     * {{&safeDescription}}
+{{&indent}}     */
+{{/description}}{{/schema}}{{&indent}}{{!
+}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
+}}    {{>type}} get{{&capitalisedName}}();
+

@@ -1,0 +1,10 @@
+{{#schema}}{{#description}}{{&indent}}    /**
+{{&indent}}     * {{&safeDescription}}
+{{&indent}}     */
+{{/description}}{{/schema}}{{!
+}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
+}}{{#overridesInterface}}{{&indent}}    @Override
+{{/overridesInterface}}{{&indent}}    public {{>type}} get{{&capitalisedName}}() {
+{{&indent}}        return {{&javaName}};
+{{&indent}}    }
+

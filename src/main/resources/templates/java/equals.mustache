@@ -6,7 +6,7 @@
 {{&indent}}            return false;
 {{#hasBaseClassWithProperties}}{{&indent}}        if (!super.equals(cg_other))
 {{&indent}}            return false;
-{{/hasBaseClassWithProperties}}{{#nonBaseProperties}}{{#first}}{{&indent}}        {{&className}} cg_typedOther = ({{&className}})cg_other;
+{{/hasBaseClassWithProperties}}{{#nonBaseAndInterfaceProperties}}{{#first}}{{&indent}}        {{&className}} cg_typedOther = ({{&className}})cg_other;
 {{/first}}{{#last}}{{#isPrimitive}}{{&indent}}        return {{&javaName}} == cg_typedOther.{{&javaName}};
 {{/isPrimitive}}{{^isPrimitive}}{{#isEnumClass}}{{&indent}}        return {{&javaName}} == cg_typedOther.{{&javaName}};
 {{/isEnumClass}}{{^isEnumClass}}{{#nullable}}{{&indent}}        return {{&javaName}} == null ? cg_typedOther.{{&javaName}} == null : {{&javaName}}.equals(cg_typedOther.{{&javaName}});
@@ -17,5 +17,5 @@
 {{/nullable}}{{^nullable}}{{&indent}}        if (!{{&javaName}}.equals(cg_typedOther.{{&javaName}}))
 {{/nullable}}{{/isEnumClass}}{{/isPrimitive}}{{! TODO check if property is array (do we ever use array?) and if so emit "Arrays.equals"
 }}{{&indent}}            return false;
-{{/last}}{{/nonBaseProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
+{{/last}}{{/nonBaseAndInterfaceProperties}}{{^nonBaseProperties}}{{&indent}}        return true;
 {{/nonBaseProperties}}{{&indent}}    }

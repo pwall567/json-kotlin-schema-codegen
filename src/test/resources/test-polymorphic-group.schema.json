@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-polymorphic-group",
+  "description": "Test generation of group of polymorphic classes.",
+  "$defs": {
+    "PhoneContact": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string",
+          "const": "PHONE"
+        },
+        "countryCode": {
+          "type": "string",
+          "pattern": "^\\+[0-9]{1,4}$"
+        },
+        "localNumber": {
+          "type": "string",
+          "pattern": "^[0-9]{2,12}$"
+        }
+      },
+      "required": [ "contactType", "localNumber" ]
+    },
+    "EmailContact": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string",
+          "const": "EMAIL"
+        },
+        "emailAddress": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "required": [ "contactType", "emailAddress" ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PhoneContact"
+    },
+    {
+      "$ref": "#/$defs/EmailContact"
+    }
+  ]
+}

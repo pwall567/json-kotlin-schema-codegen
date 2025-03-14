@@ -2,9 +2,10 @@
 }}{{#properties}}{{^first}},{{/first}}
 {{#schema}}{{#description}}    /** {{&safeDescription}} */
 {{/description}}{{/schema}}{{#indent.increment}}{{#fieldAnnotated}}{{>annotations}}{{/fieldAnnotated}}{{/indent.increment}}{{!
-}}    {{^baseProperty}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/baseProperty}}{{!
+}}    {{#overridesInterface}}override val {{/overridesInterface}}{{^overridesInterface}}{{!
+}}{{^baseProperty}}{{#overridden}}open val {{/overridden}}{{^overridden}}{{^extendedInDerived}}val {{/extendedInDerived}}{{/overridden}}{{/baseProperty}}{{!
 }}{{#baseProperty}}{{#extendedInDerived}}override val {{/extendedInDerived}}{{/baseProperty}}{{!
-}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
+}}{{/overridesInterface}}{{&kotlinName}}: {{>type}}{{#defaultValue}} = {{>default_value}}{{/defaultValue}}{{!
 }}{{^isRequired}}{{^defaultValue}} = null{{/defaultValue}}{{/isRequired}}{{/properties}}
 ){{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
@@ -22,7 +23,7 @@
 {{#constraints}}{{#indent.increment}}{{>nested_class}}
 {{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
 }{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}}{{/numberOfProperties}}{{!
-}}{{^numberOfProperties}}open class {{&className}}{{>extends_implements}}{{!
+}}{{^numberOfProperties}}interface {{&className}}{{>extends_implements}}{{!
 }}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresentOrIsBaseClass}} {
 
 {{#nestedClasses}}{{#constraints}}{{#indent.increment}}{{>nested_class}}

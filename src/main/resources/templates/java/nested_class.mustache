@@ -3,16 +3,16 @@
      */
 {{/description}}{{/schema}}{{#isObject}}    public static class {{&className}}{{>extends_implements}} {
 
-{{#nonBaseProperties}}        private final {{>type}} {{&javaName}};
+{{#nonBaseAndInterfaceProperties}}        private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}        public {{&className}}({{#properties}}{{^first}},{{/first}}
+{{/last}}{{/nonBaseAndInterfaceProperties}}{{#numberOfProperties}}        public {{&className}}({{#properties}}{{^first}},{{/first}}
                 {{>type}} {{&javaName}}{{/properties}}
         ) {
 {{#baseClass}}{{#constraints}}{{#properties}}{{#first}}            super({{/first}}{{^first}}, {{/first}}{{&javaName}}{{#last}});
-{{/last}}{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseProperties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
+{{/last}}{{/properties}}{{/constraints}}{{/baseClass}}{{#nonBaseAndInterfaceProperties}}{{^isPrimitive}}{{^nullable}}            if ({{&javaName}} == null)
                 {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{>validations}}            this.{{&javaName}} = {{&javaName}};
-{{/nonBaseProperties}}        }
+{{/nonBaseAndInterfaceProperties}}        }
 
 {{/numberOfProperties}}{{>getters}}{{>equals}}
 {{>hashcode}}

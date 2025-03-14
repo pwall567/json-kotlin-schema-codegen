@@ -3,10 +3,14 @@
 {{/packageName}}{{#constraints}}{{>system_imports}}{{#imports}}import {{&.}}
 {{#last}}
 {{/last}}{{/imports}}{{#schema}}{{#description}}/**
-* {{&safeDescription}}
-*/
-{{/description}}{{/schema}}interface {{&className}}{{>extends_implements}}{{#validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}} {
-
+ * {{&safeDescription}}
+ */
+{{/description}}{{/schema}}interface {{&className}}{{>extends_implements}}{{#interfacePropertiesPresentOrCompanionObjectNeeded}} {
+{{#interfaceProperties}}{{#first}}
+{{/first}}{{#schema}}{{#description}}    /** {{&safeDescription}} */
+{{/description}}{{/schema}}    val {{&kotlinName}}: {{>type}}
+{{/interfaceProperties}}
 {{#nestedClasses}}
-  {{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}{{/nestedClasses}}{{>add_statics}}
-}{{/validationsOrNestedClassesOrStaticsOrBaseClassWithPropertiesPresent}}{{/constraints}}
+{{#constraints}}{{#indent.increment}}{{>nested_class}}{{/indent.increment}}{{/constraints}}
+{{/nestedClasses}}{{>add_statics}}
+}{{/interfacePropertiesPresentOrCompanionObjectNeeded}}{{/constraints}}

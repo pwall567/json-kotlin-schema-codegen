@@ -7,17 +7,20 @@
  */
 {{/description}}{{/schema}}{{>annotations}}public class {{&className}}{{>extends_implements}} {
 {{>add_statics}}
-{{#nonBaseProperties}}    private final {{>type}} {{&javaName}};
+{{#nonBaseAndInterfaceProperties}}    private final {{>type}} {{&javaName}};
 {{#last}}
-{{/last}}{{/nonBaseProperties}}{{#numberOfProperties}}{{! TODO java.beans.ConstructorProperties ? }}    public {{&className}}({{#properties}}{{^first}},{{/first}}
+{{/last}}{{/nonBaseAndInterfaceProperties}}{{#numberOfProperties}}{{! TODO java.beans.ConstructorProperties ? }}    public {{&className}}({{#properties}}{{^first}},{{/first}}
             {{>type}} {{&javaName}}{{/properties}}
     ) {
 {{#baseClass}}{{#constraints}}        super({{#properties}}{{#extendedInDerived}}cg_valid_{{&javaName}}({{&javaName}}){{/extendedInDerived}}{{!
 }}{{^extendedInDerived}}{{&javaName}}{{/extendedInDerived}}{{^last}}, {{/last}}{{/properties}});
-{{/constraints}}{{/baseClass}}{{#properties}}{{^baseProperty}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
+{{/constraints}}{{/baseClass}}{{#properties}}{{#overridesInterface}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
+            {{>tniae}}("Must not be null - {{&javaName}}");
+{{/nullable}}{{/isPrimitive}}        this.{{&javaName}} = {{&javaName}};
+{{/overridesInterface}}{{^overridesInterface}}{{^baseProperty}}{{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)
             {{>tniae}}("Must not be null - {{&javaName}}");
 {{/nullable}}{{/isPrimitive}}{{/baseProperty}}{{^baseProperty.extendedInDerived}}{{>validations}}{{/baseProperty.extendedInDerived}}{{^baseProperty}}        this.{{&javaName}} = {{&javaName}};
-{{/baseProperty}}{{/properties}}    }
+{{/baseProperty}}{{/overridesInterface}}{{/properties}}    }
 {{#properties}}{{#extendedFromBase}}
     private static {{>type}} cg_valid_{{&javaName}}({{>type}} {{&javaName}}) {
 {{^isPrimitive}}{{^nullable}}        if ({{&javaName}} == null)

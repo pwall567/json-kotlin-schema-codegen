@@ -31,7 +31,7 @@ import java.io.File
 
 import io.kstuff.test.shouldThrow
 
-import io.jstuff.log.LogList
+import io.kstuff.log.LogList
 import io.kstuff.log.shouldHaveWarning
 
 import net.pwall.json.schema.JSONSchemaException
@@ -54,8 +54,8 @@ class CodeGeneratorValidationTest {
                     generate(input)
                 }
             }
-            logList.shouldHaveWarning("http://pwall.net/test-validation-errors#/minimum: " +
-                    "Number fails check: minimum 10, was 5, at #/examples/1")
+            logList shouldHaveWarning "http://pwall.net/test-validation-errors#/minimum: " +
+                    "Number fails check: minimum 10, was 5, at #/examples/1"
         }
     }
 
@@ -75,7 +75,7 @@ class CodeGeneratorValidationTest {
             }
             val expectedError = "http://pwall.net/test-validation-errors-format#/format/money/pattern: " +
                     "String doesn't match pattern ^[0-9]{1,16}\\.[0-9]{2}\$ - \"wrong\", at #/examples/1"
-            logList.shouldHaveWarning(expectedError)
+            logList shouldHaveWarning expectedError
         }
     }
 

@@ -2,7 +2,7 @@
  * @(#) Target.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2022, 2023 Peter Wall
+ * Copyright (c) 2020, 2021, 2022, 2023, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,12 +116,21 @@ class Target(
                 hasBaseClassWithPropertiesOrIsBaseClass
 
     @Suppress("unused")
+    val interfacePropertiesPresentOrCompanionObjectNeeded: Boolean
+        get() = constraints.interfaceProperties.isNotEmpty() || nestedClassesPresent || companionObjectNeeded
+
+    @Suppress("unused")
     val additionalPropertiesSpecificType: Boolean
         get() = constraints.additionalProperties?.let { it.schema !is JSONSchema.True } ?: false
 
     fun addInterface(classId: ClassId) {
         interfaces.add(classId)
         addImport(classId)
+    }
+
+    fun putBaseClass(classDescriptor: ClassDescriptor) {
+        baseClass = classDescriptor
+        addImport(classDescriptor)
     }
 
     fun addNestedClass(
