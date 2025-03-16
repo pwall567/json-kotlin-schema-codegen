@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-polymorphic-group-5",
+  "description": "Test generation of yet another complex group of polymorphic classes.",
+  "$defs": {
+    "ContactBase": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string"
+        }
+      },
+      "required": [ "contactType" ]
+    },
+    "PhoneContact": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ContactBase"
+        },
+        {
+          "properties": {
+            "contactType": {
+              "type": "string",
+              "const": "PHONE"
+            },
+            "countryCode": {
+              "type": "string",
+              "pattern": "^\\+[0-9]{1,4}$"
+            },
+            "localNumber": {
+              "type": "string",
+              "pattern": "^[0-9]{2,12}$"
+            }
+          },
+          "required": [ "contactType", "localNumber" ]
+        }
+      ]
+    },
+    "EmailContact": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ContactBase"
+        },
+        {
+          "properties": {
+            "contactType": {
+              "type": "string",
+              "const": "EMAIL"
+            },
+            "emailAddress": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          "required": [ "contactType", "emailAddress" ]
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "contactType": {
+      "type": "string"
+    },
+    "extraProperty": {
+      "type": "string"
+    }
+  },
+  "required": [ "contactType", "extraProperty" ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PhoneContact"
+    },
+    {
+      "$ref": "#/$defs/EmailContact"
+    }
+  ]
+}

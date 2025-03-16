@@ -108,7 +108,6 @@ class TestBaseNestedDerived(
     override fun equals(other: Any?): Boolean = this === other || other is TestBaseNestedDerived &&
             super.equals(other)
 
-    @Suppress("unused")
     override fun hashCode(): Int = super.hashCode()
 
     override fun toString() = "TestBaseNestedDerived(xxx=${'$'}xxx, aaa=${'$'}aaa)"

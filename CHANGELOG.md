@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.118] - 2025-03-16
+### Changed
+- `ClassDescriptor`, templates: fixed bug in handling of `oneOf` groups
+
 ## [0.117] - 2025-03-14
 ### Changed
 - `CodeGenerator`, `Constraints`, `Target`, templates: major changes to handling of `oneOf` groups

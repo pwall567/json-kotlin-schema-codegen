@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-polymorphic-group-6",
+  "description": "Test generation of one more complex group of polymorphic classes.",
+  "$defs": {
+    "ContactBase": {
+      "type": "object",
+      "properties": {
+        "contactType": {
+          "type": "string"
+        }
+      },
+      "required": [ "contactType" ]
+    },
+    "PhoneContact": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ContactBase"
+        },
+        {
+          "properties": {
+            "contactType": {
+              "type": "string",
+              "const": "PHONE"
+            }
+          },
+          "required": [ "contactType" ]
+        }
+      ]
+    },
+    "EmailContact": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ContactBase"
+        },
+        {
+          "properties": {
+            "contactType": {
+              "type": "string",
+              "const": "EMAIL"
+            }
+          },
+          "required": [ "contactType", "emailAddress" ]
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "contactType": {
+      "type": "string"
+    },
+    "extraProperty": {
+      "type": "string"
+    }
+  },
+  "required": [ "contactType", "extraProperty" ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PhoneContact"
+    },
+    {
+      "$ref": "#/$defs/EmailContact"
+    }
+  ]
+}

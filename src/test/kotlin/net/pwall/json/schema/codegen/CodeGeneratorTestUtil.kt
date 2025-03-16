@@ -35,6 +35,11 @@ object CodeGeneratorTestUtil {
     @Suppress("ConstPropertyName")
     const val packageName = "net.pwall.json.schema.codegen.test.kotlin"
     val packageDirs = packageName.split('.')
+
+    @Suppress("ConstPropertyName")
+    const val javaPackageName = "net.pwall.json.schema.codegen.test.java"
+    val javaPackageDirs = javaPackageName.split('.')
+
     val dirs = listOf("com", "example")
 
     fun resultFile(filename: String): String =

@@ -1,5 +1,5 @@
 /*
- * @(#) poly4/FunctionalityTest.kt
+ * @(#) poly5/FunctionalityTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
  * Copyright (c) 2025 Peter Wall
@@ -23,17 +23,18 @@
  * SOFTWARE.
  */
 
-package net.pwall.json.schema.codegen.test.kotlin.poly4
+package net.pwall.json.schema.codegen.test.kotlin.poly5
 
 import kotlin.test.Test
 import io.kstuff.test.shouldBe
 import io.kstuff.test.shouldBeType
-import net.pwall.json.schema.codegen.test.kotlin.TestPolymorphicGroup4
+import net.pwall.json.schema.codegen.test.kotlin.TestPolymorphicGroup5
 
 class FunctionalityTest {
 
-    @Test fun `should create poly4 classes`() {
-        val testPhone: TestPolymorphicGroup4 = PhoneContact("PHONE", "+61", "98765432")
+    @Test fun `should create poly5 classes`() {
+        val testPhone: TestPolymorphicGroup5 = PhoneContact("EXTRA", "PHONE", "+61", "98765432")
+        testPhone.extraProperty shouldBe "EXTRA"
         testPhone.contactType shouldBe "PHONE"
         testPhone.shouldBeType<PhoneContact>().countryCode shouldBe "+61"
         testPhone.shouldBeType<PhoneContact>().localNumber shouldBe "98765432"

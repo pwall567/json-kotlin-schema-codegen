@@ -2,7 +2,7 @@
  * @(#) ClassDescriptor.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2023 Peter Wall
+ * Copyright (c) 2020, 2023, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ open class ClassDescriptor(val constraints: Constraints, override val className:
     val hasBaseClass: Boolean
         get() = baseClass != null
 
-    @Suppress("unused")
+    @Suppress("MemberVisibilityCanBePrivate")
     val hasBaseClassWithProperties: Boolean
         get() = baseClass.let { it != null &&  it.constraints.properties.isNotEmpty() }
 
@@ -54,7 +54,19 @@ open class ClassDescriptor(val constraints: Constraints, override val className:
         get() = validationsPresent || hasBaseClassWithProperties
 
     @Suppress("unused")
-    val hasNonBaseProperties: Boolean
-        get() = constraints.nonBaseProperties.isNotEmpty()
+    val copySameAsBaseCopy: Boolean
+        get() {
+            baseClass?.let {
+                val properties = constraints.properties
+                val baseProperties = it.constraints.properties
+                if (properties.size != baseProperties.size)
+                    return false
+                for (i in properties.indices)
+                    if (properties[i].baseProperty != baseProperties[i])
+                        return false
+                return true
+            }
+            return false
+        }
 
 }
