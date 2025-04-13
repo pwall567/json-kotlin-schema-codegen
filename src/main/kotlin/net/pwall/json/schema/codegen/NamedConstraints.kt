@@ -2,7 +2,7 @@
  * @(#) NamedConstraints.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021, 2024 Peter Wall
+ * Copyright (c) 2020, 2021, 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,10 @@
 
 package net.pwall.json.schema.codegen
 
+import io.jstuff.util.IntOutput
+
 import net.pwall.json.schema.JSONSchema
+import net.pwall.util.DefaultValue
 import net.pwall.util.Name.Companion.capitalise
 
 class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
@@ -41,12 +44,14 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
         get() = name
 
     @Suppress("unused")
-    val kotlinName: String
-        get() = checkKotlinName(name)
+    val kotlinName: String by DefaultValue {
+        checkKotlinName(name)
+    }
 
     @Suppress("unused")
-    val javaName: String
-        get() = checkJavaName(name)
+    val javaName: String by DefaultValue {
+        checkJavaName(name)
+    }
 
     @Suppress("unused")
     val capitalisedName: String
@@ -54,9 +59,26 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
 
     companion object {
 
-        private val kotlinNameRegex = Regex("^[A-Za-z_][A-Za-z0-9_]+$")
+        private const val NAME_START_MASK = 1
+        private const val NAME_CONTINUATION_MASK = 2
+        private const val JAVA_NAME_START_MASK = 4
+        private const val JAVA_NAME_CONTINUATION_MASK = 8
+        private const val ALLOWED_SPECIAL_MASK = 16
+        private val maskArray = ByteArray(128) {
+            val alphabetic = (NAME_START_MASK or NAME_CONTINUATION_MASK or JAVA_NAME_START_MASK or
+                    JAVA_NAME_CONTINUATION_MASK).toByte()
+            when (it.toChar()) {
+                in 'A'..'Z' -> alphabetic
+                in 'a'..'z' -> alphabetic
+                in '0'..'9' -> (NAME_CONTINUATION_MASK or JAVA_NAME_CONTINUATION_MASK).toByte()
+                '_' -> alphabetic
+                '$' -> (JAVA_NAME_START_MASK or JAVA_NAME_CONTINUATION_MASK or ALLOWED_SPECIAL_MASK).toByte()
+                in " !\"#$%'()*+,-=?@^_`{|}~" -> ALLOWED_SPECIAL_MASK.toByte()
+                else -> 0
+            }
+        }
 
-        private val javaNameRegex = Regex("^[A-Za-z_$][A-Za-z0-9_$]+$")
+        private fun Char.hasMaskBit(bit: Int): Boolean = this < '\u0080' && (maskArray[code].toInt() and bit) != 0
 
         private val kotlinReserved = setOf(
             "as",
@@ -147,14 +169,52 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
             "while"
         )
 
-        fun checkKotlinName(name: String): String =
-                if (kotlinNameRegex.containsMatchIn(name) && name !in kotlinReserved) name else "`$name`"
+        fun checkKotlinName(name: String): String {
+            if (name in kotlinReserved)
+                return "`$name`"
+            if (name[0].hasMaskBit(NAME_START_MASK) && name.all { it.hasMaskBit(NAME_CONTINUATION_MASK) })
+                return name
+            return buildString {
+                var needsBackticks = !name[0].hasMaskBit(NAME_START_MASK)
+                for (ch in name) {
+                    when {
+                        ch.hasMaskBit(NAME_CONTINUATION_MASK) -> append(ch)
+                        ch.hasMaskBit(ALLOWED_SPECIAL_MASK) -> {
+                            needsBackticks = true
+                            append(ch)
+                        }
+                        else -> {
+                            append('_')
+                            IntOutput.append2Hex(this, ch.code)
+                        }
+                    }
+                }
+                if (needsBackticks) {
+                    insert(0, '`')
+                    append('`')
+                }
+            }
+        }
 
-        fun checkJavaName(name: String): String = when {
-            !javaNameRegex.containsMatchIn(name) ->
-                    name.replace(Regex("^[^A-Za-z$]+"), "_").replace(Regex("[^A-Za-z0-9$]+"), "_")
-            name in javaReserved -> "${name}_"
-            else -> name
+        fun checkJavaName(name: String): String {
+            if (name in javaReserved)
+                return name + '_'
+            if (name[0].hasMaskBit(JAVA_NAME_START_MASK) && name.all { it.hasMaskBit(JAVA_NAME_CONTINUATION_MASK) })
+                return name
+            return buildString {
+                if (name[0].hasMaskBit(JAVA_NAME_CONTINUATION_MASK) && !name[0].hasMaskBit(JAVA_NAME_START_MASK))
+                    append('_')
+                for (ch in name) {
+                    if (ch.hasMaskBit(JAVA_NAME_CONTINUATION_MASK))
+                        append(ch)
+                    else if (ch == ' ' || ch == '-')
+                        append('_')
+                    else {
+                        append('_')
+                        IntOutput.append2Hex(this, ch.code)
+                    }
+                }
+            }
         }
 
     }

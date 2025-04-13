@@ -34,14 +34,25 @@ class NamedConstraintsTest {
     @Test fun `should detect and modify illegal Kotlin names`(){
         NamedConstraints.checkKotlinName("name") shouldBe "name"
         NamedConstraints.checkKotlinName("hyphenated-name") shouldBe "`hyphenated-name`"
+        NamedConstraints.checkKotlinName("spaced name") shouldBe "`spaced name`"
         NamedConstraints.checkKotlinName("class") shouldBe "`class`"
         NamedConstraints.checkKotlinName("123test123") shouldBe "`123test123`"
+        NamedConstraints.checkKotlinName("name@") shouldBe "`name@`"
+        NamedConstraints.checkKotlinName("name:") shouldBe "name_3A"
+        NamedConstraints.checkKotlinName("name.") shouldBe "name_2E"
+        NamedConstraints.checkKotlinName("name.#") shouldBe "`name_2E#`"
     }
 
     @Test fun `should detect and modify illegal Java names`(){
         NamedConstraints.checkJavaName("name") shouldBe "name"
         NamedConstraints.checkJavaName("hyphenated-name") shouldBe "hyphenated_name"
-        NamedConstraints.checkJavaName("123test123") shouldBe "_test123"
+        NamedConstraints.checkJavaName("spaced name") shouldBe "spaced_name"
+        NamedConstraints.checkJavaName("class") shouldBe "class_"
+        NamedConstraints.checkJavaName("123test123") shouldBe "_123test123"
+        NamedConstraints.checkJavaName("name@") shouldBe "name_40"
+        NamedConstraints.checkJavaName("name:") shouldBe "name_3A"
+        NamedConstraints.checkJavaName("name.") shouldBe "name_2E"
+        NamedConstraints.checkJavaName("name.#") shouldBe "name_2E_23"
     }
 
 }

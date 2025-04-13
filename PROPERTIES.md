@@ -101,7 +101,7 @@ And if a class with this form of `additionalProperties` schema has no named `pro
 ## `patternProperties`
 
 The `patternProperties` validation presents the same problem &ndash; properties names that are not known in advance and
-and potentially including characters not allowed in Kotlin names.
+potentially including characters not allowed in Kotlin names.
 
 Take this schema for an object containing a set of currency names:
 ```json

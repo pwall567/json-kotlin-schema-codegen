@@ -27,9 +27,11 @@ package net.pwall.json.schema.codegen
 
 import io.jstuff.util.IntOutput
 
+import net.pwall.util.Deferred
+
 class StringValue(val rawString: String) : ValidationValue {
 
-    val kotlinString: String by lazy {
+    val kotlinString: String by Deferred {
         val sb1 = StringBuilder(rawString.length + 5)
         val sb2 = StringBuilder(rawString.length + 10)
         sb1.append('"')
@@ -84,7 +86,7 @@ class StringValue(val rawString: String) : ValidationValue {
         if (sb1.length < sb2.length) sb1.toString() else sb2.toString()
     }
 
-    val javaString: String by lazy {
+    val javaString: String by Deferred {
         buildString(rawString.length + 5) {
             append('"')
             for (ch in rawString) {

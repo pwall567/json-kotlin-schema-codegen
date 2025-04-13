@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.119] - 2025-04-13
+### Added
+- `Deferred`: lightweight lazy initialisation
+### Changed
+- `NamedConstraints`: improved handling of special characters in names
+- `pom.xml`: updated dependency version
+
 ## [0.118] - 2025-03-16
 ### Changed
 - `ClassDescriptor`, templates: fixed bug in handling of `oneOf` groups
