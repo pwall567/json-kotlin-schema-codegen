@@ -1,8 +1,8 @@
 /*
- * @(#) ItemConstraints.kt
+ * @(#) CodeGeneratorExtensibleEnumTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2020, 2021 Peter Wall
+ * Copyright (c) 2024 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,26 +25,28 @@
 
 package net.pwall.json.schema.codegen
 
-import net.pwall.json.schema.JSONSchema
-import net.pwall.json.schema.codegen.NamedConstraints.Companion.checkJavaName
-import net.pwall.json.schema.codegen.NamedConstraints.Companion.checkKotlinName
+import kotlin.test.Test
 
-class ItemConstraints(
-    schema: JSONSchema,
-    val name: String,
-    @Suppress("MemberVisibilityCanBePrivate") val propertyName: String
-) : Constraints(schema) {
+import java.io.File
 
-    @Suppress("unused")
-    override val displayName: String
-        get() = "$name item"
+import io.kstuff.test.shouldBe
 
-    @Suppress("unused")
-    val kotlinName: String
-        get() = checkKotlinName(propertyName)
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.OutputDetails
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.packageDirs
+import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.resultFile
 
-    @Suppress("unused")
-    val javaName: String
-        get() = checkJavaName(propertyName)
+class CodeGeneratorUpperCaseNameTest {
+
+    @Test fun `should generate code for extensible enum`() {
+        val input = File("src/test/resources/test-upper-case-name.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestUpperCaseName", "kt", packageDirs))
+        CodeGenerator().apply {
+            basePackageName = "net.pwall.json.schema.codegen.test.kotlin"
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        outputDetails.output() shouldBe resultFile("TestUpperCaseName")
+    }
 
 }

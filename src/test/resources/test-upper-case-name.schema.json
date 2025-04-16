@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-upper-case-name",
+  "description": "Test use of names starting with upper-case - example supplied by GitHub user ilkkapoutanen-61n.",
+  "type": "object",
+  "properties": {
+    "Widget": {
+      "$ref": "#/$defs/Widget"
+    }
+  },
+  "$defs": {
+    "Widget": {
+      "type": "object",
+      "properties": {
+        "isFrobbed": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

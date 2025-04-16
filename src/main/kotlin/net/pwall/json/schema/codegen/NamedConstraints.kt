@@ -29,33 +29,36 @@ import io.jstuff.util.IntOutput
 
 import net.pwall.json.schema.JSONSchema
 import net.pwall.util.DefaultValue
+import net.pwall.util.Deferred
 import net.pwall.util.Name.Companion.capitalise
 
 class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schema) {
 
     var baseProperty: Constraints? = null
 
-    @Suppress("unused")
-    val propertyName: String
-        get() = name
+    @Suppress("MemberVisibilityCanBePrivate")
+    var propertyName: String by DefaultValue {
+        name
+    }
 
     @Suppress("unused")
     override val displayName: String
         get() = name
 
     @Suppress("unused")
-    val kotlinName: String by DefaultValue {
-        checkKotlinName(name)
+    val kotlinName: String by Deferred {
+        checkKotlinName(propertyName)
     }
 
     @Suppress("unused")
-    val javaName: String by DefaultValue {
-        checkJavaName(name)
+    val javaName: String by Deferred {
+        checkJavaName(propertyName)
     }
 
     @Suppress("unused")
-    val capitalisedName: String
-        get() = javaName.capitalise()
+    val capitalisedName: String by Deferred {
+        javaName.capitalise()
+    }
 
     companion object {
 
@@ -202,7 +205,7 @@ class NamedConstraints(schema: JSONSchema, val name: String) : Constraints(schem
             if (name[0].hasMaskBit(JAVA_NAME_START_MASK) && name.all { it.hasMaskBit(JAVA_NAME_CONTINUATION_MASK) })
                 return name
             return buildString {
-                if (name[0].hasMaskBit(JAVA_NAME_CONTINUATION_MASK) && !name[0].hasMaskBit(JAVA_NAME_START_MASK))
+                if (name[0].let { it.hasMaskBit(JAVA_NAME_CONTINUATION_MASK) && !it.hasMaskBit(JAVA_NAME_START_MASK) })
                     append('_')
                 for (ch in name) {
                     if (ch.hasMaskBit(JAVA_NAME_CONTINUATION_MASK))

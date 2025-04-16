@@ -85,6 +85,7 @@ import net.pwall.json.schema.validation.TypeValidator
 import net.pwall.json.schema.validation.UniqueItemsValidator
 import net.pwall.util.DefaultValue
 import net.pwall.util.Name.Companion.capitalise
+import net.pwall.util.Name.Companion.uncapitalise
 
 /**
  * JSON Schema Code Generator.  The class may be parameterised either by constructor parameters or by setting the
@@ -1005,7 +1006,7 @@ class CodeGenerator(
         analysePropertiesRequired(constraints)
         var validationsPresent = false
         constraints.properties.forEach { property ->
-            val baseConstraints = refTarget.constraints.properties.find { it.propertyName == property.propertyName }
+            val baseConstraints = refTarget.constraints.properties.find { it.name == property.name }
             if (baseConstraints != null) {
                 baseConstraints.localType?.let {
                     if (it.packageName != null)
@@ -1330,6 +1331,8 @@ class CodeGenerator(
                 NestedClassNameOption.USE_NAME_FROM_PROPERTY -> defaultName()
             }
             val nestedClass = target.addNestedClass(constraints, constraints.schema, nestedClassName.capitalise())
+            if (constraints is NamedConstraints && nestedClass.className == constraints.name)
+                constraints.propertyName = constraints.name.uncapitalise()
             nestedClass.validationsPresent = analyseObject(target, nestedClass, constraints)
             constraints.localType = nestedClass
         }

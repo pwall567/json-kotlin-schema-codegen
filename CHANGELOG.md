@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.120] - 2025-04-16
+### Changed
+- `CodeGenerator`, `NamedConstraints`: improved handling of properties with names beginning with upper case
+
 ## [0.119] - 2025-04-13
 ### Added
 - `Deferred`: lightweight lazy initialisation
