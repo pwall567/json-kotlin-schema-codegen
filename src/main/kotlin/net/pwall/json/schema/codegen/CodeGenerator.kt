@@ -1880,6 +1880,7 @@ class CodeGenerator(
     }
 
     private fun String.depluralise(): String = when {
+        this.endsWith("ies") -> dropLast(3) + 'y'
 //        this.endsWith("es") -> dropLast(2) // need a more sophisticated way of handling plurals ending with -es
         this.endsWith('s') -> dropLast(1)
         else -> this
