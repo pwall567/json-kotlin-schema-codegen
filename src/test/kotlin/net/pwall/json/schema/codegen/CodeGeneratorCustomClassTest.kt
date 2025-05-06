@@ -25,6 +25,7 @@
 
 package net.pwall.json.schema.codegen
 
+import net.pwall.json.JSON
 import kotlin.test.Test
 
 import java.io.File
@@ -298,6 +299,21 @@ class CodeGeneratorCustomClassTest {
         codeGenerator.addCustomClassByFormat("money", ClassName("Money", "com.example.util"))
         codeGenerator.generate(input)
         stringWriter.toString() shouldBe createHeader("TestCustom.java") + expectedJavaForExtension
+    }
+
+    @Test fun `should generate a typealias for unknown type`() {
+        val input = File("src/test/resources/test-untyped.schema.json")
+        val schemaDoc = JSON.parse(input)
+        val codeGenerator = CodeGenerator()
+        val stringWriter1 = StringWriter()
+        val outputDetails1 = CodeGeneratorTestUtil.OutputDetails(TargetFileName("MyType", "kt", dirs), stringWriter1)
+        val stringWriter2 = StringWriter()
+        val outputDetails2 = CodeGeneratorTestUtil.OutputDetails(TargetFileName("Untyped", "kt", dirs), stringWriter2)
+        codeGenerator.basePackageName = "com.example"
+        codeGenerator.outputResolver = outputCapture(outputDetails1, outputDetails2)
+        codeGenerator.generateAll(schemaDoc, JSONPointer("/\$defs"))
+        expect(createHeader("MyType.kt") + expectedForMyType) { stringWriter1.toString() }
+        expect(createHeader("Untyped.kt") + expectedForUnknownType) { stringWriter2.toString() }
     }
 
     companion object {
@@ -592,6 +608,19 @@ public class TestCustom {
     }
 
 }
+"""
+
+        const val expectedForMyType =
+            """package com.example
+
+data class MyType(
+    val data: Untyped
+)
+"""
+        const val expectedForUnknownType =
+            """package com.example
+
+typealias Untyped = Any
 """
 
     }

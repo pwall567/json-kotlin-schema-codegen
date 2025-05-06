@@ -101,6 +101,8 @@ class CodeGenerator(
     /** The primary template to use for the generation of an enum */
     @Suppress("MemberVisibilityCanBePrivate")
     var enumTemplateName: String = "enum",
+    /** The template to use for the generation of a default typealias */
+    var typealiasAnyTemplateName: String = "typealias_any",
     /** The base package name for the generated classes */
     var basePackageName: String? = null,
     /** The base output directory for generated files */
@@ -186,6 +188,12 @@ class CodeGenerator(
     @Suppress("MemberVisibilityCanBePrivate")
     var enumTemplate: Template by DefaultValue {
         templateParser.parseByName(enumTemplateName)
+    }
+
+    var typealiasAnyTemplate by DefaultValue {
+        val parser = templateParser
+        val resolver = parser.resolvePartial
+        parser.parse(parser.resolver(typealiasAnyTemplateName))
     }
 
     var indexFileName: TargetFileName? = null
@@ -688,6 +696,12 @@ class CodeGenerator(
                 log.info { "-- target enum ${target.qualifiedClassName}" }
                 outputResolver(target.targetFile).use {
                     enumTemplate.appendTo(AppendableFilter(it), generatorContext.child(target))
+                }
+            }
+            constraints.isUnidentifiableType -> {
+                log.info { "-- generating typealias Any for ${target.className}" }
+                outputResolver(target.targetFile).use {
+                    typealiasAnyTemplate.appendTo(AppendableFilter(it), generatorContext.child(target))
                 }
             }
             else -> log.info { "-- nothing to generate for ${target.className}" }

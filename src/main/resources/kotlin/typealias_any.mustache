@@ -1,0 +1,6 @@
+{{>header}}{{#packageName}}package {{&packageName}}
+
+{{/packageName}}{{#constraints}}{{#schema}}{{#description}}/**
+ * {{&description}}
+ */
+{{/description}}{{/schema}}typealias {{&className}} = Any{{/constraints}}
