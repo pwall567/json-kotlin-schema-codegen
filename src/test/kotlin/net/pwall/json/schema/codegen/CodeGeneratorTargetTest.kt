@@ -119,7 +119,7 @@ class CodeGeneratorTargetTest {
     }
 
     @Test fun `should add targets for multiple schemata`() {
-        val input = File("src/test/resources/test-multiple-schema.json")
+        val input = File("src/test/resources/test-multiple.schema.json")
         val codeGenerator = CodeGenerator()
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "kt", dirs))
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "kt", dirs))

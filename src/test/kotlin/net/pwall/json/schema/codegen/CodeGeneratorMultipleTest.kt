@@ -43,7 +43,7 @@ import net.pwall.json.schema.codegen.CodeGeneratorTestUtil.outputCapture
 class CodeGeneratorMultipleTest {
 
     @Test fun `should generate classes for multiple schemata`() {
-        val input = File("src/test/resources/test-multiple-schema.json")
+        val input = File("src/test/resources/test-multiple.schema.json")
         val codeGenerator = CodeGenerator()
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "kt", dirs))
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "kt", dirs))
@@ -56,7 +56,7 @@ class CodeGeneratorMultipleTest {
     }
 
     @Test fun `should generate classes for multiple schemata in Java`() {
-        val input = File("src/test/resources/test-multiple-schema.json")
+        val input = File("src/test/resources/test-multiple.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.JAVA)
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "java", dirs))
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "java", dirs))
@@ -68,7 +68,7 @@ class CodeGeneratorMultipleTest {
     }
 
     @Test fun `should generate classes for multiple schemata in TypeScript`() {
-        val input = File("src/test/resources/test-multiple-schema.json")
+        val input = File("src/test/resources/test-multiple.schema.json")
         val codeGenerator = CodeGenerator(TargetLanguage.TYPESCRIPT)
         val outputDetailsA = OutputDetails(TargetFileName("TypeA", "ts"))
         val outputDetailsB = OutputDetails(TargetFileName("TypeB", "ts"))

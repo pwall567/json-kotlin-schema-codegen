@@ -609,12 +609,13 @@ class CodeGenerator(
 
     private fun generateIndex() {
         indexFileName?.let { name ->
+            log.info { "Generating index" }
             log.info { "-- index $name" }
             outputResolver(name).use {
                 indexTemplate.renderTo(AppendableFilter(it), TargetIndex(
                     targets = targets.filter { t ->
                         t.constraints.isObject ||
-                                t.constraints.isEnumClass && t.constraints.enumValues.let { e ->
+                                t.constraints.isString && t.constraints.enumValues.let { e ->
                                     e != null && allIdentifier(e)
                                 }
                     },
