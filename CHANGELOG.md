@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.122] - 2025-06-29
+### Changed
+- `CodeGenerator`: improved validations `minItems` and `minProperties`
+- `pom.xml`: updated dependency versions
+
 ## [0.121] - 2025-05-15
 ### Changed
 - `CodeGenerator`: fixed bug in generation of TypeScript index files
