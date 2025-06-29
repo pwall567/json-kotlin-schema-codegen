@@ -1288,7 +1288,9 @@ class CodeGenerator(
                         constraints.addValidation(Validation.Type.CONST_PROPERTIES, minP)
                     else
                         constraints.addValidation(Validation.Type.RANGE_PROPERTIES, minP to maxP)
-                } ?: constraints.addValidation(Validation.Type.MINIMUM_PROPERTIES, NumberValue(minP))
+                } ?: minP.takeIf { it > 0 }?.let {
+                    constraints.addValidation(Validation.Type.MINIMUM_PROPERTIES, NumberValue(it))
+                }
             } ?: constraints.maxProperties?.let { maxP ->
                 constraints.addValidation(Validation.Type.MAXIMUM_PROPERTIES, maxP)
             }
@@ -1465,7 +1467,7 @@ class CodeGenerator(
                     addValidation(Validation.Type.CONST_ITEMS, NumberValue(minV))
                 else
                     addValidation(Validation.Type.RANGE_ITEMS, minV to maxV)
-            } ?: addValidation(Validation.Type.MIN_ITEMS, NumberValue(minV))
+            } ?: minV.takeIf { it > 0 }?.let { addValidation(Validation.Type.MIN_ITEMS, NumberValue(it)) }
             true
         } ?: maximumItems?.takeIf { it < Int.MAX_VALUE }?.let {
             addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
