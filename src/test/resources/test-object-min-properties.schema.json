@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft/2019-09/schema",
+  "$id": "http://pwall.net/test-object-min-properties",
+  "title": "Dummy",
+  "description": "Test object minProperties.",
+  "type": "object",
+  "properties": {
+    "aaa": {
+      "type": "integer"
+    }
+  },
+  "minProperties": 0
+}

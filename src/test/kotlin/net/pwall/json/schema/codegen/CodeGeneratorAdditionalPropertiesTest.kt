@@ -2,7 +2,7 @@
  * @(#) CodeGeneratorAdditionalPropertiesTest.kt
  *
  * json-kotlin-schema-codegen  JSON Schema Code Generation
- * Copyright (c) 2024 Peter Wall
+ * Copyright (c) 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -386,6 +386,18 @@ class CodeGeneratorAdditionalPropertiesTest {
             generate(input)
         }
         outputDetails.output() shouldBe resultFile("TestApTrueMin1")
+    }
+
+    @Test fun `should generate code for aP true with minimum 0`() {
+        val input = File("src/test/resources/test-ap-true-min-0.schema.json")
+        val outputDetails = OutputDetails(TargetFileName("TestApTrueMin0", "kt", packageDirs))
+        CodeGenerator().apply {
+            additionalPropertiesOption = CodeGenerator.AdditionalPropertiesOption.STRICT
+            basePackageName = packageName
+            outputResolver = outputCapture(outputDetails)
+            generate(input)
+        }
+        outputDetails.output() shouldBe resultFile("TestApTrueMin0")
     }
 
     @Test fun `should generate code for aP true with maximum`() {

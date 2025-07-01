@@ -103,7 +103,8 @@ open class Constraints(val schema: JSONSchema, val negated: Boolean = false) : A
     @Suppress("unused")
     val additionalPropertiesNeedsInit: Boolean
         get() {
-            if (properties.isNotEmpty() || patternProperties.isNotEmpty() || minProperties != null ||
+            if (properties.isNotEmpty() || patternProperties.isNotEmpty() ||
+                    minProperties.let { it != null && it > 0 } ||
                     maxProperties != null)
                 return true
             additionalProperties?.let {

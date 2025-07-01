@@ -1467,8 +1467,11 @@ class CodeGenerator(
                     addValidation(Validation.Type.CONST_ITEMS, NumberValue(minV))
                 else
                     addValidation(Validation.Type.RANGE_ITEMS, minV to maxV)
-            } ?: minV.takeIf { it > 0 }?.let { addValidation(Validation.Type.MIN_ITEMS, NumberValue(it)) }
-            true
+                true
+            } ?: minV.takeIf { it > 0 }?.let {
+                addValidation(Validation.Type.MIN_ITEMS, NumberValue(it))
+                true
+            }
         } ?: maximumItems?.takeIf { it < Int.MAX_VALUE }?.let {
             addValidation(Validation.Type.MAX_ITEMS, NumberValue(it))
             true

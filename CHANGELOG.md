@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.123] - 2025-07-01
+### Changed
+- `CodeGenerator`: fixed bugs in validations of `minItems` and `minProperties`
+
 ## [0.122] - 2025-06-29
 ### Changed
 - `CodeGenerator`: improved validations `minItems` and `minProperties`
