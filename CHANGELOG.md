@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 - `CodeGenerator`: fixed bugs in validations of `minItems` and `minProperties`
 - `pom.xml`: changed parent POM to `kstuff-maven`
+- `deploy.yml`: updated server id
 
 ## [0.122] - 2025-06-29
 ### Changed
